@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ExtensionModel>
+
+  <Extension path = "/MonoDevelop/Ide/ProjectTemplates">
+    <ProjectTemplate id = "SyntactikProject" resource = "Syntactik.MonoDevelop.Templates.SyntactikProject.xpt.xml"/>
+  </Extension>
+  <!--
+  <Extension path = "/MonoDevelop/ProjectModel/ProjectBindings">
+    <ProjectBinding id = "MalinaProject" class = "Syntactik.MonoDevelop.SyntactikProjectBinding"/>
+  </Extension>
+-->
+  <Extension path = "/MonoDevelop/ProjectModel/LanguageBindings">
+    <LanguageBinding id = "S4X"
+		                 extensions = ".s4x"
+		                 singleLineCommentTag = "'''"
+		                 blockCommentStartTag = '"""'
+		                 blockCommentEndTag = '"""' />
+  </Extension>
+
+  <Extension path="/MonoDevelop/ProjectModel/MSBuildItemTypes">
+    <ProjectType
+        extension="synproj"
+        guid = "{2857B73E-F847-4B02-9238-064979017E34}"
+        alias = "SyntactikProject"
+        type="Syntactik.MonoDevelop.SyntactikProjectBinding" 
+        msbuildSupport ="NotSupported "/>
+  </Extension>
+</ExtensionModel>

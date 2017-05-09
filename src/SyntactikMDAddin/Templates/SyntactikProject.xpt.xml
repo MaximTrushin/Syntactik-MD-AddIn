@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<Template>
+
+  <!-- Template Header -->
+  <TemplateConfiguration>
+    <_Name>Syntactik Project</_Name>
+    <_Category>Syntactik</_Category>
+    <Icon>md-project</Icon>
+    <LanguageName>S4X</LanguageName>
+    <FileExtension>.synprj</FileExtension>
+    <_Description>Syntactik for XML Project</_Description>
+  </TemplateConfiguration>
+
+
+  <Actions>
+    <Open filename = "main.s4x"/>
+  </Actions>
+
+  <!-- Template Content -->
+  <Combine name = "${ProjectName}" directory = ".">
+<Options>
+      <StartupProject>${ProjectName}</StartupProject>
+    </Options>
+
+    <Project name = "${ProjectName}" type ="SyntactikProject" directory = ".">
+      <Options/>
+      <Files>
+        <File name="main.s4x" AddStandardHeader="True">
+          <![CDATA[!Document:
+	Element
+]]>
+        </File>
+
+      </Files> 
+    </Project>
+  </Combine>
+</Template>
