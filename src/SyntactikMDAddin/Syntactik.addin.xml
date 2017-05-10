@@ -22,7 +22,9 @@
         msbuildSupport ="NotSupported "/>
   </Extension>
 
+  <Extension path = "/MonoDevelop/Ide/TextEditorExtensions">
     <Class fileExtensions = ".s4x" class = "Syntactik.MonoDevelop.Highlighting.HighlightUsagesExtension" />
+  </Extension>
 
   <Extension path = "/MonoDevelop/Core/MimeTypes">
     <MimeType id="text/x-syntactik4xml" _description="Syntactik for XMl source code" icon="md-csharp-file" isText="true">
@@ -31,6 +33,7 @@
     <MimeType id="application/x-syntactik4xmlproject" _description="S4X-project file" baseType="application/x-msbuild">
       <File pattern="*.s4xproj" />
     </MimeType>
+  </Extension>
 
   <Extension path = "/MonoDevelop/SourceEditor2/SyntaxModes">
     <Templates id = "SyntactikSyntaxMode" resource = "Syntactik.MonoDevelop.Templates.SyntactikSyntaxMode.xml"/>
