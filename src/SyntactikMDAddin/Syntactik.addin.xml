@@ -4,11 +4,7 @@
   <Extension path = "/MonoDevelop/Ide/ProjectTemplates">
     <ProjectTemplate id = "SyntactikProject" resource = "Syntactik.MonoDevelop.Templates.SyntactikProject.xpt.xml"/>
   </Extension>
-  <!--
-  <Extension path = "/MonoDevelop/ProjectModel/ProjectBindings">
-    <ProjectBinding id = "MalinaProject" class = "Syntactik.MonoDevelop.SyntactikProjectBinding"/>
-  </Extension>
--->
+
   <Extension path = "/MonoDevelop/ProjectModel/LanguageBindings">
     <LanguageBinding id = "S4X"
 		                 extensions = ".s4x"
@@ -19,10 +15,26 @@
 
   <Extension path="/MonoDevelop/ProjectModel/MSBuildItemTypes">
     <ProjectType
-        extension="synproj"
+        extension="s4xproj"
         guid = "{2857B73E-F847-4B02-9238-064979017E34}"
         alias = "SyntactikProject"
         type="Syntactik.MonoDevelop.SyntactikProjectBinding" 
         msbuildSupport ="NotSupported "/>
   </Extension>
+
+    <Class fileExtensions = ".s4x" class = "Syntactik.MonoDevelop.Highlighting.HighlightUsagesExtension" />
+
+  <Extension path = "/MonoDevelop/Core/MimeTypes">
+    <MimeType id="text/x-syntactik4xml" _description="Syntactik for XMl source code" icon="md-csharp-file" isText="true">
+      <File pattern="*.s4x" />
+    </MimeType>
+    <MimeType id="application/x-syntactik4xmlproject" _description="S4X-project file" baseType="application/x-msbuild">
+      <File pattern="*.s4xproj" />
+    </MimeType>
+
+  <Extension path = "/MonoDevelop/SourceEditor2/SyntaxModes">
+    <Templates id = "SyntactikSyntaxMode" resource = "Syntactik.MonoDevelop.Templates.SyntactikSyntaxMode.xml"/>
+  </Extension>
+  
+  
 </ExtensionModel>

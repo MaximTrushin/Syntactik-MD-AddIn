@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<SyntaxMode name = "syntactik4xml" mimeTypes="text/x-syntactik4xml">
+
+  <EolSpan color = "Comment(Line)" rule="Comment">'''</EolSpan>
+
+  <Span color = "Comment(Line)" rule="Comment" tagColor="Comment(Line)">
+    <Begin>"""</Begin>
+    <End>"""</End>
+  </Span>
+
+  <Match color = "User Types">\!\$?[\w\.\:]*</Match>
+
+  <Match expression="(\#xmlns)(\s*=)(.*)">
+    <Group color = "String Format Items"/>
+    <Group color = "Punctuation"/>
+    <Group color = "String"/>
+  </Match>
+
+
+  <Match expression="(\#[\w\.\-]+)(\s*=)(.*)">
+    <Group color = "Keyword(Declaration)"/>
+    <Group color = "Punctuation"/>
+    <Group color = "String"/>
+  </Match>
+
+  <Match expression="(#[\w\-]+.)">
+    <Group color = "Keyword(Declaration)"/>
+  </Match>
+
+  <Match expression="(\@[\w\.\-]*)">
+    <Group color = "String(Escape)"/>
+  </Match>
+
+  <Match expression="(\%[\w\.\-]*)">
+    <Group color = "Keyword(Exception)"/>
+  </Match>
+
+  <Match expression="(\$[\w\.\:]*)">
+    <Group color = "Diff Header"/>
+  </Match>
+
+  <Match expression="(=\s*)(`[^\s]*)">
+    <Group color = "Punctuation"/>
+    <Group color = "String"/>
+  </Match>
+
+  <Match expression="(=\s*)">
+    <Group color = "Punctuation"/>
+    <Group color = "String"/>
+  </Match>
+
+  <Rule name = "OpenString">
+  </Rule>
+
+  <Rule name = "Comment">
+  </Rule>
+
+  <Rule name = "Interpolation">
+    <Match color = "Diff Header">\s*\$\$</Match>
+    <Match color = "Diff Header">\s*\$\([^\)']*\)?</Match>
+    <Match color = "Diff Header">\s*\\[btnvfr'"\\\$]?(u[0-9a-fA-F]{0,4})?</Match>
+    <Match color = "Diff Header">\s*\$[^\d\s\'\(\%][\w\.\:]*</Match>
+    <Match color = "Diff Header">\s*\$\d{1,5}</Match>
+    <Match color = "Diff Header">\s*\$\%[0-9a-fA-F]{1,4}</Match>
+    <Match color = "Xml Text">[^\$\s'\\]*</Match>
+  </Rule>
+
+  <Rule name = "AttrInterpolation">
+    <Match color = "Diff Header">\s*\$\$</Match>
+    <Match color = "Diff Header">\s*\$\([^\)']*\)?</Match>
+    <Match color = "Diff Header">\s*\\[btnvfr'"\\\$]?(u[0-9a-fA-F]{0,4})?</Match>
+    <Match color = "Diff Header">\s*\$[^\d\s\'\(\%][\w\.\:]*</Match>
+    <Match color = "Diff Header">\s*\$\d{1,5}</Match>
+    <Match color = "Diff Header">\s*\$\%[0-9a-fA-F]{1,4}</Match>
+    <Match color = "String">[^\$\s'\\]*</Match>
+  </Rule>
+
+  <Rule name = "Alias">
+    <Match color = "Plain Text">\,</Match>
+  </Rule>
+</SyntaxMode>
