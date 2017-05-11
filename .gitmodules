@@ -1,3 +1,6 @@
 [submodule "external/monodevelop"]
 	path = external/monodevelop
 	url = https://github.com/mono/monodevelop
+[submodule "external/syntactik"]
+	path = external/syntactik
+	url = https://github.com/MaximTrushin/Syntactik/
