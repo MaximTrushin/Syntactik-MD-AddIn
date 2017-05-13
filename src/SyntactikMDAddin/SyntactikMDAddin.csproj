@@ -50,6 +50,9 @@
     <Reference Include="MonoDevelop.Ide">
       <HintPath>..\..\external\monodevelop\main\build\bin\MonoDevelop.Ide.dll</HintPath>
     </Reference>
+    <Reference Include="Syntactik">
+      <HintPath>..\..\external\syntactik\Syntactik\bin\Debug\Syntactik.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

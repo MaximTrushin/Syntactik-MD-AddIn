@@ -1,22 +1,58 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <SyntaxMode name = "syntactik4xml" mimeTypes="text/x-syntactik4xml">
 
-  <EolSpan color = "Comment(Line)" rule="Comment">'''</EolSpan>
 
-  <Span color = "Comment(Line)" rule="Comment" tagColor="Comment(Line)">
+  <!-- single line comment -->
+  <EolSpan color = "Comment(Line)" rule="Comment">'''</EolSpan>
+  <!-- multi line comment -->
+  <Span color = "Comment(Line)" rule="Comment">
     <Begin>"""</Begin>
     <End>"""</End>
   </Span>
 
-  <Match color = "User Types">\!\$?[\w\.\:]*</Match>
+<!-- wsa -->
+<Span color = "Punctuation" rule ="wsa">
+  <Begin>(</Begin>
+  <End>)</End>
+</Span>
 
-  <Match expression="(\#xmlns)(\s*=)(.*)">
-    <Group color = "String Format Items"/>
+<!-- open string -->
+<Span color = "Punctuation" rule ="open_string">
+  <Begin>=</Begin>
+</Span>
+
+<Rule name = "open_string">
+  <Match color = "String">(.*)</Match>
+</Rule>  
+
+  <!-- open string -->
+  <Match expression="(\s*==\s*)([^=:()'&quot;,]*)">
     <Group color = "Punctuation"/>
     <Group color = "String"/>
   </Match>
 
+  <!-- free open string -->
+  <Match expression="(\s*=\s*)(.*)">
+    <Group color = "Punctuation"/>
+    <Group color = "String"/>
+  </Match>
+  
 
+  
+  
+  <!-- sq name -->
+  <Match color = "Keyword(Type)">'(?:\\.|.)*?(?:'|$)</Match>
+  <!-- dq name -->
+  <Match color = "Keyword(Type)">".*?(?:"|$)</Match>
+
+
+  <!-- document name -->
+  <Match color = "User Types">\s?![^=:()'",]*</Match>
+
+  <!-- alias -->
+  <Match color = "Diff Header">\s?\$[^=:()'",]*</Match>
+
+  <!--
   <Match expression="(\#[\w\.\-]+)(\s*=)(.*)">
     <Group color = "Keyword(Declaration)"/>
     <Group color = "Punctuation"/>
@@ -35,10 +71,12 @@
     <Group color = "Keyword(Exception)"/>
   </Match>
 
-  <Match expression="(\$[\w\.\:]*)">
-    <Group color = "Diff Header"/>
-  </Match>
+-->
 
+  <!-- open name -->
+  <Match color = "Keyword(Type)">\s?[^=:()'",]+</Match>  
+  
+  
   <Match expression="(=\s*)(`[^\s]*)">
     <Group color = "Punctuation"/>
     <Group color = "String"/>
@@ -48,6 +86,28 @@
     <Group color = "Punctuation"/>
     <Group color = "String"/>
   </Match>
+
+
+  
+  
+  <Rule name = "wsa">
+    <!-- string value -->
+    <Match expression="(==?\s*)([^\s]*)">
+      <Group color = "Punctuation"/>
+      <Group color = "String"/>
+    </Match>
+    
+    <!-- sq name -->
+    <Match color = "Keyword(Type)">'(?:\\.|.)*?(?:'|$)</Match>
+    
+    <!-- dq name -->
+    <Match color = "Keyword(Type)">".*?(?:"|$)</Match>
+    
+    <!-- open name -->
+    <Match color = "Keyword(Type)">\s?[^=:()'",]+</Match>
+    
+  </Rule>  
+  
 
   <Rule name = "OpenString">
   </Rule>
