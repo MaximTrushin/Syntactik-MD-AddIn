@@ -8,7 +8,6 @@ using Mono.TextEditor;
 using MonoDevelop.Ide.Editor.Extension;
 using MonoDevelop.Ide.FindInFiles;
 
-
 namespace Syntactik.MonoDevelop.Highlighting
 {
     public class HighlightUsagesExtension : AbstractUsagesExtension<object>
@@ -24,30 +23,8 @@ namespace Syntactik.MonoDevelop.Highlighting
                 textEditorData.Document.MimeType = "text/x-syntactik4xml";
                 textEditorData.Document.SyntaxMode = syntaxMode;
             }
-
-
-            //var sourceEditor = DocumentContext.GetContent<MonoDevelop.SourceEditorView>();
-
-            ////var syntaxMode = new MalinaSyntaxMode(Document.Editor.Document);
-            //var syntaxMode = new MalinaLexerSyntaxMode(Document.Editor.Document);
-            //TextEditorData.Document.MimeType = "text/x-malina";
-            //TextEditorData.Document.SyntaxMode = syntaxMode;
-
-
-            //var textEditor = DocumentContext..Editor.Parent as ExtensibleTextEditor;
-            //var sourceEditor = Document.GetContent<SourceEditorView>();
-            //if (sourceEditor != null && sourceEditor.Project != null)
-            //{
-            //    var opt = textEditor.TextArea.Options as ISourceEditorOptions;
-            //    var mOpt = new MalinaOptions(opt);
-            //    mOpt.ColorScheme = "Tango";
-            //    textEditor.TextArea.Options = mOpt;
-            //    textEditor.TextArea.TextViewMargin.PurgeLayoutCache();
-            //}
-
         }
 
-        //private SyntactikSyntaxMode syntaxMode;
         protected override Task<object> ResolveAsync(CancellationToken token)
         {
             throw new NotImplementedException();
