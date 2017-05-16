@@ -1,11 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <SyntaxMode name = "syntactik4xml" mimeTypes="text/x-syntactik4xml">
 
-
   <!-- single line comment -->
-  <EolSpan color = "Comment(Line)" rule="Comment">'''</EolSpan>
+  <EolSpan color = "Comment(Line)" rule="comment">'''</EolSpan>
   <!-- multi line comment -->
-  <Span color = "Comment(Line)" rule="Comment">
+  <Span color = "Comment(Line)"  rule="comment">
     <Begin>"""</Begin>
     <End>"""</End>
   </Span>
@@ -16,15 +15,64 @@
   <End>)</End>
 </Span>
 
+  
+<Match color = "Punctuation">:=</Match>  
+    
+<!-- delimiters >
+<Span color = "Punctuation" rule ="delimiter">
+  <Begin>:=</Begin>
+  <End></End>
+</Span-->
+  
+  <Match color = "Punctuation">::</Match>
+  <Match color = "Punctuation">:</Match>
+  <Match color = "Punctuation">=::</Match>
+  <Match color = "Punctuation">=:</Match>
+
 <!-- open string -->
+    
 <Span color = "Punctuation" rule ="open_string">
-  <Begin>=</Begin>
+  <Begin>==</Begin>
 </Span>
 
 <Rule name = "open_string">
+  <Match color = "String">([^=:()'&quot;,]*)</Match>
+
+    <!-- single line comment -->
+  <EolSpan color = "Comment(Line)" rule="comment">'''</EolSpan>
+  <!-- multi line comment -->
+  <Span color = "Comment(Line)" rule="comment">
+    <Begin>"""</Begin>
+    <End>"""</End>
+  </Span>
+  
+</Rule>  
+  
+<Rule name = "sl_open_string">
+  <Match color = "String">([^=:()'&quot;,]*)</Match>
+
+    <!-- single line comment -->
+  <EolSpan color = "Comment(Line)" rule="comment">'''</EolSpan>
+  <!-- multi line comment -->
+  <Span color = "Comment(Line)" rule="comment">
+    <Begin>"""</Begin>
+    <End>"""</End>
+  </Span>
+  
+</Rule>    
+  
+  
+<!-- free open string -->
+<Span color = "Punctuation" rule ="free_open_string">
+  <Begin>=</Begin>
+</Span>
+
+<Rule name = "free_open_string">
   <Match color = "String">(.*)</Match>
 </Rule>  
 
+  
+  
   <!-- open string -->
   <Match expression="(\s*==\s*)([^=:()'&quot;,]*)">
     <Group color = "Punctuation"/>
@@ -36,10 +84,7 @@
     <Group color = "Punctuation"/>
     <Group color = "String"/>
   </Match>
-  
 
-  
-  
   <!-- sq name -->
   <Match color = "Keyword(Type)">'(?:\\.|.)*?(?:'|$)</Match>
   <!-- dq name -->
@@ -47,10 +92,10 @@
 
 
   <!-- document name -->
-  <Match color = "User Types">\s?![^=:()'",]*</Match>
+  <Match color = "User Types">\s*![^=:()'",]*</Match>
 
   <!-- alias -->
-  <Match color = "Diff Header">\s?\$[^=:()'",]*</Match>
+  <Match color = "Diff Header">\s*\$[^=:()'",]*</Match>
 
   <!--
   <Match expression="(\#[\w\.\-]+)(\s*=)(.*)">
@@ -70,12 +115,6 @@
   <Match expression="(\%[\w\.\-]*)">
     <Group color = "Keyword(Exception)"/>
   </Match>
-
--->
-
-  <!-- open name -->
-  <Match color = "Keyword(Type)">\s?[^=:()'",]+</Match>  
-  
   
   <Match expression="(=\s*)(`[^\s]*)">
     <Group color = "Punctuation"/>
@@ -86,17 +125,42 @@
     <Group color = "Punctuation"/>
     <Group color = "String"/>
   </Match>
+-->
 
+  <!-- open name -->
+  <Match color = "Keyword(Type)">\s*[^=:()'",]+</Match>  
+  
 
   
   
   <Rule name = "wsa">
-    <!-- string value -->
-    <Match expression="(==?\s*)([^\s]*)">
+
+    <!-- single line comment -->
+    <EolSpan color = "Comment(Line)">'''</EolSpan>
+    <!-- multi line comment -->
+    <Span color = "Comment(Line)" rule="comment">
+      <Begin>"""</Begin>
+      <End>"""</End>
+    </Span>    
+    
+    <!-- sq string value -->
+    <Match expression="(==?\s*)('(?:\\.|.)*?(?:'|$))">
       <Group color = "Punctuation"/>
       <Group color = "String"/>
     </Match>
-    
+
+    <!-- dq string value -->
+    <Match expression="(==?\s*)(&quot;.*?(?:&quot;|$))">
+      <Group color = "Punctuation"/>
+      <Group color = "String"/>
+    </Match>
+
+    <!-- open string value -->
+    <Match expression="(==?\s*)([^=:()'&quot;,]*)">
+      <Group color = "Punctuation"/>
+      <Group color = "String"/>
+    </Match>    
+
     <!-- sq name -->
     <Match color = "Keyword(Type)">'(?:\\.|.)*?(?:'|$)</Match>
     
@@ -106,36 +170,19 @@
     <!-- open name -->
     <Match color = "Keyword(Type)">\s?[^=:()'",]+</Match>
     
+    <Rule name = "comment">
+    </Rule>
+    
+    <Rule name = "delimiter">
+    </Rule> 
+    
   </Rule>  
   
-
-  <Rule name = "OpenString">
+  <Rule name = "comment">
   </Rule>
-
-  <Rule name = "Comment">
-  </Rule>
-
-  <Rule name = "Interpolation">
-    <Match color = "Diff Header">\s*\$\$</Match>
-    <Match color = "Diff Header">\s*\$\([^\)']*\)?</Match>
-    <Match color = "Diff Header">\s*\\[btnvfr'"\\\$]?(u[0-9a-fA-F]{0,4})?</Match>
-    <Match color = "Diff Header">\s*\$[^\d\s\'\(\%][\w\.\:]*</Match>
-    <Match color = "Diff Header">\s*\$\d{1,5}</Match>
-    <Match color = "Diff Header">\s*\$\%[0-9a-fA-F]{1,4}</Match>
-    <Match color = "Xml Text">[^\$\s'\\]*</Match>
-  </Rule>
-
-  <Rule name = "AttrInterpolation">
-    <Match color = "Diff Header">\s*\$\$</Match>
-    <Match color = "Diff Header">\s*\$\([^\)']*\)?</Match>
-    <Match color = "Diff Header">\s*\\[btnvfr'"\\\$]?(u[0-9a-fA-F]{0,4})?</Match>
-    <Match color = "Diff Header">\s*\$[^\d\s\'\(\%][\w\.\:]*</Match>
-    <Match color = "Diff Header">\s*\$\d{1,5}</Match>
-    <Match color = "Diff Header">\s*\$\%[0-9a-fA-F]{1,4}</Match>
-    <Match color = "String">[^\$\s'\\]*</Match>
-  </Rule>
-
-  <Rule name = "Alias">
-    <Match color = "Plain Text">\,</Match>
-  </Rule>
+  <Rule name = "delimiter">
+  </Rule> 
+ 
+  
+ 
 </SyntaxMode>
