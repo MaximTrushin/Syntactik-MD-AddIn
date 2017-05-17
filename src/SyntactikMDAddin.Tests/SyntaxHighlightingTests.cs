@@ -21,10 +21,24 @@ namespace SyntactikMDAddin.Tests
         }
 
         [Test]
-        public void TestSpans()
+        public void OpenName()
         {
-            TestOutput("/* TestMe */",
-                        "<span foreground=\"#888A85\">/* TestMe */</span>");
+            TestOutput("Open Name",
+                        "<span style=\"color:#AB3338\">Open Name</span>");
+        }
+
+        [Test]
+        public void SQName()
+        {
+            TestOutput("'Single Quoted Name'",
+                        "<span style=\"color:#AB3338\">'Single Quoted Name'</span>");
+        }
+
+        [Test]
+        public void DQName()
+        {
+            TestOutput("\"Double Qouted Name\"",
+                        "<span style=\"color:#AB3338\">\"Double Qouted Name\"</span>");
         }
 
 
