@@ -14,53 +14,35 @@
   <Begin>(</Begin>
   <End>)</End>
 </Span>
-
   
 <Match color = "Punctuation">:=</Match>  
-    
-<!-- delimiters >
-<Span color = "Punctuation" rule ="delimiter">
-  <Begin>:=</Begin>
-  <End></End>
-</Span-->
+<Match color = "Punctuation">::</Match>
+<Match color = "Punctuation">:</Match>
+<Match color = "Punctuation">=::</Match>
+<Match color = "Punctuation">=:</Match>
   
-  <Match color = "Punctuation">::</Match>
-  <Match color = "Punctuation">:</Match>
-  <Match color = "Punctuation">=::</Match>
-  <Match color = "Punctuation">=:</Match>
-
 <!-- open string -->
-    
-<Span color = "Punctuation" rule ="open_string">
+<Span color = "String" rule ="open_string" tagColor="Punctuation">
   <Begin>==</Begin>
 </Span>
 
 <Rule name = "open_string">
-  <Match color = "String">([^=:()'&quot;,]*)</Match>
-
-    <!-- single line comment -->
-  <EolSpan color = "Comment(Line)" rule="comment">'''</EolSpan>
-  <!-- multi line comment -->
-  <Span color = "Comment(Line)" rule="comment">
-    <Begin>"""</Begin>
-    <End>"""</End>
-  </Span>
-  
+ 
 </Rule>  
   
-<Rule name = "sl_open_string">
-  <Match color = "String">([^=:()'&quot;,]*)</Match>
-
-    <!-- single line comment -->
-  <EolSpan color = "Comment(Line)" rule="comment">'''</EolSpan>
-  <!-- multi line comment -->
-  <Span color = "Comment(Line)" rule="comment">
-    <Begin>"""</Begin>
-    <End>"""</End>
-  </Span>
-  
-</Rule>    
-  
+<Rule name = "sq_string">
+  <!--valid escape-->
+  <Match color = "Diff Header">\\["'\\\/bfnrt]</Match>
+  <!-- utf encode-->
+  <Match color = "Diff Header">\\u[a-fA-F0-9]{0,4}</Match>
+  <!--Alias or parameter with brackets-->
+  <Match color = "Diff Header">\\(?:\$|!%)\([ \t]*(?:(?:_|[A-Z]|[a-z]|[\xC0-\xD6]|[\xD8-\xF6]|[\xF8-\u02FF]|[\u0370-\u037D]|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD])(?:[A-Z]|[a-z]|[\xC0-\xD6]|[\xD8-\xF6]|[\xF8-\u02FF]|[\u0370-\u037D]|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]|-|\.|[0-9]|\xB7|[\u0300-\u036F]|[\u203F-\u2040])*)[ \t]*\)?</Match>
+  <!--Alias or parameter without brakets-->
+  <Match color = "Diff Header">\\(?:\$|!%)(?:(?:_|[A-Z]|[a-z]|[\xC0-\xD6]|[\xD8-\xF6]|[\xF8-\u02FF]|[\u0370-\u037D]|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD])(?:[A-Z]|[a-z]|[\xC0-\xD6]|[\xD8-\xF6]|[\xF8-\u02FF]|[\u0370-\u037D]|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]|-|\.|[0-9]|\xB7|[\u0300-\u036F]|[\u203F-\u2040])*)</Match>
+  <!--invalid escape-->
+  <Match color = "Diff Header">\\.</Match>
+</Rule>  
+ 
   
 <!-- free open string -->
 <Span color = "Punctuation" rule ="free_open_string">

@@ -20,18 +20,27 @@ namespace Syntactik.MonoDevelop.Highlighting
             if ((CurRule.Name == "free_open_string" || CurRule.Name == "open_string") && 
                 !(CurSpan is IndentSpan))
             {
+                char quote = (char) 0;
+                var indent = CurText.TakeWhile(c => c == ' ' || c == '\t').Count(); //calculating indent span for multiline strings
                 if (CurRule.Name == "open_string")
                 {
-                    var r = new System.Text.RegularExpressions.Regex("[^=:()'\",]*$").Match(CurText, i - StartOffset);
-                    if (!r.Success || r.Index != i - StartOffset)
+                    var r = new System.Text.RegularExpressions.Regex(@"\s*('|"")").Match(CurText, i - StartOffset);
+                    if (r.Success && r.Index == i - StartOffset)
                     {
-                        FoundSpanBegin(new Span { Rule = "sl_open_string", Color = "String" }, i, 0);
-                        return true;
+                        quote = r.Groups[1].Value[0];
+                        FoundSpanBegin(new IndentSpan
+                                {
+                                    Indent = indent,
+                                    FirstLine = true,
+                                    Rule = quote == '\''? "sq_string": CurRule.Name,
+                                    Color = "String",
+                                    Quote = quote }, i, 0
+                               );
+                        i += r.Length - 1;
+                        return false;
                     }
                 }
-                //calculating indent span for multiline strings
-                var indent = CurText.TakeWhile(c => c == ' ' || c == '\t').Count();
-                FoundSpanBegin(new IndentSpan() {Indent = indent, FirstLine = true, Rule = CurRule.Name, Color = "String"}, i, 0);
+                FoundSpanBegin(new IndentSpan {Indent = indent, FirstLine = true, Rule = CurRule.Name, Color = "String", Quote = quote}, i, 0);
                 return true;
             }
             return base.ScanSpan(ref i);
@@ -41,13 +50,30 @@ namespace Syntactik.MonoDevelop.Highlighting
         {
             if (CurSpan == null) return base.ScanSpanEnd(cur, ref i);
 
-            if ((CurRule.Name == "free_open_string" || CurRule.Name == "open_string") &&
+            if ((CurRule.Name == "free_open_string" || CurRule.Name == "open_string" || CurRule.Name == "sq_string") &&
                 CurSpan is IndentSpan)
             {
                 var indentSpan = (IndentSpan) CurSpan;
                 if (indentSpan.FirstLine && i == StartOffset)
                 {
                     indentSpan.FirstLine = false;
+                }
+
+                if ((CurRule.Name == "open_string" || CurRule.Name == "sq_string") && indentSpan.Quote == CurText[i - StartOffset])
+                {
+                    FoundSpanEnd(CurSpan, i, 1);
+                    FoundSpanEnd(CurSpan, i, 1);
+                    return true;
+                }
+
+                if (CurRule.Name == "open_string" && indentSpan.FirstLine && indentSpan.Quote == 0)
+                {
+                    if (IsEndOfOpenString(CurText[i - StartOffset]))
+                    {
+                        FoundSpanEnd(CurSpan, i, 0);
+                        FoundSpanEnd(CurSpan, i, 0);
+                        return false; //return false so the current symbol will be processed with match rules
+                    }
                 }
 
                 if (!indentSpan.FirstLine)
@@ -61,22 +87,13 @@ namespace Syntactik.MonoDevelop.Highlighting
                     }
                 }
             }
-            else if (CurRule.Name == "sl_open_string")
-            {
-                var r = new System.Text.RegularExpressions.Regex("[^=:()'\",]*").Match(CurText, i - StartOffset);
-                if (r.Success)
-                {
-                    FoundSpanEnd(CurSpan, i, r.Length);
-                    FoundSpanEnd(CurSpan, i, r.Length);
-                    i += r.Length-1;
-                    return true;
-                }
-                FoundSpanEnd(CurSpan, i, 0);
-                FoundSpanEnd(CurSpan, i, 0);
-                return false;
-            }
-
             return base.ScanSpanEnd(cur, ref i);
+        }
+
+        public static bool IsEndOfOpenString(char c)
+        {
+            if (c > 61) return false;
+            return c == '=' || c == ':' || c == ',' || c == '\'' || c == '"' || c == ')' || c == '(';
         }
     }
 
@@ -84,6 +101,7 @@ namespace Syntactik.MonoDevelop.Highlighting
     {
         public int Indent;
         public bool FirstLine;
+        public char Quote;
     }
 
 }
