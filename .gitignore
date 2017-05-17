@@ -3,3 +3,9 @@
 /src/SyntactikMDAddin/packages
 /src/SyntactikMDAddin/.vs
 /src/SyntactikMDAddin/SyntactikMDAddin.userprefs
+
+*.suo
+/src/packages
+/src/.vs
+/src/SyntactikMDAddin.Tests/bin
+/src/SyntactikMDAddin.Tests/obj

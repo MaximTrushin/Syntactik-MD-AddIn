@@ -1,0 +1,69 @@
+﻿{
+  "name": "Syntactik",
+  "version": "1.0",
+  "description": "Syntactik syntax mode",
+  "originator": "Syntactik",
+  "baseScheme": "Default",
+  "colors": [
+  ],
+  "text": [
+    {
+      "name": "Diff Header",
+      "fore": "#009696"
+    },
+    {
+      "name": "Keyword(Exception)",
+      "fore": "#00c8c8"
+    },
+    {
+      "name": "User Types",
+      "fore": "#0000FF"
+    },
+    {
+      "name": "Comment(Line)",
+      "fore": "#c0c0c0"
+    },
+    {
+      "name": "Comment(Block)",
+      "fore": "#c0c0c0"
+    },
+    {
+      "name": "String(Escape)",
+      "fore": "#ff0000"
+    },
+    {
+      "name": "Keyword(Declaration)",
+      "fore": "#00c800"
+    },
+    {
+      "name": "String Format Items",
+      "fore": "#FF0000"
+    },
+    {
+      "name": "Plain Text",
+      "fore": "#000000",
+      "back": "#FFFFFF"
+    },
+    {
+      "name": "Punctuation",
+      "fore": "#000000"
+    },
+    {
+      "name": "String",
+      "fore": "#F57D00"
+    },
+    {
+      "name": "Xml Text",
+      "fore": "#5D0094"
+    },
+    {
+      "name": "Keyword(Constants)",
+      "fore": "#ef00ef"
+    },
+    {
+      "name": "Keyword(Type)",
+      "fore": "#ab3338",
+      "back": "#FFFFFF"
+    }
+  ]
+}
