@@ -8,6 +8,7 @@ using Mono.TextEditor;
 using Mono.TextEditor.Highlighting;
 using NUnit.Framework;
 using Syntactik.MonoDevelop.Highlighting;
+using static SyntactikMDAddin.Tests.TestUtils;
 
 namespace SyntactikMDAddin.Tests
 {
@@ -20,47 +21,22 @@ namespace SyntactikMDAddin.Tests
             Assert.IsTrue(SyntaxModeService.ValidateAllSyntaxModes());
         }
 
-        [Test]
+        [Test, RecordedTest]
         public void OpenName()
         {
-            TestOutput("Open Name",
-                        "<span style=\"color:#AB3338\">Open Name</span>");
+            DoTest();
         }
 
-        [Test]
+        [Test, RecordedTest]
         public void SQName()
         {
-            TestOutput("'Single Quoted Name'",
-                        "<span style=\"color:#AB3338\">'Single Quoted Name'</span>");
+            DoTest();
         }
 
-        [Test]
+        [Test, RecordedTest]
         public void DQName()
         {
-            TestOutput("\"Double Qouted Name\"",
-                        "<span style=\"color:#AB3338\">\"Double Qouted Name\"</span>");
-        }
-
-
-        static void TestOutput(string input, string expectedMarkup)
-        {
-            string markup = GetMarkup(input);
-            SaveMarkup(markup);
-
-            if (markup != expectedMarkup)
-            {
-                Console.WriteLine("----Expected:");
-                Console.WriteLine(expectedMarkup);
-                Console.WriteLine("----Got:");
-                Console.WriteLine(markup);
-            }
-            Assert.AreEqual(expectedMarkup, markup, "expected:" + expectedMarkup + Environment.NewLine + "But got:" + markup);
-        }
-
-        private static void SaveMarkup(string markup)
-        {
-            Directory.CreateDirectory(Path.Combine(AssemblyDirectory, "markup"));
-            File.WriteAllText(Path.Combine(AssemblyDirectory,"markup", GetTestCaseName() + ".html"), markup);
+            DoTest();
         }
 
         public static string GetMarkup(string input)

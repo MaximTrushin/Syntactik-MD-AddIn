@@ -120,7 +120,7 @@
     <!-- single line comment -->
     <EolSpan color = "Comment(Line)">'''</EolSpan>
     <!-- multi line comment -->
-    <Span color = "Comment(Line)" rule="comment">
+    <Span color = "Comment(Line)">
       <Begin>"""</Begin>
       <End>"""</End>
     </Span>    
@@ -151,13 +151,7 @@
     
     <!-- open name -->
     <Match color = "Keyword(Type)">\s?[^=:()'",]+</Match>
-    
-    <Rule name = "comment">
-    </Rule>
-    
-    <Rule name = "delimiter">
-    </Rule> 
-    
+
   </Rule>  
   
   <Rule name = "comment">
