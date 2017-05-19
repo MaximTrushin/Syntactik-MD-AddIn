@@ -1,0 +1,8 @@
+﻿"""
+ML Comment
+"""
+!doc: """ Comment """
+	el1 == "text"
+"""
+ML Comment
+"""

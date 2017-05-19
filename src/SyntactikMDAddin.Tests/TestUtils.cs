@@ -35,7 +35,7 @@ namespace SyntactikMDAddin.Tests
             var schema = ColorScheme.LoadFrom(File.OpenRead(Path.Combine(AssemblyDirectory, "SyntactikColorSchema.json")));
             SyntaxModeService.AddStyle(schema);
             data.ColorStyle = SyntaxModeService.GetColorStyle("Syntactik");
-            return data.GetMarkup(0, data.Length, false).Replace("foreground=\"", "style=\"color:");
+            return "<span>&nbsp;</span>" + data.GetMarkup(0, data.Length, false).Replace("foreground=\"", "style=\"color:").Replace("\r\n", "<br><span>&nbsp;</span>").Replace("\n", "<br><span>&nbsp;</span>");
         }
 
 
