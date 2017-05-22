@@ -47,7 +47,7 @@ namespace SyntactikMDAddin.Tests
         private static void CompareResultAndRecordedFiles(string markup, bool record)
         {
             var testCaseName = GetTestCaseName();
-            var recordedDir = AssemblyDirectory + @"\Scenarios\" + testCaseName + @"\Recorded\";
+            var recordedDir = AssemblyDirectory + @"\Scenarios\Recorded\";
             var recordedFileName = recordedDir + GetTestCaseName() + ".html";
             if (record)
             {
@@ -71,12 +71,9 @@ namespace SyntactikMDAddin.Tests
         public static void SaveTest(string result)
         {
             var testCaseName = GetTestCaseName();
-            var recordedDir = AssemblyDirectory + @"\..\..\Scenarios\" + testCaseName + @"\Recorded\";
-            if (Directory.Exists(recordedDir)) Directory.Delete(recordedDir, true);
+            var recordedDir = AssemblyDirectory + @"\..\..\Scenarios\Recorded\";
             var fileName = recordedDir + GetTestCaseName() + ".html";
-
             Directory.CreateDirectory(recordedDir);
-
             File.WriteAllText(fileName, result);
         }
 

@@ -15,14 +15,9 @@ namespace SyntactikMDAddin.Tests
     [TestFixture]
     public class SyntaxHighlightingTests : TextEditorTestBase
     {
-        [Test, RecordedTest]
-        public void ValidateSyntaxModes()
-        {
-            Assert.IsTrue(SyntaxModeService.ValidateAllSyntaxModes());
-        }
 
         [Test, RecordedTest]
-        public void FreeOpenString()
+        public void Alias()
         {
             DoTest();
         }
@@ -40,6 +35,12 @@ namespace SyntactikMDAddin.Tests
         }
 
         [Test, RecordedTest]
+        public void FreeOpenString()
+        {
+            DoTest();
+        }
+
+        [Test, RecordedTest]
         public void MultilineComment()
         {
             DoTest();
@@ -51,10 +52,29 @@ namespace SyntactikMDAddin.Tests
             DoTest();
         }
 
+        [Test, RecordTest]
+        public void OpenString()
+        {
+            DoTest();
+        }
+
         [Test, RecordedTest]
         public void SQName()
         {
             DoTest();
         }
+
+        [Test, RecordedTest]
+        public void Wsa()
+        {
+            DoTest();
+        }
+
+        [Test, RecordedTest]
+        public void ValidateSyntaxModes()
+        {
+            Assert.IsTrue(SyntaxModeService.ValidateAllSyntaxModes());
+        }
+
     }
 }
