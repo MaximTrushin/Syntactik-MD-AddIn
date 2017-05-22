@@ -23,6 +23,12 @@ namespace SyntactikMDAddin.Tests
         }
 
         [Test, RecordedTest]
+        public void CommentsInWsa()
+        {
+            DoTest();
+        }
+
+        [Test, RecordedTest]
         public void Document()
         {
             DoTest();
@@ -75,6 +81,5 @@ namespace SyntactikMDAddin.Tests
         {
             Assert.IsTrue(SyntaxModeService.ValidateAllSyntaxModes());
         }
-
     }
 }

@@ -112,15 +112,12 @@
   <!-- open name -->
   <Match color = "Keyword(Type)">\s*[^=:()'",]+</Match>  
   
-
-  
-  
   <Rule name = "wsa">
 
     <!-- single line comment -->
-    <EolSpan color = "Comment(Line)">'''</EolSpan>
+    <EolSpan color = "Comment(Line)" rule="comment">'''</EolSpan>
     <!-- multi line comment -->
-    <Span color = "Comment(Line)">
+    <Span color = "Comment(Line)"  rule="comment">
       <Begin>"""</Begin>
       <End>"""</End>
     </Span>    
