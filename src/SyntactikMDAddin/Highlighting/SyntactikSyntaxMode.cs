@@ -23,6 +23,14 @@ namespace Syntactik.MonoDevelop.Highlighting
                 this.keywordTableIgnoreCase = baseMode.keywordTableIgnoreCase;
                 this.properties = baseMode.Properties;
             }
+
+            doc.TextReplaced += doc_TextReplaced;
+        }
+
+        void doc_TextReplaced(object sender, DocumentChangeEventArgs e)
+        {
+            if (e.ChangeDelta == -1 || (e.ChangeDelta == 1 && e.InsertedText.Text == "\t"))
+                SyntaxModeService.StartUpdate(doc, this, e.Offset, e.Offset + e.InsertionLength);
         }
 
         public override SpanParser CreateSpanParser(DocumentLine line, CloneableStack<Span> spanStack)
