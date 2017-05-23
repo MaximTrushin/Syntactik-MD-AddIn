@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Mono.TextEditor;
-using Mono.TextEditor.Highlighting;
+﻿using Mono.TextEditor.Highlighting;
 using NUnit.Framework;
-using Syntactik.MonoDevelop.Highlighting;
 using static SyntactikMDAddin.Tests.TestUtils;
 
 namespace SyntactikMDAddin.Tests
@@ -58,11 +50,18 @@ namespace SyntactikMDAddin.Tests
             DoTest();
         }
 
-        [Test, RecordTest]
+        [Test, RecordedTest]
         public void OpenString()
         {
             DoTest();
         }
+        
+        [Test, RecordedTest]
+        public void SQEscapes()
+        {
+            DoTest();
+        }
+
 
         [Test, RecordedTest]
         public void SQName()

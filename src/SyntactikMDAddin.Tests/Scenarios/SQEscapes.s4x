@@ -1,0 +1,5 @@
+﻿el1:			
+	el3 == '\'FiOS\' TV Offer'
+	el4 == '\u00af \u65e5\u672c\nLine 1\u000aline\n\'\"'
+	el5 == '$5 \$(Fios)line1
+		line2\!%TV text \!%(Offer)'
