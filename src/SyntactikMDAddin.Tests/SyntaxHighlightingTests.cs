@@ -62,6 +62,13 @@ namespace SyntactikMDAddin.Tests
         {
             DoTest();
         }
+        
+        [Test, RecordedTest]
+        public void NsDefAndScope()
+        {
+            DoTest();
+        }
+
 
         [Test, RecordedTest]
         public void OpenName()

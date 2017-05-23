@@ -72,6 +72,13 @@
   <!-- dq name -->
   <Match color = "Keyword(Type)">".*?(?:"|$)</Match>
 
+  <!-- namespace definition -->
+  <Match color = "Keyword(Declaration)">\s*!#[^=:()'",]*</Match>
+
+  <!-- scope  -->
+  <Match color = "Keyword(Declaration)">\s*#[^=:()'",.]*\.?</Match>
+
+
   <!-- parameter -->
   <Match color = "Keyword(Exception)">\s*!%[^=:()'",]*</Match>
 
@@ -144,6 +151,13 @@
       <Group color = "Punctuation"/>
       <Group color = "String"/>
     </Match>
+
+    <!-- namespace definition -->
+    <Match color = "Keyword(Declaration)">\s*!#[^=:()'",]*</Match>
+
+    <!-- scope  -->
+    <Match color = "Keyword(Declaration)">\s*#[^=:()'",.]*\.?</Match>
+
 
     <!-- parameter -->
     <Match color = "Keyword(Exception)">\s*!%[^=:()'",]*</Match>
