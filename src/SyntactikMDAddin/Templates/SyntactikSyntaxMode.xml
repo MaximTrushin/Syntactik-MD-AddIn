@@ -73,7 +73,7 @@
   <Match color = "Keyword(Type)">".*?(?:"|$)</Match>
 
 
-  <!-- document name -->
+  <!-- document & alias def-->
   <Match color = "User Types">\s*![^=:()'",]*</Match>
 
   <!-- alias -->
@@ -138,7 +138,13 @@
     <Match expression="(==?\s*)([^=:()'&quot;,]*)">
       <Group color = "Punctuation"/>
       <Group color = "String"/>
-    </Match>    
+    </Match>
+
+    <!-- document & alias def-->
+    <Match color = "User Types">\s*![^=:()'",]*</Match>
+
+    <!-- alias -->
+    <Match color = "Diff Header">\s*\$[^=:()'",]*</Match>
 
     <!-- sq name -->
     <Match color = "Keyword(Type)">'(?:\\.|.)*?(?:'|$)</Match>

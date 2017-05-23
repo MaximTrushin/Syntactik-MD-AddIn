@@ -15,6 +15,12 @@ namespace SyntactikMDAddin.Tests
         }
 
         [Test, RecordedTest]
+        public void AliasDef()
+        {
+            DoTest();
+        }
+
+        [Test, RecordedTest]
         public void CommentsInWsa()
         {
             DoTest();
