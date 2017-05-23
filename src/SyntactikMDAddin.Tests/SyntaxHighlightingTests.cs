@@ -37,6 +37,13 @@ namespace SyntactikMDAddin.Tests
         {
             DoTest();
         }
+        
+        [Test, RecordedTest]
+        public void MultilineStrings()
+        {
+            DoTest();
+        }
+
 
         [Test, RecordedTest]
         public void MultilineComment()
