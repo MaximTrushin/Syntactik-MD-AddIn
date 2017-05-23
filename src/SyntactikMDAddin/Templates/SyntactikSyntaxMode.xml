@@ -72,7 +72,12 @@
   <!-- dq name -->
   <Match color = "Keyword(Type)">".*?(?:"|$)</Match>
 
+  <!-- parameter -->
+  <Match color = "Keyword(Exception)">\s*!%[^=:()'",]*</Match>
 
+  <!-- argument -->
+  <Match color = "Keyword(Exception)">\s*%[^=:()'",]*</Match>
+  
   <!-- document & alias def-->
   <Match color = "User Types">\s*![^=:()'",]*</Match>
 
@@ -139,6 +144,12 @@
       <Group color = "Punctuation"/>
       <Group color = "String"/>
     </Match>
+
+    <!-- parameter -->
+    <Match color = "Keyword(Exception)">\s*!%[^=:()'",]*</Match>
+
+    <!-- argument -->
+    <Match color = "Keyword(Exception)">\s*%[^=:()'",]*</Match>
 
     <!-- document & alias def-->
     <Match color = "User Types">\s*![^=:()'",]*</Match>

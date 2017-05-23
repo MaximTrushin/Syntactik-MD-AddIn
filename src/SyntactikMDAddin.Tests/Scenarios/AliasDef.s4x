@@ -1,10 +1,10 @@
 ﻿!$Address.US.NJ:
-	street == 123 Tornado Alley
+	!%street == 123 Tornado Alley
 		Suite 16
-	city = East Centerville
-	state = KS
+	!%city = East Centerville
+	!%state = KS
 (
 !$Address.US.NJ:
-	street == 123 Tornado Alley Suite 16,
-	city = East Centerville,
-		state = KS)
+	!%street == 123 Tornado Alley Suite 16,
+	!%city = East Centerville,
+		!%state = KS)
