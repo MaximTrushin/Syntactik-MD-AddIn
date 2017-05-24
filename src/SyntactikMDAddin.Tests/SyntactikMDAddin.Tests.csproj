@@ -59,6 +59,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Scenarios\Attribute.s4x">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Scenarios\Arguments.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

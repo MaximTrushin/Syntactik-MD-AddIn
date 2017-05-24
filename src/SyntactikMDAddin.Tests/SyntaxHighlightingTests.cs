@@ -27,6 +27,11 @@ namespace SyntactikMDAddin.Tests
         }
 
         [Test, RecordedTest]
+        public void Attribute()
+        {
+            DoTest();
+        }
+        [Test, RecordedTest]
         public void CommentsInWsa()
         {
             DoTest();

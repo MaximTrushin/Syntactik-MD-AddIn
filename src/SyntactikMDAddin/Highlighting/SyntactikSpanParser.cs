@@ -33,14 +33,14 @@ namespace Syntactik.MonoDevelop.Highlighting
                                     Indent = indent,
                                     FirstLine = true,
                                     Rule = quote == '\''? "sq_string": CurRule.Name,
-                                    Color = "String",
+                                    Color = "Xml Text",
                                     Quote = quote }, i, 0
                                );
                         i += r.Length - 1;
                         return false;
                     }
                 }
-                FoundSpanBegin(new IndentSpan {Indent = indent, FirstLine = true, Rule = CurRule.Name, Color = "String", Quote = quote}, i, 0);
+                FoundSpanBegin(new IndentSpan {Indent = indent, FirstLine = true, Rule = CurRule.Name, Color = "Xml Text", Quote = quote}, i, 0);
                 return true;
             }
             return base.ScanSpan(ref i);

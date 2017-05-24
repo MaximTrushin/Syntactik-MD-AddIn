@@ -1,6 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <SyntaxMode name = "syntactik4xml" mimeTypes="text/x-syntactik4xml">
-
+  <Property name="LineComment">'''</Property>
+  <Property name="BlockCommentStart">"""</Property>
+  <Property name="BlockCommentEnd">"""</Property>
+  <Property name="StringQuote">"</Property>
+  <Property name="StringQuote">'</Property>
+  
+  
   <!-- single line comment -->
   <EolSpan color = "Comment(Line)" rule="comment">'''</EolSpan>
   <!-- multi line comment -->
@@ -22,15 +28,15 @@
 <Match color = "Punctuation">=:</Match>
   
 <!-- open string -->
-<Span color = "String" rule ="open_string" tagColor="Punctuation">
+<Span color = "Xml Text" rule ="open_string" tagColor="Punctuation">
   <Begin>==</Begin>
 </Span>
 
 <Rule name = "open_string">
- 
 </Rule>  
   
-<Rule name = "sq_string">
+<Rule name = "sq_string">  <!--rule is called from method ScanSpan-->
+
   <!--valid escape-->
   <Match color = "Diff Header">\\["'\\\/bfnrt]</Match>
   <!-- utf encode-->
@@ -50,7 +56,7 @@
 </Span>
 
 <Rule name = "free_open_string">
-  <Match color = "String">(.*)</Match>
+  <Match color = "Xml Text">(.*)</Match>
 </Rule>  
 
   
@@ -58,20 +64,20 @@
   <!-- open string -->
   <Match expression="(\s*==\s*)([^=:()'&quot;,]*)">
     <Group color = "Punctuation"/>
-    <Group color = "String"/>
+    <Group color = "Xml Text"/>
   </Match>
 
   <!-- free open string -->
   <Match expression="(\s*=\s*)(.*)">
     <Group color = "Punctuation"/>
-    <Group color = "String"/>
+    <Group color = "Xml Text"/>
   </Match>
 
   <!-- sq name -->
   <Match color = "Keyword(Type)">'(?:\\.|.)*?(?:'|$)</Match>
   <!-- dq name -->
   <Match color = "Keyword(Type)">".*?(?:"|$)</Match>
-
+  
   <!-- namespace definition -->
   <Match color = "Keyword(Declaration)">\s*!#[^=:()'",]*</Match>
 
@@ -84,6 +90,9 @@
 
   <!-- argument -->
   <Match color = "Keyword(Exception)">\s*%[^=:()'",]*</Match>
+
+  <!-- attribute -->
+  <Match color = "String(Escape)">\s*@[^=:()'",]*</Match>  
   
   <!-- document & alias def-->
   <Match color = "User Types">\s*![^=:()'",]*</Match>
@@ -137,19 +146,19 @@
     <!-- sq string value -->
     <Match expression="(==?\s*)('(?:\\.|.)*?(?:'|$))">
       <Group color = "Punctuation"/>
-      <Group color = "String"/>
+      <Group color = "Xml Text"/>
     </Match>
 
     <!-- dq string value -->
     <Match expression="(==?\s*)(&quot;.*?(?:&quot;|$))">
       <Group color = "Punctuation"/>
-      <Group color = "String"/>
+      <Group color = "Xml Text"/>
     </Match>
 
     <!-- open string value -->
     <Match expression="(==?\s*)([^=:()'&quot;,]*)">
       <Group color = "Punctuation"/>
-      <Group color = "String"/>
+      <Group color = "Xml Text"/>
     </Match>
 
     <!-- namespace definition -->
