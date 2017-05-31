@@ -38,6 +38,14 @@
   <Extension path = "/MonoDevelop/SourceEditor2/SyntaxModes">
     <Templates id = "SyntactikSyntaxMode" resource = "Syntactik.MonoDevelop.Templates.SyntactikSyntaxMode.xml"/>
   </Extension>
+
+  <Extension path = "/MonoDevelop/TypeSystem/Parser">
+    <Parser class="Syntactik.MonoDevelop.Parser.TypeSystemParser" mimeType = "text/x-syntactik4xml" />
+  </Extension>
+  
+  <Extension path = "/MonoDevelop/TypeSystem/FoldingParser">
+    <Parser class = "Syntactik.MonoDevelop.Parser.SyntactikFoldingParser" mimeType="text/x-syntactik4xml" />
+  </Extension>
   
   
 </ExtensionModel>
