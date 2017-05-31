@@ -55,11 +55,37 @@ namespace Syntactik.MonoDevelop.Parser
             _pairFactory.AppendChild(parent, child);
         }
 
+        public void EndPair(Pair pair, Interval endInterval)
+        {
+            var foldingInfo = _foldingStack.Peek();
+            if (pair == foldingInfo.Pair)
+            {
+                _foldingStack.Pop();
+                if (foldingInfo.Begin.Line != foldingInfo.End.Line)
+                {
+                    _document.Foldings.Add(new FoldingRegion("...",
+                        new DocumentRegion(foldingInfo.Begin.Line, foldingInfo.Begin.Column + 1, foldingInfo.End.Line,
+                            foldingInfo.End.Column + 1),
+                        FoldType.Undefined, false));
+                }
+                if (_foldingStack.Count > 0)
+                {
+                    var parentFoldingInfo = _foldingStack.Peek();
+                    parentFoldingInfo.End = foldingInfo.End;
+                }
+            }
+            else
+            { 
+                //pair == null, this is closing bracket
+                foldingInfo.End = endInterval.End;
+
+            }
+            _pairFactory.EndPair(pair, endInterval);
+        }
+
         private CharLocation GetPairEnd(Interval nameInterval, Interval delimiterInterval)
         {
             if (delimiterInterval != null) return delimiterInterval.End;
-            
-
             return nameInterval.End;
         }
 
@@ -70,27 +96,5 @@ namespace Syntactik.MonoDevelop.Parser
             return child.NameInterval.End;
         }
 
-        public void EndPair(Pair pair, Interval endInterval)
-        {
-            //_document.Foldings.Add(new FoldingRegion("...", new DocumentRegion(2, 1, 5, 2), FoldType.Undefined, false));
-            //if (pair.Delimiter == )
-            var foldingInfo = _foldingStack.Peek();
-            if (pair == foldingInfo.Pair)
-            {
-                _foldingStack.Pop();
-                if (foldingInfo.Begin.Line != foldingInfo.End.Line)
-                {
-                    _document.Foldings.Add(new FoldingRegion("...", 
-                            new DocumentRegion(foldingInfo.Begin.Line, foldingInfo.Begin.Column + 1, foldingInfo.End.Line, foldingInfo.End.Column + 1), 
-                            FoldType.Undefined, false));
-                }
-                if (_foldingStack.Count > 0)
-                {
-                    var parentFoldingInfo = _foldingStack.Peek();
-                    parentFoldingInfo.End = foldingInfo.End;
-                }
-            }
-            _pairFactory.EndPair(pair, endInterval);
-        }
     }
 }
