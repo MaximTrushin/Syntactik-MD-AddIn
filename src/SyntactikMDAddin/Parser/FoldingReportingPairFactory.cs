@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using MonoDevelop.Ide.Editor;
 using MonoDevelop.Ide.TypeSystem;
 using Syntactik.DOM;
@@ -21,21 +22,25 @@ namespace Syntactik.MonoDevelop.Parser
 
         private readonly IPairFactory _pairFactory;
         private readonly SyntactikParsedDocument _document;
+        private readonly CancellationToken _cancellationToken;
 
 
-        public FoldingReportingPairFactory(IPairFactory pairFactory, SyntactikParsedDocument document)
+        public FoldingReportingPairFactory(IPairFactory pairFactory, SyntactikParsedDocument document, CancellationToken cancellationToken)
         {
             _pairFactory = pairFactory;
             _document = document;
+            _cancellationToken = cancellationToken;
             _foldingStack = new Stack<FoldingInfo>();
         }
         public Pair CreateMappedPair(ICharStream input, int nameQuotesType, Interval nameInterval, DelimiterEnum delimiter, Interval delimiterInterval,
             int valueQuotesType, Interval valueInterval, int valueIndent)
         {
+            _cancellationToken.ThrowIfCancellationRequested();
+
             var result = _pairFactory.CreateMappedPair(input, nameQuotesType, nameInterval, delimiter, delimiterInterval, valueQuotesType, valueInterval,
                 valueIndent);
 
-            if (delimiter != DelimiterEnum.E && delimiter != DelimiterEnum.EE)
+            if (delimiter != DelimiterEnum.E && delimiter != DelimiterEnum.EE && delimiter != DelimiterEnum.None)
             {
                 _foldingStack.Push(new FoldingInfo {Pair = result, Begin = GetPairEnd(nameInterval, delimiterInterval), End = GetPairEnd(nameInterval, delimiterInterval) });    
             }
@@ -45,6 +50,8 @@ namespace Syntactik.MonoDevelop.Parser
 
         public void AppendChild(Pair parent, Pair child)
         {
+            _cancellationToken.ThrowIfCancellationRequested();
+
             if (child.Delimiter == DelimiterEnum.E || child.Delimiter == DelimiterEnum.EE)
             {
                 if (_foldingStack.Count > 0)
@@ -52,7 +59,7 @@ namespace Syntactik.MonoDevelop.Parser
                     _foldingStack.Peek().End = GetPairEnd((IMappedPair) child);
                 }
 
-                if (((IMappedPair) child).ValueInterval.Begin.Line != ((IMappedPair) child).ValueInterval.End.Line)
+                if (((IMappedPair)child).ValueInterval != null && ((IMappedPair) child).ValueInterval.Begin.Line != ((IMappedPair) child).ValueInterval.End.Line)
                 {
                     _document.Foldings.Add(new FoldingRegion("...",
                         new DocumentRegion(((IMappedPair)child).ValueInterval.Begin.Line, 
@@ -67,6 +74,8 @@ namespace Syntactik.MonoDevelop.Parser
 
         public void EndPair(Pair pair, Interval endInterval)
         {
+            _cancellationToken.ThrowIfCancellationRequested();
+
             var foldingInfo = _foldingStack.Peek();
             if (pair == foldingInfo.Pair)
             {
@@ -108,6 +117,8 @@ namespace Syntactik.MonoDevelop.Parser
 
         public void ProcessComment(int commentType, Interval commentInterval)
         {
+            _cancellationToken.ThrowIfCancellationRequested();
+
             if (commentInterval.Begin.Line != commentInterval.End.Line)
                 _document.Foldings.Add(new FoldingRegion("...",
                     new DocumentRegion(commentInterval.Begin.Line, commentInterval.Begin.Column, commentInterval.End.Line,

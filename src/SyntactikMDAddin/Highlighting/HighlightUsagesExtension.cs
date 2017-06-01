@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Mono.TextEditor;
 using MonoDevelop.Ide.Editor.Extension;
 using MonoDevelop.Ide.FindInFiles;
+
 
 namespace Syntactik.MonoDevelop.Highlighting
 {
@@ -27,12 +25,12 @@ namespace Syntactik.MonoDevelop.Highlighting
 
         protected override Task<object> ResolveAsync(CancellationToken token)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         protected override Task<IEnumerable<MemberReference>> GetReferencesAsync(object resolveResult, CancellationToken token)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
     }

@@ -51,9 +51,9 @@ namespace Syntactik.MonoDevelop.Parser
         {
             foreach (var fold in comments.ToFolds())
                 yield return fold;
-            yield return new FoldingRegion("...", new DocumentRegion(2, 1, 5, 2), FoldType.Undefined, false);
-            yield return new FoldingRegion("...", new DocumentRegion(5, 5, 8, 3), FoldType.Undefined, false);
 
+            foreach (var fold in Foldings)
+                yield return fold;
 
 
 

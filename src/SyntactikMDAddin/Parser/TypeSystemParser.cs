@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Mono.TextEditor;
+using Mono.TextEditor.Highlighting;
+using MonoDevelop.Ide.Editor;
 using MonoDevelop.Ide.TypeSystem;
 using Syntactik.Compiler;
 using Syntactik.Compiler.IO;
@@ -17,7 +20,7 @@ namespace Syntactik.MonoDevelop.Parser
         {
             var fileName = options.FileName;
             var project = options.Project;
-            ParsedDocument result = ParseSyntactikDocument(options);
+            ParsedDocument result = ParseSyntactikDocument(options, cancellationToken);
 
             DateTime time;
             try
@@ -32,19 +35,19 @@ namespace Syntactik.MonoDevelop.Parser
             return Task.FromResult(result);
         }
 
-        private SyntactikParsedDocument ParseSyntactikDocument(ParseOptions options)
+        private SyntactikParsedDocument ParseSyntactikDocument(ParseOptions options, CancellationToken cancellationToken)
         {
             var result = new SyntactikParsedDocument(options.FileName);
-            var compilerParameters = CreateCompilerParameters(options, result);
+            var compilerParameters = CreateCompilerParameters(options, result, cancellationToken);
             var compiler = new SyntactikCompiler(compilerParameters);
             compiler.Run();
             return result;
         }
 
-        private CompilerParameters CreateCompilerParameters(ParseOptions options, SyntactikParsedDocument result)
+        private CompilerParameters CreateCompilerParameters(ParseOptions options, SyntactikParsedDocument result, CancellationToken cancellationToken)
         {
             var compilerParameters = new CompilerParameters { Pipeline = new CompilerPipeline() };
-            compilerParameters.Pipeline.Steps.Add(new ParseAndCreateFolding(result));
+            compilerParameters.Pipeline.Steps.Add(new ParseAndCreateFolding(result, cancellationToken));
             compilerParameters.Pipeline.Steps.Add(new ProcessAliasesAndNamespaces());
             compilerParameters.Pipeline.Steps.Add(new ValidateDocuments());
             compilerParameters.Input.Add(new StringInput(options.FileName, options.Content.Text));
