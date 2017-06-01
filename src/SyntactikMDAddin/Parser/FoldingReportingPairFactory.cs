@@ -51,6 +51,16 @@ namespace Syntactik.MonoDevelop.Parser
                 {
                     _foldingStack.Peek().End = GetPairEnd((IMappedPair) child);
                 }
+
+                if (((IMappedPair) child).ValueInterval.Begin.Line != ((IMappedPair) child).ValueInterval.End.Line)
+                {
+                    _document.Foldings.Add(new FoldingRegion("...",
+                        new DocumentRegion(((IMappedPair)child).ValueInterval.Begin.Line, 
+                            ((IMappedPair)child).ValueInterval.Begin.Column, 
+                            ((IMappedPair)child).ValueInterval.End.Line,
+                            ((IMappedPair)child).ValueInterval.End.Column + 1),
+                            FoldType.Undefined, false));
+                }
             }
             _pairFactory.AppendChild(parent, child);
         }
@@ -96,5 +106,14 @@ namespace Syntactik.MonoDevelop.Parser
             return child.NameInterval.End;
         }
 
+        public void ProcessComment(int commentType, Interval commentInterval)
+        {
+            if (commentInterval.Begin.Line != commentInterval.End.Line)
+                _document.Foldings.Add(new FoldingRegion("...",
+                    new DocumentRegion(commentInterval.Begin.Line, commentInterval.Begin.Column, commentInterval.End.Line,
+                        commentInterval.End.Column + 1), FoldType.Comment, false));
+
+            _pairFactory.ProcessComment(commentType, commentInterval);
+        }
     }
 }
