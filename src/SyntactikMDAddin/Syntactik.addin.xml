@@ -18,7 +18,7 @@
         extension="s4xproj"
         guid = "{2857B73E-F847-4B02-9238-064979017E34}"
         alias = "SyntactikProject"
-        type="Syntactik.MonoDevelop.SyntactikProjectBinding" 
+        type="Syntactik.MonoDevelop.SyntactikProject" 
         msbuildSupport ="NotSupported "/>
   </Extension>
 

@@ -5,12 +5,12 @@ using Syntactik.IO;
 
 namespace Syntactik.MonoDevelop.Parser
 {
-    public class ParseAndCreateFolding : Parse
+    public class ParseAndCreateFoldingStep : Parse
     {
         private readonly SyntactikParsedDocument _parsedDocument;
         private readonly CancellationToken _cancellationToken;
 
-        public ParseAndCreateFolding(SyntactikParsedDocument parsedDocument, CancellationToken cancellationToken)
+        public ParseAndCreateFoldingStep(SyntactikParsedDocument parsedDocument, CancellationToken cancellationToken)
         {
             _parsedDocument = parsedDocument;
             _cancellationToken = cancellationToken;

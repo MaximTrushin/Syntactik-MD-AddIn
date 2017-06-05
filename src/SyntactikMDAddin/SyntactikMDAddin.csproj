@@ -68,12 +68,12 @@
     <Compile Include="Highlighting\SyntactikSpanParser.cs" />
     <Compile Include="Highlighting\SyntactikSyntaxMode.cs" />
     <Compile Include="Parser\FoldingReportingPairFactory.cs" />
-    <Compile Include="Parser\ParseAndCreateFolding.cs" />
+    <Compile Include="Parser\ParseAndCreateFoldingStep.cs" />
     <Compile Include="Parser\SyntactikParsedDocument.cs" />
     <Compile Include="Parser\SyntactikFoldingParser.cs" />
     <Compile Include="Parser\TypeSystemParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SyntactikProjectBinding.cs" />
+    <Compile Include="Project\SyntactikProject.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Syntactik.addin.xml">

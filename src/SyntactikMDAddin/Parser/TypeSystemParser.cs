@@ -19,9 +19,18 @@ namespace Syntactik.MonoDevelop.Parser
         public override Task<ParsedDocument> Parse(ParseOptions options, CancellationToken cancellationToken = new CancellationToken())
         {
             var fileName = options.FileName;
-            var project = options.Project;
-            ParsedDocument result = ParseSyntactikDocument(options, cancellationToken);
+            var project = (SyntactikProject)options.Project;
+            ParsedDocument result;
 
+            //Parse if document has newer version
+            if (options.OldParsedDocument == null || ((SyntactikParsedDocument)options.OldParsedDocument).ContentVersion.CompareAge(options.Content.Version) != 0)
+            {
+                result = project.ParseSyntactikDocument(options, cancellationToken);
+            }
+            else
+            {
+                result = options.OldParsedDocument;
+            }
             DateTime time;
             try
             {
@@ -35,23 +44,6 @@ namespace Syntactik.MonoDevelop.Parser
             return Task.FromResult(result);
         }
 
-        private SyntactikParsedDocument ParseSyntactikDocument(ParseOptions options, CancellationToken cancellationToken)
-        {
-            var result = new SyntactikParsedDocument(options.FileName);
-            var compilerParameters = CreateCompilerParameters(options, result, cancellationToken);
-            var compiler = new SyntactikCompiler(compilerParameters);
-            compiler.Run();
-            return result;
-        }
 
-        private CompilerParameters CreateCompilerParameters(ParseOptions options, SyntactikParsedDocument result, CancellationToken cancellationToken)
-        {
-            var compilerParameters = new CompilerParameters { Pipeline = new CompilerPipeline() };
-            compilerParameters.Pipeline.Steps.Add(new ParseAndCreateFolding(result, cancellationToken));
-            compilerParameters.Pipeline.Steps.Add(new ProcessAliasesAndNamespaces());
-            compilerParameters.Pipeline.Steps.Add(new ValidateDocuments());
-            compilerParameters.Input.Add(new StringInput(options.FileName, options.Content.Text));
-            return compilerParameters;
-        }
     }
 }
