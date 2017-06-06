@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using MonoDevelop.Core;
+using MonoDevelop.Core.Text;
 using MonoDevelop.Ide.TypeSystem;
 using MonoDevelop.Projects;
 using Syntactik.Compiler;
@@ -18,12 +19,20 @@ namespace Syntactik.MonoDevelop
     [ProjectModelDataItem]
     public class SyntactikProject : Project
     {
-        object _syncRoot = new object();
+        internal class ParseInfo
+        {
+            public int Version;
+            public SyntactikParsedDocument Document;
+        }
+
+        readonly object _syncRoot = new object();
+        internal Dictionary<string, ParseInfo> CompileInfo { get; } = new Dictionary<string, ParseInfo>();
+
         public SyntactikProject()
 		{
         }
 
-        public SyntactikProject(ProjectCreateInformation info, XmlElement projectOptions)
+        public SyntactikProject(ProjectCreateInformation info, XmlElement projectOptions): base(info, projectOptions)
         {
             Configurations.Add(CreateConfiguration("Default"));
         }
@@ -35,7 +44,7 @@ namespace Syntactik.MonoDevelop
             Configurations.Add(CreateConfiguration("Default"));
         }
 
-        protected override SolutionItemConfiguration OnCreateConfiguration(string name, ConfigurationKind kind)
+        protected override SolutionItemConfiguration OnCreateConfiguration(string name, ConfigurationKind kind = ConfigurationKind.Blank)
         {
             ProjectConfiguration conf = new ProjectConfiguration(name);
             return conf;
@@ -75,37 +84,42 @@ namespace Syntactik.MonoDevelop
 
         }
 
-        private void ParseProjectFile(string file)
+        private void ParseProjectFile(string fileName)
         {
+            string content = System.IO.File.ReadAllText(fileName);
+            var document = ParseSyntactikDocument(fileName, content, null, new CancellationToken());
+
             lock (_syncRoot)
             {
-                
-            }
+                CompileInfo.Remove(fileName);
+                CompileInfo.Add(fileName, 
+                    new ParseInfo()
+                    {
+                        Document = document,
+                        Version = -1
+                    }
+                );
+           }
         }
 
-        internal SyntactikParsedDocument ParseSyntactikDocument(ParseOptions options, CancellationToken cancellationToken)
+        internal SyntactikParsedDocument ParseSyntactikDocument(string fileName, string content, ITextSourceVersion version, CancellationToken cancellationToken)
         {
-            var result = new SyntactikParsedDocument(options.FileName, options.Content.Version);
-            var compilerParameters = CreateCompilerParameters(options, result, cancellationToken);
+            var result = new SyntactikParsedDocument(fileName, version);
+            var compilerParameters = CreateCompilerParameters(fileName, content, result, cancellationToken);
             var compiler = new SyntactikCompiler(compilerParameters);
-            var context = compiler.Run();
+            compiler.Run();
             return result;
         }
 
-        private CompilerParameters CreateCompilerParameters(ParseOptions options, SyntactikParsedDocument result, CancellationToken cancellationToken)
+        private CompilerParameters CreateCompilerParameters(string fileName, string content, SyntactikParsedDocument result, CancellationToken cancellationToken)
         {
             var compilerParameters = new CompilerParameters { Pipeline = new CompilerPipeline() };
             compilerParameters.Pipeline.Steps.Add(new ParseAndCreateFoldingStep(result, cancellationToken));
-            compilerParameters.Pipeline.Steps.Add(new ProcessAliasesAndNamespaces());
-            compilerParameters.Pipeline.Steps.Add(new ValidateDocuments());
-            compilerParameters.Input.Add(new StringInput(options.FileName, options.Content.Text));
+            //compilerParameters.Pipeline.Steps.Add(new ProcessAliasesAndNamespaces());
+            //compilerParameters.Pipeline.Steps.Add(new ValidateDocuments());
+            compilerParameters.Input.Add(new StringInput(fileName, content));
             return compilerParameters;
         }
-
-        //protected override ProjectFeatures OnGetSupportedFeatures()
-        //{
-        //    return ProjectFeatures.Build;
-        //}
 
         [ProjectModelDataItem]
         public class SyntactikProjectConfiguration : ProjectConfiguration

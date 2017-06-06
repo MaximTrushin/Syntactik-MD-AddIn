@@ -9,6 +9,7 @@ using Syntactik.Compiler;
 using Syntactik.Compiler.IO;
 using Syntactik.Compiler.Pipelines;
 using Syntactik.Compiler.Steps;
+using DocumentRegion = MonoDevelop.Ide.Editor.DocumentRegion;
 using TS = MonoDevelop.Ide.TypeSystem;
 
 namespace Syntactik.MonoDevelop.Parser
@@ -20,17 +21,18 @@ namespace Syntactik.MonoDevelop.Parser
         {
             var fileName = options.FileName;
             var project = (SyntactikProject)options.Project;
-            ParsedDocument result;
+            DefaultParsedDocument result;
 
             //Parse if document has newer version
             if (options.OldParsedDocument == null || ((SyntactikParsedDocument)options.OldParsedDocument).ContentVersion.CompareAge(options.Content.Version) != 0)
             {
-                result = project.ParseSyntactikDocument(options, cancellationToken);
+                result = project.ParseSyntactikDocument(options.FileName, options.Content.Text, options.Content.Version, cancellationToken);
             }
             else
             {
-                result = options.OldParsedDocument;
+                result = (DefaultParsedDocument)options.OldParsedDocument;
             }
+            result.Add(new Error(ErrorType.Unknown, "test_err", "Test Error", new DocumentRegion(2,1,2,5)));
             DateTime time;
             try
             {
@@ -41,7 +43,7 @@ namespace Syntactik.MonoDevelop.Parser
                 time = DateTime.UtcNow;
             }
             result.LastWriteTimeUtc = time;
-            return Task.FromResult(result);
+            return Task.FromResult((ParsedDocument)result);
         }
 
 

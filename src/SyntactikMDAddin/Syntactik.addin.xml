@@ -23,6 +23,7 @@
   </Extension>
 
   <Extension path = "/MonoDevelop/Ide/TextEditorExtensions">
+    <Class class = "Syntactik.MonoDevelop.Parser.ErrorHandlerTextEditorExtension" />
     <Class fileExtensions = ".s4x" class = "Syntactik.MonoDevelop.Highlighting.HighlightUsagesExtension" />
   </Extension>
 

@@ -55,6 +55,11 @@ namespace Syntactik.MonoDevelop.Parser
             return GenerateFoldingsInternal(await GetCommentsAsync(cancellationToken), cancellationToken);
         }
 
+        public override Task<IReadOnlyList<Error>> GetErrorsAsync(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return base.GetErrorsAsync(cancellationToken);
+        }
+
         IEnumerable<FoldingRegion> GenerateFoldingsInternal(IReadOnlyList<Comment> comments, CancellationToken cancellationToken)
         {
             foreach (var fold in comments.ToFolds())
