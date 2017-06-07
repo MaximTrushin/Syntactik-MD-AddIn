@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Template Originator="Syntactik" Language="S4X" Created="6/07/2017" LastModified="6/07/2017">
+
+  <TemplateConfiguration>
+    <_Name>Empty Syntactik for XML File</_Name>
+    <Icon>md-text-file-icon</Icon>
+    <_Category>General</_Category>
+    <LanguageName>S4X</LanguageName>
+    <_Description>Creates an empty S4X file.</_Description>
+    <DefaultFilename>S4XFile</DefaultFilename>
+  </TemplateConfiguration>
+
+  <TemplateFiles>
+    <File DefaultExtension=".s4x" DefaultName="S4XFile" AddStandardHeader="True">
+    </File>
+  </TemplateFiles>
+
+  <FileOptions/>
+
+</Template>

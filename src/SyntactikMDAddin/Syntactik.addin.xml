@@ -27,6 +27,10 @@
     <Class fileExtensions = ".s4x" class = "Syntactik.MonoDevelop.Highlighting.HighlightUsagesExtension" />
   </Extension>
 
+  <Extension path = "/MonoDevelop/Ide/FileTemplates">
+    <FileTemplate id = "EmptyS4XFile" resource = "Syntactik.MonoDevelop.Templates.EmptyS4XFile.xft.xml"/>
+  </Extension>  
+  
   <Extension path = "/MonoDevelop/Core/MimeTypes">
     <MimeType id="text/x-syntactik4xml" _description="Syntactik for XMl source code" icon="md-csharp-file" isText="true">
       <File pattern="*.s4x" />

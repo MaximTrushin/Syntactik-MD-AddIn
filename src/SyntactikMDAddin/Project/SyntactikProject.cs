@@ -86,6 +86,12 @@ namespace Syntactik.MonoDevelop
 
         }
 
+        protected override string[] OnGetSupportedLanguages()
+        {
+            return new[] { "", //Adds html, txt and xml to the list of file templates in the New File dialog
+                "S4X", "S4J" };
+        }
+
         private void ParseProjectFile(string fileName)
         {
             string content = File.ReadAllText(fileName);
