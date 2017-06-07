@@ -24,7 +24,11 @@ namespace Syntactik.MonoDevelop.Parser
             DefaultParsedDocument result;
 
             //Parse if document has newer version
-            if (options.OldParsedDocument == null || ((SyntactikParsedDocument)options.OldParsedDocument).ContentVersion.CompareAge(options.Content.Version) != 0)
+            if (options.OldParsedDocument == null ||
+                !((SyntactikParsedDocument)options.OldParsedDocument).ContentVersion.BelongsToSameDocumentAs(options.Content.Version) ||
+                ((SyntactikParsedDocument)options.OldParsedDocument).ContentVersion.CompareAge(options.Content.Version) != 0
+                
+                )
             {
                 result = project.ParseSyntactikDocument(options.FileName, options.Content.Text, options.Content.Version, cancellationToken);
             }
@@ -32,7 +36,7 @@ namespace Syntactik.MonoDevelop.Parser
             {
                 result = (DefaultParsedDocument)options.OldParsedDocument;
             }
-            result.Add(new Error(ErrorType.Unknown, "test_err", "Test Error", new DocumentRegion(2,1,2,5)));
+
             DateTime time;
             try
             {

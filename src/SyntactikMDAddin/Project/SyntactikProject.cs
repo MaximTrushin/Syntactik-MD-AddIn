@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
@@ -21,8 +22,9 @@ namespace Syntactik.MonoDevelop
     {
         internal class ParseInfo
         {
-            public int Version;
+            public ITextSourceVersion Version;
             public SyntactikParsedDocument Document;
+            public CompilerContext Context;
         }
 
         readonly object _syncRoot = new object();
@@ -75,7 +77,7 @@ namespace Syntactik.MonoDevelop
                 let pfile = projectItem
                 let isDir = Directory.Exists(pfile.FilePath.FullPath)
                 where !isDir
-                where pfile.FilePath.Extension.ToLower() == ".ml"
+                where pfile.FilePath.Extension.ToLower() == ".s4x"
                 select projectItem.FilePath.FullPath.ToString();
             foreach (var file in files)
             {
@@ -86,7 +88,7 @@ namespace Syntactik.MonoDevelop
 
         private void ParseProjectFile(string fileName)
         {
-            string content = System.IO.File.ReadAllText(fileName);
+            string content = File.ReadAllText(fileName);
             var document = ParseSyntactikDocument(fileName, content, null, new CancellationToken());
 
             lock (_syncRoot)
@@ -96,7 +98,7 @@ namespace Syntactik.MonoDevelop
                     new ParseInfo()
                     {
                         Document = document,
-                        Version = -1
+                        Version = null
                     }
                 );
            }
@@ -104,10 +106,30 @@ namespace Syntactik.MonoDevelop
 
         internal SyntactikParsedDocument ParseSyntactikDocument(string fileName, string content, ITextSourceVersion version, CancellationToken cancellationToken)
         {
+            ParseInfo info;
+            if (version != null && CompileInfo.TryGetValue(fileName, out info))
+            {
+                if (info.Version != null && version.BelongsToSameDocumentAs(info.Version) && version.CompareAge(info.Version) == 0)
+                {
+                    return info.Document;
+                }
+            }
+
             var result = new SyntactikParsedDocument(fileName, version);
             var compilerParameters = CreateCompilerParameters(fileName, content, result, cancellationToken);
             var compiler = new SyntactikCompiler(compilerParameters);
-            compiler.Run();
+            var context = compiler.Run();
+            result.AddErrors(context.Errors);
+            CompileInfo.Remove(fileName);
+            CompileInfo.Add(fileName,
+                new ParseInfo
+                {
+                    Document = result,
+                    Context = context,
+                    Version = version
+                }
+            );
+            
             return result;
         }
 

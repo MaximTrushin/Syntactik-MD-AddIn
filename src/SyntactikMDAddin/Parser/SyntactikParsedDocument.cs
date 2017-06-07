@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using MonoDevelop.Core.Text;
 using MonoDevelop.Ide.Editor;
 using MonoDevelop.Ide.TypeSystem;
+using Syntactik.Compiler;
 
 namespace Syntactik.MonoDevelop.Parser
 {
@@ -68,6 +69,15 @@ namespace Syntactik.MonoDevelop.Parser
             foreach (var fold in Foldings)
                 yield return fold;
 
+        }
+
+        public void AddErrors(SortedSet<CompilerError> contextErrors)
+        {
+            if (contextErrors != null && contextErrors.Count > 0)
+                foreach (var error in contextErrors)
+                {
+                    Add(new Error(ErrorType.Error, error.Code, error.Message, error.LexicalInfo.Line, error.LexicalInfo.Column));
+                }
         }
     }
 }
