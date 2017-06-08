@@ -174,6 +174,9 @@
     <!-- argument -->
     <Match color = "Keyword(Exception)">\s*%[^=:()'",]*</Match>
 
+    <!-- attribute -->
+    <Match color = "String(Escape)">\s*@[^=:()'",]*</Match>
+
     <!-- document & alias def-->
     <Match color = "User Types">\s*![^=:()'",]*</Match>
 
