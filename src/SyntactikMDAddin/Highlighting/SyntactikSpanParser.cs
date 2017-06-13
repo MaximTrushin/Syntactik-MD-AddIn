@@ -17,30 +17,49 @@ namespace Syntactik.MonoDevelop.Highlighting
         {
             if (CurSpan == null) return base.ScanSpan(ref i);
 
-            if ((CurRule.Name == "free_open_string" || CurRule.Name == "open_string") && 
+            if ((CurRule.Name.StartsWith("free_open_string") || CurRule.Name.StartsWith("open_string")) && 
                 !(CurSpan is IndentSpan))
             {
                 char quote = (char) 0;
                 var indent = CurText.TakeWhile(c => c == ' ' || c == '\t').Count(); //calculating indent span for multiline strings
-                if (CurRule.Name == "open_string")
+                if (CurRule.Name.StartsWith("open_string"))
                 {
                     var r = new System.Text.RegularExpressions.Regex(@"\s*('|"")").Match(CurText, i - StartOffset);
                     if (r.Success && r.Index == i - StartOffset)
                     {
                         quote = r.Groups[1].Value[0];
+                        var prev = RuleStack.Count > 1 ? RuleStack.ElementAt(1) : null;
+                        string ruleName;
+                        if (quote == '\'')
+                        {
+                            ruleName = "sq_string";
+                        }
+                        else
+                        {
+                            ruleName = "dq_string";
+                        }
+                        if (CurRule.Name.EndsWith("_sl")) ruleName += "_sl";
                         FoundSpanBegin(new IndentSpan
                                 {
                                     Indent = indent,
                                     FirstLine = true,
-                                    Rule = quote == '\''? "sq_string": CurRule.Name,
-                                    Color = "Xml Text",
+                                    Rule = ruleName,
+                                    Color = prev == null || !prev.Name.StartsWith("string_high") ? "Xml Text": "String",
                                     Quote = quote }, i, 0
                                );
                         i += r.Length - 1;
                         return false;
                     }
                 }
-                FoundSpanBegin(new IndentSpan {Indent = indent, FirstLine = true, Rule = CurRule.Name, Color = "Xml Text", Quote = quote}, i, 0);
+                var prevRule = RuleStack.Count > 1 ? RuleStack.ElementAt(1) : null;
+                FoundSpanBegin(new IndentSpan
+                {
+                    Indent = indent,
+                    FirstLine = true,
+                    Rule = CurRule.Name,
+                    Color = prevRule == null || !prevRule.Name.StartsWith("string_high") ? "Xml Text" : "String",
+                    Quote = quote
+                }, i, 0);
                 return true;
             }
             return base.ScanSpan(ref i);
@@ -50,7 +69,29 @@ namespace Syntactik.MonoDevelop.Highlighting
         {
             if (CurSpan == null) return base.ScanSpanEnd(cur, ref i);
 
-            if ((CurRule.Name == "free_open_string" || CurRule.Name == "open_string" || CurRule.Name == "sq_string") &&
+            if (CurRule.Name.StartsWith("string_high") && IsEndOfHighString(CurText[i - StartOffset]))
+            {
+                FoundSpanEnd(CurSpan, i, 0);
+                return base.ScanSpanEnd(CurSpan, ref i); //return false so the current symbol will be processed with match rules
+            }
+
+            if (CurRule.Name.StartsWith("open_string") && IsEndOfOpenString(CurText[i - StartOffset]))
+            {
+                FoundSpanEnd(CurSpan, i, 0);
+                FoundSpanEnd(CurSpan, i, 0);
+                if (CurRule.Name.StartsWith("string_high")) FoundSpanEnd(CurSpan, i, 0);
+                return CurSpan != null && base.ScanSpanEnd(CurSpan, ref i);
+            }
+
+            if (CurRule.Name.EndsWith("_sl") && (CurText[i - StartOffset] == '\r' || CurText[i - StartOffset] == '\n'))
+            {
+                FoundSpanEnd(CurSpan, i, 1);
+                FoundSpanEnd(CurSpan, i, 1);
+                if (CurRule.Name.StartsWith("string_high")) FoundSpanEnd(CurSpan, i, 1);
+                return true;
+            }
+
+            if ((CurRule.Name.StartsWith("free_open_string") || CurRule.Name.StartsWith("open_string") || CurRule.Name.StartsWith("sq_string") || CurRule.Name.StartsWith("dq_string")) &&
                 CurSpan is IndentSpan)
             {
                 var indentSpan = (IndentSpan) CurSpan;
@@ -59,41 +100,57 @@ namespace Syntactik.MonoDevelop.Highlighting
                     indentSpan.FirstLine = false;
                 }
 
-                if ((CurRule.Name == "open_string" || CurRule.Name == "sq_string") && indentSpan.Quote == CurText[i - StartOffset])
+                if ((CurRule.Name.StartsWith("sq_string") || CurRule.Name.StartsWith("dq_string")) && indentSpan.Quote == CurText[i - StartOffset])
                 {
                     FoundSpanEnd(CurSpan, i, 1);
                     FoundSpanEnd(CurSpan, i, 1);
+                    if (CurRule.Name.StartsWith("string_high")) FoundSpanEnd(CurSpan, i, 1);
                     return true;
                 }
 
-                if (CurRule.Name == "open_string" && indentSpan.FirstLine && indentSpan.Quote == 0)
+                if (CurRule.Name.StartsWith("open_string") && indentSpan.FirstLine && indentSpan.Quote == 0)
                 {
                     if (IsEndOfOpenString(CurText[i - StartOffset]))
                     {
                         FoundSpanEnd(CurSpan, i, 0);
                         FoundSpanEnd(CurSpan, i, 0);
-                        return false; //return false so the current symbol will be processed with match rules
+                        if (CurRule.Name.StartsWith("string_high")) FoundSpanEnd(CurSpan, i, 0);
+                        return CurSpan != null && base.ScanSpanEnd(CurSpan, ref i); //return false so the current symbol will be processed with match rules
                     }
                 }
 
                 if (!indentSpan.FirstLine)
                 {
                     var indent = CurText.TakeWhile(c => c == ' ' || c == '\t').Count();
-                    if (indent <= indentSpan.Indent)
+                    if (indent <= indentSpan.Indent && CurText.Trim().Length > 0)
                     {
                         FoundSpanEnd(CurSpan, i, 0);
                         FoundSpanEnd(CurSpan, i, 0);
-                        return false; //return false so the current symbol will be processed with match rules
+                        if (CurRule.Name.StartsWith("string_high")) FoundSpanEnd(CurSpan, i, 0);
+                        return CurSpan != null && base.ScanSpanEnd(CurSpan, ref i); //return false so the current symbol will be processed with match rules
                     }
                 }
             }
-            return base.ScanSpanEnd(cur, ref i);
+            return base.ScanSpanEnd(CurSpan, ref i);
+        }
+
+        private void ExitWsa()
+        {
+            if (RuleStack.All(rule => rule.Name != "wsa")) return;
+
+            while (RuleStack.Peek().Name != "wsa") RuleStack.Pop();
         }
 
         public static bool IsEndOfOpenString(char c)
         {
             if (c > 61) return false;
             return c == '=' || c == ':' || c == ',' || c == '\'' || c == '"' || c == ')' || c == '(';
+        }
+
+        public static bool IsEndOfHighString(char c)
+        {
+            if (c > 61) return false;
+            return c == ':' || c == ',' || c == '\'' || c == '"' || c == ')' || c == '(';
         }
     }
 

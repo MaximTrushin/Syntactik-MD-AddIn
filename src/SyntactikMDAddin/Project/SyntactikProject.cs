@@ -125,7 +125,7 @@ namespace Syntactik.MonoDevelop
             var compilerParameters = CreateCompilerParameters(fileName, content, result, cancellationToken);
             var compiler = new SyntactikCompiler(compilerParameters);
             var context = compiler.Run();
-            result.AddErrors(context.Errors);
+            result.AddErrors(context.Errors.Where(error => error.LexicalInfo.Line >= 0 && error.LexicalInfo.Column >= 0));
             CompileInfo.Remove(fileName);
             CompileInfo.Add(fileName,
                 new ParseInfo

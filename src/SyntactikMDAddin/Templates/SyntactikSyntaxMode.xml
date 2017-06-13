@@ -1,12 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <SyntaxMode name = "syntactik4xml" mimeTypes="text/x-syntactik4xml">
-  <Property name="LineComment">'''</Property>
-  <Property name="BlockCommentStart">"""</Property>
-  <Property name="BlockCommentEnd">"""</Property>
-  <Property name="StringQuote">"</Property>
-  <Property name="StringQuote">'</Property>
-  
-  
   <!-- single line comment -->
   <EolSpan color = "Comment(Line)" rule="comment">'''</EolSpan>
   <!-- multi line comment -->
@@ -16,11 +9,13 @@
   </Span>
 
 <!-- wsa -->
-<Span color = "Punctuation" rule ="wsa">
+<Span color = "Punctuation" rule ="wsa" tagColor = "Punctuation">
   <Begin>(</Begin>
   <End>)</End>
 </Span>
-  
+
+<Match color = "Punctuation">[ \t]+</Match>
+<Match color = "Punctuation">,</Match>  
 <Match color = "Punctuation">:=</Match>  
 <Match color = "Punctuation">::</Match>
 <Match color = "Punctuation">:</Match>
@@ -35,8 +30,16 @@
 <Rule name = "open_string">
 </Rule>  
   
-<Rule name = "sq_string">  <!--rule is called from method ScanSpan-->
+<Rule name = "open_string_sl">
+</Rule>
 
+<Rule name = "dq_string">
+</Rule>
+
+<Rule name = "dq_string_sl">
+</Rule>
+
+  <Rule name = "sq_string">  <!--rule is called from method ScanSpan-->
   <!--valid escape-->
   <Match color = "Diff Header">\\["'\\\/bfnrt]</Match>
   <!-- utf encode-->
@@ -48,7 +51,21 @@
   <!--invalid escape-->
   <Match color = "Diff Header">\\.</Match>
 </Rule>  
- 
+  
+  
+<Rule name = "sq_string_sl">  <!-- COPY OF sq_string-->
+  <!--valid escape-->
+  <Match color = "Diff Header">\\["'\\\/bfnrt]</Match>
+  <!-- utf encode-->
+  <Match color = "Diff Header">\\u[a-fA-F0-9]{0,4}</Match>
+  <!--Alias or parameter with brackets-->
+  <Match color = "Diff Header">\\(?:\$|!%)\([ \t]*(?:(?:_|[A-Z]|[a-z]|[\xC0-\xD6]|[\xD8-\xF6]|[\xF8-\u02FF]|[\u0370-\u037D]|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD])(?:[A-Z]|[a-z]|[\xC0-\xD6]|[\xD8-\xF6]|[\xF8-\u02FF]|[\u0370-\u037D]|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]|-|\.|[0-9]|\xB7|[\u0300-\u036F]|[\u203F-\u2040])*)[ \t]*\)?</Match>
+  <!--Alias or parameter without brakets-->
+  <Match color = "Diff Header">\\(?:\$|!%)(?:(?:_|[A-Z]|[a-z]|[\xC0-\xD6]|[\xD8-\xF6]|[\xF8-\u02FF]|[\u0370-\u037D]|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD])(?:[A-Z]|[a-z]|[\xC0-\xD6]|[\xD8-\xF6]|[\xF8-\u02FF]|[\u0370-\u037D]|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]|-|\.|[0-9]|\xB7|[\u0300-\u036F]|[\u203F-\u2040])*)</Match>
+  <!--invalid escape-->
+  <Match color = "Diff Header">\\.</Match>
+</Rule>    
+    
   
 <!-- free open string -->
 <Span color = "Punctuation" rule ="free_open_string">
@@ -57,42 +74,100 @@
 
 <Rule name = "free_open_string">
   <Match color = "Xml Text">(.*)</Match>
+</Rule>
+  
+<Rule name = "free_open_string_high_attr">
+  <Match color = "String">(.*)</Match>
 </Rule>  
 
+<!-- attribute -->
+<Span color = "String(Escape)" rule ="string_high_attr">
+  <Begin>@</Begin>
+</Span>
   
+<!-- namespace definition -->
+<Span color = "Keyword(Declaration)" rule ="string_high_ns_def">
+  <Begin>!#</Begin>
+</Span>  
   
+
+<Rule name = "string_high_attr">
   <!-- open string -->
-  <Match expression="(\s*==\s*)([^=:()'&quot;,]*)">
-    <Group color = "Punctuation"/>
-    <Group color = "Xml Text"/>
-  </Match>
+  <Span color = "Punctuation" rule ="open_string">
+    <Begin>==</Begin>
+  </Span>
 
   <!-- free open string -->
-  <Match expression="(\s*=\s*)(.*)">
-    <Group color = "Punctuation"/>
-    <Group color = "Xml Text"/>
-  </Match>
+  <Span color = "Punctuation" rule ="free_open_string_high_attr">
+    <Begin>=</Begin>
+  </Span>
+
+  <Match color = "String(Escape)">[^=:()'", ]+</Match>
+  <Match color = "Punctuation">[ \t]+</Match>
+  
+</Rule>  
+  
+<Rule name = "string_high_attr_sl">
+  <!-- open string -->
+  <Span color = "Punctuation" rule ="open_string_sl">
+    <Begin>==</Begin>
+  </Span>
+
+  <!-- free open string -->
+  <Span color = "Punctuation" rule ="open_string_sl">
+    <Begin>=</Begin>
+  </Span>
+
+  <Match color = "String(Escape)">[^=:()'", ]+</Match>
+  <Match color = "Punctuation">[ \t]+</Match>
+  
+</Rule>    
+  
+  
+<Rule name = "string_high_ns_def">
+  <!-- open string -->
+  <Span color = "Punctuation" rule ="open_string">
+    <Begin>==</Begin>
+  </Span>
+
+  <!-- free open string -->
+  <Span color = "Punctuation" rule ="free_open_string_high_attr">
+    <Begin>=</Begin>
+  </Span>
+
+  <Match color = "Keyword(Declaration)">[^=:()'", ]+</Match>
+  <Match color = "Punctuation">[ \t]+</Match>
+  
+</Rule>   
+  
+<Rule name = "string_high_ns_def_sl">
+  <!-- open string -->
+  <Span color = "Punctuation" rule ="open_string">
+    <Begin>==</Begin>
+  </Span>
+
+  <!-- free open string -->
+  <Span color = "Punctuation" rule ="open_string">
+    <Begin>=</Begin>
+  </Span>
+
+  <Match color = "Keyword(Declaration)">[^=:()'", ]+</Match>
+  <Match color = "Punctuation">[ \t]+</Match>
+</Rule>    
 
   <!-- sq name -->
   <Match color = "Keyword(Type)">'(?:\\.|.)*?(?:'|$)</Match>
   <!-- dq name -->
   <Match color = "Keyword(Type)">".*?(?:"|$)</Match>
-  
-  <!-- namespace definition -->
-  <Match color = "Keyword(Declaration)">\s*!#[^=:()'",]*</Match>
 
   <!-- scope  -->
   <Match color = "Keyword(Declaration)">\s*#[^=:()'",.]*\.?</Match>
-
 
   <!-- parameter -->
   <Match color = "Keyword(Exception)">\s*!%[^=:()'",]*</Match>
 
   <!-- argument -->
   <Match color = "Keyword(Exception)">\s*%[^=:()'",]*</Match>
-
-  <!-- attribute -->
-  <Match color = "String(Escape)">\s*@[^=:()'",]*</Match>  
   
   <!-- document & alias def-->
   <Match color = "User Types">\s*![^=:()'",]*</Match>
@@ -100,38 +175,8 @@
   <!-- alias -->
   <Match color = "Diff Header">\s*\$[^=:()'",]*</Match>
 
-  <!--
-  <Match expression="(\#[\w\.\-]+)(\s*=)(.*)">
-    <Group color = "Keyword(Declaration)"/>
-    <Group color = "Punctuation"/>
-    <Group color = "String"/>
-  </Match>
-
-  <Match expression="(#[\w\-]+.)">
-    <Group color = "Keyword(Declaration)"/>
-  </Match>
-
-  <Match expression="(\@[\w\.\-]*)">
-    <Group color = "String(Escape)"/>
-  </Match>
-
-  <Match expression="(\%[\w\.\-]*)">
-    <Group color = "Keyword(Exception)"/>
-  </Match>
-  
-  <Match expression="(=\s*)(`[^\s]*)">
-    <Group color = "Punctuation"/>
-    <Group color = "String"/>
-  </Match>
-
-  <Match expression="(=\s*)">
-    <Group color = "Punctuation"/>
-    <Group color = "String"/>
-  </Match>
--->
-
   <!-- open name -->
-  <Match color = "Keyword(Type)">\s*[^=:()'",]+</Match>  
+  <Match color = "Keyword(Type)">\s*[^@=:()'",][^=:()'",]*</Match>  
   
   <Rule name = "wsa">
 
@@ -141,32 +186,46 @@
     <Span color = "Comment(Line)"  rule="comment">
       <Begin>"""</Begin>
       <End>"""</End>
+    </Span>
+
+    <Span color = "Punctuation" rule ="wsa" tagColor ="Punctuation">
+      <Begin>(</Begin>
+      <End>)</End>
+    </Span> 
+    
+    <Match color = "Punctuation">[ \t]+</Match>
+    <Match color = "Punctuation">,</Match>  
+    <Match color = "Punctuation">:=</Match>  
+    <Match color = "Punctuation">::</Match>
+    <Match color = "Punctuation">:</Match>
+    <Match color = "Punctuation">=::</Match>
+    <Match color = "Punctuation">=:</Match>    
+  
+    
+    <!-- single line string -->
+    <Span color = "Xml Text" rule ="open_string_sl" tagColor="Punctuation">
+      <Begin>==</Begin>
     </Span>    
     
-    <!-- sq string value -->
-    <Match expression="(==?\s*)('(?:\\.|.)*?(?:'|$))">
-      <Group color = "Punctuation"/>
-      <Group color = "Xml Text"/>
-    </Match>
+    <Span color = "Xml Text" rule ="open_string_sl" tagColor="Punctuation">
+      <Begin>=</Begin>
+    </Span>  
 
-    <!-- dq string value -->
-    <Match expression="(==?\s*)(&quot;.*?(?:&quot;|$))">
-      <Group color = "Punctuation"/>
-      <Group color = "Xml Text"/>
-    </Match>
-
-    <!-- open string value -->
-    <Match expression="(==?\s*)([^=:()'&quot;,]*)">
-      <Group color = "Punctuation"/>
-      <Group color = "Xml Text"/>
-    </Match>
+    <!-- attribute -->
+    <Span color = "String(Escape)" rule ="string_high_attr_sl">
+      <Begin>@</Begin>
+    </Span>    
+    
+    <!-- ns def -->
+    <Span color = "Keyword(Declaration)" rule ="string_high_ns_def_sl">
+      <Begin>!#</Begin>
+    </Span>      
 
     <!-- namespace definition -->
     <Match color = "Keyword(Declaration)">\s*!#[^=:()'",]*</Match>
 
     <!-- scope  -->
     <Match color = "Keyword(Declaration)">\s*#[^=:()'",.]*\.?</Match>
-
 
     <!-- parameter -->
     <Match color = "Keyword(Exception)">\s*!%[^=:()'",]*</Match>
@@ -193,12 +252,23 @@
     <Match color = "Keyword(Type)">\s?[^=:()'",]+</Match>
 
   </Rule>  
+
+  <Rule name = "string_sl">
+
+    <!-- sq string value -->
+    <Match color = "Xml Text">'.*?(?:'|$)</Match>    
+
+    <!-- dq string value -->
+    <Match color = "Xml Text">".*?(?:"|$)</Match>  
+
+    <!-- open string value -->
+    <Match color = "Xml Text">[^=:()'",]*</Match>  
   
+  </Rule>  
+ 
   <Rule name = "comment">
   </Rule>
   <Rule name = "delimiter">
   </Rule> 
- 
-  
  
 </SyntaxMode>

@@ -23,7 +23,7 @@ namespace Syntactik.MonoDevelop.Highlighting
                 this.keywordTableIgnoreCase = baseMode.keywordTableIgnoreCase;
                 this.properties = baseMode.Properties;
             }
-
+            SetDelimiter("");
             doc.TextReplaced += doc_TextReplaced;
         }
 

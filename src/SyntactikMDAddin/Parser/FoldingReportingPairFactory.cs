@@ -75,7 +75,7 @@ namespace Syntactik.MonoDevelop.Parser
         public void EndPair(Pair pair, Interval endInterval)
         {
             _cancellationToken.ThrowIfCancellationRequested();
-
+            if (_foldingStack.Count == 0) return;
             var foldingInfo = _foldingStack.Peek();
             if (pair == foldingInfo.Pair)
             {

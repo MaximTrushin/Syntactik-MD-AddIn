@@ -35,8 +35,7 @@ namespace Syntactik.MonoDevelop.Parser
                     try
                     {
                         locked = await foldingsSemaphore.WaitAsync(Timeout.Infinite, cancellationToken);
-                        var r = foldingsSemaphore.WaitAsync(Timeout.Infinite, cancellationToken);
-                        
+                      
                         if (Foldings == null)
                             Foldings = (await GenerateFoldings(cancellationToken)).ToList();
                     }
@@ -64,16 +63,22 @@ namespace Syntactik.MonoDevelop.Parser
         IEnumerable<FoldingRegion> GenerateFoldingsInternal(IReadOnlyList<Comment> comments, CancellationToken cancellationToken)
         {
             foreach (var fold in comments.ToFolds())
+            {
+                cancellationToken.ThrowIfCancellationRequested();
                 yield return fold;
+            }
+
 
             foreach (var fold in Foldings)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
                 yield return fold;
-
+            }
         }
 
-        public void AddErrors(SortedSet<CompilerError> contextErrors)
+        public void AddErrors(IEnumerable<CompilerError> contextErrors)
         {
-            if (contextErrors != null && contextErrors.Count > 0)
+            if (contextErrors != null)
                 foreach (var error in contextErrors)
                 {
                     Add(new Error(ErrorType.Error, error.Code, error.Message, error.LexicalInfo.Line, error.LexicalInfo.Column));
