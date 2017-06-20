@@ -40,7 +40,7 @@ namespace Syntactik.MonoDevelop.Parser
                     var ctx = DocumentContext;
                     if (ctx == null)
                         return;
-                    await UpdateErrorUndelines(parsedDocument, token).ConfigureAwait(false);
+                    await UpdateErrorUnderlines(parsedDocument, token).ConfigureAwait(false);
                 }
                 catch (OperationCanceledException)
                 {
@@ -49,7 +49,7 @@ namespace Syntactik.MonoDevelop.Parser
             }, token);
         }
 
-        async Task UpdateErrorUndelines(ParsedDocument parsedDocument, CancellationToken token)
+        async Task UpdateErrorUnderlines(ParsedDocument parsedDocument, CancellationToken token)
         {
             if (parsedDocument == null || isDisposed)
                 return;

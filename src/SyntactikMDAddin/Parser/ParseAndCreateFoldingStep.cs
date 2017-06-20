@@ -1,6 +1,7 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using Syntactik.Compiler.Steps;
-using Syntactik.DOM.Mapped;
+using Syntactik.DOM;
 using Syntactik.IO;
 
 namespace Syntactik.MonoDevelop.Parser
@@ -18,7 +19,10 @@ namespace Syntactik.MonoDevelop.Parser
 
         protected override Syntactik.Parser GetParser(Module module, ICharStream input)
         {
-            return module.TargetFormat == Module.TargetFormats.Json ? new Syntactik.Parser(input, new FoldingReportingPairFactory(new ReportingPairFactoryForJson(_context, module), _parsedDocument, _cancellationToken), module) : 
+            var m = module as DOM.Mapped.Module;
+            if (m == null) throw new ArgumentException("Invalid module type.");
+
+            return m.TargetFormat == DOM.Mapped.Module.TargetFormats.Json ? new Syntactik.Parser(input, new FoldingReportingPairFactory(new ReportingPairFactoryForJson(_context, module), _parsedDocument, _cancellationToken), module) : 
                 new Syntactik.Parser(input, new FoldingReportingPairFactory(new ReportingPairFactoryForXml(_context, module), _parsedDocument, _cancellationToken), module);
         }
     }

@@ -34,6 +34,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\external\monodevelop\main\build\AddIns\DisplayBindings\SourceEditor\gdk-sharp.dll</HintPath>
+    </Reference>
     <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\external\monodevelop\main\build\AddIns\DisplayBindings\SourceEditor\glib-sharp.dll</HintPath>
@@ -74,6 +78,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddinInfo.cs" />
+    <Compile Include="Completion\DOM\Alias.cs" />
+    <Compile Include="Completion\DOM\AliasDefinition.cs" />
+    <Compile Include="Completion\DOM\Argument.cs" />
+    <Compile Include="Completion\DOM\Attribute.cs" />
+    <Compile Include="Completion\DOM\Document.cs" />
+    <Compile Include="Completion\DOM\Element.cs" />
+    <Compile Include="Completion\DOM\ICompletionNode.cs" />
+    <Compile Include="Completion\DOM\Module.cs" />
+    <Compile Include="Completion\DOM\NamespaceDefinition.cs" />
+    <Compile Include="Completion\DOM\Parameter.cs" />
+    <Compile Include="Completion\DOM\Scope.cs" />
+    <Compile Include="Completion\JsonCompletionPairFactory.cs" />
+    <Compile Include="Completion\MutableDataList.cs" />
+    <Compile Include="Completion\ParseAndCreateFoldingStep.cs" />
+    <Compile Include="Completion\SyntactikCategory.cs" />
+    <Compile Include="Completion\SyntactikCompletionTextEditorExtension.cs" />
+    <Compile Include="Completion\XmlCompletionPairFactory.cs" />
     <Compile Include="Highlighting\HighlightUsagesExtension.cs" />
     <Compile Include="Highlighting\SyntactikSpanParser.cs" />
     <Compile Include="Highlighting\SyntactikSyntaxMode.cs" />
