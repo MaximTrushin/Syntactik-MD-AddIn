@@ -48,6 +48,7 @@ namespace Syntactik.MonoDevelop.Completion
         protected virtual async Task<ICompletionDataList> HandleCodeCompletion(
             CodeCompletionContext completionContext, bool forced, CancellationToken token)
         {
+            //Calculating completion context
             var buf = this.Editor;
             var compilerParameters = CreateCompilerParameters(Editor.FileName, Editor.Text, Editor.CaretOffset);
             var compiler = new SyntactikCompiler(compilerParameters);
@@ -74,7 +75,16 @@ namespace Syntactik.MonoDevelop.Completion
             //    return list;
             //}
 
+            //Getting list of aliases
 
+            if (DocumentContext.HasProject)
+            {
+                var project = DocumentContext.Project as SyntactikProject;
+                if (project != null)
+                {
+                    var list = project.GetProjectAliasList();
+                }
+            }
             return null;
         }
 

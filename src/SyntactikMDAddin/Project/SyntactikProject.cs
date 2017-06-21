@@ -13,6 +13,7 @@ using MonoDevelop.Projects;
 using Syntactik.Compiler;
 using Syntactik.Compiler.IO;
 using Syntactik.Compiler.Steps;
+using Syntactik.DOM;
 using Syntactik.MonoDevelop.Parser;
 
 namespace Syntactik.MonoDevelop
@@ -24,7 +25,6 @@ namespace Syntactik.MonoDevelop
         {
             public ITextSourceVersion Version;
             public SyntactikParsedDocument Document;
-            public CompilerContext Context;
         }
 
         readonly object _syncRoot = new object();
@@ -96,26 +96,16 @@ namespace Syntactik.MonoDevelop
         {
             string content = File.ReadAllText(fileName);
             var document = ParseSyntactikDocument(fileName, content, null, new CancellationToken());
-
-            lock (_syncRoot)
-            {
-                CompileInfo.Remove(fileName);
-                CompileInfo.Add(fileName, 
-                    new ParseInfo()
-                    {
-                        Document = document,
-                        Version = null
-                    }
-                );
-           }
         }
 
-        internal SyntactikParsedDocument ParseSyntactikDocument(string fileName, string content, ITextSourceVersion version, CancellationToken cancellationToken)
+        internal SyntactikParsedDocument ParseSyntactikDocument(string fileName, string content,
+            ITextSourceVersion version, CancellationToken cancellationToken)
         {
             ParseInfo info;
             if (version != null && CompileInfo.TryGetValue(fileName, out info))
             {
-                if (info.Version != null && version.BelongsToSameDocumentAs(info.Version) && version.CompareAge(info.Version) == 0)
+                if (info.Version != null && version.BelongsToSameDocumentAs(info.Version) &&
+                    version.CompareAge(info.Version) == 0)
                 {
                     return info.Document;
                 }
@@ -126,15 +116,20 @@ namespace Syntactik.MonoDevelop
             var compiler = new SyntactikCompiler(compilerParameters);
             var context = compiler.Run();
             result.AddErrors(context.Errors.Where(error => error.LexicalInfo.Line >= 0 && error.LexicalInfo.Column >= 0));
-            CompileInfo.Remove(fileName);
-            CompileInfo.Add(fileName,
-                new ParseInfo
-                {
-                    Document = result,
-                    Context = context,
-                    Version = version
-                }
-            );
+            var module = context.CompileUnit.Modules[0];
+            result.Ast = module;
+
+            lock (_syncRoot)
+            {
+                CompileInfo.Remove(fileName);
+                CompileInfo.Add(fileName,
+                    new ParseInfo
+                    {
+                        Document = result,
+                        Version = version
+                    }
+                );
+            }
             
             return result;
         }
@@ -143,8 +138,8 @@ namespace Syntactik.MonoDevelop
         {
             var compilerParameters = new CompilerParameters { Pipeline = new CompilerPipeline() };
             compilerParameters.Pipeline.Steps.Add(new ParseAndCreateFoldingStep(result, cancellationToken));
-            //compilerParameters.Pipeline.Steps.Add(new ProcessAliasesAndNamespaces());
-            //compilerParameters.Pipeline.Steps.Add(new ValidateDocuments());
+            compilerParameters.Pipeline.Steps.Add(new ProcessAliasesAndNamespaces());
+            compilerParameters.Pipeline.Steps.Add(new ValidateDocuments());
             compilerParameters.Input.Add(new StringInput(fileName, content));
             return compilerParameters;
         }
@@ -155,6 +150,27 @@ namespace Syntactik.MonoDevelop
             public SyntactikProjectConfiguration(string id) : base(id)
             {
             }
+        }
+
+        public Dictionary<string, AliasDefinition> GetProjectAliasList()
+        {
+            var aliasDefs = new Dictionary<string, AliasDefinition>();
+            lock (_syncRoot)
+            {
+                foreach (var item in CompileInfo)
+                {
+                    var module = item.Value.Document.Ast as Module;
+                    if (module != null)
+                        foreach (var moduleMember in module.Members)
+                        {
+                            var aliasDef = moduleMember as AliasDefinition;
+                            if (aliasDef != null && !aliasDefs.ContainsKey(aliasDef.Name))
+                                aliasDefs.Add(aliasDef.Name, aliasDef);
+                        }
+                }
+            }
+
+            return aliasDefs;
         }
 
     }
