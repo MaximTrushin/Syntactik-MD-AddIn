@@ -82,6 +82,7 @@
     <Compile Include="Completion\DOM\AliasDefinition.cs" />
     <Compile Include="Completion\DOM\Argument.cs" />
     <Compile Include="Completion\DOM\Attribute.cs" />
+    <Compile Include="Completion\DOM\CompletionContextVisitor.cs" />
     <Compile Include="Completion\DOM\Document.cs" />
     <Compile Include="Completion\DOM\Element.cs" />
     <Compile Include="Completion\DOM\ICompletionNode.cs" />
