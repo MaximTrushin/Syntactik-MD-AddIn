@@ -112,7 +112,7 @@ namespace Syntactik.MonoDevelop
             }
 
             var result = new SyntactikParsedDocument(fileName, version);
-            var compilerParameters = CreateCompilerParameters(fileName, content, result, cancellationToken);
+            var compilerParameters = CreateCompilerParameters(fileName, content, result, cancellationToken); //TODO: Compile including other modules
             var compiler = new SyntactikCompiler(compilerParameters);
             var context = compiler.Run();
             result.AddErrors(context.Errors.Where(error => error.LexicalInfo.Line >= 0 && error.LexicalInfo.Column >= 0));
