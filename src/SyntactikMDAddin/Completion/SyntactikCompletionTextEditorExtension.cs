@@ -33,7 +33,7 @@ namespace Syntactik.MonoDevelop.Completion
             int pos = completionContext.TriggerOffset;
             if (pos < 0)
                 return null;
-            return HandleCodeCompletion(completionContext, true, default(CancellationToken));
+            return HandleCodeCompletion(completionContext, true, default(CancellationToken), 0);
         }
 
         public override Task<ICompletionDataList> HandleCodeCompletionAsync(CodeCompletionContext completionContext,
@@ -43,25 +43,32 @@ namespace Syntactik.MonoDevelop.Completion
             char ch = completionContext.TriggerOffset > 0 ? Editor.GetCharAt(completionContext.TriggerOffset - 1) : '\0';
             if (pos > 0 && ch == completionChar)
             {
+                int triggerWordLength = 0;
+                if (char.IsLetterOrDigit(completionChar) || completionChar == '_')
+                {
+                    if (completionContext.TriggerOffset > 1 && char.IsLetterOrDigit(Editor.GetCharAt(completionContext.TriggerOffset - 2)))
+                        return null;
+                    triggerWordLength = 1;
+                }
                 //tracker.UpdateEngine();
-                return HandleCodeCompletion(completionContext, false, token);
+                return HandleCodeCompletion(completionContext, false, token, triggerWordLength);
             }
             return null;
         }
 
-        protected virtual Task<ICompletionDataList> HandleCodeCompletion(
-            CodeCompletionContext completionContext, bool forced, CancellationToken token)
+        protected virtual Task<ICompletionDataList> HandleCodeCompletion(CodeCompletionContext completionContext, bool forced, CancellationToken token, int triggerWordLength)
         {
 
             CompletionContext context = new CompletionContext(Editor.FileName, Editor.Text, Editor.CaretOffset, token);
             context.CalculateExpectations();
 
-            return GetCompletionList(context, completionContext);
+            return GetCompletionList(context, completionContext, triggerWordLength);
         }
 
-        private Task<ICompletionDataList> GetCompletionList(CompletionContext context, CodeCompletionContext editorCompletionContext)
+        private Task<ICompletionDataList> GetCompletionList(CompletionContext context, CodeCompletionContext editorCompletionContext, int triggerWordLength)
         {
             var completionList = new CompletionDataList();
+            completionList.TriggerWordLength = triggerWordLength;
             foreach (var expectation in context.Expectations.AsEnumerable())
             {
                 if (expectation == CompletionExpectation.Alias)
@@ -80,6 +87,7 @@ namespace Syntactik.MonoDevelop.Completion
             var aliases = GetListOfBlockAliasDefinitions(valuesOnly).Select(a => a.Value.Name);
             var rawPrefix = GetPrefixOfCurrentAlias(context, editorCompletionContext);
             var prefix = rawPrefix??string.Empty;
+
             if (rawPrefix != null) rawPrefix = "$" + rawPrefix;
 
             if (!prefix.EndsWith("."))
