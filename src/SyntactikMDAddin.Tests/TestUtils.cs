@@ -46,8 +46,7 @@ namespace SyntactikMDAddin.Tests
         /// <param name="record">If true then result file is recorded not compared.</param>
         private static void CompareResultAndRecordedFiles(string markup, bool record)
         {
-            var testCaseName = GetTestCaseName();
-            var recordedDir = AssemblyDirectory + @"\Scenarios\Recorded\";
+            var recordedDir = AssemblyDirectory + @"\Scenarios\" + GetTestClassName() + @"\Recorded\";
             var recordedFileName = recordedDir + GetTestCaseName() + ".html";
             if (record)
             {
@@ -70,8 +69,7 @@ namespace SyntactikMDAddin.Tests
 
         public static void SaveTest(string result)
         {
-            var testCaseName = GetTestCaseName();
-            var recordedDir = AssemblyDirectory + @"\..\..\Scenarios\Recorded\";
+            var recordedDir = AssemblyDirectory + @"\..\..\Scenarios\" + GetTestClassName() + @"\Recorded\";
             var fileName = recordedDir + GetTestCaseName() + ".html";
             Directory.CreateDirectory(recordedDir);
             File.WriteAllText(fileName, result);
@@ -82,7 +80,7 @@ namespace SyntactikMDAddin.Tests
         {
             var testCaseName = GetTestCaseName();
 
-            var fileName = new StringBuilder(AssemblyDirectory + @"\Scenarios\").Append(testCaseName).Append(".s4x").ToString();
+            var fileName = new StringBuilder(AssemblyDirectory + @"\Scenarios\").Append(GetTestClassName() + "\\"). Append(testCaseName).Append(".s4x").ToString();
 
             Console.WriteLine();
             Console.WriteLine(Path.GetFileName(fileName));
@@ -124,6 +122,18 @@ namespace SyntactikMDAddin.Tests
         {
             var trace = new StackTrace();
             return trace.GetFrames().Select(f => f.GetMethod()).First(m => m.CustomAttributes.Any(a => a.AttributeType.FullName == "NUnit.Framework.TestAttribute")).Name;
+        }
+
+        private static string GetTestClassName()
+        {
+            var trace = new StackTrace();
+            var method =
+                trace.GetFrames()
+                    .Select(f => f.GetMethod())
+                    .First(m => m.CustomAttributes.Any(a => a.AttributeType.FullName == "NUnit.Framework.TestAttribute"));
+            var name = method.DeclaringType.Name;
+            var result = name.Substring(0, name.Length - "Tests".Length);
+            return result;
         }
 
         private static bool TestHasAttribute<T>()

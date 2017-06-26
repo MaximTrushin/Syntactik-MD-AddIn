@@ -64,52 +64,52 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Scenarios\Attribute.s4x">
+    <None Include="Scenarios\SyntaxHighlighting\Attribute.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Scenarios\Arguments.s4x">
+    <None Include="Scenarios\SyntaxHighlighting\Arguments.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Scenarios\AliasDef.s4x">
+    <None Include="Scenarios\SyntaxHighlighting\AliasDef.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Scenarios\CommentsInWsa.s4x">
+    <None Include="Scenarios\SyntaxHighlighting\CommentsInWsa.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Scenarios\NsDefAndScope.s4x">
+    <None Include="Scenarios\SyntaxHighlighting\NsDefAndScope.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Scenarios\MultilineStrings.s4x">
+    <None Include="Scenarios\SyntaxHighlighting\MultilineStrings.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Scenarios\SQEscapes.s4x">
+    <None Include="Scenarios\SyntaxHighlighting\SQEscapes.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Scenarios\Wsa.s4x">
+    <None Include="Scenarios\SyntaxHighlighting\Wsa.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Scenarios\Alias.s4x">
+    <None Include="Scenarios\SyntaxHighlighting\Alias.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Scenarios\MultilineComment.s4x">
+    <None Include="Scenarios\SyntaxHighlighting\MultilineComment.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Scenarios\Document.s4x">
+    <None Include="Scenarios\SyntaxHighlighting\Document.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Scenarios\OpenString.s4x">
+    <None Include="Scenarios\SyntaxHighlighting\OpenString.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Scenarios\FreeOpenString.s4x">
+    <None Include="Scenarios\SyntaxHighlighting\FreeOpenString.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Scenarios\SQName.s4x">
+    <None Include="Scenarios\SyntaxHighlighting\SQName.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Scenarios\DQName.s4x">
+    <None Include="Scenarios\SyntaxHighlighting\DQName.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Scenarios\OpenName.s4x">
+    <None Include="Scenarios\SyntaxHighlighting\OpenName.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="SyntactikColorSchema.json">
