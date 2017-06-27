@@ -11,14 +11,14 @@ namespace Syntactik.MonoDevelop.Completion
 {
     public class CompletionContext
     {
-        private readonly FilePath _fileName;
+        private readonly string _fileName;
         private readonly string _text;
         private readonly int _offset;
         private readonly CancellationToken _cancellationToken;
         public Set<CompletionExpectation> Expectations { get; }
         public CompletionExpectation InTag { get; private set; }
 
-        public CompletionContext(FilePath fileName, string text, int offset, CancellationToken cancellationToken = new CancellationToken())
+        public CompletionContext(string fileName, string text, int offset, CancellationToken cancellationToken = new CancellationToken())
         {
             Expectations = new Set<CompletionExpectation>();
             _fileName = fileName;

@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 using MonoDevelop.Ide.CodeCompletion;
 using MonoDevelop.Ide.Editor;
 using MonoDevelop.Ide.Editor.Extension;
-using Syntactik.Compiler;
-using Syntactik.Compiler.IO;
-using Syntactik.MonoDevelop.Completion.DOM;
-using Syntactik.MonoDevelop.Parser;
+using MonoDevelop.Projects;
 using AliasDefinition = Syntactik.DOM.Mapped.AliasDefinition;
 
 namespace Syntactik.MonoDevelop.Completion
@@ -18,19 +15,19 @@ namespace Syntactik.MonoDevelop.Completion
     {
         public override string CompletionLanguage => "S4X";
 
-        protected override void Initialize()
-        {
-            base.Initialize();
-        }
+        //protected override void Initialize()
+        //{
+        //    base.Initialize();
+        //}
 
-        public override void Dispose()
-        {
-            base.Dispose();
-        }
+        //public override void Dispose()
+        //{
+        //    base.Dispose();
+        //}
 
         public override Task<ICompletionDataList> CodeCompletionCommand(CodeCompletionContext completionContext)
         {
-            int pos = completionContext.TriggerOffset;
+            var pos = completionContext.TriggerOffset;
             if (pos < 0)
                 return null;
             return HandleCodeCompletion(completionContext, true, default(CancellationToken), 0);
@@ -41,50 +38,52 @@ namespace Syntactik.MonoDevelop.Completion
         {
             int pos = completionContext.TriggerOffset;
             char ch = completionContext.TriggerOffset > 0 ? Editor.GetCharAt(completionContext.TriggerOffset - 1) : '\0';
-            if (pos > 0 && ch == completionChar)
+
+            if (pos <= 0 || ch != completionChar) return null;
+
+            int triggerWordLength = 0;
+            if (char.IsLetterOrDigit(completionChar) || completionChar == '_')
             {
-                int triggerWordLength = 0;
-                if (char.IsLetterOrDigit(completionChar) || completionChar == '_')
-                {
-                    if (completionContext.TriggerOffset > 1 && char.IsLetterOrDigit(Editor.GetCharAt(completionContext.TriggerOffset - 2)))
-                        return null;
-                    triggerWordLength = 1;
-                }
-                //tracker.UpdateEngine();
-                return HandleCodeCompletion(completionContext, false, token, triggerWordLength);
+                if (completionContext.TriggerOffset > 1 && char.IsLetterOrDigit(Editor.GetCharAt(completionContext.TriggerOffset - 2)))
+                    return null;
+                triggerWordLength = 1;
             }
-            return null;
+            return HandleCodeCompletion(completionContext, false, token, triggerWordLength);
         }
 
-        protected virtual Task<ICompletionDataList> HandleCodeCompletion(CodeCompletionContext completionContext, bool forced, CancellationToken token, int triggerWordLength)
+        protected virtual Task<ICompletionDataList> HandleCodeCompletion(CodeCompletionContext completionContext, bool forced, 
+            CancellationToken token, int triggerWordLength)
         {
 
             CompletionContext context = new CompletionContext(Editor.FileName, Editor.Text, Editor.CaretOffset, token);
             context.CalculateExpectations();
 
-            return GetCompletionList(context, completionContext, triggerWordLength);
+            return GetCompletionList(context, completionContext, triggerWordLength, ((SyntactikProject)DocumentContext.Project).GetProjectAliasList);
         }
 
-        private Task<ICompletionDataList> GetCompletionList(CompletionContext context, CodeCompletionContext editorCompletionContext, int triggerWordLength)
+        protected internal static Task<ICompletionDataList> GetCompletionList(CompletionContext context, 
+            CodeCompletionContext editorCompletionContext, 
+            int triggerWordLength,
+            Func<Dictionary<string, Syntactik.DOM.AliasDefinition>> aliasListFunc)
         {
-            var completionList = new CompletionDataList();
-            completionList.TriggerWordLength = triggerWordLength;
+            var completionList = new CompletionDataList {TriggerWordLength = triggerWordLength};
             foreach (var expectation in context.Expectations.AsEnumerable())
             {
                 if (expectation == CompletionExpectation.Alias)
                 {
-                    DoAliasCompletion(completionList, context, editorCompletionContext);
+                    DoAliasCompletion(completionList, context, editorCompletionContext, aliasListFunc);
                 }
             }
             return Task.FromResult<ICompletionDataList>(completionList);
         }
 
-        private void DoAliasCompletion(CompletionDataList completionList, CompletionContext context, CodeCompletionContext editorCompletionContext, bool valuesOnly = false)
+        private static void DoAliasCompletion(CompletionDataList completionList, CompletionContext context, 
+            CodeCompletionContext editorCompletionContext, Func<Dictionary<string, Syntactik.DOM.AliasDefinition>> aliasListFunc, bool valuesOnly = false)
         {
             var items = new List<CompletionData>();
             var category = new SyntactikCompletionCategory { DisplayText = "Aliases", Order = 3 };
 
-            var aliases = GetListOfBlockAliasDefinitions(valuesOnly).Select(a => a.Value.Name);
+            var aliases = GetListOfBlockAliasDefinitions(aliasListFunc, valuesOnly).Select(a => a.Value.Name);
             var rawPrefix = GetPrefixOfCurrentAlias(context, editorCompletionContext);
             var prefix = rawPrefix??string.Empty;
 
@@ -164,7 +163,7 @@ namespace Syntactik.MonoDevelop.Completion
             return result;
         }
 
-        private string GetPrefixOfCurrentAlias(CompletionContext context, CodeCompletionContext editorCompletionContext)
+        private static string GetPrefixOfCurrentAlias(CompletionContext context, CodeCompletionContext editorCompletionContext)
         {
             var pair = context.LastPair;
             if (!(pair is Syntactik.DOM.Alias)) return null;
@@ -173,18 +172,12 @@ namespace Syntactik.MonoDevelop.Completion
             return alias.Name;
         }
 
-        private IEnumerable<KeyValuePair<string, Syntactik.DOM.AliasDefinition>> GetListOfBlockAliasDefinitions(bool valuesOnly = false)
+        private static IEnumerable<KeyValuePair<string, Syntactik.DOM.AliasDefinition>> GetListOfBlockAliasDefinitions(
+            Func<Dictionary<string, Syntactik.DOM.AliasDefinition>> aliasListFunc, bool valuesOnly = false)
         {
             //Getting list of aliases
-            if (DocumentContext.HasProject)
-            {
-                var project = DocumentContext.Project as SyntactikProject;
-                if (project != null)
-                {
-                    return project.GetProjectAliasList().Where(a => ((AliasDefinition)a.Value).IsValueNode == valuesOnly);
-                }
-            }
-            return null;
+            return
+                aliasListFunc?.Invoke().Where(a => ((AliasDefinition) a.Value).IsValueNode == valuesOnly);
         }
     }
 }

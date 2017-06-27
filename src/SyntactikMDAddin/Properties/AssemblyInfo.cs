@@ -12,6 +12,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyCopyright("Maxim Trushin")]
 [assembly: AssemblyTrademark("Syntactik")]
 [assembly: AssemblyCulture("")]
+[assembly: InternalsVisibleTo("SyntactikMDAddin.Tests")]
 
 // The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,

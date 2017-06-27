@@ -5,105 +5,105 @@ using static SyntactikMDAddin.Tests.TestUtils;
 namespace SyntactikMDAddin.Tests
 {
     [TestFixture]
-    public class SyntaxHighlightingTests : TextEditorTestBase
+    public class SyntaxHighlightingTests
     {
 
         [Test, RecordedTest]
         public void Alias()
         {
-            DoTest();
+            DoHighlightingTest();
         }
 
         [Test, RecordedTest]
         public void AliasDef()
         {
-            DoTest();
+            DoHighlightingTest();
         }
 
         [Test, RecordedTest]
         public void Arguments()
         {
-            DoTest();
+            DoHighlightingTest();
         }
 
         [Test, RecordedTest]
         public void Attribute()
         {
-            DoTest();
+            DoHighlightingTest();
         }
         [Test, RecordedTest]
         public void CommentsInWsa()
         {
-            DoTest();
+            DoHighlightingTest();
         }
 
         [Test, RecordedTest]
         public void Document()
         {
-            DoTest();
+            DoHighlightingTest();
         }
 
         [Test, RecordedTest]
         public void DQName()
         {
-            DoTest();
+            DoHighlightingTest();
         }
 
         [Test, RecordedTest]
         public void FreeOpenString()
         {
-            DoTest();
+            DoHighlightingTest();
         }
         
         [Test, RecordedTest]
         public void MultilineStrings()
         {
-            DoTest();
+            DoHighlightingTest();
         }
 
 
         [Test, RecordedTest]
         public void MultilineComment()
         {
-            DoTest();
+            DoHighlightingTest();
         }
         
         [Test, RecordedTest]
         public void NsDefAndScope()
         {
-            DoTest();
+            DoHighlightingTest();
         }
 
 
         [Test, RecordedTest]
         public void OpenName()
         {
-            DoTest();
+            DoHighlightingTest();
         }
 
         [Test, RecordedTest]
         public void OpenString()
         {
-            DoTest();
+            DoHighlightingTest();
         }
         
         [Test, RecordedTest]
         public void SQEscapes()
         {
-            DoTest();
+            DoHighlightingTest();
         }
 
 
         [Test, RecordedTest]
         public void SQName()
         {
-            DoTest();
+            DoHighlightingTest();
         }
 
         [Test, RecordedTest]
         public void Wsa()
         {
-            DoTest();
+            DoHighlightingTest();
         }
 
         [Test, RecordedTest]

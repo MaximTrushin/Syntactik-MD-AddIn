@@ -5,25 +5,91 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Mono.TextEditor;
 using Mono.TextEditor.Highlighting;
+using MonoDevelop.Ide.CodeCompletion;
 using NUnit.Framework;
+using Syntactik.Compiler;
+using Syntactik.Compiler.IO;
+using Syntactik.Compiler.Pipelines;
+using Syntactik.DOM;
+using Syntactik.MonoDevelop;
+using Syntactik.MonoDevelop.Completion;
 using Syntactik.MonoDevelop.Highlighting;
+using Syntactik.MonoDevelop.Parser;
+using CompilerParameters = Syntactik.Compiler.CompilerParameters;
 
 namespace SyntactikMDAddin.Tests
 {
     public class TestUtils
     {
-        public static void DoTest()
+        public static void DoHighlightingTest()
         {
             var input = PrintTestScenario();
 
             string markup = GetMarkup(input);
 
             if (IsRecordedTest() || IsRecordTest())
-                CompareResultAndRecordedFiles(markup, IsRecordTest());
+                CompareResultAndRecordedFiles(markup, IsRecordTest(), "html");
+        }
+
+        public static void DoCompletionTest()
+        {
+            var input = PrintTestScenario();
+
+            string completionList = GetCompletionList(GetTestCaseName(), input, input.Length - 1);
+
+            if (IsRecordedTest() || IsRecordTest())
+                CompareResultAndRecordedFiles(completionList, IsRecordTest(), "list");
+        }
+
+        private static string GetCompletionList(string fileName, string text, int caretOffset)
+        {
+            CompletionContext context = new CompletionContext(fileName, text, caretOffset);
+            context.CalculateExpectations();
+            var lines = text.Split();
+            var lastLine = lines[lines.Length - 1];
+            var codeCompletionContext = new CodeCompletionContext {TriggerLineOffset = lastLine.Length > 0? lastLine.Length - 1:0};
+            
+            var compilerParameters = CreateCompilerParameters(fileName, text);
+            var compiler = new SyntactikCompiler(compilerParameters);
+            var compilerContext = compiler.Run();
+            var module = compilerContext.CompileUnit.Modules[0];
+
+            Func<Dictionary<string, Syntactik.DOM.AliasDefinition>> func = () =>
+            {
+                var aliasDefs = new Dictionary<string, AliasDefinition>();
+                foreach (var moduleMember in module.Members)
+                {
+                    var aliasDef = moduleMember as AliasDefinition;
+                    if (aliasDef != null && !aliasDefs.ContainsKey(aliasDef.Name))
+                        aliasDefs.Add(aliasDef.Name, aliasDef);
+                }
+                return aliasDefs;
+            }; 
+            var list = SyntactikCompletionTextEditorExtension.GetCompletionList(context, codeCompletionContext, 0, func).Result;
+            return CompletionListToString(list);
+        }
+
+        private static string CompletionListToString(ICompletionDataList list)
+        {
+            var sb = new StringBuilder();
+            foreach (var item in list)
+            {
+                sb.Append(item.CompletionText);
+            }
+            return sb.ToString();
+        }
+
+        private static CompilerParameters CreateCompilerParameters(string fileName, string content)
+        {
+            var compilerParameters = new CompilerParameters { Pipeline = new CompileToMemory() };
+            compilerParameters.Input.Add(new StringInput(fileName, content));
+            return compilerParameters;
         }
 
         public static string GetMarkup(string input)
@@ -42,15 +108,16 @@ namespace SyntactikMDAddin.Tests
         /// <summary>
         /// Record result file or compare it with previously recorded result
         /// </summary>
-        /// <param name="markup"></param>
+        /// <param name="result"></param>
         /// <param name="record">If true then result file is recorded not compared.</param>
-        private static void CompareResultAndRecordedFiles(string markup, bool record)
+        /// <param name="extension">Extension of saved file.</param>
+        private static void CompareResultAndRecordedFiles(string result, bool record, string extension)
         {
             var recordedDir = AssemblyDirectory + @"\Scenarios\" + GetTestClassName() + @"\Recorded\";
-            var recordedFileName = recordedDir + GetTestCaseName() + ".html";
+            var recordedFileName = recordedDir + GetTestCaseName() + "." + extension;
             if (record)
             {
-                SaveTest(markup);
+                SaveTest(result, extension);
             }
             else
             {
@@ -59,7 +126,7 @@ namespace SyntactikMDAddin.Tests
                 //Equal number of files
                 Console.WriteLine();
 
-                var result = markup.Replace("\r\n", "\n");
+                result = result.Replace("\r\n", "\n");
                 var recorded = File.ReadAllText(recordedFileName).Replace("\r\n", "\n");
 
                 Console.WriteLine(result);
@@ -67,10 +134,10 @@ namespace SyntactikMDAddin.Tests
             }
         }
 
-        public static void SaveTest(string result)
+        public static void SaveTest(string result, string extension)
         {
             var recordedDir = AssemblyDirectory + @"\..\..\Scenarios\" + GetTestClassName() + @"\Recorded\";
-            var fileName = recordedDir + GetTestCaseName() + ".html";
+            var fileName = recordedDir + GetTestCaseName() + "." + extension;
             Directory.CreateDirectory(recordedDir);
             File.WriteAllText(fileName, result);
         }
@@ -93,15 +160,15 @@ namespace SyntactikMDAddin.Tests
         public static void PrintCode(string code)
         {
             int line = 1;
-            Console.WriteLine("Code:");
-            Console.Write("{0}:\t ", line);
+            Console.WriteLine(@"Code:");
+            Console.Write(@" ({0})", line);
             int offset = 0;
             foreach (var c in code)
             {
                 if (c == '\r') continue;
                 if (c == '\n')
                 {
-                    Console.Write(" ({0})", offset);
+                    Console.Write(@" ({0})", offset);
                 }
 
                 Console.Write(c);
@@ -109,10 +176,10 @@ namespace SyntactikMDAddin.Tests
                 if (c == '\n')
                 {
                     line++;
-                    Console.Write("{0}:\t ", line);
+                    Console.Write(@" ({0})", line);
                 }
             }
-            Console.Write(" ({0})", offset);
+            Console.Write(@" ({0})", offset);
             Console.WriteLine();
         }
 

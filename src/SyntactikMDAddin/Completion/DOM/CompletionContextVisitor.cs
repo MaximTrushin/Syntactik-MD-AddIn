@@ -11,10 +11,7 @@ namespace Syntactik.MonoDevelop.Completion.DOM
     {
         private Pair _lastPair;
 
-        public Pair LastPair
-        {
-            get { return _lastPair; }
-        }
+        public Pair LastPair => _lastPair;
 
         public override void OnDocument(Syntactik.DOM.Document pair)
         {
