@@ -22,6 +22,25 @@ namespace SyntactikMDAddin.Tests
         {
             DoCompletionExpectationsTest();
         }
+
+        [Test, RecordedTest]
+        public void Alias2()
+        {
+            DoCompletionExpectationsTest();
+        }
+
+        [Test, RecordedTest]
+        public void Alias3()
+        {
+            DoCompletionExpectationsTest();
+        }
+
+        [Test, RecordedTest]
+        public void AliasWithArguments()
+        {
+            DoCompletionExpectationsTest();
+        }
+
         [Test, RecordedTest]
         public void Module1()
         {

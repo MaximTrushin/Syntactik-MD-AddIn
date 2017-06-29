@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Syntactik.Compiler;
 using Syntactik.Compiler.IO;
+using Syntactik.Compiler.Steps;
 using Syntactik.DOM;
 using Syntactik.MonoDevelop.Parser;
 
@@ -55,9 +56,27 @@ namespace Syntactik.MonoDevelop.Completion
             var alias = LastPair as Syntactik.DOM.Mapped.Alias;
             if (alias != null)
             {
+                
                 if (alias.NameInterval.End.Index == _offset)
-                    InTag = CompletionExpectation.Alias;
-                AddExpectation(CompletionExpectation.Alias);
+                {
+                    //InTag = CompletionExpectation.Alias;
+                    AddExpectation(CompletionExpectation.Alias);
+                    return;
+                }
+
+                if (alias.Delimiter == DelimiterEnum.None) return;
+                if (alias.Delimiter == DelimiterEnum.E || alias.Delimiter == DelimiterEnum.EE)
+                {
+                    AddExpectation(CompletionExpectation.Value);
+                    return;
+                }
+                if (alias.Delimiter == DelimiterEnum.C)
+                {
+                    if (alias.AliasDefinition != null && alias.AliasDefinition.Parameters.Count > 0)
+                        AddExpectation(CompletionExpectation.Argument);
+                    return;
+                }
+
             }
         }
 
@@ -70,6 +89,7 @@ namespace Syntactik.MonoDevelop.Completion
         {
             var compilerParameters = new CompilerParameters { Pipeline = new CompilerPipeline() };
             compilerParameters.Pipeline.Steps.Add(new ParseForCompletionStep(_cancellationToken));
+            compilerParameters.Pipeline.Steps.Add(new ProcessAliasesAndNamespaces());
             compilerParameters.Input.Add(new StringInput(fileName, content.Substring(0, offset < content.Length?offset + 1: content.Length)));
             return compilerParameters;
         }
