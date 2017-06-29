@@ -42,7 +42,7 @@ namespace Syntactik.MonoDevelop.Completion
             if (pos <= 0 || ch != completionChar) return null;
 
             int triggerWordLength = 0;
-            if (char.IsLetterOrDigit(completionChar) || completionChar == '_')
+            if (char.IsLetterOrDigit(completionChar) || completionChar == '_' || completionChar == '$')
             {
                 if (completionContext.TriggerOffset > 1 && char.IsLetterOrDigit(Editor.GetCharAt(completionContext.TriggerOffset - 2)))
                     return null;
@@ -144,13 +144,6 @@ namespace Syntactik.MonoDevelop.Completion
                 }
             }
             completionList.AddRange(items.OrderBy(i => i.DisplayText));
-
-
-
-            //foreach (var aliasDef in list)
-            //{
-            //    completionList.Add("$" + aliasDef.Value.Name);
-            //}
         }
 
         private static string NameElement(string el, string prefix)
