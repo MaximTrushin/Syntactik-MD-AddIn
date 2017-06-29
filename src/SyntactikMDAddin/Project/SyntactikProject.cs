@@ -152,7 +152,7 @@ namespace Syntactik.MonoDevelop
             }
         }
 
-        public Dictionary<string, AliasDefinition> GetProjectAliasList()
+        public Dictionary<string, AliasDefinition> GetAliasDefinitionList()
         {
             var aliasDefs = new Dictionary<string, AliasDefinition>();
             lock (_syncRoot)

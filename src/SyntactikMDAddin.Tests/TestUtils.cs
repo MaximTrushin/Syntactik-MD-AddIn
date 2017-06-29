@@ -41,11 +41,32 @@ namespace SyntactikMDAddin.Tests
         {
             var input = PrintTestScenario();
 
-            CompletionContext context = new CompletionContext(GetTestCaseName(), input, input.Length - 1);
+            var compilerParameters = CreateCompilerParameters(GetTestCaseName(), input);
+            var compiler = new SyntactikCompiler(compilerParameters);
+            var compilerContext = compiler.Run();
+            var module = compilerContext.CompileUnit.Modules[0];
+
+            Func<Dictionary<string, AliasDefinition>> func = () =>
+            {
+                var aliasDefs = new Dictionary<string, AliasDefinition>();
+                foreach (var moduleMember in module.Members)
+                {
+                    var aliasDef = moduleMember as AliasDefinition;
+                    if (aliasDef != null && !aliasDefs.ContainsKey(aliasDef.Name))
+                        aliasDefs.Add(aliasDef.Name, aliasDef);
+                }
+                return aliasDefs;
+            };
+            CompletionContext context = new CompletionContext(GetTestCaseName(), input, input.Length - 1, func);
             context.CalculateExpectations();
             var expectation = string.Join("\r\n", context.Expectations);
             if (IsRecordedTest() || IsRecordTest())
                 CompareResultAndRecordedFiles(expectation, IsRecordTest(), "exp");
+        }
+
+        private static Dictionary<string, AliasDefinition> CompileAndGetAliasDefinions(string input)
+        {
+            throw new NotImplementedException();
         }
 
         public static void DoCompletionListTest()
@@ -60,18 +81,12 @@ namespace SyntactikMDAddin.Tests
 
         private static string GetCompletionList(string fileName, string text, int caretOffset)
         {
-            CompletionContext context = new CompletionContext(fileName, text, caretOffset);
-            context.CalculateExpectations();
-            var lines = text.Split();
-            var lastLine = lines[lines.Length - 1];
-            var codeCompletionContext = new CodeCompletionContext {TriggerLineOffset = lastLine.Length > 0? lastLine.Length - 1:0};
-            
             var compilerParameters = CreateCompilerParameters(fileName, text);
             var compiler = new SyntactikCompiler(compilerParameters);
             var compilerContext = compiler.Run();
             var module = compilerContext.CompileUnit.Modules[0];
 
-            Func<Dictionary<string, Syntactik.DOM.AliasDefinition>> func = () =>
+            Func<Dictionary<string, AliasDefinition>> func = () =>
             {
                 var aliasDefs = new Dictionary<string, AliasDefinition>();
                 foreach (var moduleMember in module.Members)
@@ -81,7 +96,15 @@ namespace SyntactikMDAddin.Tests
                         aliasDefs.Add(aliasDef.Name, aliasDef);
                 }
                 return aliasDefs;
-            }; 
+            };
+
+            CompletionContext context = new CompletionContext(fileName, text, caretOffset, func);
+            context.CalculateExpectations();
+            var lines = text.Split();
+            var lastLine = lines[lines.Length - 1];
+            var codeCompletionContext = new CodeCompletionContext { TriggerLineOffset = lastLine.Length > 0 ? lastLine.Length - 1 : 0 };
+
+
             var list = SyntactikCompletionTextEditorExtension.GetCompletionList(context, codeCompletionContext, 0, func).Result;
             return CompletionListToString(list);
         }

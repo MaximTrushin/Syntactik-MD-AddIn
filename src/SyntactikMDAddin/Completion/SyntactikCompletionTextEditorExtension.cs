@@ -54,11 +54,10 @@ namespace Syntactik.MonoDevelop.Completion
         protected virtual Task<ICompletionDataList> HandleCodeCompletion(CodeCompletionContext completionContext, bool forced, 
             CancellationToken token, int triggerWordLength)
         {
-
-            CompletionContext context = new CompletionContext(Editor.FileName, Editor.Text, Editor.CaretOffset, token);
+            CompletionContext context = new CompletionContext(Editor.FileName, Editor.Text, Editor.CaretOffset, ((SyntactikProject)DocumentContext.Project).GetAliasDefinitionList, token);
             context.CalculateExpectations();
 
-            return GetCompletionList(context, completionContext, triggerWordLength, ((SyntactikProject)DocumentContext.Project).GetProjectAliasList);
+            return GetCompletionList(context, completionContext, triggerWordLength, ((SyntactikProject)DocumentContext.Project).GetAliasDefinitionList);
         }
 
         protected internal static Task<ICompletionDataList> GetCompletionList(CompletionContext context, 

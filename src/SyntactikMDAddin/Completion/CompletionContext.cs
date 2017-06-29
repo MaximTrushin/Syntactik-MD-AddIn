@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using Syntactik.Compiler;
 using Syntactik.Compiler.IO;
 using Syntactik.Compiler.Steps;
 using Syntactik.DOM;
+using Mapped = Syntactik.DOM.Mapped;
 using Syntactik.MonoDevelop.Parser;
 
 namespace Syntactik.MonoDevelop.Completion
@@ -13,17 +15,19 @@ namespace Syntactik.MonoDevelop.Completion
         private readonly string _fileName;
         private readonly string _text;
         private readonly int _offset;
+        private readonly Func<Dictionary<string, AliasDefinition>> _aliasDefinitions;
         private readonly CancellationToken _cancellationToken;
         public SortedSet<CompletionExpectation> Expectations { get; }
         public CompletionExpectation InTag { get; private set; }
         public Pair LastPair { get; private set; }
 
-        public CompletionContext(string fileName, string text, int offset, CancellationToken cancellationToken = new CancellationToken())
+        public CompletionContext(string fileName, string text, int offset, Func<Dictionary<string, AliasDefinition>> aliasDefinitions, CancellationToken cancellationToken = new CancellationToken())
         {
             Expectations = new SortedSet<CompletionExpectation>();
             _fileName = fileName;
             _text = text;
             _offset = offset;
+            _aliasDefinitions = aliasDefinitions;
             _cancellationToken = cancellationToken;
         }
 
@@ -53,7 +57,7 @@ namespace Syntactik.MonoDevelop.Completion
                 return;
             }
 
-            var alias = LastPair as Syntactik.DOM.Mapped.Alias;
+            var alias = LastPair as Mapped.Alias;
             if (alias != null)
             {
                 
@@ -72,7 +76,8 @@ namespace Syntactik.MonoDevelop.Completion
                 }
                 if (alias.Delimiter == DelimiterEnum.C)
                 {
-                    if (alias.AliasDefinition != null && alias.AliasDefinition.Parameters.Count > 0)
+                    AliasDefinition aliasDef; 
+                    if (_aliasDefinitions().TryGetValue(alias.Name, out aliasDef) && ((Mapped.AliasDefinition)aliasDef).Parameters.Count > 0)
                         AddExpectation(CompletionExpectation.Argument);
                     return;
                 }
@@ -89,7 +94,6 @@ namespace Syntactik.MonoDevelop.Completion
         {
             var compilerParameters = new CompilerParameters { Pipeline = new CompilerPipeline() };
             compilerParameters.Pipeline.Steps.Add(new ParseForCompletionStep(_cancellationToken));
-            compilerParameters.Pipeline.Steps.Add(new ProcessAliasesAndNamespaces());
             compilerParameters.Input.Add(new StringInput(fileName, content.Substring(0, offset < content.Length?offset + 1: content.Length)));
             return compilerParameters;
         }
