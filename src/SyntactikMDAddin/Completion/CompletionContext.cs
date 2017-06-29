@@ -41,7 +41,9 @@ namespace Syntactik.MonoDevelop.Completion
 
             if (LastPair == null) //Module
             {
-                AddExpectation(CompletionExpectation.Namespace);
+                var module = context.CompileUnit.Modules[0];
+                if (module.Members.Count == 0 && module.ModuleDocument == null)
+                    AddExpectation(CompletionExpectation.Namespace);
                 AddExpectation(CompletionExpectation.Alias);
                 AddExpectation(CompletionExpectation.Element);
                 AddExpectation(CompletionExpectation.Attribute);

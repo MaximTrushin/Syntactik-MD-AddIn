@@ -67,6 +67,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Scenarios\CompletionExpectations\Module2.s4x">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Scenarios\CompletionExpectations\Module1.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
