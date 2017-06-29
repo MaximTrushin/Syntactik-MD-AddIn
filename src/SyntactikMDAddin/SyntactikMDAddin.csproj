@@ -93,7 +93,7 @@
     <Compile Include="Completion\DOM\Parameter.cs" />
     <Compile Include="Completion\DOM\Scope.cs" />
     <Compile Include="Completion\JsonCompletionPairFactory.cs" />
-    <Compile Include="Completion\ParseAndCreateFoldingStep.cs" />
+    <Compile Include="Completion\ParseForCompletionStep.cs" />
     <Compile Include="Completion\SyntactikCompletionCategory.cs" />
     <Compile Include="Completion\SyntactikCompletionTextEditorExtension.cs" />
     <Compile Include="Completion\XmlCompletionPairFactory.cs" />

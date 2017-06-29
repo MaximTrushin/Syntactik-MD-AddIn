@@ -9,9 +9,10 @@ namespace Syntactik.MonoDevelop.Completion
     internal class XmlCompletionPairFactory : IPairFactory
     {
         private CancellationToken _cancellationToken;
-        private CompilerContext _context;
+        private readonly CompilerContext _context;
         private Module _module;
         private readonly IPairFactory _pairFactory;
+        private Pair _lastPair;
 
 
         public XmlCompletionPairFactory(CompilerContext context, Module module, CancellationToken cancellationToken)
@@ -36,8 +37,13 @@ namespace Syntactik.MonoDevelop.Completion
             _pairFactory.AppendChild(parent, child);
         }
 
-        public void EndPair(Pair pair, Interval endInterval)
+        public void EndPair(Pair pair, Interval endInterval, bool endedByEof = false)
         {
+            if (endedByEof && _lastPair == null)
+            {
+                _lastPair = pair;
+                _context.InMemoryOutputObjects.Add("LastPair", pair);
+            }
             _cancellationToken.ThrowIfCancellationRequested();
         }
 

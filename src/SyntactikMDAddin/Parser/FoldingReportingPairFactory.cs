@@ -72,7 +72,7 @@ namespace Syntactik.MonoDevelop.Parser
             _pairFactory.AppendChild(parent, child);
         }
 
-        public void EndPair(Pair pair, Interval endInterval)
+        public void EndPair(Pair pair, Interval endInterval, bool endedByEof = false)
         {
             _cancellationToken.ThrowIfCancellationRequested();
             if (_foldingStack.Count == 0) return;

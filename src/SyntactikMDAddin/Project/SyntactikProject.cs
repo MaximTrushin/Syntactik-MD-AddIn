@@ -95,7 +95,7 @@ namespace Syntactik.MonoDevelop
         private void ParseProjectFile(string fileName)
         {
             string content = File.ReadAllText(fileName);
-            var document = ParseSyntactikDocument(fileName, content, null, new CancellationToken());
+            ParseSyntactikDocument(fileName, content, null, new CancellationToken());
         }
 
         internal SyntactikParsedDocument ParseSyntactikDocument(string fileName, string content,

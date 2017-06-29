@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using Syntactik.Compiler.Steps;
 using Syntactik.DOM;
@@ -11,17 +13,26 @@ namespace Syntactik.MonoDevelop.Parser
     {
         private readonly CancellationToken _cancellationToken;
 
-        public ParseForCompletionStep(CancellationToken cancellationToken)
+        public ParseForCompletionStep(CancellationToken cancellationToken):base()
         {
             _cancellationToken = cancellationToken;
+            
         }
 
         protected override Syntactik.Parser GetParser(Module module, ICharStream input)
         {
             var m = module as DOM.Mapped.Module;
             if (m == null) throw new ArgumentException("Invalid module type.");
+
             return m.TargetFormat == DOM.Mapped.Module.TargetFormats.Json ? new Syntactik.Parser(input, new JsonCompletionPairFactory(_context, module,_cancellationToken), module) : 
                 new Syntactik.Parser(input, new XmlCompletionPairFactory(_context, module, _cancellationToken), module);
+        }
+
+        protected override void DoParse(string fileName, TextReader reader)
+        {
+            _context.InMemoryOutputObjects = new Dictionary<string, object>();
+            base.DoParse(fileName, reader);
+
         }
     }
 }
