@@ -37,7 +37,18 @@ namespace SyntactikMDAddin.Tests
                 CompareResultAndRecordedFiles(markup, IsRecordTest(), "html");
         }
 
-        public static void DoCompletionTest()
+        public static void DoCompletionExpectationsTest()
+        {
+            var input = PrintTestScenario();
+
+            CompletionContext context = new CompletionContext(GetTestCaseName(), input, input.Length - 1);
+            context.CalculateExpectations();
+            var expectation = string.Join("\r\n", context.Expectations);
+            if (IsRecordedTest() || IsRecordTest())
+                CompareResultAndRecordedFiles(expectation, IsRecordTest(), "exp");
+        }
+
+        public static void DoCompletionListTest()
         {
             var input = PrintTestScenario();
 

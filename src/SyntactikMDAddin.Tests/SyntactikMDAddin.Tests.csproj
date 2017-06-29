@@ -57,8 +57,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CompletionExpectationsTests.cs" />
     <Compile Include="RecordedTestAttribute.cs" />
-    <Compile Include="CompletionTests.cs" />
+    <Compile Include="CompletionListTests.cs" />
     <Compile Include="SyntaxHighlightingTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestUtils.cs" />
@@ -66,7 +67,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Scenarios\Completion\Alias1.s4x">
+    <None Include="Scenarios\CompletionExpectations\Module1.s4x">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scenarios\CompletionList\Alias1.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Scenarios\SyntaxHighlighting\Attribute.s4x">
