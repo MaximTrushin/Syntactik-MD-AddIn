@@ -1,0 +1,5 @@
+﻿!$alias: el1: !%arg1, !%arg2 
+''' Inside alias value.
+$alias :
+	%arg1
+	
