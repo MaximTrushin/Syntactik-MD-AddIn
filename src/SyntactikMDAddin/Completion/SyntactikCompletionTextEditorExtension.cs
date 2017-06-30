@@ -104,14 +104,14 @@ namespace Syntactik.MonoDevelop.Completion
                     items.Add(data);
                     data.CompletionCategory = category;
                     //data.Icon = MalinaIcons.Namespace;
-                    
+                    var name = alias.Substring(0, alias.Length - 1);
                     if (string.IsNullOrEmpty(prefix))
-                        data.DisplayText = "$" + alias;
+                        data.DisplayText = "$" + name;
                     else
-                        data.DisplayText = alias;
+                        data.DisplayText = name;
                     data.CompletionText = data.DisplayText;
                     if (string.IsNullOrEmpty(rawPrefix) || rawPrefix.StartsWith("$") == false)
-                        data.CompletionText = "$" + alias;
+                        data.CompletionText = "$" + name;
 
                 }
                 else
