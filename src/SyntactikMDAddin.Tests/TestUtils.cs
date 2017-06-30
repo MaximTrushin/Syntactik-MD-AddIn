@@ -64,10 +64,6 @@ namespace SyntactikMDAddin.Tests
                 CompareResultAndRecordedFiles(expectation, IsRecordTest(), "exp");
         }
 
-        private static Dictionary<string, AliasDefinition> CompileAndGetAliasDefinions(string input)
-        {
-            throw new NotImplementedException();
-        }
 
         public static void DoCompletionListTest()
         {
@@ -103,10 +99,8 @@ namespace SyntactikMDAddin.Tests
             var lines = text.Split();
             var lastLine = lines[lines.Length - 1];
             var codeCompletionContext = new CodeCompletionContext { TriggerLineOffset = lastLine.Length > 0 ? lastLine.Length - 1 : 0 };
-
-
             var list = SyntactikCompletionTextEditorExtension.GetCompletionList(context, codeCompletionContext, 0, func).Result;
-            return CompletionListToString(list);
+            return string.Join("\n", list.Select(item => item.CompletionText));
         }
 
         private static string CompletionListToString(ICompletionDataList list)

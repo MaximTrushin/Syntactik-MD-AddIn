@@ -138,8 +138,8 @@ namespace Syntactik.MonoDevelop.Completion
                     //    //    text = alias + ":" + Environment.NewLine + indent + "\t";
                     //}
                     data.CompletionText = text;
-                    //if (rawPrefix.StartsWith("$") == false)
-                    //    data.CompletionText = "$" + alias;
+                    if (rawPrefix == null || rawPrefix.StartsWith("$") == false)
+                        data.CompletionText = "$" + alias;
                 }
             }
             completionList.AddRange(items.OrderBy(i => i.DisplayText));
