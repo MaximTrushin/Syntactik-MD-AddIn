@@ -7,6 +7,7 @@ using MonoDevelop.Ide.CodeCompletion;
 using MonoDevelop.Ide.Editor;
 using MonoDevelop.Ide.Editor.Extension;
 using MonoDevelop.Projects;
+using Syntactik.DOM.Mapped;
 using AliasDefinition = Syntactik.DOM.Mapped.AliasDefinition;
 
 namespace Syntactik.MonoDevelop.Completion
@@ -72,6 +73,8 @@ namespace Syntactik.MonoDevelop.Completion
                 {
                     DoAliasCompletion(completionList, context, editorCompletionContext, aliasListFunc);
                 }
+                if (expectation==CompletionExpectation.Argument)
+                    DoArgumentCompletion(completionList, context, editorCompletionContext, aliasListFunc);
             }
             return Task.FromResult<ICompletionDataList>(completionList);
         }
@@ -133,6 +136,30 @@ namespace Syntactik.MonoDevelop.Completion
             }
             completionList.AddRange(items.OrderBy(i => i.DisplayText));
         }
+
+        private static void DoArgumentCompletion(CompletionDataList completionList, CompletionContext context,
+            CodeCompletionContext editorCompletionContext,
+            Func<Dictionary<string, Syntactik.DOM.AliasDefinition>> aliasListFunc, bool valuesOnly = false)
+        {
+            var alias = context.LastPair as Alias;
+            if (alias == null) return;
+            var aliasDef = GetListOfBlockAliasDefinitions(aliasListFunc, valuesOnly).FirstOrDefault(a => a.Key == alias.Name).Value as AliasDefinition;
+
+            if (aliasDef == null) return;
+            var args = aliasDef.Parameters.Where(p => alias.Arguments.FirstOrDefault(a => a.Name == p.Name) == null);
+            var items = new List<CompletionData>();
+            var category = new SyntactikCompletionCategory { DisplayText = "Arguments", Order = 3 };
+            foreach (var parameter in args)
+            {
+                CompletionData data = new CompletionItem(ItemType.Argument);
+                items.Add(data);
+                data.CompletionCategory = category;
+                data.DisplayText = "%" + parameter.Name;
+                data.CompletionText = data.DisplayText;
+            }
+            completionList.AddRange(items.OrderBy(i => i.DisplayText));
+        }
+
 
         // return false if completion can't be shown
         public override bool GetCompletionCommandOffset(out int cpos, out int wlen)

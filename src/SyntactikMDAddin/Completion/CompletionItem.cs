@@ -17,7 +17,8 @@ namespace Syntactik.MonoDevelop.Completion
         Entity,
         Namepsace,
         Alias,
-        AliasNamespace
+        AliasNamespace,
+        Argument
     }
     public class CompletionItem : CompletionData
     {
