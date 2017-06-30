@@ -57,7 +57,7 @@ namespace SyntactikMDAddin.Tests
                 }
                 return aliasDefs;
             };
-            CompletionContext context = new CompletionContext(GetTestCaseName(), input, input.Length - 1, func);
+            CompletionContext context = new CompletionContext(GetTestCaseName(), input, input.Length, func);
             context.CalculateExpectations();
             var expectation = string.Join("\r\n", context.Expectations);
             if (IsRecordedTest() || IsRecordTest())
@@ -69,7 +69,7 @@ namespace SyntactikMDAddin.Tests
         {
             var input = PrintTestScenario();
 
-            string completionList = GetCompletionList(GetTestCaseName(), input, input.Length - 1);
+            string completionList = GetCompletionList(GetTestCaseName(), input, input.Length);
 
             if (IsRecordedTest() || IsRecordTest())
                 CompareResultAndRecordedFiles(completionList, IsRecordTest(), "list");
@@ -146,6 +146,7 @@ namespace SyntactikMDAddin.Tests
             if (record)
             {
                 SaveTest(result, extension);
+                Console.WriteLine(result);
             }
             else
             {

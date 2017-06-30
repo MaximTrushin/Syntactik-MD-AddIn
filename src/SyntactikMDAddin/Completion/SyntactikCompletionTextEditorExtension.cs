@@ -109,10 +109,10 @@ namespace Syntactik.MonoDevelop.Completion
                         data.DisplayText = "$" + alias;
                     else
                         data.DisplayText = alias;
-                    data.CompletionText = alias;
+                    data.CompletionText = data.DisplayText;
                     if (string.IsNullOrEmpty(rawPrefix) || rawPrefix.StartsWith("$") == false)
                         data.CompletionText = "$" + alias;
-                    //data.CompletionText = name;
+
                 }
                 else
                 {
@@ -121,29 +121,54 @@ namespace Syntactik.MonoDevelop.Completion
                     data.CompletionCategory = category;
                     //data.Icon = MalinaIcons.Alias;
                     if (string.IsNullOrEmpty(prefix))
+                    { 
                         data.DisplayText = "$" + alias;
+                    }
                     else
+                    { 
                         data.DisplayText = alias;
-                    string text = alias;
-                    //var aliasDef = aliasDefinitions.FirstOrDefault(a => a.Name == prefix + alias);
-                    //if (aliasDef != null)
-                    //{
-                    //    var p = aliasDef.Parameters.FirstOrDefault();
-                    //    var indent = GetCurrentIndent();
-                    //    if (p != null && p.Name == "_")
-                    //    {
-                    //        text = alias + "::" + Environment.NewLine + indent + "\t";
-                    //    }
-                    //    //else if (aliasDef.Parameters.Any())
-                    //    //    text = alias + ":" + Environment.NewLine + indent + "\t";
-                    //}
-                    data.CompletionText = text;
-                    if (rawPrefix == null || rawPrefix.StartsWith("$") == false)
-                        data.CompletionText = "$" + alias;
+                    }
+                    data.CompletionText = data.DisplayText;
                 }
             }
             completionList.AddRange(items.OrderBy(i => i.DisplayText));
         }
+
+        // return false if completion can't be shown
+        public override bool GetCompletionCommandOffset(out int cpos, out int wlen)
+        {
+            cpos = wlen = 0;
+            int pos = Editor.CaretOffset - 1;
+            while (pos >= 0)
+            {
+                char c = Editor.GetCharAt(pos);
+                if (!IsCompletionChar(c))
+                    break;
+                pos--;
+            }
+            if (pos == -1)
+                return false;
+
+            pos++;
+            cpos = pos;
+            int len = Editor.Length;
+
+            while (pos < len)
+            {
+                char c = Editor.GetCharAt(pos);
+                if (!IsCompletionChar(c))
+                    break;
+                pos++;
+            }
+            wlen = pos - cpos;
+            return true;
+        }
+
+        private static bool IsCompletionChar(char c)
+        {
+            return char.IsLetterOrDigit(c) || c == '_' || c == '$' || c == '!' || c == '@' || c == '%' || c == '#' || c == '!';
+        }
+
 
         private static string NameElement(string el, string prefix)
         {
@@ -158,7 +183,7 @@ namespace Syntactik.MonoDevelop.Completion
         private static string GetPrefixOfCurrentAlias(CompletionContext context, CodeCompletionContext editorCompletionContext)
         {
             var pair = context.LastPair;
-            if (!(pair is Syntactik.DOM.Alias)) return null;
+            if (context.InTag != CompletionExpectation.Alias) return null;
             var alias = (Syntactik.DOM.Mapped.Alias) pair;
             if (alias.NameInterval.End.Column < editorCompletionContext.TriggerLineOffset) return null;
             return alias.Name;

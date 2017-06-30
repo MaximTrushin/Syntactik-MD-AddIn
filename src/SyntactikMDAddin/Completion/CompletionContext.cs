@@ -26,7 +26,7 @@ namespace Syntactik.MonoDevelop.Completion
             Expectations = new SortedSet<CompletionExpectation>();
             _fileName = fileName;
             _text = text;
-            _offset = offset;
+            _offset = offset - 1;
             _aliasDefinitions = aliasDefinitions;
             _cancellationToken = cancellationToken;
         }
@@ -63,7 +63,7 @@ namespace Syntactik.MonoDevelop.Completion
                 
                 if (alias.NameInterval.End.Index == _offset)
                 {
-                    //InTag = CompletionExpectation.Alias;
+                    InTag = CompletionExpectation.Alias;
                     AddExpectation(CompletionExpectation.Alias);
                     return;
                 }
