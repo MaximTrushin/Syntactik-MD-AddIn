@@ -141,7 +141,13 @@ namespace Syntactik.MonoDevelop.Completion
             CodeCompletionContext editorCompletionContext,
             Func<Dictionary<string, Syntactik.DOM.AliasDefinition>> aliasListFunc, bool valuesOnly = false)
         {
-            var alias = context.LastPair as Alias;
+            Alias alias;
+            if (context.InTag == CompletionExpectation.Argument)
+            {
+                alias = (context.LastPair as Argument)?.Parent as Alias;
+            }
+            else
+                alias = context.LastPair as Alias;
             if (alias == null) return;
             var aliasDef = GetListOfBlockAliasDefinitions(aliasListFunc, valuesOnly).FirstOrDefault(a => a.Key == alias.Name).Value as AliasDefinition;
 

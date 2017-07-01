@@ -44,7 +44,7 @@ namespace Syntactik.MonoDevelop.Completion
             if (context.InMemoryOutputObjects.TryGetValue("LastPair", out lastPair))
                 LastPair = (Pair) lastPair;
 
-            if (LastPair == null) //Module
+            if (lastPair == null) //Module
             {
                 var module = context.CompileUnit.Modules[0];
                 if (module.Members.Count == 0 && module.ModuleDocument == null)
@@ -57,7 +57,7 @@ namespace Syntactik.MonoDevelop.Completion
                 return;
             }
 
-            var alias = LastPair as Mapped.Alias;
+            var alias = lastPair as Mapped.Alias;
             if (alias != null)
             {
                 
@@ -79,6 +79,22 @@ namespace Syntactik.MonoDevelop.Completion
                     AliasDefinition aliasDef; 
                     if (_aliasDefinitions().TryGetValue(alias.Name, out aliasDef) && ((Mapped.AliasDefinition)aliasDef).Parameters.Count > 0)
                         AddExpectation(CompletionExpectation.Argument);
+                    return;
+                }
+            }
+            var argument = lastPair as Mapped.Argument;
+            if (argument != null)
+            {
+                if (argument.NameInterval.End.Index == _offset)
+                {
+                    InTag = CompletionExpectation.Argument;
+                    AddExpectation(CompletionExpectation.Argument);
+                    return;
+                }
+                if (argument.Delimiter == DelimiterEnum.None) return;
+                if (argument.Delimiter == DelimiterEnum.E || argument.Delimiter == DelimiterEnum.EE)
+                {
+                    AddExpectation(CompletionExpectation.Value);
                     return;
                 }
 
