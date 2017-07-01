@@ -28,6 +28,7 @@ namespace Syntactik.MonoDevelop.Completion
 
         public override Task<ICompletionDataList> CodeCompletionCommand(CodeCompletionContext completionContext)
         {
+            Editor.EnsureCaretIsNotVirtual();
             var pos = completionContext.TriggerOffset;
             if (pos < 0)
                 return null;
@@ -37,13 +38,14 @@ namespace Syntactik.MonoDevelop.Completion
         public override Task<ICompletionDataList> HandleCodeCompletionAsync(CodeCompletionContext completionContext,
             char completionChar, CancellationToken token = default(CancellationToken))
         {
+            Editor.EnsureCaretIsNotVirtual();
             int pos = completionContext.TriggerOffset;
             char ch = completionContext.TriggerOffset > 0 ? Editor.GetCharAt(completionContext.TriggerOffset - 1) : '\0';
 
             if (pos <= 0 || ch != completionChar) return null;
 
             int triggerWordLength = 0;
-            if (char.IsLetterOrDigit(completionChar) || completionChar == '_' || completionChar == '$')
+            if (IsCompletionChar(completionChar))
             {
                 if (completionContext.TriggerOffset > 1 && char.IsLetterOrDigit(Editor.GetCharAt(completionContext.TriggerOffset - 2)))
                     return null;
@@ -160,12 +162,11 @@ namespace Syntactik.MonoDevelop.Completion
                 CompletionData data = new CompletionItem(ItemType.Argument);
                 items.Add(data);
                 data.CompletionCategory = category;
-                data.DisplayText = "%" + parameter.Name;
+                data.DisplayText = "%" + parameter.Name + (parameter.IsValueNode?" =": ": ");
                 data.CompletionText = data.DisplayText;
             }
             completionList.AddRange(items.OrderBy(i => i.DisplayText));
         }
-
 
         // return false if completion can't be shown
         public override bool GetCompletionCommandOffset(out int cpos, out int wlen)
@@ -199,7 +200,7 @@ namespace Syntactik.MonoDevelop.Completion
 
         private static bool IsCompletionChar(char c)
         {
-            return char.IsLetterOrDigit(c) || c == '_' || c == '$' || c == '!' || c == '@' || c == '%' || c == '#' || c == '!';
+            return char.IsLetterOrDigit(c) || c == '_' || c == '!' || c == '@' || c == '#' || c == '$' || c == '%';
         }
 
 
