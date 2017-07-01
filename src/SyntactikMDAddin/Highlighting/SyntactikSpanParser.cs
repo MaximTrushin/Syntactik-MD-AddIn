@@ -75,10 +75,13 @@ namespace Syntactik.MonoDevelop.Highlighting
                 return base.ScanSpanEnd(CurSpan, ref i); //return false so the current symbol will be processed with match rules
             }
 
-            if (CurRule.Name.StartsWith("open_string") && IsEndOfOpenString(CurText[i - StartOffset]))
+
+            if (CurRule.Name.StartsWith("open_string") //Ending Open string
+                && !(CurSpan is IndentSpan) //If it is first line
+                && IsEndOfOpenString(CurText[i - StartOffset]) ) //And end of open string found
             {
                 FoundSpanEnd(CurSpan, i, 0);
-                FoundSpanEnd(CurSpan, i, 0);
+                if (CurSpan != null) FoundSpanEnd(CurSpan, i, 0);
                 if (CurRule.Name.StartsWith("string_high")) FoundSpanEnd(CurSpan, i, 0);
                 return CurSpan != null && base.ScanSpanEnd(CurSpan, ref i);
             }

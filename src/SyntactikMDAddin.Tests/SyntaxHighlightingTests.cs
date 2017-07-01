@@ -25,6 +25,11 @@ namespace SyntactikMDAddin.Tests
         {
             DoHighlightingTest();
         }
+        [Test, RecordedTest]
+        public void Arguments2()
+        {
+            DoHighlightingTest();
+        }
 
         [Test, RecordedTest]
         public void Attribute()

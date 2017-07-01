@@ -14,3 +14,5 @@ el:
 		free open
 		string
 	el
+el2 == line1
+	line2 ''' not a comment 
