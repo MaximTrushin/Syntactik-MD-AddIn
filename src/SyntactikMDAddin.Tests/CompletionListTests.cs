@@ -41,5 +41,10 @@ namespace SyntactikMDAddin.Tests
         {
             DoCompletionListTest();
         }
+        [Test, RecordedTest]
+        public void AliasWithArguments4()
+        {
+            DoCompletionListTest();
+        }
     }
 }

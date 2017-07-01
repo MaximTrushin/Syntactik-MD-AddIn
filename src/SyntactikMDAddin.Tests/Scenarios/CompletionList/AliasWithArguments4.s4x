@@ -1,0 +1,8 @@
+﻿!$Address.US.NJ:
+    street := !%street == 123 main
+    city := !%city = Hawley
+    state := !%state = PA
+
+$Address.US.NJ:
+	%street =
+	
