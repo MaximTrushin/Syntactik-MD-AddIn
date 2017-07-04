@@ -99,7 +99,7 @@ namespace Syntactik.MonoDevelop
         }
 
         internal SyntactikParsedDocument ParseSyntactikDocument(string fileName, string content,
-            ITextSourceVersion version, CancellationToken cancellationToken)
+            ITextSourceVersion version, CancellationToken cancellationToken, bool parseOnly = false)
         {
             ParseInfo info;
             if (version != null && CompileInfo.TryGetValue(fileName, out info))
@@ -112,35 +112,87 @@ namespace Syntactik.MonoDevelop
             }
 
             var result = new SyntactikParsedDocument(fileName, version);
-            var compilerParameters = CreateCompilerParameters(fileName, content, result, cancellationToken); //TODO: Compile including other modules
+            var compilerParameters = CreateParsingOnlyCompilerParameters(fileName, content, result, cancellationToken);
             var compiler = new SyntactikCompiler(compilerParameters);
             var context = compiler.Run();
             result.AddErrors(context.Errors.Where(error => error.LexicalInfo.Line >= 0 && error.LexicalInfo.Column >= 0));
             var module = context.CompileUnit.Modules[0];
             result.Ast = module;
 
+            var modules = new PairCollection<Module>();
             lock (_syncRoot)
             {
-                CompileInfo.Remove(fileName);
-                CompileInfo.Add(fileName,
-                    new ParseInfo
+                if (CompileInfo.TryGetValue(fileName, out info))
+                {
+                    info.Document = result;
+                    info.Version = version;
+                }
+                else
+                    CompileInfo.Add(fileName,
+                        new ParseInfo
+                        {
+                            Document = result,
+                            Version = version
+                        }
+                    );
+                if (!parseOnly)
+                {
+                    foreach (var item in CompileInfo) //TODO: Remove CompileInfo when file is deleted from the project
                     {
-                        Document = result,
-                        Version = version
+                        modules.Add((Module) item.Value.Document.Ast);
                     }
-                );
+                    compilerParameters = CreateValidationOnlyCompilerParameters(); //TODO: Use cancellation token
+                    compiler = new SyntactikCompiler(compilerParameters);
+                    context = compiler.Run(new CompileUnit {Modules = modules});
+                    CleanNonParserErrors();
+                    AddValidationError(context.Errors);
+                }
             }
-            
             return result;
         }
 
-        private CompilerParameters CreateCompilerParameters(string fileName, string content, SyntactikParsedDocument result, CancellationToken cancellationToken)
+        private void AddValidationError(SortedSet<CompilerError> errors)
+        {
+            foreach (var error in errors)
+            {
+                ParseInfo info;
+                if (CompileInfo.TryGetValue(error.LexicalInfo.FileName, out info))
+                {
+                    info.Document.Add(error);
+                }
+            }
+        }
+
+        private void CleanNonParserErrors()
+        {
+            foreach (var info in CompileInfo)
+            {
+                var errors = new List<Error>();
+                foreach (var error in info.Value.Document.Errors)
+                    if (IsParserError(error.Id)) errors.Add(error);
+
+                info.Value.Document.Errors = errors;
+            }
+        }
+
+        private bool IsParserError(string errorId)
+        {
+            return errorId == "MCE0007" || errorId == "MCE0032" || errorId == "MCE0100" || errorId == "MCE0100" || errorId == "MCE0102";
+        }
+
+        private CompilerParameters CreateParsingOnlyCompilerParameters(string fileName, string content, SyntactikParsedDocument result, CancellationToken cancellationToken)
         {
             var compilerParameters = new CompilerParameters { Pipeline = new CompilerPipeline() };
             compilerParameters.Pipeline.Steps.Add(new ParseAndCreateFoldingStep(result, cancellationToken));
+            compilerParameters.Input.Add(new StringInput(fileName, content));
+            return compilerParameters;
+        }
+
+        private CompilerParameters CreateValidationOnlyCompilerParameters()
+        {
+            var compilerParameters = new CompilerParameters { Pipeline = new CompilerPipeline() };
             compilerParameters.Pipeline.Steps.Add(new ProcessAliasesAndNamespaces());
             compilerParameters.Pipeline.Steps.Add(new ValidateDocuments());
-            compilerParameters.Input.Add(new StringInput(fileName, content));
             return compilerParameters;
         }
 
