@@ -40,12 +40,12 @@ namespace Syntactik.MonoDevelop.Highlighting
 
         protected override Task<object> ResolveAsync(CancellationToken token)
         {
-            return null;
+            return Task.FromResult<object>(null);
         }
 
         protected override Task<IEnumerable<MemberReference>> GetReferencesAsync(object resolveResult, CancellationToken token)
         {
-            return null;
+            return Task.FromResult<IEnumerable<MemberReference>>(null);
         }
 
     }

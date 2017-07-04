@@ -104,7 +104,6 @@
     <Compile Include="Parser\FoldingReportingPairFactory.cs" />
     <Compile Include="Parser\ParseAndCreateFoldingStep.cs" />
     <Compile Include="Parser\SyntactikParsedDocument.cs" />
-    <Compile Include="Parser\SyntactikFoldingParser.cs" />
     <Compile Include="Parser\TypeSystemParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Project\SyntactikProject.cs" />

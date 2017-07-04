@@ -21,7 +21,7 @@ namespace Syntactik.MonoDevelop.Parser
         {
             var fileName = options.FileName;
             var project = (SyntactikProject)options.Project;
-            DefaultParsedDocument result;
+            ParsedDocument result;
 
             //Parse if document has newer version
             if (options.OldParsedDocument == null ||
@@ -34,7 +34,7 @@ namespace Syntactik.MonoDevelop.Parser
             }
             else
             {
-                result = (DefaultParsedDocument)options.OldParsedDocument;
+                result = options.OldParsedDocument;
             }
 
             DateTime time;
@@ -47,7 +47,7 @@ namespace Syntactik.MonoDevelop.Parser
                 time = DateTime.UtcNow;
             }
             result.LastWriteTimeUtc = time;
-            return Task.FromResult((ParsedDocument)result);
+            return Task.FromResult(result);
         }
 
 
