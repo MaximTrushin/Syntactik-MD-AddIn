@@ -221,9 +221,31 @@ namespace Syntactik.MonoDevelop
                         }
                 }
             }
-
             return aliasDefs;
         }
 
+        protected override void OnFileRemovedFromProject(ProjectFileEventArgs e)
+        {
+            base.OnFileRemovedFromProject(e);
+            foreach (var file in e)
+            {
+                lock (_syncRoot)
+                {
+                    CompileInfo.Remove(file.ProjectFile.FilePath);
+                }
+            }
+        }
+
+        protected override void OnFileRenamedInProject(ProjectFileRenamedEventArgs e)
+        {
+            base.OnFileRenamedInProject(e);
+            foreach (var file in e)
+            {
+                lock (_syncRoot)
+                {
+                    CompileInfo.Remove(file.OldName);
+                }
+            }
+        }
     }
 }
