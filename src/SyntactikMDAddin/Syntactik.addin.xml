@@ -15,10 +15,11 @@
 
   <Extension path="/MonoDevelop/ProjectModel/MSBuildItemTypes">
     <ProjectType
+        language="S4X"
         extension="s4xproj"
         guid = "{2857B73E-F847-4B02-9238-064979017E34}"
         alias = "SyntactikProject"
-        type="Syntactik.MonoDevelop.SyntactikProject" 
+        type="Syntactik.MonoDevelop.Project.SyntactikProject" 
         msbuildSupport ="NotSupported "/>
   </Extension>
 
@@ -48,4 +49,18 @@
   <Extension path = "/MonoDevelop/TypeSystem/Parser">
     <Parser class="Syntactik.MonoDevelop.Parser.TypeSystemParser" mimeType = "text/x-syntactik4xml" />
   </Extension>
+  
+  
+  <Extension path = "/MonoDevelop/Ide/RunConfigurationEditors">
+    <Class class="Syntactik.MonoDevelop.Project.SyntactikProjectRunConfigurationEditor" runConfigurationType="MonoDevelop.Projects.ProjectRunConfiguration" />
+  </Extension>
+  
+  <Extension path = "/MonoDevelop/ProjectModel/Gui/ItemOptionPanels/Build/General">
+    <Condition id="ProjectTypeId" value="SyntactikProject">
+      <Panel id = "SyntactikCompilerOptionsPanel"
+			             _label = "S4X"
+			             class = "Syntactik.MonoDevelop.Project.CompilerOptionsPanel"/>
+    </Condition>
+  </Extension>  
+  
 </ExtensionModel>

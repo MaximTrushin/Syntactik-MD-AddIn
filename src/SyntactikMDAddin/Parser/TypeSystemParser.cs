@@ -1,15 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Mono.TextEditor;
-using Mono.TextEditor.Highlighting;
-using MonoDevelop.Ide.Editor;
 using MonoDevelop.Ide.TypeSystem;
-using Syntactik.Compiler;
-using Syntactik.Compiler.IO;
-using Syntactik.Compiler.Pipelines;
-using Syntactik.Compiler.Steps;
-using DocumentRegion = MonoDevelop.Ide.Editor.DocumentRegion;
+using Syntactik.MonoDevelop.Project;
 using TS = MonoDevelop.Ide.TypeSystem;
 
 namespace Syntactik.MonoDevelop.Parser

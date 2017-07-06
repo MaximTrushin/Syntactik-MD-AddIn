@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
@@ -16,10 +14,10 @@ using Syntactik.Compiler.Steps;
 using Syntactik.DOM;
 using Syntactik.MonoDevelop.Parser;
 
-namespace Syntactik.MonoDevelop
+namespace Syntactik.MonoDevelop.Project
 {
     [ProjectModelDataItem]
-    public class SyntactikProject : Project
+    public class SyntactikProject : global::MonoDevelop.Projects.Project
     {
         internal class ParseInfo
         {
@@ -48,7 +46,7 @@ namespace Syntactik.MonoDevelop
 
         protected override SolutionItemConfiguration OnCreateConfiguration(string name, ConfigurationKind kind = ConfigurationKind.Blank)
         {
-            ProjectConfiguration conf = new ProjectConfiguration(name);
+            var conf = new SyntactikProjectConfiguration(name);
             return conf;
         }
 
@@ -194,14 +192,6 @@ namespace Syntactik.MonoDevelop
             compilerParameters.Pipeline.Steps.Add(new ProcessAliasesAndNamespaces());
             compilerParameters.Pipeline.Steps.Add(new ValidateDocuments());
             return compilerParameters;
-        }
-
-        [ProjectModelDataItem]
-        public class SyntactikProjectConfiguration : ProjectConfiguration
-        {
-            public SyntactikProjectConfiguration(string id) : base(id)
-            {
-            }
         }
 
         public Dictionary<string, AliasDefinition> GetAliasDefinitionList()
