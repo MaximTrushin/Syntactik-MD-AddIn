@@ -58,12 +58,18 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\external\monodevelop\main\build\bin\Mono.Addins.dll</HintPath>
     </Reference>
+    <Reference Include="Mono.Debugging">
+      <HintPath>..\..\external\monodevelop\main\build\bin\Mono.Debugging.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.TextEditor, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\external\monodevelop\main\build\bin\Mono.TextEditor.dll</HintPath>
     </Reference>
     <Reference Include="MonoDevelop.Core">
       <HintPath>..\..\external\monodevelop\main\build\bin\MonoDevelop.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoDevelop.Debugger">
+      <HintPath>..\..\external\monodevelop\main\build\AddIns\MonoDevelop.Debugger\MonoDevelop.Debugger.dll</HintPath>
     </Reference>
     <Reference Include="MonoDevelop.Ide">
       <HintPath>..\..\external\monodevelop\main\build\bin\MonoDevelop.Ide.dll</HintPath>

@@ -6,7 +6,12 @@ using MonoDevelop.Projects;
 
 namespace Syntactik.MonoDevelop.Project
 {
-    class SyntactikProjectRunConfigurationEditor: RunConfigurationEditor
+    /// <summary>
+    /// This class is needed to display project's option dialog.
+    /// Extension /MonoDevelop/Ide/RunConfigurationEditors is looking for runConfigurationType="MonoDevelop.Projects.ProjectRunConfiguration".
+    /// This class is registered as the handler of this configuration type.
+    /// </summary>
+    class SyntactikProjectRunConfigurationEditor : RunConfigurationEditor
     {
         private readonly Notebook _widget;
 

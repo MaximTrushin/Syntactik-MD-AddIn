@@ -4,10 +4,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
+using Mono.Debugging.Client;
 using MonoDevelop.Core;
 using MonoDevelop.Core.Text;
 using MonoDevelop.Ide.TypeSystem;
 using MonoDevelop.Projects;
+using MonoDevelop.Debugger;
 using Syntactik.Compiler;
 using Syntactik.Compiler.IO;
 using Syntactik.Compiler.Steps;
@@ -30,11 +32,25 @@ namespace Syntactik.MonoDevelop.Project
 
         public SyntactikProject()
 		{
+            Init();
         }
 
         public SyntactikProject(ProjectCreateInformation info, XmlElement projectOptions): base(info, projectOptions)
         {
             Configurations.Add(CreateConfiguration("Default"));
+            Init();
+        }
+
+        private void Init()
+        {
+            //Preventing setting of brakepoints in files of Syntactik project.
+            var breakpoints = DebuggingService.Breakpoints;
+            breakpoints.CheckingReadOnly += BreakpointsOnCheckingReadOnly;
+        }
+
+        private void BreakpointsOnCheckingReadOnly(object sender, ReadOnlyCheckEventArgs readOnlyCheckEventArgs)
+        {
+            readOnlyCheckEventArgs.SetReadOnly(true);
         }
 
         internal Dictionary<string, Task<SyntactikParsedDocument>> CompiledDocuments { get; } = new Dictionary<string, Task<SyntactikParsedDocument>>();
