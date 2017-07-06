@@ -2,4 +2,5 @@
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="C:\Program Files (x86)\Xamarin Studio\bin\MonoDevelop.Ide.dll" /&gt;&#xD;
   &lt;Assembly Path="C:\_projects\Syntactik-MD-AddIn\external\monodevelop\main\build\bin\MonoDevelop.Ide.dll" /&gt;&#xD;
+  &lt;Assembly Path="C:\_projects\Syntactik-MD-AddIn\external\monodevelop\main\build\bin\MonoDevelop.Core.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String></wpf:ResourceDictionary>
