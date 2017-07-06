@@ -19,7 +19,7 @@
         extension="s4xproj"
         guid = "{2857B73E-F847-4B02-9238-064979017E34}"
         alias = "SyntactikProject"
-        type="Syntactik.MonoDevelop.Project.SyntactikProject" 
+        type="Syntactik.MonoDevelop.Project.SyntactikProject"
         msbuildSupport ="NotSupported "/>
   </Extension>
 
@@ -31,8 +31,8 @@
 
   <Extension path = "/MonoDevelop/Ide/FileTemplates">
     <FileTemplate id = "EmptyS4XFile" resource = "Syntactik.MonoDevelop.Templates.EmptyS4XFile.xft.xml"/>
-  </Extension>  
-  
+  </Extension>
+
   <Extension path = "/MonoDevelop/Core/MimeTypes">
     <MimeType id="text/x-syntactik4xml" _description="Syntactik for XMl source code" icon="md-csharp-file" isText="true">
       <File pattern="*.s4x" />
@@ -49,18 +49,19 @@
   <Extension path = "/MonoDevelop/TypeSystem/Parser">
     <Parser class="Syntactik.MonoDevelop.Parser.TypeSystemParser" mimeType = "text/x-syntactik4xml" />
   </Extension>
-  
-  
+
   <Extension path = "/MonoDevelop/Ide/RunConfigurationEditors">
-    <Class class="Syntactik.MonoDevelop.Project.SyntactikProjectRunConfigurationEditor" runConfigurationType="MonoDevelop.Projects.ProjectRunConfiguration" />
+    <Condition id="ProjectTypeId" value="SyntactikProject">
+      <Class class="Syntactik.MonoDevelop.Project.SyntactikProjectRunConfigurationEditor" runConfigurationType="MonoDevelop.Projects.ProjectRunConfiguration" />
+    </Condition>
   </Extension>
-  
+
   <Extension path = "/MonoDevelop/ProjectModel/Gui/ItemOptionPanels/Build/General">
     <Condition id="ProjectTypeId" value="SyntactikProject">
       <Panel id = "SyntactikCompilerOptionsPanel"
 			             _label = "S4X"
 			             class = "Syntactik.MonoDevelop.Project.CompilerOptionsPanel"/>
     </Condition>
-  </Extension>  
-  
+  </Extension>
+
 </ExtensionModel>

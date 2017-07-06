@@ -4,10 +4,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MonoDevelop.Ide.CodeCompletion;
-using MonoDevelop.Ide.Editor;
 using MonoDevelop.Ide.Editor.Extension;
-using MonoDevelop.Projects;
 using Syntactik.DOM.Mapped;
+using Syntactik.MonoDevelop.Project;
 using AliasDefinition = Syntactik.DOM.Mapped.AliasDefinition;
 
 namespace Syntactik.MonoDevelop.Completion
