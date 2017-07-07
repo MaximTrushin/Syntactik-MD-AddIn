@@ -18,7 +18,7 @@ namespace Syntactik.MonoDevelop.Project
                 if (string.IsNullOrEmpty(_xmlOutputFolder))
                 {
 
-                    _xmlOutputFolder = ParentItem.BaseDirectory + @"\Output\Xml";
+                    _xmlOutputFolder = ParentItem.BaseDirectory + @"\Output\";
                 }
 
                 return _xmlOutputFolder;
@@ -34,8 +34,8 @@ namespace Syntactik.MonoDevelop.Project
 
         public override FilePath OutputDirectory
         {
-            get { return this.ParentItem.BaseDirectory + @"\Output\"; }
-            set { }
+            get { return _xmlOutputFolder; }
+            set { _xmlOutputFolder = value; }
         }
         //public override void CopyFrom(ItemConfiguration configuration)
         //{

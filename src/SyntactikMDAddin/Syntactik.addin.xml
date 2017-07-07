@@ -51,9 +51,7 @@
   </Extension>
 
   <Extension path = "/MonoDevelop/Ide/RunConfigurationEditors">
-    <Condition id="ProjectTypeId" value="SyntactikProject">
       <Class class="Syntactik.MonoDevelop.Project.SyntactikProjectRunConfigurationEditor" runConfigurationType="MonoDevelop.Projects.ProjectRunConfiguration" />
-    </Condition>
   </Extension>
 
   <Extension path = "/MonoDevelop/ProjectModel/Gui/ItemOptionPanels/Build/General">

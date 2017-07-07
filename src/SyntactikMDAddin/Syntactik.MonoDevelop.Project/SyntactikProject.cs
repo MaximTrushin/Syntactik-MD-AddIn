@@ -12,6 +12,7 @@ using MonoDevelop.Projects;
 using MonoDevelop.Debugger;
 using Syntactik.Compiler;
 using Syntactik.Compiler.IO;
+using Syntactik.Compiler.Pipelines;
 using Syntactik.Compiler.Steps;
 using Syntactik.DOM;
 using Syntactik.MonoDevelop.Parser;
@@ -125,7 +126,7 @@ namespace Syntactik.MonoDevelop.Project
                 }
             }
 
-            var result = new SyntactikParsedDocument(fileName, version);
+          var result = new SyntactikParsedDocument(fileName, version);
             var compilerParameters = CreateParsingOnlyCompilerParameters(fileName, content, result, cancellationToken);
             var compiler = new SyntactikCompiler(compilerParameters);
             var context = compiler.Run();
@@ -151,11 +152,11 @@ namespace Syntactik.MonoDevelop.Project
                     );
                 if (!parseOnly)
                 {
-                    foreach (var item in CompileInfo) //TODO: Remove CompileInfo when file is deleted from the project
+                    foreach (var item in CompileInfo)
                     {
                         modules.Add((Module) item.Value.Document.Ast);
                     }
-                    compilerParameters = CreateValidationOnlyCompilerParameters(); //TODO: Use cancellation token
+                     compilerParameters = CreateValidationOnlyCompilerParameters(); //TODO: Use cancellation token
                     compiler = new SyntactikCompiler(compilerParameters);
                     context = compiler.Run(new CompileUnit {Modules = modules});
                     CleanNonParserErrors();
@@ -252,6 +253,47 @@ namespace Syntactik.MonoDevelop.Project
                     CompileInfo.Remove(file.OldName);
                 }
             }
+        }
+
+        protected override Task<BuildResult> DoBuild(ProgressMonitor monitor, ConfigurationSelector configuration)
+        {
+            var projectConfig = (SyntactikProjectConfiguration)this.GetConfiguration(configuration);
+            var compilerParameters = CreateCompilerParameters(projectConfig.XMLOutputFolder, GetProjectFiles(this));
+            var compiler = new SyntactikCompiler(compilerParameters);
+            var context = compiler.Run();
+            return Task.FromResult(GetBuildResult(context));
+        }
+
+        private BuildResult GetBuildResult(CompilerContext context)
+        {
+            var result = new BuildResult();
+            foreach (var error in context.Errors)
+            {
+                result.AddError(error.LexicalInfo.FileName, error.LexicalInfo.Line, error.LexicalInfo.Column, error.Code, error.Message);
+            }
+            return result;
+        }
+
+        private static IEnumerable<string> GetProjectFiles(SyntactikProject project)
+        {
+            var sources = project.Items.GetAll<ProjectFile>()
+                .Where(i => i.Subtype != Subtype.Directory && i.FilePath.Extension.ToLower() == ".s4x")
+                .Select(i => i.FilePath.FullPath.ToString());
+            return sources;
+        }
+
+
+        private static CompilerParameters CreateCompilerParameters(string outputDirectory, IEnumerable<string> files)
+        {
+            var compilerParameters = new CompilerParameters
+            {
+                Pipeline = new CompileToFiles(),
+                OutputDirectory = outputDirectory
+            };
+            foreach (var file in files)
+                compilerParameters.Input.Add(new FileInput(file));
+
+            return compilerParameters;
         }
     }
 }
