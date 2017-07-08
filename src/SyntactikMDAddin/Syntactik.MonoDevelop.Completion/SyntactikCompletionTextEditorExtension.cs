@@ -107,7 +107,7 @@ namespace Syntactik.MonoDevelop.Completion
                     data = new CompletionItem(ItemType.AliasNamespace);
                     items.Add(data);
                     data.CompletionCategory = category;
-                    //data.Icon = MalinaIcons.Namespace;
+                    data.Icon = SyntactikIcons.Namespace;
                     var name = alias.Substring(0, alias.Length - 1);
                     if (string.IsNullOrEmpty(prefix))
                         data.DisplayText = "$" + name;
@@ -123,7 +123,7 @@ namespace Syntactik.MonoDevelop.Completion
                     data = new CompletionItem(ItemType.Alias);
                     items.Add(data);
                     data.CompletionCategory = category;
-                    //data.Icon = MalinaIcons.Alias;
+                    data.Icon = SyntactikIcons.Alias;
                     if (string.IsNullOrEmpty(prefix))
                     { 
                         data.DisplayText = "$" + alias;

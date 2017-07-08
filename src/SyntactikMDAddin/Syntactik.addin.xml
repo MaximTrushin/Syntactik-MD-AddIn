@@ -61,5 +61,17 @@
 			             class = "Syntactik.MonoDevelop.Project.CompilerOptionsPanel"/>
     </Condition>
   </Extension>
+  
+  <Extension path = "/MonoDevelop/Core/StockIcons">
+    <StockIcon stockid = "ml-element" resource = "Syntactik.MonoDevelop.icons.element-16.png" size="Menu"/>
+    <StockIcon stockid = "ml-element-opt" resource = "Syntactik.MonoDevelop.icons.element-opt-16.png" size="Menu"/>
+    <StockIcon stockid = "ml-namespace-decl" resource = "Syntactik.MonoDevelop.icons.namespace-decl-16.png" size="Menu"/>
+    <StockIcon stockid = "ml-alias" resource = "Syntactik.MonoDevelop.icons.alias-16.png" size="Menu"/>
+    <StockIcon stockid = "ml-namespace" resource = "Syntactik.MonoDevelop.icons.namespace-16.png" size="Menu"/>
+    <StockIcon stockid = "ml-attribute" resource = "Syntactik.MonoDevelop.icons.attribute-16.png" size="Menu"/>
+    <StockIcon stockid = "ml-attribute-opt" resource = "Syntactik.MonoDevelop.icons.attribute-opt-16.png" size="Menu"/>
+    <StockIcon stockid = "ml-argument" resource = "Syntactik.MonoDevelop.icons.argument-16.png" size="Menu"/>
+    <StockIcon stockid = "ml-enum" resource = "Syntactik.MonoDevelop.icons.enum-16.png" size="Menu"/>
+  </Extension>
 
 </ExtensionModel>

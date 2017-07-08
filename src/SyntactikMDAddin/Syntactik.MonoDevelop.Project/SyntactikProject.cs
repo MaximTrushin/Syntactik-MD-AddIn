@@ -49,6 +49,13 @@ namespace Syntactik.MonoDevelop.Project
             breakpoints.CheckingReadOnly += BreakpointsOnCheckingReadOnly;
         }
 
+        protected override void OnDispose()
+        {
+            var breakpoints = DebuggingService.Breakpoints;
+            breakpoints.CheckingReadOnly -= BreakpointsOnCheckingReadOnly;
+            base.OnDispose();
+        }
+
         private void BreakpointsOnCheckingReadOnly(object sender, ReadOnlyCheckEventArgs readOnlyCheckEventArgs)
         {
             readOnlyCheckEventArgs.SetReadOnly(true);
