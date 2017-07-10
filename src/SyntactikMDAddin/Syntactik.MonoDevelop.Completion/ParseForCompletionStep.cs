@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using Syntactik.Compiler;
 using Syntactik.Compiler.Steps;
 using Syntactik.DOM;
 using Syntactik.IO;
@@ -12,11 +13,12 @@ namespace Syntactik.MonoDevelop.Parser
     public class ParseForCompletionStep : Parse
     {
         private readonly CancellationToken _cancellationToken;
+        private readonly ICharStream _input;
 
-        public ParseForCompletionStep(CancellationToken cancellationToken):base()
+        public ParseForCompletionStep(CancellationToken cancellationToken, ICharStream input)
         {
             _cancellationToken = cancellationToken;
-            
+            _input = input;
         }
 
         protected override Syntactik.Parser GetParser(Module module, ICharStream input)
@@ -31,7 +33,19 @@ namespace Syntactik.MonoDevelop.Parser
         protected override void DoParse(string fileName, TextReader reader)
         {
             _context.InMemoryOutputObjects = new Dictionary<string, object>();
-            base.DoParse(fileName, reader);
+            try
+            {
+                var module = CreateModule(fileName);
+                _context.CompileUnit.AppendChild(module);
+                Syntactik.Parser parser = GetParser(module, _input);
+                var errorListener = new ErrorListener(_context, fileName);
+                parser.ErrorListeners.Add(errorListener);
+                parser.ParseModule(fileName);
+            }
+            catch (Exception ex)
+            {
+                _context.AddError(CompilerErrorFactory.FatalError(ex));
+            }
 
         }
     }

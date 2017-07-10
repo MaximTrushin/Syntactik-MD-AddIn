@@ -25,6 +25,7 @@ namespace Syntactik.MonoDevelop.Completion.DOM
             var member = child as ModuleMember;
             if (member != null)
             {
+                child.InitializeParent(this);
                 _entity = null;
                 _members = null;
                 _moduleDocument = null;
@@ -35,14 +36,11 @@ namespace Syntactik.MonoDevelop.Completion.DOM
             var entity = child as Entity;
             if (entity != null)
             {
+                child.InitializeParent(this);
                 _moduleDocument = null;
                 _members = null;
                 _member = null;
                 _entity = entity;
-            }
-            else
-            {
-                base.AppendChild(child);
             }
         }
 

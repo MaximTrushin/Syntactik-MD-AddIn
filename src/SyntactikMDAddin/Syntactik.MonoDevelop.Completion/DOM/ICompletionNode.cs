@@ -8,6 +8,6 @@ namespace Syntactik.MonoDevelop.Completion.DOM
 {
     public interface ICompletionNode
     {
-        void DeleteChildrenNodes();
+        void StoreStringValues();
     }
 }

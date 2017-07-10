@@ -3,7 +3,7 @@ using Syntactik.DOM;
 
 namespace Syntactik.MonoDevelop.Completion.DOM
 {
-    public class NamespaceDefinition : Syntactik.DOM.Mapped.NamespaceDefinition
+    public class NamespaceDefinition : Syntactik.DOM.Mapped.NamespaceDefinition, ICompletionNode
     {
         public override void AppendChild(Pair child)
         {
@@ -12,8 +12,10 @@ namespace Syntactik.MonoDevelop.Completion.DOM
                 InterpolationItems = new List<object> { child };
                 child.InitializeParent(this);
             }
-            else
-                base.AppendChild(child);
+        }
+
+        public void StoreStringValues()
+        {
         }
     }
 }

@@ -5,8 +5,11 @@ using Syntactik.Compiler;
 using Syntactik.Compiler.IO;
 using Syntactik.Compiler.Steps;
 using Syntactik.DOM;
+using Syntactik.IO;
+using Syntactik.MonoDevelop.Completion.DOM;
 using Mapped = Syntactik.DOM.Mapped;
 using Syntactik.MonoDevelop.Parser;
+using AliasDefinition = Syntactik.DOM.AliasDefinition;
 
 namespace Syntactik.MonoDevelop.Completion
 {
@@ -31,11 +34,24 @@ namespace Syntactik.MonoDevelop.Completion
             _cancellationToken = cancellationToken;
         }
 
+        //public void Parse()
+        //{
+        //    var compilerParameters = CreateCompilerParametersForCompletion(_fileName, _text, _offset);
+        //    var compiler = new SyntactikCompiler(compilerParameters);
+        //    var context = compiler.Run();
+        //    object lastPair;
+        //    if (context.InMemoryOutputObjects.TryGetValue("LastPair", out lastPair))
+        //        LastPair = (Pair)lastPair;
+        //}
+
         public void CalculateExpectations()
         {
-            var compilerParameters = CreateCompilerParameters(_fileName, _text, _offset);
+            InputStream input;
+            var compilerParameters = CreateCompilerParametersForCompletion(_fileName, _text, _offset, out input);
             var compiler = new SyntactikCompiler(compilerParameters);
             var context = compiler.Run();
+            StoreValues(context);
+            input.Dispose();
             InTag = CompletionExpectation.NoExpectation;
 
             //var visitor = new CompletionContextVisitor();
@@ -101,17 +117,35 @@ namespace Syntactik.MonoDevelop.Completion
             }
         }
 
+        private void StoreValues(CompilerContext context)
+        {
+            var visitor = new CompletionVisitor();
+            visitor.Visit(context.CompileUnit.Modules[0]);
+        }
+
         private void AddExpectation(CompletionExpectation expectation)
         {
             Expectations.Add(expectation);
         }
 
-        private CompilerParameters CreateCompilerParameters(string fileName, string content, int offset)
+        private CompilerParameters CreateCompilerParametersForCompletion(string fileName, string content, int offset, out InputStream input)
         {
             var compilerParameters = new CompilerParameters { Pipeline = new CompilerPipeline() };
-            compilerParameters.Pipeline.Steps.Add(new ParseForCompletionStep(_cancellationToken));
-            compilerParameters.Input.Add(new StringInput(fileName, content.Substring(0, offset < content.Length?offset + 1: content.Length)));
+            input = new InputStream(content, offset < content.Length ? offset + 1 : content.Length); //This is performance hack to prevent copying of editors content.
+            compilerParameters.Pipeline.Steps.Add(new ParseForCompletionStep(_cancellationToken, input));
+                
+            compilerParameters.Input.Add(new StringInput(fileName, content)); //This input is not really used. This is hack to prevent copying of editors content
             return compilerParameters;
+        }
+
+        internal class CompletionVisitor : SyntactikDepthFirstVisitor
+        {
+            protected override void OnPair(Pair pair)
+            {
+                var cn = pair as ICompletionNode;
+                cn?.StoreStringValues();
+                base.OnPair(pair);
+            }
         }
     }
 

@@ -4,7 +4,7 @@ using Syntactik.DOM;
 
 namespace Syntactik.MonoDevelop.Completion.DOM
 {
-    public class Scope : Syntactik.DOM.Mapped.Element
+    public class Scope : Syntactik.DOM.Mapped.Element, ICompletionNode
     {
         private Entity _entity;
         public override void AppendChild(Pair child)
@@ -20,10 +20,6 @@ namespace Syntactik.MonoDevelop.Completion.DOM
             {
                 _entity = item;
             }
-            else
-            {
-                base.AppendChild(child);
-            }
         }
         public override PairCollection<Entity> Entities
         {
@@ -35,6 +31,9 @@ namespace Syntactik.MonoDevelop.Completion.DOM
                 return _entities;
             }
             set { throw new NotImplementedException(); }
+        }
+        public void StoreStringValues()
+        {
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Syntactik.MonoDevelop.Completion.DOM
     /// It can have zero or many Namespace definitions.
     /// It also can have either one entity.
     /// </summary>
-    public class Document: Syntactik.DOM.Mapped.Document
+    public class Document: Syntactik.DOM.Mapped.Document, ICompletionNode
     {
         private Entity _entity;
 
@@ -18,6 +18,7 @@ namespace Syntactik.MonoDevelop.Completion.DOM
             var ns = child as NamespaceDefinition;
             if (ns != null)
             {
+                child.InitializeParent(this);
                 NamespaceDefinitions.Add(ns);
                 return;
             }
@@ -25,12 +26,12 @@ namespace Syntactik.MonoDevelop.Completion.DOM
             var entity = child as Entity;
             if (entity != null)
             {
+                child.InitializeParent(this);
                 DocumentElement = entity;
                 _entities = null;
                 _entity = entity;
                 return;
             }
-            base.AppendChild(child);
         }
 
         public override PairCollection<Entity> Entities
@@ -43,6 +44,12 @@ namespace Syntactik.MonoDevelop.Completion.DOM
                 return _entities; 
             }
             set { throw new NotImplementedException(); }
+        }
+        public void StoreStringValues()
+        {
+            if (Name != null)
+            {
+            }
         }
     }
 }
