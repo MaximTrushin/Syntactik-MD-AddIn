@@ -119,6 +119,7 @@
     <Compile Include="Syntactik.MonoDevelop.Highlighting\SyntactikSyntaxMode.cs" />
     <Compile Include="Syntactik.MonoDevelop.Parser\ErrorHandlerTextEditorExtension.cs" />
     <Compile Include="Syntactik.MonoDevelop.Parser\FoldingReportingPairFactory.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Parser\FoldingTextEditorExtension.cs" />
     <Compile Include="Syntactik.MonoDevelop.Parser\ParseAndCreateFoldingStep.cs" />
     <Compile Include="Syntactik.MonoDevelop.Parser\SyntactikParsedDocument.cs" />
     <Compile Include="Syntactik.MonoDevelop.Parser\TypeSystemParser.cs" />

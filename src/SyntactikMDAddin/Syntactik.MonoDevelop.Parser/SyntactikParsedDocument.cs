@@ -20,54 +20,11 @@ namespace Syntactik.MonoDevelop.Parser
 
         public ITextSourceVersion ContentVersion { get; }
 
-        readonly SemaphoreSlim foldingsSemaphore = new SemaphoreSlim(1, 1);
-
         public override Task<IReadOnlyList<FoldingRegion>> GetFoldingsAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (Foldings == null)
-            {
-                return Task.Run(async delegate
-                {
-                    bool locked = false;
-                    try
-                    {
-                        locked = await foldingsSemaphore.WaitAsync(Timeout.Infinite, cancellationToken);
-                      
-                        if (Foldings == null)
-                            Foldings = (await GenerateFoldings(cancellationToken)).ToList();
-                    }
-                    finally
-                    {
-                        if (locked)
-                            foldingsSemaphore.Release();
-                    }
-                    return Foldings as IReadOnlyList<FoldingRegion>;
-                }, cancellationToken);
-            }
-            return Task.FromResult(Foldings as IReadOnlyList<FoldingRegion>);
+            return Task.FromResult(new List<FoldingRegion>() as IReadOnlyList<FoldingRegion>);
         }
 
-        async Task<IEnumerable<FoldingRegion>> GenerateFoldings(CancellationToken cancellationToken)
-        {
-            return GenerateFoldingsInternal(await GetCommentsAsync(cancellationToken), cancellationToken);
-        }
-
-
-        IEnumerable<FoldingRegion> GenerateFoldingsInternal(IReadOnlyList<Comment> comments, CancellationToken cancellationToken)
-        {
-            foreach (var fold in comments.ToFolds())
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                yield return fold;
-            }
-
-
-            foreach (var fold in Foldings)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                yield return fold;
-            }
-        }
 
         public void AddErrors(IEnumerable<CompilerError> contextErrors)
         {
