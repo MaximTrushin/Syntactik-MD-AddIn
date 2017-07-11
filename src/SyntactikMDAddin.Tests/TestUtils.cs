@@ -1,14 +1,10 @@
 ﻿using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Remoting.Messaging;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Mono.TextEditor;
 using Mono.TextEditor.Highlighting;
 using MonoDevelop.Ide.CodeCompletion;
@@ -17,10 +13,8 @@ using Syntactik.Compiler;
 using Syntactik.Compiler.IO;
 using Syntactik.Compiler.Pipelines;
 using Syntactik.DOM;
-using Syntactik.MonoDevelop;
 using Syntactik.MonoDevelop.Completion;
 using Syntactik.MonoDevelop.Highlighting;
-using Syntactik.MonoDevelop.Parser;
 using CompilerParameters = Syntactik.Compiler.CompilerParameters;
 
 namespace SyntactikMDAddin.Tests
@@ -82,9 +76,11 @@ namespace SyntactikMDAddin.Tests
             var compilerContext = compiler.Run();
             var module = compilerContext.CompileUnit.Modules[0];
 
+            Dictionary<string, AliasDefinition> aliasDefs = null;
             Func<Dictionary<string, AliasDefinition>> func = () =>
             {
-                var aliasDefs = new Dictionary<string, AliasDefinition>();
+                if (aliasDefs != null) return aliasDefs;
+                aliasDefs = new Dictionary<string, AliasDefinition>();
                 foreach (var moduleMember in module.Members)
                 {
                     var aliasDef = moduleMember as AliasDefinition;
@@ -99,18 +95,8 @@ namespace SyntactikMDAddin.Tests
             var lines = text.Split();
             var lastLine = lines[lines.Length - 1];
             var codeCompletionContext = new CodeCompletionContext { TriggerLineOffset = lastLine.Length > 0 ? lastLine.Length - 1 : 0 };
-            var list = SyntactikCompletionTextEditorExtension.GetCompletionList(context, codeCompletionContext, 0, func).Result;
+            var list = SyntactikCompletionTextEditorExtension.GetCompletionList(context, codeCompletionContext, 0, func);
             return string.Join("\n", list.Select(item => item.CompletionText));
-        }
-
-        private static string CompletionListToString(ICompletionDataList list)
-        {
-            var sb = new StringBuilder();
-            foreach (var item in list)
-            {
-                sb.Append(item.CompletionText);
-            }
-            return sb.ToString();
         }
 
         private static CompilerParameters CreateCompilerParameters(string fileName, string content)

@@ -120,7 +120,7 @@ namespace Syntactik.MonoDevelop.Project
             ParseSyntactikDocument(fileName, content, null, new CancellationToken());
         }
 
-        internal SyntactikParsedDocument ParseSyntactikDocument(string fileName, string content,
+        internal Task<SyntactikParsedDocument> ParseSyntactikDocument(string fileName, string content,
             ITextSourceVersion version, CancellationToken cancellationToken, bool parseOnly = false)
         {
             ParseInfo info;
@@ -129,11 +129,11 @@ namespace Syntactik.MonoDevelop.Project
                 if (info.Version != null && version.BelongsToSameDocumentAs(info.Version) &&
                     version.CompareAge(info.Version) == 0)
                 {
-                    return info.Document;
+                    return Task.FromResult(info.Document);
                 }
             }
 
-          var result = new SyntactikParsedDocument(fileName, version);
+            var result = new SyntactikParsedDocument(fileName, version);
             var compilerParameters = CreateParsingOnlyCompilerParameters(fileName, content, result, cancellationToken);
             var compiler = new SyntactikCompiler(compilerParameters);
             var context = compiler.Run();
@@ -163,14 +163,14 @@ namespace Syntactik.MonoDevelop.Project
                     {
                         modules.Add((Module) item.Value.Document.Ast);
                     }
-                     compilerParameters = CreateValidationOnlyCompilerParameters(); //TODO: Use cancellation token
+                    compilerParameters = CreateValidationOnlyCompilerParameters(); //TODO: Use cancellation token
                     compiler = new SyntactikCompiler(compilerParameters);
                     context = compiler.Run(new CompileUnit {Modules = modules});
                     CleanNonParserErrors();
                     AddValidationError(context.Errors);
                 }
             }
-            return result;
+            return Task.FromResult(result);
         }
 
         private void AddValidationError(SortedSet<CompilerError> errors)

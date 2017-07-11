@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Syntactik.DOM;
+using Syntactik.IO;
 
 namespace Syntactik.MonoDevelop.Completion.DOM
 {
@@ -11,45 +12,43 @@ namespace Syntactik.MonoDevelop.Completion.DOM
     /// </summary>
     public class Document: Syntactik.DOM.Mapped.Document, ICompletionNode
     {
-        private Entity _entity;
+        private readonly ICharStream _input;
 
-        public override void AppendChild(Pair child)
+        internal Document(ICharStream input)
         {
-            var ns = child as NamespaceDefinition;
-            if (ns != null)
-            {
-                child.InitializeParent(this);
-                NamespaceDefinitions.Add(ns);
-                return;
-            }
-
-            var entity = child as Entity;
-            if (entity != null)
-            {
-                child.InitializeParent(this);
-                DocumentElement = entity;
-                _entities = null;
-                _entity = entity;
-                return;
-            }
+            _input = input;
         }
-
-        public override PairCollection<Entity> Entities
+        public override string Name
         {
             get
             {
-                if (_entities != null) return _entities;
-                _entities = new PairCollection<Entity>(this);
-                if (_entity != null) _entities.Add(_entity);
-                return _entities; 
+                if (base.Name != null) return base.Name;
+                base.Name = Element.GetNameText(_input, NameQuotesType, NameInterval).Substring(1);
+                return base.Name;
             }
-            set { throw new NotImplementedException(); }
+            set { base.Name = value; }
         }
+
+        private Pair _lastAddedChild;
+        public override void AppendChild(Pair child)
+        {
+            var completionNode = _lastAddedChild as ICompletionNode;
+            completionNode?.DeleteChildren();
+            _lastAddedChild = child;
+            base.AppendChild(child);
+        }
+
         public void StoreStringValues()
         {
             if (Name != null)
             {
             }
+        }
+
+        public void DeleteChildren()
+        {
+            InterpolationItems = null;
+            _entities = null;
         }
     }
 }

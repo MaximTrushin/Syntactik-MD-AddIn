@@ -6,7 +6,6 @@ namespace Syntactik.MonoDevelop.Completion.DOM
 {
     public class Argument : Syntactik.DOM.Mapped.Argument, ICompletionNode
     {
-        private Entity _entity;
         private readonly ICharStream _input;
 
         internal Argument(ICharStream input)
@@ -25,32 +24,26 @@ namespace Syntactik.MonoDevelop.Completion.DOM
             set { base.Name = value; }
         }
 
+        private Pair _lastAddedChild;
         public override void AppendChild(Pair child)
         {
-            var item = child as Entity;
-            if (item != null)
-            {
-                _entity = item;
-                child.InitializeParent(this);
-            }
+            var completionNode = _lastAddedChild as ICompletionNode;
+            completionNode?.DeleteChildren();
+            _lastAddedChild = child;
+            base.AppendChild(child);
         }
 
-        public override PairCollection<Entity> Entities
-        {
-            get
-            {
-                if (_entities != null) return _entities;
-                _entities = new PairCollection<Entity>(this);
-                if (_entity != null) _entities.Add(_entity);
-                return _entities;
-            }
-            set { throw new NotImplementedException(); }
-        }
         public void StoreStringValues()
         {
             if (Name != null)
             {
             }
+        }
+
+        public void DeleteChildren()
+        {
+            InterpolationItems = null;
+            _entities = null;
         }
     }
 }

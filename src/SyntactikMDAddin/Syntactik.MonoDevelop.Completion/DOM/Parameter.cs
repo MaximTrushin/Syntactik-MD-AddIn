@@ -1,40 +1,48 @@
 ﻿using System;
 using System.Collections.Generic;
 using Syntactik.DOM;
+using Syntactik.IO;
 
 namespace Syntactik.MonoDevelop.Completion.DOM
 {
     public class Parameter : Syntactik.DOM.Mapped.Parameter, ICompletionNode
     {
-        private Entity _entity;
-        public override void AppendChild(Pair child)
+        private readonly ICharStream _input;
+
+        internal Parameter(ICharStream input)
         {
-            if (Delimiter == DelimiterEnum.EC)
-            {
-                InterpolationItems = new List<object> { child };
-                child.InitializeParent(this);
-                return;
-            }
-            var item = child as Entity;
-            if (item != null)
-            {
-                child.InitializeParent(this);
-                _entity = item;
-            }
+            _input = input;
         }
-        public override PairCollection<Entity> Entities
+        public override string Name
         {
             get
             {
-                if (_entities != null) return _entities;
-                _entities = new PairCollection<Entity>(this);
-                if (_entity != null) _entities.Add(_entity);
-                return _entities;
+                if (base.Name != null) return base.Name;
+                base.Name = Element.GetNameText(_input, NameQuotesType, NameInterval).Substring(1);
+                return base.Name;
             }
-            set { throw new NotImplementedException(); }
+            set { base.Name = value; }
+        }
+
+        private Pair _lastAddedChild;
+        public override void AppendChild(Pair child)
+        {
+            var completionNode = _lastAddedChild as ICompletionNode;
+            completionNode?.DeleteChildren();
+            _lastAddedChild = child;
+            base.AppendChild(child);
         }
         public void StoreStringValues()
         {
+            if (Name != null)
+            {
+            }
+        }
+
+        public void DeleteChildren()
+        {
+            InterpolationItems = null;
+            _entities = null;
         }
     }
 }

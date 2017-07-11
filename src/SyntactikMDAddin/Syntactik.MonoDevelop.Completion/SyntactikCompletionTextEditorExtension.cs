@@ -3,27 +3,39 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Gtk;
+using MonoDevelop.Components;
 using MonoDevelop.Ide.CodeCompletion;
 using MonoDevelop.Ide.Editor.Extension;
-using Syntactik.DOM.Mapped;
+using MonoDevelop.Ide.Gui.Content;
+using Syntactik.DOM;
 using Syntactik.MonoDevelop.Project;
+using Alias = Syntactik.DOM.Mapped.Alias;
 using AliasDefinition = Syntactik.DOM.Mapped.AliasDefinition;
+using Argument = Syntactik.DOM.Mapped.Argument;
 
 namespace Syntactik.MonoDevelop.Completion
 {
-    public class SyntactikCompletionTextEditorExtension : CompletionTextEditorExtension
+    public class SyntactikCompletionTextEditorExtension : CompletionTextEditorExtension, IPathedDocument
     {
+        private readonly object _syncLock = new object();
+        private PathEntry[] _currentPath;
+        private bool _pathUpdateQueued;
+        private CompletionContextTask _completionContextTask;
         public override string CompletionLanguage => "S4X";
 
-        //protected override void Initialize()
-        //{
-        //    base.Initialize();
-        //}
 
-        //public override void Dispose()
-        //{
-        //    base.Dispose();
-        //}
+        protected override void Initialize()
+        {
+            base.Initialize();
+            Editor.CaretPositionChanged += HandleCaretPositionChanged;
+        }
+
+        public override void Dispose()
+        {
+            Editor.CaretPositionChanged -= HandleCaretPositionChanged;
+            base.Dispose();
+        }
 
         public override Task<ICompletionDataList> CodeCompletionCommand(CodeCompletionContext completionContext)
         {
@@ -34,7 +46,7 @@ namespace Syntactik.MonoDevelop.Completion
             return HandleCodeCompletion(completionContext, true, default(CancellationToken), 0);
         }
 
-        public override Task<ICompletionDataList> HandleCodeCompletionAsync(CodeCompletionContext completionContext,
+        public override async Task<ICompletionDataList> HandleCodeCompletionAsync(CodeCompletionContext completionContext,
             char completionChar, CancellationToken token = default(CancellationToken))
         {
             Editor.EnsureCaretIsNotVirtual();
@@ -43,26 +55,50 @@ namespace Syntactik.MonoDevelop.Completion
 
             if (pos <= 0 || ch != completionChar) return null;
 
-            int triggerWordLength = 0;
-            if (IsCompletionChar(completionChar))
-            {
-                if (completionContext.TriggerOffset > 1 && char.IsLetterOrDigit(Editor.GetCharAt(completionContext.TriggerOffset - 2)))
-                    return null;
-                triggerWordLength = 1;
-            }
-            return HandleCodeCompletion(completionContext, false, token, triggerWordLength);
+            if (!IsCompletionChar(completionChar)) return null;
+            if (completionContext.TriggerOffset > 1 && char.IsLetterOrDigit(Editor.GetCharAt(completionContext.TriggerOffset - 2)))
+                return null;
+            const int triggerWordLength = 1;
+            return await HandleCodeCompletion(completionContext, false, token, triggerWordLength);
         }
 
         protected virtual Task<ICompletionDataList> HandleCodeCompletion(CodeCompletionContext completionContext, bool forced, 
             CancellationToken token, int triggerWordLength)
         {
-            CompletionContext context = new CompletionContext(Editor.FileName, Editor.Text, Editor.CaretOffset, ((SyntactikProject)DocumentContext.Project).GetAliasDefinitionList, token);
-            context.CalculateExpectations();
-
-            return GetCompletionList(context, completionContext, triggerWordLength, ((SyntactikProject)DocumentContext.Project).GetAliasDefinitionList);
+            return Task.Run(
+                async () => {
+                    //CompletionContext context = new CompletionContext(Editor.FileName, Editor.Text, Editor.CaretOffset, ((SyntactikProject)DocumentContext.Project).GetAliasDefinitionList, token);
+                    
+                    CompletionContext context = await GetCompletionContextAsync(token);
+                    context.CalculateExpectations();
+                    return GetCompletionList(context, completionContext, triggerWordLength,
+                        ((SyntactikProject) DocumentContext.Project).GetAliasDefinitionList);
+                }, token
+            );
         }
 
-        protected internal static Task<ICompletionDataList> GetCompletionList(CompletionContext context, 
+        private Task<CompletionContext> GetCompletionContextAsync(CancellationToken token)
+        {
+            lock (_syncLock)
+            {
+                if (_completionContextTask != null)
+                {
+                    if (_completionContextTask.Version.BelongsToSameDocumentAs(Editor.Version) &&
+                    _completionContextTask.Version.CompareAge(Editor.Version) == 0)
+                        return _completionContextTask.Task;
+                }
+                _completionContextTask = new CompletionContextTask (Task.Run(
+                    () => {
+                        CompletionContext context = new CompletionContext(Editor.FileName, Editor.Text, Editor.CaretOffset, ((SyntactikProject)DocumentContext.Project).GetAliasDefinitionList, token);
+                        context.Parse();
+                        return context;
+                    }, token
+                ), Editor.Version);
+                return _completionContextTask.Task;
+            }
+        }
+
+        protected internal static ICompletionDataList GetCompletionList(CompletionContext context, 
             CodeCompletionContext editorCompletionContext, 
             int triggerWordLength,
             Func<Dictionary<string, Syntactik.DOM.AliasDefinition>> aliasListFunc)
@@ -75,9 +111,9 @@ namespace Syntactik.MonoDevelop.Completion
                     DoAliasCompletion(completionList, context, editorCompletionContext, aliasListFunc);
                 }
                 if (expectation==CompletionExpectation.Argument)
-                    DoArgumentCompletion(completionList, context, editorCompletionContext, aliasListFunc);
+                    DoArgumentCompletion(completionList, context, aliasListFunc);
             }
-            return Task.FromResult<ICompletionDataList>(completionList);
+            return completionList;
         }
 
         private static void DoAliasCompletion(CompletionDataList completionList, CompletionContext context, 
@@ -139,7 +175,6 @@ namespace Syntactik.MonoDevelop.Completion
         }
 
         private static void DoArgumentCompletion(CompletionDataList completionList, CompletionContext context,
-            CodeCompletionContext editorCompletionContext,
             Func<Dictionary<string, Syntactik.DOM.AliasDefinition>> aliasListFunc, bool valuesOnly = false)
         {
             Alias alias;
@@ -163,6 +198,7 @@ namespace Syntactik.MonoDevelop.Completion
                 data.CompletionCategory = category;
                 data.DisplayText = "%" + parameter.Name + (parameter.IsValueNode?" =": ": ");
                 data.CompletionText = data.DisplayText;
+                data.Icon = SyntactikIcons.Argument;
             }
             completionList.AddRange(items.OrderBy(i => i.DisplayText));
         }
@@ -170,6 +206,7 @@ namespace Syntactik.MonoDevelop.Completion
         // return false if completion can't be shown
         public override bool GetCompletionCommandOffset(out int cpos, out int wlen)
         {
+            Editor.EnsureCaretIsNotVirtual();
             cpos = wlen = 0;
             int pos = Editor.CaretOffset - 1;
             while (pos >= 0)
@@ -228,6 +265,88 @@ namespace Syntactik.MonoDevelop.Completion
             //Getting list of aliases
             return
                 aliasListFunc?.Invoke().Where(a => ((AliasDefinition) a.Value).IsValueNode == valuesOnly);
+        }
+
+        public Control CreatePathWidget(int index)
+        {
+            var menu = new Menu();
+            var mi = new MenuItem("Select");
+            mi.Activated += delegate
+            {
+                SelectPath(index);
+            };
+            menu.Add(mi);
+            mi = new MenuItem("Select Content");
+            mi.Activated += delegate
+            {
+                SelectContent(index);
+            };
+            menu.Add(mi);
+            mi = new MenuItem("Select Next Node");
+            mi.Activated += delegate
+            {
+                SelectNextNode(index);
+            };
+            menu.Add(mi);
+            menu.ShowAll();
+            return menu;
+        }
+
+        private void SelectNextNode(int index)
+        {
+            
+        }
+
+        private void SelectContent(int index)
+        {
+            
+        }
+
+        private void SelectPath(int index)
+        {
+
+        }
+
+        public PathEntry[] CurrentPath => _currentPath;
+        public event EventHandler<DocumentPathChangedEventArgs> PathChanged;
+
+        private void HandleCaretPositionChanged(object sender, EventArgs e)
+        {
+            if (_pathUpdateQueued)
+                return;
+            _pathUpdateQueued = true;
+          GLib.Timeout.Add(500, delegate
+            {
+                _pathUpdateQueued = false;
+                //UpdatePath();
+                return false;
+            });
+        }
+
+        private void UpdatePath()
+        {
+            var s = this.Editor.GetFoldingsContaining(Editor.CaretOffset);
+            //var content = (DocumentContext as global::MonoDevelop.Ide.Gui.Document).
+
+             CompletionContext context = new CompletionContext(Editor.FileName, Editor.Text, Editor.CaretOffset, null, new CancellationToken());
+            //context.Parse();
+            List<PathEntry> path = GetPath(context.LastPair);
+
+            PathEntry[] oldPath = _currentPath;
+            _currentPath = path.ToArray();
+
+            PathChanged?.Invoke(this, new DocumentPathChangedEventArgs(oldPath));
+        }
+
+        private List<PathEntry> GetPath(Pair lastPair)
+        {
+            var pair = lastPair;
+            var list = new List<PathEntry>();
+            //while (pair != null)
+            //{
+                
+            //}
+            return list;
         }
     }
 }

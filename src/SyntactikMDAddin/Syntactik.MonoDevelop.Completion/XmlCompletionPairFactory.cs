@@ -61,7 +61,7 @@ namespace Syntactik.MonoDevelop.Completion
 
                 var tuple = Element.GetNameAndNs(nameText.Substring(1), nameQuotesType);
                 var ns = string.IsNullOrEmpty(tuple.Item1) ? null : tuple.Item1;
-                pair = new DOM.Attribute
+                pair = new DOM.Attribute(input)
                 {
                     NsPrefix = ns,
                     //Name = VerifyName(tuple.Item2, nameInterval, _module),
@@ -97,7 +97,7 @@ namespace Syntactik.MonoDevelop.Completion
             {
                 if (delimiter == DelimiterEnum.None)
                     delimiter = DelimiterEnum.EE;
-                pair = new DOM.NamespaceDefinition
+                pair = new DOM.NamespaceDefinition(input)
                 {
                     //Name = VerifyNsName(nameText.Substring(2), nameInterval, _module),
                     NameInterval = nameInterval,
@@ -112,7 +112,7 @@ namespace Syntactik.MonoDevelop.Completion
             }
             else if (nameText.StartsWith("!%"))
             {
-                pair = new DOM.Parameter
+                pair = new DOM.Parameter(input)
                 {
                     //Name = VerifyNsName(nameText.Substring(2), nameInterval, _module),
                     NameInterval = nameInterval,
@@ -129,7 +129,7 @@ namespace Syntactik.MonoDevelop.Completion
             {
                 if (delimiter == DelimiterEnum.None)
                     delimiter = DelimiterEnum.C;
-                pair = new DOM.Document
+                pair = new DOM.Document(input)
                 {
                     //Name = VerifyName(nameText.Substring(1), nameInterval, _module),
                     NameInterval = nameInterval,
@@ -177,7 +177,7 @@ namespace Syntactik.MonoDevelop.Completion
             {
                 if (delimiter == DelimiterEnum.None)
                     delimiter = DelimiterEnum.C;
-                pair = new DOM.Scope
+                pair = new DOM.Scope(input)
                 {
                     //NsPrefix = VerifyScopeName(nameText.Substring(1), nameInterval, _module),
                     NameInterval = nameInterval,

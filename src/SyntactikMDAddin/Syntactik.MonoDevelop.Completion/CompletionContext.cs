@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading;
 using Syntactik.Compiler;
 using Syntactik.Compiler.IO;
-using Syntactik.Compiler.Steps;
 using Syntactik.DOM;
 using Syntactik.IO;
 using Syntactik.MonoDevelop.Completion.DOM;
@@ -20,6 +19,7 @@ namespace Syntactik.MonoDevelop.Completion
         private readonly int _offset;
         private readonly Func<Dictionary<string, AliasDefinition>> _aliasDefinitions;
         private readonly CancellationToken _cancellationToken;
+        private CompilerContext _context;
         public SortedSet<CompletionExpectation> Expectations { get; }
         public CompletionExpectation InTag { get; private set; }
         public Pair LastPair { get; private set; }
@@ -34,35 +34,29 @@ namespace Syntactik.MonoDevelop.Completion
             _cancellationToken = cancellationToken;
         }
 
-        //public void Parse()
-        //{
-        //    var compilerParameters = CreateCompilerParametersForCompletion(_fileName, _text, _offset);
-        //    var compiler = new SyntactikCompiler(compilerParameters);
-        //    var context = compiler.Run();
-        //    object lastPair;
-        //    if (context.InMemoryOutputObjects.TryGetValue("LastPair", out lastPair))
-        //        LastPair = (Pair)lastPair;
-        //}
-
-        public void CalculateExpectations()
+        public void Parse()
         {
             InputStream input;
             var compilerParameters = CreateCompilerParametersForCompletion(_fileName, _text, _offset, out input);
             var compiler = new SyntactikCompiler(compilerParameters);
-            var context = compiler.Run();
-            StoreValues(context);
+            _context = compiler.Run();
+            StoreValues(_context);
             input.Dispose();
+            object lastPair;
+            if (_context.InMemoryOutputObjects.TryGetValue("LastPair", out lastPair))
+                LastPair = (Pair)lastPair;
+        }
+
+        public void CalculateExpectations()
+        {
+
             InTag = CompletionExpectation.NoExpectation;
 
             //var visitor = new CompletionContextVisitor();
             //visitor.Visit(context.CompileUnit);
-            object lastPair;
-            if (context.InMemoryOutputObjects.TryGetValue("LastPair", out lastPair))
-                LastPair = (Pair) lastPair;
-
-            if (lastPair == null) //Module
+            if (LastPair == null) //Module
             {
-                var module = context.CompileUnit.Modules[0];
+                var module = _context.CompileUnit.Modules[0];
                 if (module.Members.Count == 0 && module.ModuleDocument == null)
                     AddExpectation(CompletionExpectation.Namespace);
                 AddExpectation(CompletionExpectation.Alias);
@@ -73,7 +67,7 @@ namespace Syntactik.MonoDevelop.Completion
                 return;
             }
 
-            var alias = lastPair as Mapped.Alias;
+            var alias = LastPair as Mapped.Alias;
             if (alias != null)
             {
                 
@@ -98,7 +92,7 @@ namespace Syntactik.MonoDevelop.Completion
                     return;
                 }
             }
-            var argument = lastPair as Mapped.Argument;
+            var argument = LastPair as Mapped.Argument;
             if (argument != null)
             {
                 if (argument.NameInterval.End.Index == _offset)
@@ -113,7 +107,6 @@ namespace Syntactik.MonoDevelop.Completion
                     AddExpectation(CompletionExpectation.Value);
                     return;
                 }
-
             }
         }
 

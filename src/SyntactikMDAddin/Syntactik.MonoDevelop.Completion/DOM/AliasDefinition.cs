@@ -6,7 +6,6 @@ namespace Syntactik.MonoDevelop.Completion.DOM
 {
     public class AliasDefinition: Syntactik.DOM.Mapped.AliasDefinition, ICompletionNode
     {
-        private Entity _entity;
         private readonly ICharStream _input;
 
         internal AliasDefinition(ICharStream input)
@@ -25,42 +24,26 @@ namespace Syntactik.MonoDevelop.Completion.DOM
             set { base.Name = value; }
         }
 
+        private Pair _lastAddedChild;
         public override void AppendChild(Pair child)
         {
-            var ns = child as NamespaceDefinition;
-            if (ns != null)
-            {
-                child.InitializeParent(this);
-                NamespaceDefinitions.Add(ns);
-                return;
-            }
-
-            var entity = child as Entity;
-            if (entity != null)
-            {
-                child.InitializeParent(this);
-                _entities = null;
-                _entity = entity;
-                return;
-            }
+            var completionNode = _lastAddedChild as ICompletionNode;
+            completionNode?.DeleteChildren();
+            _lastAddedChild = child;
+            base.AppendChild(child);
         }
 
-        public override PairCollection<Entity> Entities
-        {
-            get
-            {
-                if (_entities != null) return _entities;
-                _entities = new PairCollection<Entity>(this);
-                if (_entity != null) _entities.Add(_entity);
-                return _entities;
-            }
-            set { throw new NotImplementedException(); }
-        }
         public void StoreStringValues()
         {
             if (Name != null)
             {
             }
+        }
+
+        public void DeleteChildren()
+        {
+            InterpolationItems = null;
+            _entities = null;
         }
     }
 }

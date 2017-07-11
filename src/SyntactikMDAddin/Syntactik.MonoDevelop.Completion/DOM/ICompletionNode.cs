@@ -9,5 +9,6 @@ namespace Syntactik.MonoDevelop.Completion.DOM
     public interface ICompletionNode
     {
         void StoreStringValues();
+        void DeleteChildren();
     }
 }

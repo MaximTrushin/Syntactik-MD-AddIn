@@ -94,6 +94,7 @@
     <Compile Include="AddinInfo.cs" />
     <Compile Include="CompilerOptionsWidget.cs" />
     <Compile Include="Syntactik.MonoDevelop.Completion\CompletionContext.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Completion\CompletionContextTask.cs" />
     <Compile Include="Syntactik.MonoDevelop.Completion\CompletionItem.cs" />
     <Compile Include="Syntactik.MonoDevelop.Completion\DOM\Alias.cs" />
     <Compile Include="Syntactik.MonoDevelop.Completion\DOM\AliasDefinition.cs" />

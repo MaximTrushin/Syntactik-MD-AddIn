@@ -10,7 +10,7 @@ namespace Syntactik.MonoDevelop.Parser
     public sealed class TypeSystemParser: TS.TypeSystemParser
     {
 
-        public override Task<ParsedDocument> Parse(ParseOptions options, CancellationToken cancellationToken = new CancellationToken())
+        public override async Task<ParsedDocument> Parse(ParseOptions options, CancellationToken cancellationToken = new CancellationToken())
         {
             var fileName = options.FileName;
             var project = (SyntactikProject)options.Project;
@@ -23,7 +23,7 @@ namespace Syntactik.MonoDevelop.Parser
                 
                 )
             {
-                result = project.ParseSyntactikDocument(options.FileName, options.Content.Text, options.Content.Version, cancellationToken);
+                result = await project.ParseSyntactikDocument(options.FileName, options.Content.Text, options.Content.Version, cancellationToken);
             }
             else
             {
@@ -40,7 +40,7 @@ namespace Syntactik.MonoDevelop.Parser
                 time = DateTime.UtcNow;
             }
             result.LastWriteTimeUtc = time;
-            return Task.FromResult(result);
+            return result;
         }
 
 

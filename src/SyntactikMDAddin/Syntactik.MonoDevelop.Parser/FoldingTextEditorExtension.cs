@@ -128,7 +128,7 @@ namespace Syntactik.MonoDevelop.Parser
             }
             catch (Exception ex)
             {
-                LoggingService.LogError("Unhandled exception in ParseInformationUpdaterWorkerThread", ex);
+                LoggingService.LogError("Unhandled exception in FoldingTextEditorExtension.UpdateFoldings.", ex);
             }
         }
 
