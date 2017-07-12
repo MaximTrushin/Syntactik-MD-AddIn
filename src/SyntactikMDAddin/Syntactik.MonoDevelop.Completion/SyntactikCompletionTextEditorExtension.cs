@@ -338,18 +338,19 @@ namespace Syntactik.MonoDevelop.Completion
 
         private void UpdatePath(ITextSourceVersion version, int caretOffset, string fileName, string text, Func<Dictionary<string, Syntactik.DOM.AliasDefinition>> getAliasDefinitionList)
         {
-            lock (_syncLock)
-            {
-                //var content = (DocumentContext as global::MonoDevelop.Ide.Gui.Document).
+            //var content = (DocumentContext as global::MonoDevelop.Ide.Gui.Document).
+            CancellationTokenSource src = null;
                 try
                 {
-                    if (_pathUpdateTokenSource != null && !_pathUpdateTokenSource.IsCancellationRequested)
+                    lock (_syncLock)
                     {
-                        _pathUpdateTokenSource.Cancel();
-                        _pathUpdateTokenSource.Dispose();
-                        _pathUpdateTokenSource = null;
+                        if (_pathUpdateTokenSource != null && !_pathUpdateTokenSource.IsCancellationRequested)
+                        {
+                            _pathUpdateTokenSource.Cancel();
+                        }
+                        _pathUpdateTokenSource = src = new CancellationTokenSource();
                     }
-                    _pathUpdateTokenSource = new CancellationTokenSource();
+
                     var task = GetCompletionContextAsync(_pathUpdateTokenSource.Token, version, caretOffset,
                         fileName, text, getAliasDefinitionList);
 #if DEBUG
@@ -376,7 +377,14 @@ namespace Syntactik.MonoDevelop.Completion
                 {
                     LoggingService.LogError("Unhandled exception in FoldingTextEditorExtension.UpdateFoldings.", ex);
                 }
-            }
+                finally
+                {
+                    lock (_syncLock)
+                    {
+                        src?.Dispose();
+                        if (_pathUpdateTokenSource == src) _pathUpdateTokenSource = null;
+                    }
+                }
         }
 
         private List<PathEntry> GetPath(Pair lastPair)
