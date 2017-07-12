@@ -14,30 +14,26 @@ namespace Syntactik.MonoDevelop.Completion
 {
     public class CompletionContext
     {
-        private readonly string _fileName;
-        private readonly string _text;
-        private readonly int _offset;
-        private readonly Func<Dictionary<string, AliasDefinition>> _aliasDefinitions;
         private readonly CancellationToken _cancellationToken;
         private CompilerContext _context;
+        private int _offset;
+        private Func<Dictionary<string, AliasDefinition>> _aliasDefinitions;
         public SortedSet<CompletionExpectation> Expectations { get; }
         public CompletionExpectation InTag { get; private set; }
         public Pair LastPair { get; private set; }
 
-        public CompletionContext(string fileName, string text, int offset, Func<Dictionary<string, AliasDefinition>> aliasDefinitions, CancellationToken cancellationToken = new CancellationToken())
+        public CompletionContext(CancellationToken cancellationToken = new CancellationToken())
         {
             Expectations = new SortedSet<CompletionExpectation>();
-            _fileName = fileName;
-            _text = text;
-            _offset = offset - 1;
-            _aliasDefinitions = aliasDefinitions;
             _cancellationToken = cancellationToken;
         }
 
-        public void Parse()
+        public void Parse(string fileName, string text, int offset, Func<Dictionary<string, AliasDefinition>> aliasDefinitions)
         {
+            _offset = offset - 1;
+            _aliasDefinitions = aliasDefinitions;
             InputStream input;
-            var compilerParameters = CreateCompilerParametersForCompletion(_fileName, _text, _offset, out input);
+            var compilerParameters = CreateCompilerParametersForCompletion(fileName, text, offset, out input);
             var compiler = new SyntactikCompiler(compilerParameters);
             _context = compiler.Run();
             StoreValues(_context);
@@ -49,11 +45,7 @@ namespace Syntactik.MonoDevelop.Completion
 
         public void CalculateExpectations()
         {
-
             InTag = CompletionExpectation.NoExpectation;
-
-            //var visitor = new CompletionContextVisitor();
-            //visitor.Visit(context.CompileUnit);
             if (LastPair == null) //Module
             {
                 var module = _context.CompileUnit.Modules[0];
@@ -110,6 +102,11 @@ namespace Syntactik.MonoDevelop.Completion
             }
         }
 
+        /// <summary>
+        /// Going through dom tree reading names and ns. It causes storing of names localy in pair objects.
+        /// After that we can dispose input object which keeping the whole editor text string in the memory.
+        /// </summary>
+        /// <param name="context"></param>
         private void StoreValues(CompilerContext context)
         {
             var visitor = new CompletionVisitor();

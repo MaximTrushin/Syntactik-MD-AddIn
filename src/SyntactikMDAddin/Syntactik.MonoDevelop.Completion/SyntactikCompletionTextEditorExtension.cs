@@ -93,8 +93,8 @@ namespace Syntactik.MonoDevelop.Completion
                 }
                 _completionContextTask = new CompletionContextTask (Task.Run(
                     () => {
-                        CompletionContext context = new CompletionContext(fileName, text, caretOffset, getAliasDefinitionList, token);
-                        context.Parse();
+                        CompletionContext context = new CompletionContext(token);
+                        context.Parse(fileName, text, caretOffset, getAliasDefinitionList);
                         return context;
                     }, token
                 ), version, caretOffset);
