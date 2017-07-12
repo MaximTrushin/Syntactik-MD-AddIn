@@ -61,7 +61,7 @@ namespace Syntactik.MonoDevelop.Completion.DOM
                 return base.NsPrefix;
 
             }
-            set { base.Name = value; }
+            set { base.NsPrefix = value; }
         }
 
         internal static string GetNameText(ICharStream input, int nameQuotesType, Interval nameInterval)

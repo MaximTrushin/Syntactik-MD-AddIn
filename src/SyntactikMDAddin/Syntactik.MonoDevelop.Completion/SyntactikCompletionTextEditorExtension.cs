@@ -5,7 +5,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Gtk;
 using MonoDevelop.Components;
+using MonoDevelop.Core;
+using MonoDevelop.Core.Text;
 using MonoDevelop.Ide.CodeCompletion;
+using MonoDevelop.Ide.Editor;
 using MonoDevelop.Ide.Editor.Extension;
 using MonoDevelop.Ide.Gui.Content;
 using Syntactik.DOM;
@@ -69,7 +72,8 @@ namespace Syntactik.MonoDevelop.Completion
                 async () => {
                     //CompletionContext context = new CompletionContext(Editor.FileName, Editor.Text, Editor.CaretOffset, ((SyntactikProject)DocumentContext.Project).GetAliasDefinitionList, token);
                     
-                    CompletionContext context = await GetCompletionContextAsync(token);
+                    CompletionContext context = await GetCompletionContextAsync(token, Editor.Version, Editor.CaretOffset, 
+                        Editor.FileName, Editor.Text, ((SyntactikProject)DocumentContext.Project).GetAliasDefinitionList);
                     context.CalculateExpectations();
                     return GetCompletionList(context, completionContext, triggerWordLength,
                         ((SyntactikProject) DocumentContext.Project).GetAliasDefinitionList);
@@ -77,23 +81,23 @@ namespace Syntactik.MonoDevelop.Completion
             );
         }
 
-        private Task<CompletionContext> GetCompletionContextAsync(CancellationToken token)
+        private Task<CompletionContext> GetCompletionContextAsync(CancellationToken token, ITextSourceVersion version, int caretOffset, string fileName, string text, Func<Dictionary<string, Syntactik.DOM.AliasDefinition>> getAliasDefinitionList)
         {
             lock (_syncLock)
             {
                 if (_completionContextTask != null)
                 {
-                    if (_completionContextTask.Version.BelongsToSameDocumentAs(Editor.Version) &&
-                    _completionContextTask.Version.CompareAge(Editor.Version) == 0)
+                    if (_completionContextTask.Version.BelongsToSameDocumentAs(version) &&
+                    _completionContextTask.Version.CompareAge(version) == 0 && _completionContextTask.Offset == caretOffset)
                         return _completionContextTask.Task;
                 }
                 _completionContextTask = new CompletionContextTask (Task.Run(
                     () => {
-                        CompletionContext context = new CompletionContext(Editor.FileName, Editor.Text, Editor.CaretOffset, ((SyntactikProject)DocumentContext.Project).GetAliasDefinitionList, token);
+                        CompletionContext context = new CompletionContext(fileName, text, caretOffset, getAliasDefinitionList, token);
                         context.Parse();
                         return context;
                     }, token
-                ), Editor.Version);
+                ), version, caretOffset);
                 return _completionContextTask.Task;
             }
         }
@@ -315,37 +319,76 @@ namespace Syntactik.MonoDevelop.Completion
             if (_pathUpdateQueued)
                 return;
             _pathUpdateQueued = true;
-          GLib.Timeout.Add(500, delegate
-            {
-                _pathUpdateQueued = false;
-                //UpdatePath();
-                return false;
-            });
+            var editor = Editor;
+            editor.EnsureCaretIsNotVirtual();
+            GLib.Timeout.Add(500, delegate
+                {
+                    _pathUpdateQueued = false;
+                    Task.Run(() =>
+                    {
+                        UpdatePath(editor.Version, editor.CaretOffset, editor.FileName, editor.Text, ((SyntactikProject)DocumentContext.Project).GetAliasDefinitionList);
+                    });
+                    return false;
+                }
+            );
         }
 
-        private void UpdatePath()
+
+        private CancellationTokenSource _pathUpdateTokenSource;
+
+        private void UpdatePath(ITextSourceVersion version, int caretOffset, string fileName, string text, Func<Dictionary<string, Syntactik.DOM.AliasDefinition>> getAliasDefinitionList)
         {
-            var s = this.Editor.GetFoldingsContaining(Editor.CaretOffset);
-            //var content = (DocumentContext as global::MonoDevelop.Ide.Gui.Document).
+            lock (_syncLock)
+            {
+                //var content = (DocumentContext as global::MonoDevelop.Ide.Gui.Document).
+                try
+                {
+                    if (_pathUpdateTokenSource != null && !_pathUpdateTokenSource.IsCancellationRequested)
+                    {
+                        _pathUpdateTokenSource.Cancel();
+                        _pathUpdateTokenSource.Dispose();
+                        _pathUpdateTokenSource = null;
+                    }
+                    _pathUpdateTokenSource = new CancellationTokenSource();
+                    var task = GetCompletionContextAsync(_pathUpdateTokenSource.Token, version, caretOffset,
+                        fileName, text, getAliasDefinitionList);
+#if DEBUG
+                    task.Wait(_pathUpdateTokenSource.Token);
+#else
+                    task.Wait(2000, _pathUpdateTokenSource.Token);
+#endif
 
-             CompletionContext context = new CompletionContext(Editor.FileName, Editor.Text, Editor.CaretOffset, null, new CancellationToken());
-            //context.Parse();
-            List<PathEntry> path = GetPath(context.LastPair);
 
-            PathEntry[] oldPath = _currentPath;
-            _currentPath = path.ToArray();
+                    if (task.Status != TaskStatus.RanToCompletion) return;
+                    CompletionContext context = task.Result;
 
-            PathChanged?.Invoke(this, new DocumentPathChangedEventArgs(oldPath));
+                    List<PathEntry> path = GetPath(context.LastPair);
+
+                    PathEntry[] oldPath = _currentPath;
+                    _currentPath = path.ToArray();
+
+                    Gtk.Application.Invoke(delegate
+                    {
+                        PathChanged?.Invoke(this, new DocumentPathChangedEventArgs(oldPath));
+                    });
+                }
+                catch (Exception ex)
+                {
+                    LoggingService.LogError("Unhandled exception in FoldingTextEditorExtension.UpdateFoldings.", ex);
+                }
+            }
         }
 
         private List<PathEntry> GetPath(Pair lastPair)
         {
             var pair = lastPair;
             var list = new List<PathEntry>();
-            //while (pair != null)
-            //{
-                
-            //}
+            while (pair != null)
+            {
+                list.Add(new PathEntry(pair.Name));
+                pair = pair.Parent;
+                if (pair is Module) break;
+            }
             return list;
         }
     }
