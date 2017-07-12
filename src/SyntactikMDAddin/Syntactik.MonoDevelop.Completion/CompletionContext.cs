@@ -33,7 +33,7 @@ namespace Syntactik.MonoDevelop.Completion
             _offset = offset - 1;
             _aliasDefinitions = aliasDefinitions;
             InputStream input;
-            var compilerParameters = CreateCompilerParametersForCompletion(fileName, text, offset, out input);
+            var compilerParameters = CreateCompilerParametersForCompletion(fileName, text, _offset, out input);
             var compiler = new SyntactikCompiler(compilerParameters);
             _context = compiler.Run();
             StoreValues(_context);

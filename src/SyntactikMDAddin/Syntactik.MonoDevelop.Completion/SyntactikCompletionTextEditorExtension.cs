@@ -58,10 +58,10 @@ namespace Syntactik.MonoDevelop.Completion
 
             if (pos <= 0 || ch != completionChar) return null;
 
-            if (!IsCompletionChar(completionChar)) return null;
-            if (completionContext.TriggerOffset > 1 && char.IsLetterOrDigit(Editor.GetCharAt(completionContext.TriggerOffset - 2)))
+            if (!IsCompletionChar(completionChar) && completionChar != '.') return null;
+            if (char.IsLetterOrDigit(completionChar) && completionContext.TriggerOffset > 1 && char.IsLetterOrDigit(Editor.GetCharAt(completionContext.TriggerOffset - 2)))
                 return null;
-            const int triggerWordLength = 1;
+            var triggerWordLength = completionChar != '.'?1:0;
             return await HandleCodeCompletion(completionContext, false, token, triggerWordLength);
         }
 
@@ -314,6 +314,8 @@ namespace Syntactik.MonoDevelop.Completion
         public PathEntry[] CurrentPath => _currentPath;
         public event EventHandler<DocumentPathChangedEventArgs> PathChanged;
 
+
+        private const uint UpdatePathInterval = 2000;
         private void HandleCaretPositionChanged(object sender, EventArgs e)
         {
             if (_pathUpdateQueued)
@@ -321,7 +323,7 @@ namespace Syntactik.MonoDevelop.Completion
             _pathUpdateQueued = true;
             var editor = Editor;
             editor.EnsureCaretIsNotVirtual();
-            GLib.Timeout.Add(500, delegate
+            GLib.Timeout.Add(UpdatePathInterval, delegate
                 {
                     _pathUpdateQueued = false;
                     Task.Run(() =>
@@ -335,7 +337,6 @@ namespace Syntactik.MonoDevelop.Completion
 
 
         private CancellationTokenSource _pathUpdateTokenSource;
-
         private void UpdatePath(ITextSourceVersion version, int caretOffset, string fileName, string text, Func<Dictionary<string, Syntactik.DOM.AliasDefinition>> getAliasDefinitionList)
         {
             //var content = (DocumentContext as global::MonoDevelop.Ide.Gui.Document).
@@ -358,8 +359,6 @@ namespace Syntactik.MonoDevelop.Completion
 #else
                     task.Wait(2000, _pathUpdateTokenSource.Token);
 #endif
-
-
                     if (task.Status != TaskStatus.RanToCompletion) return;
                     CompletionContext context = task.Result;
 
@@ -387,7 +386,7 @@ namespace Syntactik.MonoDevelop.Completion
                 }
         }
 
-        private List<PathEntry> GetPath(Pair lastPair)
+        private static List<PathEntry> GetPath(Pair lastPair)
         {
             var pair = lastPair;
             var list = new List<PathEntry>();
@@ -397,6 +396,7 @@ namespace Syntactik.MonoDevelop.Completion
                 pair = pair.Parent;
                 if (pair is Module) break;
             }
+            list.Reverse();
             return list;
         }
     }
