@@ -7,15 +7,19 @@ using Gtk;
 using MonoDevelop.Components;
 using MonoDevelop.Core;
 using MonoDevelop.Core.Text;
+using MonoDevelop.Ide;
 using MonoDevelop.Ide.CodeCompletion;
 using MonoDevelop.Ide.Editor;
 using MonoDevelop.Ide.Editor.Extension;
 using MonoDevelop.Ide.Gui.Content;
 using Syntactik.DOM;
+using Syntactik.DOM.Mapped;
 using Syntactik.MonoDevelop.Project;
 using Alias = Syntactik.DOM.Mapped.Alias;
 using AliasDefinition = Syntactik.DOM.Mapped.AliasDefinition;
 using Argument = Syntactik.DOM.Mapped.Argument;
+using Document = Syntactik.DOM.Document;
+using Module = Syntactik.DOM.Module;
 
 namespace Syntactik.MonoDevelop.Completion
 {
@@ -260,7 +264,10 @@ namespace Syntactik.MonoDevelop.Completion
             if (context.InTag != CompletionExpectation.Alias) return null;
             var alias = (Syntactik.DOM.Mapped.Alias) pair;
             if (alias.NameInterval.End.Column < editorCompletionContext.TriggerLineOffset) return null;
-            return alias.Name;
+            var prefix = alias.Name;
+            if (string.IsNullOrEmpty(prefix)) return prefix;
+
+            return prefix.Substring(0, prefix.Length - (alias.NameInterval.End.Index - context.Offset));
         }
 
         private static IEnumerable<KeyValuePair<string, Syntactik.DOM.AliasDefinition>> GetListOfBlockAliasDefinitions(
@@ -274,26 +281,45 @@ namespace Syntactik.MonoDevelop.Completion
         public Control CreatePathWidget(int index)
         {
             var menu = new Menu();
-            var mi = new MenuItem("Select");
+            var mi = new MenuItem("Go to");
             mi.Activated += delegate
             {
-                SelectPath(index);
+                Goto(_currentPath[index].Tag as Pair);
             };
             menu.Add(mi);
-            mi = new MenuItem("Select Content");
-            mi.Activated += delegate
-            {
-                SelectContent(index);
-            };
-            menu.Add(mi);
-            mi = new MenuItem("Select Next Node");
-            mi.Activated += delegate
-            {
-                SelectNextNode(index);
-            };
-            menu.Add(mi);
+            //mi.Activated += delegate
+            //{
+            //    SelectPath(index);
+            //};
+            //menu.Add(mi);
+            //mi = new MenuItem("Select Content");
+            //mi.Activated += delegate
+            //{
+            //    SelectContent(index);
+            //};
+            //menu.Add(mi);
+            //mi = new MenuItem("Select Next Node");
+            //mi.Activated += delegate
+            //{
+            //    SelectNextNode(index);
+            //};
+            //menu.Add(mi);
             menu.ShowAll();
             return menu;
+        }
+
+        private void Goto(Pair pair)
+        {
+            var p = pair as IMappedPair;
+            var start = GetPairStart(p);
+            Editor.SetCaretLocation(start.Line, start.Column);
+        }
+
+        private CharLocation GetPairStart(IMappedPair pair)
+        {
+            if (pair.NameInterval != null) return pair.NameInterval.Begin;
+            if (pair.DelimiterInterval != null) return pair.DelimiterInterval.Begin;
+            return pair.ValueInterval.Begin;
         }
 
         private void SelectNextNode(int index)
@@ -315,7 +341,7 @@ namespace Syntactik.MonoDevelop.Completion
         public event EventHandler<DocumentPathChangedEventArgs> PathChanged;
 
 
-        private const uint UpdatePathInterval = 2000;
+        private const uint UpdatePathInterval = 500;
         private void HandleCaretPositionChanged(object sender, EventArgs e)
         {
             if (_pathUpdateQueued)
@@ -392,12 +418,44 @@ namespace Syntactik.MonoDevelop.Completion
             var list = new List<PathEntry>();
             while (pair != null)
             {
-                list.Add(new PathEntry(pair.Name));
+                if (pair is Document && (pair.Parent as Module)?.ModuleDocument == pair) break;
+                list.Add(new PathEntry(ImageService.GetIcon(GetIconSourceName(pair)), GetMarkup(pair)) {Tag = pair});
                 pair = pair.Parent;
                 if (pair is Module) break;
             }
             list.Reverse();
             return list;
+        }
+
+        private static string GetMarkup(Pair pair)
+        {
+            var nsNode = pair as INsNode;
+            var ns = nsNode == null ? "" : string.IsNullOrEmpty(nsNode.NsPrefix)?"": nsNode.NsPrefix + ".";
+
+            if (pair is Syntactik.DOM.Element) return ns + pair.Name;
+            if (pair is Syntactik.DOM.Alias) return "$" + pair.Name;
+            if (pair is Syntactik.DOM.Argument) return "%" + pair.Name;
+            if (pair is Syntactik.DOM.Attribute) return "@" + ns + pair.Name;
+            if (pair is Syntactik.DOM.Scope) return "#" + pair.Name;
+            if (pair is Syntactik.DOM.NamespaceDefinition) return "!#" + pair.Name;
+            if (pair is Syntactik.DOM.Parameter) return "!%" + pair.Name;
+            if (pair is Syntactik.DOM.Document) return "!" + pair.Name;
+            if (pair is Syntactik.DOM.AliasDefinition) return "!$" + pair.Name;
+            return SyntactikIcons.Enum;
+        }
+
+        private static string GetIconSourceName(Pair pair)
+        {
+            if (pair is Syntactik.DOM.Element) return SyntactikIcons.Element;
+            if (pair is Syntactik.DOM.Alias) return SyntactikIcons.Alias;
+            if (pair is Syntactik.DOM.Argument) return SyntactikIcons.Argument;
+            if (pair is Syntactik.DOM.Attribute) return SyntactikIcons.Attribute;
+            if (pair is Syntactik.DOM.Scope) return SyntactikIcons.NamespaceDefinition;
+            if (pair is Syntactik.DOM.NamespaceDefinition) return SyntactikIcons.NamespaceDefinition;
+            if (pair is Syntactik.DOM.Parameter) return SyntactikIcons.Argument;
+            if (pair is Syntactik.DOM.Document) return SyntactikIcons.Document;
+            if (pair is Syntactik.DOM.AliasDefinition) return SyntactikIcons.AliasDef;
+            return SyntactikIcons.Enum;
         }
     }
 }

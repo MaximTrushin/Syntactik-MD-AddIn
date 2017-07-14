@@ -68,6 +68,8 @@
     <StockIcon stockid = "ml-element-opt" resource = "Syntactik.MonoDevelop.icons.element-opt-16.png" size="Menu"/>
     <StockIcon stockid = "ml-namespace-decl" resource = "Syntactik.MonoDevelop.icons.namespace-decl-16.png" size="Menu"/>
     <StockIcon stockid = "ml-alias" resource = "Syntactik.MonoDevelop.icons.alias-16.png" size="Menu"/>
+    <StockIcon stockid = "ml-alias-def" resource = "Syntactik.MonoDevelop.icons.alias-def-16.png" size="Menu"/>
+    <StockIcon stockid = "ml-document" resource = "Syntactik.MonoDevelop.icons.document-16.png" size="Menu"/>
     <StockIcon stockid = "ml-namespace" resource = "Syntactik.MonoDevelop.icons.namespace-16.png" size="Menu"/>
     <StockIcon stockid = "ml-attribute" resource = "Syntactik.MonoDevelop.icons.attribute-16.png" size="Menu"/>
     <StockIcon stockid = "ml-attribute-opt" resource = "Syntactik.MonoDevelop.icons.attribute-opt-16.png" size="Menu"/>

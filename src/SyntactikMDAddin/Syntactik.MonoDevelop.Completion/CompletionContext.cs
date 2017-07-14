@@ -5,7 +5,6 @@ using Syntactik.Compiler;
 using Syntactik.Compiler.IO;
 using Syntactik.DOM;
 using Syntactik.IO;
-using Syntactik.MonoDevelop.Completion.DOM;
 using Mapped = Syntactik.DOM.Mapped;
 using Syntactik.MonoDevelop.Parser;
 using AliasDefinition = Syntactik.DOM.AliasDefinition;
@@ -21,6 +20,8 @@ namespace Syntactik.MonoDevelop.Completion
         public SortedSet<CompletionExpectation> Expectations { get; }
         public CompletionExpectation InTag { get; private set; }
         public Pair LastPair { get; private set; }
+
+        public int Offset => _offset;
 
         public CompletionContext(CancellationToken cancellationToken = new CancellationToken())
         {
@@ -63,7 +64,7 @@ namespace Syntactik.MonoDevelop.Completion
             if (alias != null)
             {
                 
-                if (alias.NameInterval.End.Index == _offset)
+                if (alias.NameInterval.End.Index >= _offset)
                 {
                     InTag = CompletionExpectation.Alias;
                     AddExpectation(CompletionExpectation.Alias);
@@ -87,7 +88,7 @@ namespace Syntactik.MonoDevelop.Completion
             var argument = LastPair as Mapped.Argument;
             if (argument != null)
             {
-                if (argument.NameInterval.End.Index == _offset)
+                if (argument.NameInterval.End.Index >= _offset)
                 {
                     InTag = CompletionExpectation.Argument;
                     AddExpectation(CompletionExpectation.Argument);
@@ -121,21 +122,23 @@ namespace Syntactik.MonoDevelop.Completion
         private CompilerParameters CreateCompilerParametersForCompletion(string fileName, string content, int offset, out InputStream input)
         {
             var compilerParameters = new CompilerParameters { Pipeline = new CompilerPipeline() };
-            input = new InputStream(content, offset < content.Length ? offset + 1 : content.Length); //This is performance hack to prevent copying of editors content.
+            input = new InputStream(content, GetOffset(offset, content)); //This is performance hack to prevent copying of editors content.
             compilerParameters.Pipeline.Steps.Add(new ParseForCompletionStep(_cancellationToken, input));
                 
             compilerParameters.Input.Add(new StringInput(fileName, content)); //This input is not really used. This is hack to prevent copying of editors content
             return compilerParameters;
         }
 
-        internal class CompletionVisitor : SyntactikDepthFirstVisitor
+        private int GetOffset(int offset, string content)
         {
-            protected override void OnPair(Pair pair)
+            var length = content.Length;
+            if (offset >= length) return length;
+            offset++;
+            while (offset < length && !IntegerCharExtensions.IsEndOfOpenName(content[offset]))
             {
-                var cn = pair as ICompletionNode;
-                cn?.StoreStringValues();
-                base.OnPair(pair);
+                offset++;
             }
+            return offset;
         }
     }
 

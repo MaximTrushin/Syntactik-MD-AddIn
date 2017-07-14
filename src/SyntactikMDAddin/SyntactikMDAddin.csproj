@@ -93,6 +93,7 @@
   <ItemGroup>
     <Compile Include="AddinInfo.cs" />
     <Compile Include="CompilerOptionsWidget.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Completion\CompletionVisitor.cs" />
     <Compile Include="Syntactik.MonoDevelop.Completion\CompletionContext.cs" />
     <Compile Include="Syntactik.MonoDevelop.Completion\CompletionContextTask.cs" />
     <Compile Include="Syntactik.MonoDevelop.Completion\CompletionItem.cs" />
@@ -174,6 +175,12 @@
     <EmbeddedResource Include="icons\namespace-16.png" />
     <EmbeddedResource Include="icons\namespace-decl-16.png" />
     <EmbeddedResource Include="icons\test-overlay.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="icons\document-16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="icons\alias-def-16.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

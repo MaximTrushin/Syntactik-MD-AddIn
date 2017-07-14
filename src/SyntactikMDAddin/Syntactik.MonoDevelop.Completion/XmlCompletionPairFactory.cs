@@ -4,7 +4,6 @@ using Syntactik.Compiler.Steps;
 using Syntactik.DOM;
 using Syntactik.DOM.Mapped;
 using Syntactik.IO;
-using Element = Syntactik.DOM.Mapped.Element;
 using Module = Syntactik.DOM.Mapped.Module;
 
 
@@ -19,7 +18,8 @@ namespace Syntactik.MonoDevelop.Completion
         private Pair _lastPair;
 
 
-        public XmlCompletionPairFactory(CompilerContext context, Syntactik.DOM.Module module, CancellationToken cancellationToken)
+        public XmlCompletionPairFactory(CompilerContext context, Syntactik.DOM.Module module,
+            CancellationToken cancellationToken)
         {
             _context = context;
             _module = (Module) module;
@@ -27,13 +27,13 @@ namespace Syntactik.MonoDevelop.Completion
             _pairFactory = new ReportingPairFactoryForXml(context, module);
         }
 
-        public Pair CreateMappedPair(ICharStream input, int nameQuotesType, Interval nameInterval, DelimiterEnum delimiter,
+        public Pair CreateMappedPair(ICharStream input, int nameQuotesType, Interval nameInterval,
+            DelimiterEnum delimiter,
             Interval delimiterInterval, int valueQuotesType, Interval valueInterval, int valueIndent)
         {
             _cancellationToken.ThrowIfCancellationRequested();
             IMappedPair pair;
             var nameText = GetNameText(input, nameQuotesType, nameInterval);
-            //var value = GetValue(input, delimiter, valueQuotesType, valueInterval, valueIndent, _context, _module);
             if (nameQuotesType > 0)
             {
                 if (delimiter == DelimiterEnum.None)
@@ -41,40 +41,28 @@ namespace Syntactik.MonoDevelop.Completion
 
                 pair = new DOM.Element(input)
                 {
-                    //Name = VerifyElementName(nameText, nameInterval, _module),
                     NameQuotesType = nameQuotesType,
                     NameInterval = nameInterval,
                     Delimiter = delimiter,
                     DelimiterInterval = delimiterInterval,
-                    //Value = value.Item1,
                     ValueQuotesType = valueQuotesType,
                     ValueInterval = valueInterval,
-                    //InterpolationItems = value.Item2,
                     ValueIndent = valueIndent
                 };
-
             }
             else if (nameText.StartsWith("@"))
             {
                 if (delimiter == DelimiterEnum.None)
                     delimiter = DelimiterEnum.E;
-
-                var tuple = Element.GetNameAndNs(nameText.Substring(1), nameQuotesType);
-                var ns = string.IsNullOrEmpty(tuple.Item1) ? null : tuple.Item1;
                 pair = new DOM.Attribute(input)
                 {
-                    NsPrefix = ns,
-                    //Name = VerifyName(tuple.Item2, nameInterval, _module),
                     NameInterval = nameInterval,
                     Delimiter = delimiter,
                     DelimiterInterval = delimiterInterval,
-                    //Value = value.Item1,
                     ValueQuotesType = valueQuotesType,
                     ValueInterval = valueInterval,
-                    //InterpolationItems = value.Item2,
                     ValueIndent = valueIndent
                 };
-
             }
             else if (nameText.StartsWith("!$"))
             {
@@ -82,14 +70,11 @@ namespace Syntactik.MonoDevelop.Completion
                     delimiter = DelimiterEnum.C;
                 pair = new DOM.AliasDefinition(input)
                 {
-                    //Name = VerifyName(nameText.Substring(2), nameInterval, _module),
                     NameInterval = nameInterval,
                     Delimiter = delimiter,
                     DelimiterInterval = delimiterInterval,
-                    //Value = value.Item1,
                     ValueQuotesType = valueQuotesType,
                     ValueInterval = valueInterval,
-                    //InterpolationItems = value.Item2,
                     ValueIndent = valueIndent
                 };
             }
@@ -99,14 +84,11 @@ namespace Syntactik.MonoDevelop.Completion
                     delimiter = DelimiterEnum.EE;
                 pair = new DOM.NamespaceDefinition(input)
                 {
-                    //Name = VerifyNsName(nameText.Substring(2), nameInterval, _module),
                     NameInterval = nameInterval,
                     Delimiter = delimiter,
                     DelimiterInterval = delimiterInterval,
-                    //Value = value.Item1,
                     ValueQuotesType = valueQuotesType,
                     ValueInterval = valueInterval,
-                    //InterpolationItems = value.Item2,
                     ValueIndent = valueIndent
                 };
             }
@@ -114,14 +96,11 @@ namespace Syntactik.MonoDevelop.Completion
             {
                 pair = new DOM.Parameter(input)
                 {
-                    //Name = VerifyNsName(nameText.Substring(2), nameInterval, _module),
                     NameInterval = nameInterval,
                     Delimiter = delimiter,
                     DelimiterInterval = delimiterInterval,
-                    //Value = value.Item1,
                     ValueQuotesType = valueQuotesType,
                     ValueInterval = valueInterval,
-                    //InterpolationItems = value.Item2,
                     ValueIndent = valueIndent
                 };
             }
@@ -131,14 +110,11 @@ namespace Syntactik.MonoDevelop.Completion
                     delimiter = DelimiterEnum.C;
                 pair = new DOM.Document(input)
                 {
-                    //Name = VerifyName(nameText.Substring(1), nameInterval, _module),
                     NameInterval = nameInterval,
                     Delimiter = delimiter,
                     DelimiterInterval = delimiterInterval,
-                    //Value = value.Item1,
                     ValueQuotesType = valueQuotesType,
                     ValueInterval = valueInterval,
-                    //InterpolationItems = value.Item2,
                     ValueIndent = valueIndent
                 };
             }
@@ -146,30 +122,23 @@ namespace Syntactik.MonoDevelop.Completion
             {
                 pair = new DOM.Alias(input)
                 {
-                    //Name = VerifyName(nameText.Substring(1), nameInterval, _module),
                     NameInterval = nameInterval,
                     Delimiter = delimiter,
                     DelimiterInterval = delimiterInterval,
-                    //Value = value.Item1,
                     ValueQuotesType = valueQuotesType,
                     ValueInterval = valueInterval,
-                    //InterpolationItems = value.Item2,
                     ValueIndent = valueIndent
                 };
-
             }
             else if (nameText.StartsWith("%"))
             {
                 pair = new DOM.Argument(input)
                 {
-                    //Name = VerifyName(nameText.Substring(1), nameInterval, _module),
                     NameInterval = nameInterval,
                     Delimiter = delimiter,
                     DelimiterInterval = delimiterInterval,
-                    //Value = value.Item1,
                     ValueQuotesType = valueQuotesType,
                     ValueInterval = valueInterval,
-                    //InterpolationItems = value.Item2,
                     ValueIndent = valueIndent
                 };
             }
@@ -179,7 +148,6 @@ namespace Syntactik.MonoDevelop.Completion
                     delimiter = DelimiterEnum.C;
                 pair = new DOM.Scope(input)
                 {
-                    //NsPrefix = VerifyScopeName(nameText.Substring(1), nameInterval, _module),
                     NameInterval = nameInterval,
                     Delimiter = delimiter,
                     DelimiterInterval = delimiterInterval
@@ -189,28 +157,22 @@ namespace Syntactik.MonoDevelop.Completion
             {
                 if (delimiter == DelimiterEnum.None)
                     delimiter = DelimiterEnum.C;
-                //var tuple = Element.GetNameAndNs(nameText, nameQuotesType);
-                //var ns = string.IsNullOrEmpty(tuple.Item1) ? null : tuple.Item1;
 
                 pair = new DOM.Element(input)
                 {
-                    //NsPrefix = ns,
-                    //Name = VerifyElementName(tuple.Item2, nameInterval, _module),
                     NameQuotesType = nameQuotesType,
                     NameInterval = nameInterval,
                     Delimiter = delimiter,
                     DelimiterInterval = delimiterInterval,
-                    //Value = value.Item1,
                     ValueQuotesType = valueQuotesType,
                     ValueInterval = valueInterval,
-                    //InterpolationItems = value.Item2,
                     ValueIndent = valueIndent
                 };
-
             }
             SetValueType(pair, delimiter, /*value.Item1*/ null, valueQuotesType);
-            return (Pair)pair;
+            return (Pair) pair;
         }
+
         private void SetValueType(IMappedPair pair, DelimiterEnum delimiter, string value, int valueQuotesType)
         {
             switch (delimiter)
@@ -252,19 +214,21 @@ namespace Syntactik.MonoDevelop.Completion
             //    pair.ValueType = GetJsonValueType(value, ValueType.OpenString);
             //    return;
             //}
-
         }
 
         internal static string GetNameText(ICharStream input, int nameQuotesType, Interval nameInterval)
         {
             if (nameQuotesType == 0)
-                return ((ITextSource)input).GetText(nameInterval.Begin.Index, nameInterval.End.Index);
-            var c = ((ITextSource)input).GetChar(nameInterval.End.Index);
+                return ((ITextSource) input).GetText(nameInterval.Begin.Index, nameInterval.End.Index);
+            var c = ((ITextSource) input).GetChar(nameInterval.End.Index);
             if (nameQuotesType == 1)
-                return c == '\'' ? ((ITextSource)input).GetText(nameInterval.Begin.Index + 1, nameInterval.End.Index - 1) : ((ITextSource)input).GetText(nameInterval.Begin.Index + 1, nameInterval.End.Index);
+                return c == '\''
+                    ? ((ITextSource) input).GetText(nameInterval.Begin.Index + 1, nameInterval.End.Index - 1)
+                    : ((ITextSource) input).GetText(nameInterval.Begin.Index + 1, nameInterval.End.Index);
 
-            return c == '"' ? ((ITextSource)input).GetText(nameInterval.Begin.Index + 1, nameInterval.End.Index - 1) : ((ITextSource)input).GetText(nameInterval.Begin.Index + 1, nameInterval.End.Index);
-
+            return c == '"'
+                ? ((ITextSource) input).GetText(nameInterval.Begin.Index + 1, nameInterval.End.Index - 1)
+                : ((ITextSource) input).GetText(nameInterval.Begin.Index + 1, nameInterval.End.Index);
         }
 
         public void AppendChild(Pair parent, Pair child)

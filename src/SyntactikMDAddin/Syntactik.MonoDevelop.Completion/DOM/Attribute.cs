@@ -17,7 +17,11 @@ namespace Syntactik.MonoDevelop.Completion.DOM
             get
             {
                 if (base.Name != null) return base.Name;
-                base.Name = Element.GetNameText(_input, NameQuotesType, NameInterval).Substring(1);
+                var nameText = Element.GetNameText(_input, NameQuotesType, NameInterval).Substring(1);
+                var tuple = Syntactik.DOM.Mapped.Element.GetNameAndNs(nameText, NameQuotesType);
+                var ns = string.IsNullOrEmpty(tuple.Item1) ? null : tuple.Item1;
+                base.Name = tuple.Item2;
+                NsPrefix = ns;
                 return base.Name;
             }
             set { base.Name = value; }

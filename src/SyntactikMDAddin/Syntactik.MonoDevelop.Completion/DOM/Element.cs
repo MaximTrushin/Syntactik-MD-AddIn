@@ -43,27 +43,6 @@ namespace Syntactik.MonoDevelop.Completion.DOM
             set { base.Name = value; }
         }
 
-        public override string NsPrefix
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(base.Name)) return base.Name;
-                var nameText = GetNameText(_input, NameQuotesType, NameInterval);
-                if (NameQuotesType > 0)
-                {
-                    base.Name = nameText;
-                    return "";
-                }
-                var tuple = GetNameAndNs(nameText, NameQuotesType);
-                var ns = string.IsNullOrEmpty(tuple.Item1) ? null : tuple.Item1;
-                base.Name = tuple.Item2;
-                base.NsPrefix = ns;
-                return base.NsPrefix;
-
-            }
-            set { base.NsPrefix = value; }
-        }
-
         internal static string GetNameText(ICharStream input, int nameQuotesType, Interval nameInterval)
         {
             if (nameQuotesType == 0)

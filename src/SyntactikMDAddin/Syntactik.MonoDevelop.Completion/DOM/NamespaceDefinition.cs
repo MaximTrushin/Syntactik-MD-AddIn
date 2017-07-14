@@ -17,7 +17,7 @@ namespace Syntactik.MonoDevelop.Completion.DOM
             get
             {
                 if (base.Name != null) return base.Name;
-                base.Name = Element.GetNameText(_input, NameQuotesType, NameInterval).Substring(1);
+                base.Name = Element.GetNameText(_input, NameQuotesType, NameInterval).Substring(2);
                 return base.Name;
             }
             set { base.Name = value; }
