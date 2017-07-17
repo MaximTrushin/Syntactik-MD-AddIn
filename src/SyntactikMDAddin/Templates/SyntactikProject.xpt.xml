@@ -25,6 +25,7 @@
     <Project name = "${ProjectName}" type ="SyntactikProject" directory = ".">
       <Options/>
       <Files>
+        <Directory name="Schemas" />
         <File name="main.s4x" AddStandardHeader="True">
           <![CDATA[!Document:
 	Element

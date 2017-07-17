@@ -93,6 +93,9 @@
   <ItemGroup>
     <Compile Include="AddinInfo.cs" />
     <Compile Include="CompilerOptionsWidget.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Commands\SchemaFolderCommandHandler.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Commands\SyntactikCommandHandler.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Commands\SyntactikCommands.cs" />
     <Compile Include="Syntactik.MonoDevelop.Completion\CompletionVisitor.cs" />
     <Compile Include="Syntactik.MonoDevelop.Completion\CompletionContext.cs" />
     <Compile Include="Syntactik.MonoDevelop.Completion\CompletionContextTask.cs" />
@@ -119,6 +122,10 @@
     <Compile Include="Syntactik.MonoDevelop.Highlighting\HighlightUsagesExtension.cs" />
     <Compile Include="Syntactik.MonoDevelop.Highlighting\SyntactikSpanParser.cs" />
     <Compile Include="Syntactik.MonoDevelop.Highlighting\SyntactikSyntaxMode.cs" />
+    <Compile Include="Syntactik.MonoDevelop.NodeBuilders\ProjectNodeBuilder.cs" />
+    <Compile Include="Syntactik.MonoDevelop.NodeBuilders\SchemaFolder.cs" />
+    <Compile Include="Syntactik.MonoDevelop.NodeBuilders\SchemaFolderNodeBuilder.cs" />
+    <Compile Include="Syntactik.MonoDevelop.NodeBuilders\SchemaFolderNodeBuilderExtension.cs" />
     <Compile Include="Syntactik.MonoDevelop.Parser\ErrorHandlerTextEditorExtension.cs" />
     <Compile Include="Syntactik.MonoDevelop.Parser\FoldingReportingPairFactory.cs" />
     <Compile Include="Syntactik.MonoDevelop.Parser\FoldingTextEditorExtension.cs" />

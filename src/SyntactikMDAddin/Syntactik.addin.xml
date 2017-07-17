@@ -77,4 +77,27 @@
     <StockIcon stockid = "ml-enum" resource = "Syntactik.MonoDevelop.icons.enum-16.png" size="Menu"/>
   </Extension>
 
+  <Extension path = "/MonoDevelop/Ide/Pads/ProjectPad">
+    <NodeBuilder class = "Syntactik.MonoDevelop.NodeBuilders.ProjectNodeBuilder"/>
+    <NodeBuilder class = "Syntactik.MonoDevelop.NodeBuilders.SchemaFolderNodeBuilderExtension"/>
+    <NodeBuilder class = "Syntactik.MonoDevelop.NodeBuilders.SchemaFolderNodeBuilder"/>    
+  </Extension>
+
+  <Extension path = "/MonoDevelop/Ide/Commands">
+    <Category _name = "Syntactik" id = "Syntactik">
+      <Command id = "Syntactik.MonoDevelop.Commands.SyntactikCommands.AddSchema"
+       _label = "Add Schema"
+       icon = "gtk-add" />
+    </Category>
+  </Extension>
+
+
+  <ExtensionPoint path = "/MonoDevelop/Syntactik/ContextMenu/ProjectPad/SchemaFolder">
+    <ExtensionNodeSet id="MonoDevelop.Components.Commands.ItemSet"/>
+  </ExtensionPoint>
+
+  <Extension path = "/MonoDevelop/Syntactik/ContextMenu/ProjectPad/SchemaFolder">
+    <CommandItem id = "Syntactik.MonoDevelop.Commands.SyntactikCommands.AddSchema" />
+  </Extension>  
+  
 </ExtensionModel>
