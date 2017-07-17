@@ -18,37 +18,33 @@ namespace Syntactik.MonoDevelop.NodeBuilders
             var project = (SyntactikProject) dataObject;
             var pos = treeBuilder.CurrentPosition;
 
-            Action iterate = null;
-            iterate = () =>
-            {
-                if (treeBuilder.HasChildren())
-                {
-                    treeBuilder.MoveToFirstChild();
-                    iterate();
-                    treeBuilder.MoveToParent();
-                }
-                bool move = false;
-                var begin = treeBuilder.CurrentPosition;
-                do
-                {
-                    if (treeBuilder.DataItem is SchemaFolder)
-                        continue;
-                    if (IsHiddenItem(treeBuilder.DataItem))
-                    {
-                        treeBuilder.Remove();
-                        treeBuilder.MoveToPosition(begin);
-                        move = true;
-                    }
-                    else
-                        move = treeBuilder.MoveNext();
-                } while (move);
-            };
-
-            iterate();
-
+            IterateTreeBuilder(treeBuilder);
             treeBuilder.MoveToPosition(pos);
             FilePath rootName = project.BaseDirectory.Combine("Schemas");
             treeBuilder.AddChild(new SchemaFolder(rootName, project));
+        }
+
+        private void IterateTreeBuilder(ITreeBuilder treeBuilder)
+        {
+            if (treeBuilder.HasChildren())
+            {
+                treeBuilder.MoveToFirstChild();
+                IterateTreeBuilder(treeBuilder);
+                treeBuilder.MoveToParent();
+            }
+            bool move = false;
+            do
+            {
+                if (treeBuilder.DataItem is SchemaFolder)
+                    continue;
+                if (IsHiddenItem(treeBuilder.DataItem))
+                {
+                    treeBuilder.Remove();
+                    move = true;
+                }
+                else
+                    move = treeBuilder.MoveNext();
+            } while (move);
         }
 
         private bool IsHiddenItem(object dataItem)

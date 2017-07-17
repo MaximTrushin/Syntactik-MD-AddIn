@@ -9,12 +9,8 @@ namespace Syntactik.MonoDevelop.NodeBuilders
     public class SchemaFolderNodeBuilder : TypeNodeBuilder
     {
         #region Properties
-        /// <summary>Gets the data type for the WebReferenceFolderNodeBuilder.</summary>
-        /// <value>A Type containing the data type for WebReferenceFolderNodeBuilder.</value>
         public override Type NodeDataType => typeof(SchemaFolder);
 
-        /// <summary>Gets the type of the CommandHandler with the WebReferenceFolderNodeBuilder.</summary>
-        /// <value>A Type containing the reference for the CommandHandlerType for the WebReferenceFolderNodeBuilder.</value>
         public override Type CommandHandlerType => typeof(SchemaFolderCommandHandler);
 
         /// <summary>Gets the Addin path for the context menu for the WebReferenceFolderNodeBuilder.</summary>
