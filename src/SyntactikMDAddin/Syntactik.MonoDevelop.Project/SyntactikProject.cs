@@ -281,10 +281,19 @@ namespace Syntactik.MonoDevelop.Project
             return result;
         }
 
+        private static string[] GetProjectSchemas(SyntactikProject project)
+        {
+            var shemaFolder = project.Items.OfType<ProjectFile>().First(i => i.FilePath.FileName.ToLower() == "schemas");
+            var schmeas = from projectItem in project.Items.OfType<ProjectFile>()
+                          where projectItem.FilePath.IsChildPathOf(shemaFolder.FilePath) && projectItem.FilePath.Extension == ".xsd"
+                          select projectItem.FilePath.ToString();
+            return schmeas.ToArray();
+        }
+
         private static IEnumerable<string> GetProjectFiles(SyntactikProject project)
         {
             var sources = project.Items.GetAll<ProjectFile>()
-                .Where(i => i.Subtype != Subtype.Directory && i.FilePath.Extension.ToLower() == ".s4x")
+                .Where(i => i.Subtype != Subtype.Directory && (i.FilePath.Extension.ToLower() == ".s4x" || i.FilePath.Extension.ToLower() == ".xsd"))
                 .Select(i => i.FilePath.FullPath.ToString());
             return sources;
         }
@@ -297,8 +306,15 @@ namespace Syntactik.MonoDevelop.Project
                 Pipeline = new CompileToFiles(),
                 OutputDirectory = outputDirectory
             };
-            foreach (var file in files)
-                compilerParameters.Input.Add(new FileInput(file));
+            foreach (var fileName in files)
+            {
+                if (fileName.EndsWith(".s4x"))
+                {
+                    compilerParameters.Input.Add(new FileInput(fileName));
+                    continue;
+                }
+                if (fileName.EndsWith(".xsd")) compilerParameters.XmlSchemaSet.Add(null, fileName);
+            }
 
             return compilerParameters;
         }
