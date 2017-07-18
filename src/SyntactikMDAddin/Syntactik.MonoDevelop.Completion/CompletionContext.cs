@@ -101,6 +101,29 @@ namespace Syntactik.MonoDevelop.Completion
                     return;
                 }
             }
+            var element = LastPair as Mapped.Element;
+            if (element != null)
+            {
+                if (element.NameInterval.End.Index >= _offset)
+                {
+                    InTag = CompletionExpectation.Element;
+                    AddExpectation(CompletionExpectation.Element);
+                    return;
+                }
+                if (element.Delimiter == DelimiterEnum.None) return;
+                if (element.Delimiter == DelimiterEnum.E || element.Delimiter == DelimiterEnum.EE)
+                {
+                    AddExpectation(CompletionExpectation.Value);
+                    return;
+                }
+                if (element.Delimiter == DelimiterEnum.C)
+                {
+                    AddExpectation(CompletionExpectation.Alias);
+                    AddExpectation(CompletionExpectation.Element);
+                    AddExpectation(CompletionExpectation.Attribute);
+                    return;
+                }
+            }
         }
 
         /// <summary>

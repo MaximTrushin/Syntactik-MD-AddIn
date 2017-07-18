@@ -1,3 +1,3 @@
 ﻿!$alias: el1: !%arg
-''' Inside alias value.
+''' Inside alias body.
 $alias :

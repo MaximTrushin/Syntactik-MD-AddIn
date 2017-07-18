@@ -226,13 +226,13 @@ namespace Syntactik.MonoDevelop.Project
                 foreach (var item in CompileInfo)
                 {
                     var module = item.Value.Document.Ast as Module;
-                    if (module != null)
-                        foreach (var moduleMember in module.Members)
-                        {
-                            var aliasDef = moduleMember as AliasDefinition;
-                            if (aliasDef != null && !aliasDefs.ContainsKey(aliasDef.Name))
-                                aliasDefs.Add(aliasDef.Name, aliasDef);
-                        }
+                    if (module == null) continue;
+                    foreach (var moduleMember in module.Members)
+                    {
+                        var aliasDef = moduleMember as AliasDefinition;
+                        if (aliasDef != null && !aliasDefs.ContainsKey(aliasDef.Name))
+                            aliasDefs.Add(aliasDef.Name, aliasDef);
+                    }
                 }
             }
             return aliasDefs;
@@ -281,15 +281,6 @@ namespace Syntactik.MonoDevelop.Project
             return result;
         }
 
-        private static string[] GetProjectSchemas(SyntactikProject project)
-        {
-            var shemaFolder = project.Items.OfType<ProjectFile>().First(i => i.FilePath.FileName.ToLower() == "schemas");
-            var schmeas = from projectItem in project.Items.OfType<ProjectFile>()
-                          where projectItem.FilePath.IsChildPathOf(shemaFolder.FilePath) && projectItem.FilePath.Extension == ".xsd"
-                          select projectItem.FilePath.ToString();
-            return schmeas.ToArray();
-        }
-
         private static IEnumerable<string> GetProjectFiles(SyntactikProject project)
         {
             var sources = project.Items.GetAll<ProjectFile>()
@@ -297,7 +288,6 @@ namespace Syntactik.MonoDevelop.Project
                 .Select(i => i.FilePath.FullPath.ToString());
             return sources;
         }
-
 
         private static CompilerParameters CreateCompilerParameters(string outputDirectory, IEnumerable<string> files)
         {
