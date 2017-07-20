@@ -21,7 +21,7 @@ using Syntactik.MonoDevelop.Schemas;
 namespace Syntactik.MonoDevelop.Projects
 {
     [ProjectModelDataItem]
-    public class SyntactikProject : Project
+    public class SyntactikProject : Project, IProjectFilesProvider
     {
         internal class ParseInfo
         {
@@ -291,6 +291,14 @@ namespace Syntactik.MonoDevelop.Projects
                 .Where(i => i.Subtype != Subtype.Directory && (i.FilePath.Extension.ToLower() == ".s4x" || i.FilePath.Extension.ToLower() == ".xsd"))
                 .Select(i => i.FilePath.FullPath.ToString());
             return sources;
+        }
+        public IEnumerable<string> GetSchemaProjectFiles()
+        {
+            var services = Items.OfType<ProjectFile>()
+                .Where(i => i.ProjectVirtualPath.ParentDirectory.FileNameWithoutExtension.ToLower() == "schemas" &&
+                i.ProjectVirtualPath.ParentDirectory.ParentDirectory.FileNameWithoutExtension == "" &&
+                i.FilePath.Extension == ".xsd").Select(i => i.FilePath.ToString());
+            return services;
         }
 
         private static CompilerParameters CreateCompilerParameters(string outputDirectory, IEnumerable<string> files)

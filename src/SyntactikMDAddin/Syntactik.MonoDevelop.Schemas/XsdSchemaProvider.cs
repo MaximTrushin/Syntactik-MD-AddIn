@@ -4,6 +4,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Schema;
 using MonoDevelop.Projects;
+using Syntactik.MonoDevelop.Projects;
 
 namespace Syntactik.MonoDevelop.Schemas
 {
@@ -12,29 +13,15 @@ namespace Syntactik.MonoDevelop.Schemas
         XmlSchemaSet _schemaset;
         readonly Dictionary<string, XmlSchema> _includes = new Dictionary<string, XmlSchema>();
 
-        private readonly Project _project;
+        private readonly IProjectFilesProvider _provider;
 
-        public XsdSchemaProvider(Project project)
+        public XsdSchemaProvider(IProjectFilesProvider provider)
         {
-            _project = project;
+            _provider = provider;
         }
-
-        private IEnumerable<ProjectFile> GetSchemaProjectFiles()
+        protected virtual IEnumerable<string> GetSchemaFiles()
         {
-            if (_project == null) return new List<ProjectFile>();
-            var services = _project.Items.OfType<ProjectFile>()
-                .Where(i => i.ProjectVirtualPath.ParentDirectory.FileNameWithoutExtension.ToLower() == "schemas" &&
-                i.ProjectVirtualPath.ParentDirectory.ParentDirectory.FileNameWithoutExtension == "" &&
-                i.FilePath.Extension == ".xsd");
-            //var services = from projectItem in _project.Items.OfType<ProjectFile>()
-            //    where projectItem.FilePath.IsChildPathOf(shemaFolder.FilePath) && projectItem.FilePath.Extension == ".xsd"
-            //    select projectItem;
-            return services;
-        }
-
-        protected virtual string[] GetSchemaFiles()
-        {
-            return GetSchemaProjectFiles().Select(f => f.FilePath.FullPath.ToString()).ToArray();
+            return _provider.GetSchemaProjectFiles();
         }
 
         public void UpdateServices()

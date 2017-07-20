@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
-using Syntactik.MonoDevelop.Completion;
-using MonoDevelop.Projects;
+using Syntactik.MonoDevelop.Projects;
 
 namespace Syntactik.MonoDevelop.Schemas
 {
@@ -13,11 +10,11 @@ namespace Syntactik.MonoDevelop.Schemas
     {
         readonly List<ISchemaProvider> _providers = new List<ISchemaProvider>();
 
-        public SchemasRepository(Project project)
+        public SchemasRepository(IProjectFilesProvider provider)
         {
             _providers.Add(new XmlSchemaInstanceNamespace());
             _providers.Add(new XmlSchemaNamespace());
-            _providers.Add(new XsdSchemaProvider(project));
+            _providers.Add(new XsdSchemaProvider(provider));
         }
 
         public IEnumerable<NamespaceInfo> GetNamespaces()

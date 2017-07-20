@@ -133,6 +133,7 @@
     <Compile Include="Syntactik.MonoDevelop.Parser\SyntactikParsedDocument.cs" />
     <Compile Include="Syntactik.MonoDevelop.Parser\TypeSystemParser.cs" />
     <Compile Include="Syntactik.MonoDevelop.Project\CompilerOptionsPanel.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Project\IProjectFilesProvider.cs" />
     <Compile Include="Syntactik.MonoDevelop.Project\SyntactikProjectConfiguration.cs" />
     <Compile Include="Syntactik.MonoDevelop.Project\SyntactikProjectRunConfigurationEditor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
