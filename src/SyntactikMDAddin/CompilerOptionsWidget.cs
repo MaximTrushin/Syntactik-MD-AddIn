@@ -1,19 +1,19 @@
-﻿using System;
-using MonoDevelop.Ide;
+﻿using MonoDevelop.Ide;
 using MonoDevelop.Projects;
-using Syntactik.MonoDevelop.Project;
+using Syntactik.MonoDevelop.Projects;
 
 namespace Syntactik.MonoDevelop
 {
     [System.ComponentModel.ToolboxItem(true)]
     public partial class CompilerOptionsWidget : Gtk.Bin
     {
-        public CompilerOptionsWidget(global::MonoDevelop.Projects.Project project)
+        public CompilerOptionsWidget(Project project)
         {
-            this.Build();
+            Build();
 
-            var configuration = (SyntactikProjectConfiguration)project.GetConfiguration(IdeApp.Workspace.ActiveConfiguration);
-            this.folderEntry.Path = configuration.XMLOutputFolder;
+            var configuration =
+                (SyntactikProjectConfiguration) project.GetConfiguration(IdeApp.Workspace.ActiveConfiguration);
+            folderEntry.Path = configuration.XMLOutputFolder;
         }
 
         public bool ValidateChanges()
@@ -28,8 +28,6 @@ namespace Syntactik.MonoDevelop
                 var configuration = (SyntactikProjectConfiguration) itemConfiguration;
                 configuration.XMLOutputFolder = folderEntry.Path;
             }
-
         }
     }
 }
-

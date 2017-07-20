@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Gtk;
-using MonoDevelop.Components;
+﻿using MonoDevelop.Components;
 using MonoDevelop.Ide.Gui.Dialogs;
 
-namespace Syntactik.MonoDevelop.Project
+namespace Syntactik.MonoDevelop.Projects
 {
     public class CompilerOptionsPanel : ItemOptionsPanel
     {

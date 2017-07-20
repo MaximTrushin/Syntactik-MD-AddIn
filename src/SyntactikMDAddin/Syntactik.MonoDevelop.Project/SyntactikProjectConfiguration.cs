@@ -2,7 +2,7 @@ using MonoDevelop.Core;
 using MonoDevelop.Core.Serialization;
 using MonoDevelop.Projects;
 
-namespace Syntactik.MonoDevelop.Project
+namespace Syntactik.MonoDevelop.Projects
 {
 
     [ProjectModelDataItem]

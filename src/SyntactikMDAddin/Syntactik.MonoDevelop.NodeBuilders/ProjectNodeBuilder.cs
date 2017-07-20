@@ -3,7 +3,7 @@ using MonoDevelop.Core;
 using MonoDevelop.Ide.Gui.Components;
 using MonoDevelop.Ide.Gui.Pads.ProjectPad;
 using Syntactik.MonoDevelop.Commands;
-using Syntactik.MonoDevelop.Project;
+using Syntactik.MonoDevelop.Projects;
 
 namespace Syntactik.MonoDevelop.NodeBuilders
 {

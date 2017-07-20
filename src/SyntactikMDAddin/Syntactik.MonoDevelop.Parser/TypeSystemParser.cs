@@ -2,14 +2,13 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MonoDevelop.Ide.TypeSystem;
-using Syntactik.MonoDevelop.Project;
+using Syntactik.MonoDevelop.Projects;
 using TS = MonoDevelop.Ide.TypeSystem;
 
 namespace Syntactik.MonoDevelop.Parser
 {
     public sealed class TypeSystemParser: TS.TypeSystemParser
     {
-
         public override async Task<ParsedDocument> Parse(ParseOptions options, CancellationToken cancellationToken = new CancellationToken())
         {
             var fileName = options.FileName;
@@ -42,7 +41,5 @@ namespace Syntactik.MonoDevelop.Parser
             result.LastWriteTimeUtc = time;
             return result;
         }
-
-
     }
 }

@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Gdk;
-using MonoDevelop.Ide.CodeCompletion;
-using MonoDevelop.Ide.CodeTemplates;
-using MonoDevelop.Ide.Editor.Extension;
+﻿using MonoDevelop.Ide.CodeCompletion;
 
 namespace Syntactik.MonoDevelop.Completion
 {
@@ -15,7 +7,7 @@ namespace Syntactik.MonoDevelop.Completion
         PrivateAttribute,
         Attribute,
         Entity,
-        Namepsace,
+        Namespace,
         Alias,
         AliasNamespace,
         Argument

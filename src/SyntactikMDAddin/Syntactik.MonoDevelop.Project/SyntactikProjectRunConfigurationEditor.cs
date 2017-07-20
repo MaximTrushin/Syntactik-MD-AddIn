@@ -4,7 +4,7 @@ using MonoDevelop.Components;
 using MonoDevelop.Ide.Execution;
 using MonoDevelop.Projects;
 
-namespace Syntactik.MonoDevelop.Project
+namespace Syntactik.MonoDevelop.Projects
 {
     /// <summary>
     /// This class is needed to display project's option dialog.
