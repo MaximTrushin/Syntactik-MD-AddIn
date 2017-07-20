@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using MonoDevelop.Components;
+using MonoDevelop.Ide;
 using Syntactik.Compiler;
 using Syntactik.Compiler.IO;
 using Syntactik.DOM;
@@ -46,6 +48,7 @@ namespace Syntactik.MonoDevelop.Completion
 
         public void CalculateExpectations()
         {
+            Expectations.Clear();
             InTag = CompletionExpectation.NoExpectation;
             if (LastPair == null) //Module
             {
@@ -54,7 +57,6 @@ namespace Syntactik.MonoDevelop.Completion
                     AddExpectation(CompletionExpectation.Namespace);
                 AddExpectation(CompletionExpectation.Alias);
                 AddExpectation(CompletionExpectation.Element);
-                AddExpectation(CompletionExpectation.Attribute);
                 AddExpectation(CompletionExpectation.Document);
                 AddExpectation(CompletionExpectation.AliasDefinition);
                 return;
@@ -124,6 +126,29 @@ namespace Syntactik.MonoDevelop.Completion
                     return;
                 }
             }
+
+            var document = LastPair as Mapped.Document;
+            if (document != null)
+            {
+                if (document.NameInterval.End.Index >= _offset)
+                {
+                    InTag = CompletionExpectation.Document;
+                    AddExpectation(CompletionExpectation.Element);
+                    return;
+                }
+                if (document.Delimiter == DelimiterEnum.None) return;
+                if (document.Delimiter == DelimiterEnum.E || document.Delimiter == DelimiterEnum.EE)
+                {
+                    AddExpectation(CompletionExpectation.Value);
+                    return;
+                }
+                if (document.Delimiter == DelimiterEnum.C)
+                {
+                    AddExpectation(CompletionExpectation.Alias);
+                    AddExpectation(CompletionExpectation.Element);
+                    return;
+                }
+            }
         }
 
         /// <summary>
@@ -162,6 +187,19 @@ namespace Syntactik.MonoDevelop.Completion
                 offset++;
             }
             return offset;
+        }
+
+        public IEnumerable<Pair> GetPath()
+        {
+            var pair = LastPair;
+            var list = new List<Pair>();
+            while (pair != null)
+            {
+                list.Add(pair);
+                pair = pair.Parent;
+            }
+            //list.Reverse();
+            return list;
         }
     }
 

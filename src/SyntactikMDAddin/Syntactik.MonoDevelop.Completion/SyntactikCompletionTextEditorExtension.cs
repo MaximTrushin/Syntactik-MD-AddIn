@@ -14,7 +14,8 @@ using MonoDevelop.Ide.Editor.Extension;
 using MonoDevelop.Ide.Gui.Content;
 using Syntactik.DOM;
 using Syntactik.DOM.Mapped;
-using Syntactik.MonoDevelop.Project;
+using Syntactik.MonoDevelop.Projects;
+using Syntactik.MonoDevelop.Schemas;
 using Alias = Syntactik.DOM.Mapped.Alias;
 using AliasDefinition = Syntactik.DOM.Mapped.AliasDefinition;
 using Argument = Syntactik.DOM.Mapped.Argument;
@@ -69,20 +70,21 @@ namespace Syntactik.MonoDevelop.Completion
             return await HandleCodeCompletion(completionContext, false, token, triggerWordLength);
         }
 
-        protected virtual Task<ICompletionDataList> HandleCodeCompletion(CodeCompletionContext completionContext, bool forced, 
+        protected virtual async Task<ICompletionDataList> HandleCodeCompletion(CodeCompletionContext completionContext, bool forced, 
             CancellationToken token, int triggerWordLength)
         {
-            return Task.Run(
-                async () => {
-                    //CompletionContext context = new CompletionContext(Editor.FileName, Editor.Text, Editor.CaretOffset, ((SyntactikProject)DocumentContext.Project).GetAliasDefinitionList, token);
-                    
-                    CompletionContext context = await GetCompletionContextAsync(token, Editor.Version, Editor.CaretOffset, 
-                        Editor.FileName, Editor.Text, ((SyntactikProject)DocumentContext.Project).GetAliasDefinitionList);
-                    context.CalculateExpectations();
-                    return GetCompletionList(context, completionContext, triggerWordLength,
-                        ((SyntactikProject) DocumentContext.Project).GetAliasDefinitionList);
-                }, token
-            );
+            return await GetCompletionListAsync(completionContext, token, triggerWordLength);
+        }
+
+        private async Task<ICompletionDataList> GetCompletionListAsync(CodeCompletionContext completionContext,
+            CancellationToken token, int triggerWordLength)
+        {
+            CompletionContext context = await GetCompletionContextAsync(token, Editor.Version, Editor.CaretOffset,
+                   Editor.FileName, Editor.Text, ((SyntactikProject)DocumentContext.Project).GetAliasDefinitionList);
+            context.CalculateExpectations();
+            return GetCompletionList(context, completionContext, triggerWordLength,
+                ((SyntactikProject)DocumentContext.Project).GetAliasDefinitionList,
+                ((SyntactikProject)DocumentContext.Project).SchemasRepository);
         }
 
         private Task<CompletionContext> GetCompletionContextAsync(CancellationToken token, ITextSourceVersion version, int caretOffset, string fileName, string text, Func<Dictionary<string, Syntactik.DOM.AliasDefinition>> getAliasDefinitionList)
@@ -109,19 +111,53 @@ namespace Syntactik.MonoDevelop.Completion
         protected internal static ICompletionDataList GetCompletionList(CompletionContext context, 
             CodeCompletionContext editorCompletionContext, 
             int triggerWordLength,
-            Func<Dictionary<string, Syntactik.DOM.AliasDefinition>> aliasListFunc)
+            Func<Dictionary<string, Syntactik.DOM.AliasDefinition>> aliasListFunc,
+            SchemasRepository schemasRepository)
         {
+            
+            var schemaInfo = schemasRepository.GetContextInfo(new Context { CompletionInfo = context });
             var completionList = new CompletionDataList {TriggerWordLength = triggerWordLength};
             foreach (var expectation in context.Expectations.AsEnumerable())
             {
                 if (expectation == CompletionExpectation.Alias)
-                {
                     DoAliasCompletion(completionList, context, editorCompletionContext, aliasListFunc);
-                }
+                
                 if (expectation==CompletionExpectation.Argument)
                     DoArgumentCompletion(completionList, context, aliasListFunc);
+
+                if (expectation == CompletionExpectation.Element)
+                    DoElementCompletion(completionList, context, schemaInfo);
             }
             return completionList;
+        }
+
+        private static void DoElementCompletion(CompletionDataList completionList, CompletionContext context, ContextInfo schemaInfo)
+        {
+            var items = new List<CompletionData>();
+            var categoryElements = new SyntactikCompletionCategory { DisplayText = "Elements", Order = 2 };
+            //var categoryAttributes = new SyntactikCompletionCategory { DisplayText = "Attributes", Order = 1 };
+
+            CompletionData data;
+            //foreach (var attribute in schemaInfo.Attributes)
+            //{
+            //    data = new CompletionItem(ItemType.Attribute);
+            //    items.Add(data);
+            //    data.CompletionCategory = categoryAttributes;
+            //    data.Icon = SyntactikIcons.Attribute;
+            //    data.DisplayText = "@" + attribute.Name;
+            //    data.CompletionText = data.DisplayText;
+            //}
+
+            foreach (var element in schemaInfo.Elements)
+            {
+                data = new CompletionItem(ItemType.Entity);
+                items.Add(data);
+                data.CompletionCategory = categoryElements;
+                data.Icon = SyntactikIcons.Element;
+                data.DisplayText = element.Name;
+                data.CompletionText = data.DisplayText;
+            }
+            completionList.AddRange(items.OrderBy(i => i.DisplayText));
         }
 
         private static void DoAliasCompletion(CompletionDataList completionList, CompletionContext context, 
@@ -262,9 +298,9 @@ namespace Syntactik.MonoDevelop.Completion
         {
             var pair = context.LastPair;
             if (context.InTag != CompletionExpectation.Alias) return null;
-            var alias = (Syntactik.DOM.Mapped.Alias) pair;
+            var alias = (IMappedPair) pair;
             if (alias.NameInterval.End.Column < editorCompletionContext.TriggerLineOffset) return null;
-            var prefix = alias.Name;
+            var prefix = pair.Name;
             if (string.IsNullOrEmpty(prefix)) return prefix;
 
             return prefix.Substring(0, prefix.Length - (alias.NameInterval.End.Index - context.Offset));
@@ -388,7 +424,7 @@ namespace Syntactik.MonoDevelop.Completion
                     if (task.Status != TaskStatus.RanToCompletion) return;
                     CompletionContext context = task.Result;
 
-                    List<PathEntry> path = GetPath(context.LastPair);
+                    var path = GetPathEntries(context.GetPath());
 
                     PathEntry[] oldPath = _currentPath;
                     _currentPath = path.ToArray();
@@ -412,16 +448,14 @@ namespace Syntactik.MonoDevelop.Completion
                 }
         }
 
-        private static List<PathEntry> GetPath(Pair lastPair)
+        private List<PathEntry> GetPathEntries(IEnumerable<Pair> pairs)
         {
-            var pair = lastPair;
             var list = new List<PathEntry>();
-            while (pair != null)
+            foreach (var pair in pairs)
             {
-                if (pair is Document && (pair.Parent as Module)?.ModuleDocument == pair) break;
-                list.Add(new PathEntry(ImageService.GetIcon(GetIconSourceName(pair)), GetMarkup(pair)) {Tag = pair});
-                pair = pair.Parent;
                 if (pair is Module) break;
+                if (pair is Document && (pair.Parent as Module)?.ModuleDocument == pair) break;
+                list.Add(new PathEntry(ImageService.GetIcon(GetIconSourceName(pair)), GetMarkup(pair)) { Tag = pair });
             }
             list.Reverse();
             return list;

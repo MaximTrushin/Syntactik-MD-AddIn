@@ -16,17 +16,20 @@ using Syntactik.Compiler.Pipelines;
 using Syntactik.Compiler.Steps;
 using Syntactik.DOM;
 using Syntactik.MonoDevelop.Parser;
+using Syntactik.MonoDevelop.Schemas;
 
-namespace Syntactik.MonoDevelop.Project
+namespace Syntactik.MonoDevelop.Projects
 {
     [ProjectModelDataItem]
-    public class SyntactikProject : global::MonoDevelop.Projects.Project
+    public class SyntactikProject : Project
     {
         internal class ParseInfo
         {
             public ITextSourceVersion Version;
             public SyntactikParsedDocument Document;
         }
+
+        public SchemasRepository SchemasRepository { get; private set; }
 
         readonly object _syncRoot = new object();
         internal Dictionary<string, ParseInfo> CompileInfo { get; } = new Dictionary<string, ParseInfo>();
@@ -47,6 +50,7 @@ namespace Syntactik.MonoDevelop.Project
             //Preventing setting of brakepoints in files of Syntactik project.
             var breakpoints = DebuggingService.Breakpoints;
             breakpoints.CheckingReadOnly += BreakpointsOnCheckingReadOnly;
+            SchemasRepository = new SchemasRepository(this);
         }
 
         protected override void OnDispose()
