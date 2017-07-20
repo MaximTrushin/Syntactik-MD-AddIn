@@ -1,14 +1,15 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading;
 using Mono.TextEditor;
 using Mono.TextEditor.Highlighting;
 using MonoDevelop.Ide.CodeCompletion;
+using MonoDevelop.Projects;
 using NUnit.Framework;
 using Syntactik.Compiler;
 using Syntactik.Compiler.IO;
@@ -66,14 +67,12 @@ namespace SyntactikMDAddin.Tests
         public static void DoCompletionListTest()
         {
             var input = PrintTestScenario();
-
-            string completionList = GetCompletionList(GetTestCaseName(), input, input.Length);
-
+            string completionList = GetCompletionList(GetTestCaseName(), input, new FileProvider());
             if (IsRecordedTest() || IsRecordTest())
                 CompareResultAndRecordedFiles(completionList, IsRecordTest(), "list");
         }
 
-        private static string GetCompletionList(string fileName, string text, int caretOffset)
+        private static string GetCompletionList(string fileName, string text, IProjectFilesProvider filesProvider)
         {
             var compilerParameters = CreateCompilerParameters(fileName, text);
             var compiler = new SyntactikCompiler(compilerParameters);
@@ -95,12 +94,12 @@ namespace SyntactikMDAddin.Tests
             };
 
             CompletionContext context = new CompletionContext();
-            context.Parse(fileName, text, caretOffset, func);
+            context.Parse(fileName, text, text.Length, func);
             context.CalculateExpectations();
             var lines = text.Split();
             var lastLine = lines[lines.Length - 1];
             var codeCompletionContext = new CodeCompletionContext { TriggerLineOffset = lastLine.Length > 0 ? lastLine.Length - 1 : 0 };
-            var schemasRepository = new SchemasRepository(null);
+            var schemasRepository = new SchemasRepository(filesProvider);
             var list = SyntactikCompletionTextEditorExtension.GetCompletionList(context, codeCompletionContext, 0, func, schemasRepository);
             return string.Join("\n", list.Select(item => item.CompletionText));
         }
@@ -241,6 +240,20 @@ namespace SyntactikMDAddin.Tests
         public static bool IsRecordTest()
         {
             return TestHasAttribute<RecordTestAttribute>();
+        }
+
+        public class FileProvider : IProjectFilesProvider
+        {
+            public IEnumerable<string> GetSchemaProjectFiles()
+            {
+                var files = new List<string>();
+                var path = AssemblyDirectory + @"\Schemas";
+                foreach (var file in Directory.GetFiles(path))
+                {
+                    files.Add(file);
+                }
+                return files;
+            }
         }
     }
 }
