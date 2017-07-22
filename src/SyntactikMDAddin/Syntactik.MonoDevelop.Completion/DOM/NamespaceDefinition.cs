@@ -23,6 +23,17 @@ namespace Syntactik.MonoDevelop.Completion.DOM
             set { base.Name = value; }
         }
 
+        public override string Value
+        {
+            get
+            {
+                if (base.Value != null) return base.Value;
+                base.Value = Element.GetNameText(_input, ValueQuotesType, ValueInterval);
+                return base.Value;
+            }
+            set { base.Value = value; }
+        }
+
         private Pair _lastAddedChild;
         public override void AppendChild(Pair child)
         {
@@ -34,9 +45,8 @@ namespace Syntactik.MonoDevelop.Completion.DOM
 
         public void StoreStringValues()
         {
-            if (Name != null)
-            {
-            }
+            if (Name != null){}
+            if (Value != null){}
         }
 
         public void DeleteChildren()

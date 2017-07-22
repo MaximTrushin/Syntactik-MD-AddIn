@@ -17,9 +17,11 @@ namespace Syntactik.MonoDevelop.Schemas
             _providers.Add(new XsdSchemaProvider(provider));
         }
 
+        private IEnumerable<NamespaceInfo> _namespaces;
         public IEnumerable<NamespaceInfo> GetNamespaces()
         {
-            return _providers.SelectMany(p => p.GetNamespaces());
+            if (_namespaces != null) return _namespaces;
+            return _namespaces = _providers.SelectMany(p => p.GetNamespaces());
         }
 
         public void Validate(XmlDocument doc, Action<XmlNode, string> onErrorAction)
@@ -35,13 +37,7 @@ namespace Syntactik.MonoDevelop.Schemas
             {
                 schemaProvider.PopulateContextInfo(ctx, result);
             }
-
             return result;
-        }
-
-        public void AddProvider(ISchemaProvider provider)
-        {
-            _providers.Add(provider);
         }
     }
 }

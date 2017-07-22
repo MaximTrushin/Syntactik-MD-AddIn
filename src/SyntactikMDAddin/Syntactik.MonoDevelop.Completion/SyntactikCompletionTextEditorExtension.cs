@@ -14,6 +14,8 @@ using MonoDevelop.Ide.Editor.Extension;
 using MonoDevelop.Ide.Gui.Content;
 using Syntactik.DOM;
 using Syntactik.DOM.Mapped;
+using Syntactik.IO;
+using Syntactik.MonoDevelop.Completion.DOM;
 using Syntactik.MonoDevelop.Projects;
 using Syntactik.MonoDevelop.Schemas;
 using Alias = Syntactik.DOM.Mapped.Alias;
@@ -21,6 +23,7 @@ using AliasDefinition = Syntactik.DOM.Mapped.AliasDefinition;
 using Argument = Syntactik.DOM.Mapped.Argument;
 using Document = Syntactik.DOM.Document;
 using Module = Syntactik.DOM.Module;
+using NamespaceDefinition = Syntactik.DOM.NamespaceDefinition;
 
 namespace Syntactik.MonoDevelop.Completion
 {
@@ -36,12 +39,15 @@ namespace Syntactik.MonoDevelop.Completion
         protected override void Initialize()
         {
             base.Initialize();
+            CompletionWindowManager.WordCompleted += CompletionWindowManager_WordCompleted;
             Editor.CaretPositionChanged += HandleCaretPositionChanged;
+
         }
 
         public override void Dispose()
         {
             Editor.CaretPositionChanged -= HandleCaretPositionChanged;
+            CompletionWindowManager.WordCompleted -= CompletionWindowManager_WordCompleted;
             base.Dispose();
         }
 
@@ -126,18 +132,17 @@ namespace Syntactik.MonoDevelop.Completion
                     DoArgumentCompletion(completionList, context, aliasListFunc);
 
                 if (expectation == CompletionExpectation.Element)
-                    DoElementCompletion(completionList, context, schemaInfo);
+                    DoElementCompletion(completionList, context, schemaInfo, schemasRepository);
             }
             return completionList;
         }
 
-        private static void DoElementCompletion(CompletionDataList completionList, CompletionContext context, ContextInfo schemaInfo)
+        private static void DoElementCompletion(CompletionDataList completionList, CompletionContext completionContext, ContextInfo schemaInfo, SchemasRepository schemasRepository)
         {
             var items = new List<CompletionData>();
             var categoryElements = new SyntactikCompletionCategory { DisplayText = "Elements", Order = 2 };
             //var categoryAttributes = new SyntactikCompletionCategory { DisplayText = "Attributes", Order = 1 };
 
-            CompletionData data;
             //foreach (var attribute in schemaInfo.Attributes)
             //{
             //    data = new CompletionItem(ItemType.Attribute);
@@ -147,17 +152,50 @@ namespace Syntactik.MonoDevelop.Completion
             //    data.DisplayText = "@" + attribute.Name;
             //    data.CompletionText = data.DisplayText;
             //}
+            
 
             foreach (var element in schemaInfo.Elements)
             {
-                data = new CompletionItem(ItemType.Entity);
+                bool newNs = false;
+                string prefix = string.IsNullOrEmpty(element.Namespace)?"":ResolveNamespacePrefix(element.Namespace, completionContext.LastPair, schemasRepository, out newNs);
+                var data = new CompletionItem {ItemType = ItemType.Entity, Namespace = element.Namespace, NsPrefix = prefix};
                 items.Add(data);
                 data.CompletionCategory = categoryElements;
                 data.Icon = SyntactikIcons.Element;
-                data.DisplayText = element.Name;
+                data.DisplayText = (string.IsNullOrEmpty(prefix)?"":(prefix + ".")) + element.Name;
                 data.CompletionText = data.DisplayText;
+                data.NewNamespace = newNs;
             }
             completionList.AddRange(items.OrderBy(i => i.DisplayText));
+        }
+
+        private static string ResolveNamespacePrefix(string @namespace, Pair completionContextLastPair, SchemasRepository schemasRepository, out bool newNs)
+        {
+            NamespaceDefinition nsDef = null;
+            newNs = false;
+            while (completionContextLastPair != null)
+            {
+                var moduleMember = completionContextLastPair as ModuleMember;
+                if (moduleMember != null)
+                {
+                    nsDef = moduleMember.NamespaceDefinitions.FirstOrDefault(n => n.Value == @namespace);
+                }
+                else
+                {
+                    var module = completionContextLastPair as Module;
+                    if (module != null)
+                    {
+                        nsDef = module.NamespaceDefinitions.FirstOrDefault(n => n.Value == @namespace);
+                    }
+                }
+
+                if (completionContextLastPair.Parent is CompileUnit) break;
+                completionContextLastPair = completionContextLastPair.Parent;
+            }
+            if (nsDef != null) return nsDef.Name;
+
+            newNs = true;
+            return schemasRepository.GetNamespaces().First(n => n.Namespace == @namespace).Name;
         }
 
         private static void DoAliasCompletion(CompletionDataList completionList, CompletionContext context, 
@@ -184,7 +222,7 @@ namespace Syntactik.MonoDevelop.Completion
                 CompletionData data;
                 if (alias.EndsWith("."))
                 {
-                    data = new CompletionItem(ItemType.AliasNamespace);
+                    data = new CompletionItem { ItemType = ItemType.AliasNamespace};
                     items.Add(data);
                     data.CompletionCategory = category;
                     data.Icon = SyntactikIcons.Namespace;
@@ -200,7 +238,7 @@ namespace Syntactik.MonoDevelop.Completion
                 }
                 else
                 {
-                    data = new CompletionItem(ItemType.Alias);
+                    data = new CompletionItem { ItemType = ItemType.Alias};
                     items.Add(data);
                     data.CompletionCategory = category;
                     data.Icon = SyntactikIcons.Alias;
@@ -237,7 +275,7 @@ namespace Syntactik.MonoDevelop.Completion
             var category = new SyntactikCompletionCategory { DisplayText = "Arguments", Order = 3 };
             foreach (var parameter in args)
             {
-                CompletionData data = new CompletionItem(ItemType.Argument);
+                CompletionData data = new CompletionItem {ItemType = ItemType.Argument};
                 items.Add(data);
                 data.CompletionCategory = category;
                 data.DisplayText = "%" + parameter.Name + (parameter.IsValueNode?" =": ": ");
@@ -245,6 +283,44 @@ namespace Syntactik.MonoDevelop.Completion
                 data.Icon = SyntactikIcons.Argument;
             }
             completionList.AddRange(items.OrderBy(i => i.DisplayText));
+        }
+
+        private void CompletionWindowManager_WordCompleted(object sender, CodeCompletionContextEventArgs e)
+        {
+            if (SelectedCompletionItem == null)
+                return;
+            if (SelectedCompletionItem.NewNamespace)
+                AddNewNamespaceToModule(SelectedCompletionItem.NsPrefix, SelectedCompletionItem.Namespace);
+        }
+
+        private void AddNewNamespaceToModule(string nsPrefix, string ns)
+        {
+            var document = DocumentContext.ParsedDocument;
+            var module = document.Ast as Syntactik.DOM.Mapped.Module;
+            int offset = FindOffsetForNewNamespaceInsertion(module);
+            var text = (offset == 0?"":"\r\n") + $"!#{nsPrefix} = {ns}" + (offset == 0 ? "\r\n": "");
+            Editor.InsertText(offset, text);
+        }
+
+        private int FindOffsetForNewNamespaceInsertion(Syntactik.DOM.Mapped.Module module)
+        {
+            var result = 0;
+            foreach (var nsDef in module.NamespaceDefinitions)
+            {
+                var index = DomHelper.GetPairEnd((IMappedPair) nsDef).Index;
+                if (index > result) result = index;
+            }
+            if (result == 0) return 0;
+            result++;
+            var line = Editor.GetLineByOffset(result);
+            var text = Editor.GetLineText(line);
+            var offset = result - line.Offset + 1;
+            while (offset < text.Length && !IntegerCharExtensions.IsEndOfOpenName(text[offset]))
+            {
+                result++;
+                offset++;
+            }
+            return result;
         }
 
         // return false if completion can't be shown
@@ -374,6 +450,8 @@ namespace Syntactik.MonoDevelop.Completion
         }
 
         public PathEntry[] CurrentPath => _currentPath;
+        protected internal CompletionItem SelectedCompletionItem { get; internal set; }
+
         public event EventHandler<DocumentPathChangedEventArgs> PathChanged;
 
 

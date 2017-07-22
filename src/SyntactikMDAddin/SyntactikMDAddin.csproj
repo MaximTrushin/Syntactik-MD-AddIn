@@ -106,6 +106,7 @@
     <Compile Include="Syntactik.MonoDevelop.Completion\DOM\Attribute.cs" />
     <Compile Include="Syntactik.MonoDevelop.Completion\DOM\CompletionContextVisitor.cs" />
     <Compile Include="Syntactik.MonoDevelop.Completion\DOM\Document.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Completion\DOM\DomHelper.cs" />
     <Compile Include="Syntactik.MonoDevelop.Completion\DOM\Element.cs" />
     <Compile Include="Syntactik.MonoDevelop.Completion\DOM\ICompletionNode.cs" />
     <Compile Include="Syntactik.MonoDevelop.Completion\DOM\Module.cs" />

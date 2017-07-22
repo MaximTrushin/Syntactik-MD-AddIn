@@ -6,6 +6,7 @@ using MonoDevelop.Ide.TypeSystem;
 using Syntactik.DOM;
 using Syntactik.DOM.Mapped;
 using Syntactik.IO;
+using Syntactik.MonoDevelop.Completion.DOM;
 
 namespace Syntactik.MonoDevelop.Parser
 {
@@ -42,7 +43,7 @@ namespace Syntactik.MonoDevelop.Parser
 
             if (delimiter != DelimiterEnum.E && delimiter != DelimiterEnum.EE && delimiter != DelimiterEnum.None)
             {
-                _foldingStack.Push(new FoldingInfo {Pair = result, Begin = GetPairEnd(nameInterval, delimiterInterval), End = GetPairEnd(nameInterval, delimiterInterval) });    
+                _foldingStack.Push(new FoldingInfo {Pair = result, Begin = DomHelper.GetPairEnd(nameInterval, delimiterInterval), End = DomHelper.GetPairEnd(nameInterval, delimiterInterval) });    
             }
 
             return result;
@@ -56,7 +57,7 @@ namespace Syntactik.MonoDevelop.Parser
             {
                 if (_foldingStack.Count > 0)
                 {
-                    _foldingStack.Peek().End = GetPairEnd((IMappedPair) child);
+                    _foldingStack.Peek().End = DomHelper.GetPairEnd((IMappedPair) child);
                 }
 
                 if (((IMappedPair)child).ValueInterval != null && ((IMappedPair) child).ValueInterval.Begin.Line != ((IMappedPair) child).ValueInterval.End.Line)
@@ -102,18 +103,7 @@ namespace Syntactik.MonoDevelop.Parser
             _pairFactory.EndPair(pair, endInterval);
         }
 
-        private CharLocation GetPairEnd(Interval nameInterval, Interval delimiterInterval)
-        {
-            if (delimiterInterval != null) return delimiterInterval.End;
-            return nameInterval.End;
-        }
 
-        private CharLocation GetPairEnd(IMappedPair child)
-        {
-            if (child.ValueInterval != null) return child.ValueInterval.End;
-            if (child.DelimiterInterval != null) return child.DelimiterInterval.End;
-            return child.NameInterval.End;
-        }
 
         public void ProcessComment(int commentType, Interval commentInterval)
         {

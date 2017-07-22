@@ -1,4 +1,6 @@
 ﻿using MonoDevelop.Ide.CodeCompletion;
+using MonoDevelop.Ide.Editor.Extension;
+using MonoDevelop.Ide.Gui;
 
 namespace Syntactik.MonoDevelop.Completion
 {
@@ -15,12 +17,14 @@ namespace Syntactik.MonoDevelop.Completion
     public class CompletionItem : CompletionData
     {
         public ItemType ItemType { get; set; }
+        public bool NewNamespace { get; set; }
+        public string Namespace { get; set; }
+        public string NsPrefix { get; set; }
 
-        public CompletionItem(ItemType itemType)
+        public override void InsertCompletionText(CompletionListWindow window, ref KeyActions ka, KeyDescriptor descriptor)
         {
-            ItemType = itemType;
+            ((SyntactikCompletionTextEditorExtension)window.Extension).SelectedCompletionItem = this;
+            base.InsertCompletionText(window, ref ka, descriptor);
         }
-
-
     }
 }
