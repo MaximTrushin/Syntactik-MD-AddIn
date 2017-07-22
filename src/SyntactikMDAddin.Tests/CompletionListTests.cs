@@ -27,6 +27,11 @@ namespace SyntactikMDAddin.Tests
             DoCompletionListTest();
         }
         [Test, RecordedTest]
+        public void AliasComplex3()
+        {
+            DoCompletionListTest();
+        }
+        [Test, RecordedTest]
         public void AliasWithArguments1()
         {
             DoCompletionListTest();
@@ -48,6 +53,11 @@ namespace SyntactikMDAddin.Tests
         }
         [Test, RecordedTest]
         public void Document1()
+        {
+            DoCompletionListTest();
+        }
+        [Test, RecordedTest]
+        public void Element1()
         {
             DoCompletionListTest();
         }
