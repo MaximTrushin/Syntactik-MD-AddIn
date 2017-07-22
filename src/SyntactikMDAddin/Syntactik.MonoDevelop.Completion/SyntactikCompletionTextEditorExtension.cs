@@ -51,6 +51,11 @@ namespace Syntactik.MonoDevelop.Completion
             base.Dispose();
         }
 
+        /// <summary>
+        /// This method is called when completion command is executed (Ctrl+Space).
+        /// </summary>
+        /// <param name="completionContext"></param>
+        /// <returns></returns>
         public override Task<ICompletionDataList> CodeCompletionCommand(CodeCompletionContext completionContext)
         {
             Editor.EnsureCaretIsNotVirtual();
@@ -60,6 +65,13 @@ namespace Syntactik.MonoDevelop.Completion
             return HandleCodeCompletion(completionContext, true, default(CancellationToken), 0);
         }
 
+        /// <summary>
+        /// This method is triggered when completion is triggered interactively during typing.
+        /// </summary>
+        /// <param name="completionContext"></param>
+        /// <param name="completionChar">Symbol which started the completion.</param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public override async Task<ICompletionDataList> HandleCodeCompletionAsync(CodeCompletionContext completionContext,
             char completionChar, CancellationToken token = default(CancellationToken))
         {
@@ -69,10 +81,24 @@ namespace Syntactik.MonoDevelop.Completion
 
             if (pos <= 0 || ch != completionChar) return null;
 
-            if (!IsCompletionChar(completionChar) && completionChar != '.') return null;
-            if (char.IsLetterOrDigit(completionChar) && completionContext.TriggerOffset > 1 && char.IsLetterOrDigit(Editor.GetCharAt(completionContext.TriggerOffset - 2)))
+            if (!IsCompletionChar(completionChar)) return null;
+            //Don't start completion in the middle of the word if completion char is entered
+            if (completionChar != '.' && IsCompletionChar(completionChar) && completionContext.TriggerOffset > 1 && IsCompletionChar(Editor.GetCharAt(completionContext.TriggerOffset - 2)))
                 return null;
             var triggerWordLength = completionChar != '.'?1:0;
+
+
+            int cpos, wlen;
+            if (!GetCompletionCommandOffset(out cpos, out wlen))
+            {
+                cpos = Editor.CaretOffset;
+                wlen = 0;
+            }
+            CurrentCompletionContext.TriggerOffset = cpos;
+            CurrentCompletionContext.TriggerWordLength = wlen;
+
+
+
             return await HandleCodeCompletion(completionContext, false, token, triggerWordLength);
         }
 
@@ -132,37 +158,29 @@ namespace Syntactik.MonoDevelop.Completion
                     DoArgumentCompletion(completionList, context, aliasListFunc);
 
                 if (expectation == CompletionExpectation.Element)
-                    DoElementCompletion(completionList, context, schemaInfo, schemasRepository);
+                    DoElementCompletion(completionList, context, editorCompletionContext, schemaInfo, schemasRepository);
             }
             return completionList;
         }
 
-        private static void DoElementCompletion(CompletionDataList completionList, CompletionContext completionContext, ContextInfo schemaInfo, SchemasRepository schemasRepository)
+        private static void DoElementCompletion(CompletionDataList completionList, CompletionContext completionContext,
+            CodeCompletionContext editorCompletionContext, ContextInfo schemaInfo, SchemasRepository schemasRepository)
         {
             var items = new List<CompletionData>();
             var categoryElements = new SyntactikCompletionCategory { DisplayText = "Elements", Order = 2 };
-            //var categoryAttributes = new SyntactikCompletionCategory { DisplayText = "Attributes", Order = 1 };
-
-            //foreach (var attribute in schemaInfo.Attributes)
-            //{
-            //    data = new CompletionItem(ItemType.Attribute);
-            //    items.Add(data);
-            //    data.CompletionCategory = categoryAttributes;
-            //    data.Icon = SyntactikIcons.Attribute;
-            //    data.DisplayText = "@" + attribute.Name;
-            //    data.CompletionText = data.DisplayText;
-            //}
-            
+            var rawPrefix = GetPrefixForCurrentPair(completionContext, editorCompletionContext, CompletionExpectation.Element);
 
             foreach (var element in schemaInfo.Elements)
             {
                 bool newNs = false;
                 string prefix = string.IsNullOrEmpty(element.Namespace)?"":ResolveNamespacePrefix(element.Namespace, completionContext.LastPair, schemasRepository, out newNs);
+                var displayText = (string.IsNullOrEmpty(prefix) ? "" : (prefix + ".")) + element.Name;
+                if (rawPrefix != null && !displayText.StartsWith(rawPrefix)) continue;
                 var data = new CompletionItem {ItemType = ItemType.Entity, Namespace = element.Namespace, NsPrefix = prefix};
                 items.Add(data);
                 data.CompletionCategory = categoryElements;
                 data.Icon = SyntactikIcons.Element;
-                data.DisplayText = (string.IsNullOrEmpty(prefix)?"":(prefix + ".")) + element.Name;
+                data.DisplayText = displayText;
                 data.CompletionText = data.DisplayText;
                 data.NewNamespace = newNs;
             }
@@ -205,11 +223,8 @@ namespace Syntactik.MonoDevelop.Completion
             var category = new SyntactikCompletionCategory { DisplayText = "Aliases", Order = 3 };
 
             var aliases = GetListOfBlockAliasDefinitions(aliasListFunc, valuesOnly).Select(a => a.Value.Name);
-            var rawPrefix = GetPrefixOfCurrentAlias(context, editorCompletionContext);
+            var rawPrefix = GetPrefixForCurrentPair(context, editorCompletionContext, CompletionExpectation.Alias);
             var prefix = rawPrefix??string.Empty;
-
-            if (rawPrefix != null) rawPrefix = "$" + rawPrefix;
-
             if (!prefix.EndsWith("."))
             {
                 var pos = prefix.LastIndexOf(".", StringComparison.Ordinal);
@@ -232,9 +247,6 @@ namespace Syntactik.MonoDevelop.Completion
                     else
                         data.DisplayText = name;
                     data.CompletionText = data.DisplayText;
-                    if (string.IsNullOrEmpty(rawPrefix) || rawPrefix.StartsWith("$") == false)
-                        data.CompletionText = "$" + name;
-
                 }
                 else
                 {
@@ -252,6 +264,11 @@ namespace Syntactik.MonoDevelop.Completion
                     }
                     data.CompletionText = data.DisplayText;
                 }
+            }
+            if (prefix.EndsWith("."))
+            {
+                //If alias is composite then increasing TriggerOffset by the length of prefix. +1 is for $
+                editorCompletionContext.TriggerOffset += prefix.Length + 1; 
             }
             completionList.AddRange(items.OrderBy(i => i.DisplayText));
         }
@@ -327,7 +344,7 @@ namespace Syntactik.MonoDevelop.Completion
         public override bool GetCompletionCommandOffset(out int cpos, out int wlen)
         {
             Editor.EnsureCaretIsNotVirtual();
-            cpos = wlen = 0;
+
             int pos = Editor.CaretOffset - 1;
             while (pos >= 0)
             {
@@ -336,9 +353,6 @@ namespace Syntactik.MonoDevelop.Completion
                     break;
                 pos--;
             }
-            if (pos == -1)
-                return false;
-
             pos++;
             cpos = pos;
             int len = Editor.Length;
@@ -356,7 +370,7 @@ namespace Syntactik.MonoDevelop.Completion
 
         private static bool IsCompletionChar(char c)
         {
-            return char.IsLetterOrDigit(c) || c == '_' || c == '!' || c == '@' || c == '#' || c == '$' || c == '%';
+            return char.IsLetterOrDigit(c) || c == '_' || c == '!' || c == '@' || c == '#' || c == '$' || c == '%' || c == '.';
         }
 
 
@@ -370,16 +384,19 @@ namespace Syntactik.MonoDevelop.Completion
             return result;
         }
 
-        private static string GetPrefixOfCurrentAlias(CompletionContext context, CodeCompletionContext editorCompletionContext)
+        private static string GetPrefixForCurrentPair(CompletionContext context, CodeCompletionContext editorCompletionContext, CompletionExpectation expectedNode)
         {
-            var pair = context.LastPair;
-            if (context.InTag != CompletionExpectation.Alias) return null;
-            var alias = (IMappedPair) pair;
-            if (alias.NameInterval.End.Column < editorCompletionContext.TriggerLineOffset) return null;
-            var prefix = pair.Name;
+            var contextPair = context.LastPair;
+            if (context.InTag != expectedNode) return null;
+            var mappedPair = (IMappedPair) contextPair;
+            var nsPair = contextPair as INsNode;
+            string ns = "";
+            if (nsPair != null && !string.IsNullOrEmpty(nsPair.NsPrefix)) ns = nsPair.NsPrefix + ".";
+            if (mappedPair.NameInterval.End.Column < editorCompletionContext.TriggerLineOffset) return null;
+            var prefix = ns + contextPair.Name;
             if (string.IsNullOrEmpty(prefix)) return prefix;
 
-            return prefix.Substring(0, prefix.Length - (alias.NameInterval.End.Index - context.Offset));
+            return prefix.Substring(0, prefix.Length - (mappedPair.NameInterval.End.Index - context.Offset));
         }
 
         private static IEnumerable<KeyValuePair<string, Syntactik.DOM.AliasDefinition>> GetListOfBlockAliasDefinitions(
@@ -434,20 +451,20 @@ namespace Syntactik.MonoDevelop.Completion
             return pair.ValueInterval.Begin;
         }
 
-        private void SelectNextNode(int index)
-        {
+        //private void SelectNextNode(int index)
+        //{
             
-        }
+        //}
 
-        private void SelectContent(int index)
-        {
+        //private void SelectContent(int index)
+        //{
             
-        }
+        //}
 
-        private void SelectPath(int index)
-        {
+        //private void SelectPath(int index)
+        //{
 
-        }
+        //}
 
         public PathEntry[] CurrentPath => _currentPath;
         protected internal CompletionItem SelectedCompletionItem { get; internal set; }

@@ -100,12 +100,12 @@ namespace Syntactik.MonoDevelop.Schemas
             }
         }
 
-        protected override IEnumerable<XmlSchemaSet> GetSchemaSets()
+        protected override XmlSchemaSet GetSchemaSet()
         {
-            UpdateServices();
+           
             if (_schemaset == null)
-                yield break;
-            yield return _schemaset;
+                UpdateServices();
+            return _schemaset;
         }
     }
 }

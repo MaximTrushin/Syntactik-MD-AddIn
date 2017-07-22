@@ -14,7 +14,7 @@ namespace Syntactik.MonoDevelop.Schemas
         public List<AttributeInfo> GlobalAttributes { get; private set; }
         public List<ElementTypeRef> TypeRefs { get; private set; }
 
-        protected abstract IEnumerable<XmlSchemaSet> GetSchemaSets();
+        protected abstract XmlSchemaSet GetSchemaSet();
 
         protected XmlSchemaProvider()
         {
@@ -31,32 +31,24 @@ namespace Syntactik.MonoDevelop.Schemas
             GlobalElements.Clear();
             GlobalAttributes.Clear();
 
-            var schemaSets = GetSchemaSets();
-            foreach (var schemaset in schemaSets)
+            var schemaSet = GetSchemaSet();
+            foreach (XmlSchemaType sType in schemaSet.GlobalTypes.Values)
             {
-                //foreach (XmlSchema schema in schemaset.Schemas())
-                //{
-
-                //}
-                foreach (XmlSchemaType sType in schemaset.GlobalTypes.Values)
-                {
-                    var elementType = GetElementType(sType);
-                    elementType.IsGlobal = true;
-                    Types.Add(elementType);
-                }
-                foreach (XmlSchemaElement sElement in schemaset.GlobalElements.Values)
-                {
-                    var elementInfo = GetElementInfo(sElement, null);
-                    elementInfo.IsGlobal = true;
-                    GlobalElements.Add(elementInfo);
-                }
-                foreach (XmlSchemaAttribute sAttrib in schemaset.GlobalAttributes.Values)
-                {
-                    var attributeInfo = GetAttributeInfo(sAttrib, null);
-                    attributeInfo.IsGlobal = true;
-                    GlobalAttributes.Add(attributeInfo);
-                }
-
+                var elementType = GetElementType(sType);
+                elementType.IsGlobal = true;
+                Types.Add(elementType);
+            }
+            foreach (XmlSchemaElement sElement in schemaSet.GlobalElements.Values)
+            {
+                var elementInfo = GetElementInfo(sElement, null);
+                elementInfo.IsGlobal = true;
+                GlobalElements.Add(elementInfo);
+            }
+            foreach (XmlSchemaAttribute sAttrib in schemaSet.GlobalAttributes.Values)
+            {
+                var attributeInfo = GetAttributeInfo(sAttrib, null);
+                attributeInfo.IsGlobal = true;
+                GlobalAttributes.Add(attributeInfo);
             }
 
             foreach (var tRef in TypeRefs)
@@ -334,33 +326,31 @@ namespace Syntactik.MonoDevelop.Schemas
 
         public void Validate(XmlDocument doc, Action<XmlNode, string> onErrorAction)
         {
-            var schemaSets = GetSchemaSets();
-            foreach (var schemaSet in schemaSets)
-            {
-                if (schemaSet.Count == 0)
-                    continue;
-                doc.Schemas = schemaSet;
+            var schemaSet = GetSchemaSet();
+            if (schemaSet.Count == 0)
+                return;
+            doc.Schemas = schemaSet;
 
-                doc.Validate((sender, args) =>
-                {
-                    var exception = args.Exception as XmlSchemaValidationException;
-                    onErrorAction((XmlNode)exception.SourceObject, args.Message);
-                });
-            }
+            doc.Validate((sender, args) =>
+            {
+                var exception = (XmlSchemaValidationException) args.Exception;
+                onErrorAction((XmlNode)exception.SourceObject, args.Message);
+            });
+            
         }
 
         public IEnumerable<NamespaceInfo> GetNamespaces()
         {
             var allNamespaces = new List<NamespaceInfo>();
-            var schemaSets = GetSchemaSets();
-            foreach (var schemaset in schemaSets)
-                foreach (var xmlSchema in schemaset.Schemas().Cast<XmlSchema>())
-                {
-                    var namespaces = xmlSchema.Namespaces.ToArray()
-                        .Select(ns => new NamespaceInfo { Namespace = ns.Namespace, Name = ns.Name });
-                    allNamespaces.AddRange(namespaces);
+            var schemaSet = GetSchemaSet();
 
-                }
+            foreach (var xmlSchema in schemaSet.Schemas().Cast<XmlSchema>())
+            {
+                var namespaces = xmlSchema.Namespaces.ToArray()
+                    .Select(ns => new NamespaceInfo { Namespace = ns.Namespace, Name = ns.Name });
+                allNamespaces.AddRange(namespaces);
+
+            }
 
             var result = from ns in allNamespaces
                          where !new[]
