@@ -167,7 +167,7 @@ namespace Syntactik.MonoDevelop.Completion
             CodeCompletionContext editorCompletionContext, ContextInfo schemaInfo, SchemasRepository schemasRepository)
         {
             var items = new List<CompletionData>();
-            var categoryElements = new SyntactikCompletionCategory { DisplayText = "Elements", Order = 2 };
+            var completionCategory = new SyntactikCompletionCategory { DisplayText = "Elements", Order = 2 };
             var rawPrefix = GetPrefixForCurrentPair(completionContext, editorCompletionContext, CompletionExpectation.Element);
 
             foreach (var element in schemaInfo.Elements)
@@ -175,16 +175,51 @@ namespace Syntactik.MonoDevelop.Completion
                 bool newNs = false;
                 string prefix = string.IsNullOrEmpty(element.Namespace)?"":ResolveNamespacePrefix(element.Namespace, completionContext.LastPair, schemasRepository, out newNs);
                 var displayText = (string.IsNullOrEmpty(prefix) ? "" : (prefix + ".")) + element.Name;
+
+                //Skip element if it conflicts with the current completion text
                 if (rawPrefix != null && !displayText.StartsWith(rawPrefix)) continue;
-                var data = new CompletionItem {ItemType = ItemType.Entity, Namespace = element.Namespace, NsPrefix = prefix};
-                items.Add(data);
-                data.CompletionCategory = categoryElements;
-                data.Icon = SyntactikIcons.Element;
-                data.DisplayText = displayText;
-                data.CompletionText = data.DisplayText;
-                data.NewNamespace = newNs;
+                var elementType = element.GetElementType();
+                bool haveExtensions;
+                var types = GetElementTypes(elementType, out haveExtensions);
+                foreach (var type in types)
+                {
+                    var data = new CompletionItem { ItemType = ItemType.Entity, Namespace = element.Namespace, NsPrefix = prefix };
+                    items.Add(data);
+                    string postfix = string.Empty;
+                    if (type != elementType || haveExtensions)
+                    {
+                        postfix = $" ({type.Name})";
+                    }
+
+                    if (type.IsComplex)
+                    {
+                        data.DisplayText = $"{displayText}:{postfix}";
+                        data.CompletionText = $"{displayText}:";
+                    }
+                    else
+                    {
+                        data.DisplayText = $"{displayText} = {postfix}";
+                        data.CompletionText = $"{displayText} =";
+                    }
+
+                    data.CompletionCategory = completionCategory;
+                    data.Icon = element.Optional ? SyntactikIcons.OptElement : SyntactikIcons.Element;
+                    data.NewNamespace = newNs;
+                }
             }
             completionList.AddRange(items.OrderBy(i => i.DisplayText));
+        }
+
+        private static List<ElementType> GetElementTypes(ElementType elementType, out bool haveExtensions)
+        {
+            haveExtensions = false;
+            var types = new List<ElementType> {elementType};
+            if (elementType is ComplexType && ((ComplexType) elementType).Descendants.Count > 0)
+            {
+                types.AddRange(((ComplexType) elementType).Descendants);
+                haveExtensions = true;
+            }
+            return types;
         }
 
         private static string ResolveNamespacePrefix(string @namespace, Pair completionContextLastPair, SchemasRepository schemasRepository, out bool newNs)

@@ -1,4 +1,4 @@
 $alias1
 $alias2
-ipo.comment
-ipo.purchaseOrder
+ipo.comment =
+ipo.purchaseOrder:
