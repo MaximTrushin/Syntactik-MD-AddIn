@@ -4,6 +4,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Schema;
 using Syntactik.DOM;
+using Syntactik.MonoDevelop.Completion;
 
 namespace Syntactik.MonoDevelop.Schemas
 {
@@ -24,7 +25,7 @@ namespace Syntactik.MonoDevelop.Schemas
             TypeRefs = new List<ElementTypeRef>();
         }
 
-        void Update()
+        void UpdateSchemaInfo()
         {
             TypeRefs.Clear();
             Types.Clear();
@@ -70,100 +71,56 @@ namespace Syntactik.MonoDevelop.Schemas
 
         public void PopulateContextInfo(Context context, ContextInfo ctxInfo)
         {
-            Update();
+            UpdateSchemaInfo();
 
             var elements = new List<ElementInfo>(GlobalElements);
             var attributes = new List<AttributeInfo>(GlobalAttributes);
 
-            var path = context.CompletionInfo.GetPath().Where(pair => !(pair is Document) && !(pair is Module) && !(pair is CompileUnit)).ToList();
+            var lastNode = context.CompletionInfo.InTag == CompletionExpectation.NoExpectation
+                ? context.CompletionInfo.LastPair
+                : context.CompletionInfo.LastPair.Parent;
 
-            ElementType targetType = null;
-
-            ctxInfo.CurrentType = null;
-            ctxInfo.Scope = null;
-
-            //if (!path.Any() && context.RootElementName != null)
-            //{
-            //    var root = elements.FirstOrDefault(e => e.Name == context.RootElementName);
-            //    if (root != null)
-            //    {
-            //        attributes.Clear();
-            //        elements.Clear();
-            //        elements.Add(root);
-            //    }
-            //}
-
-            //if (context.FlattenRoot)
-            //{
-            //    var newPath = new List<Pair>(path);
-            //    newPath.Insert(0, new Element {Name = context.RootElementName});
-            //    path = newPath;
-            //}
-
-            foreach (var n in path)
+            var element = lastNode as Element;
+            if (element != null)
             {
-                var aliasDef = n as AliasDefinition;
-                if (aliasDef != null)
-                {
-                    var rootElements = elements.ToList();
-                    foreach (var rElement in rootElements)
-                    {
-                        EnumerateSubElementsAndAttributes(elements, attributes, rElement, ctxInfo);
-                    }
-                    elements.ForEach(e => e.InSequence = false);
-                    continue;
-                }
 
-                var element = n as Element;
-                if (element == null)
-                {
-                    targetType = null;
-                    break;
-                }
-                var fElement = elements.FirstOrDefault(e => e.Name == element.Name);
+                var fElement = elements.FirstOrDefault(e => e.Name.Contains(element.Name));
                 if (fElement == null)
                 {
-                    targetType = null;
                     var rootElements = elements.ToList();
                     foreach (var rElement in rootElements)
                     {
-                        EnumerateSubElementsAndAttributes(elements, attributes, rElement, ctxInfo);
+                        EnumerateSubElementsAndAttributes(elements, attributes, rElement);
                     }
                     elements.ForEach(e => e.InSequence = false);
-                    break;
                 }
-
-                targetType = fElement.GetElementType();
-                var cTargetType = targetType as ComplexType;
-                if (cTargetType != null)
-                    ctxInfo.Scope = cTargetType;
                 else
-                    break;
-
-                elements.Clear();
-                attributes.Clear();
-
-                elements.AddRange(cTargetType.Elements);
-                attributes.AddRange(cTargetType.Attributes);
-
-                foreach (var d in cTargetType.Descendants)
                 {
-                    var dElements = d.Elements.Where(e => elements.All(ce => ce.Name != e.Name)).ToList();
-                    var dAttributes = d.Attributes.Where(a => attributes.All(ca => ca.Name != a.Name)).ToList();
-                    elements.AddRange(dElements);
-                    attributes.AddRange(dAttributes);
+                    var cTargetType = fElement.GetElementType() as ComplexType;
+                    if (cTargetType != null)
+                    {
+                        elements.Clear();
+                        attributes.Clear();
+
+                        elements.AddRange(cTargetType.Elements);
+                        attributes.AddRange(cTargetType.Attributes);
+
+                        foreach (var d in cTargetType.Descendants)
+                        {
+                            var dElements = d.Elements.Where(e => elements.All(ce => ce.Name != e.Name)).ToList();
+                            var dAttributes =
+                                d.Attributes.Where(a => attributes.All(ca => ca.Name != a.Name)).ToList();
+                            elements.AddRange(dElements);
+                            attributes.AddRange(dAttributes);
+                        }
+                    }
                 }
             }
-            ctxInfo.CurrentType = targetType;
-            foreach (var element in elements)
-                ctxInfo.Elements.Add(element);
-
-            foreach (var attribute in attributes)
-                ctxInfo.Attributes.Add(attribute);
-
+            ctxInfo.Elements.AddRange(elements);
+            ctxInfo.Attributes.AddRange(attributes);
         }
 
-        private void EnumerateSubElementsAndAttributes(List<ElementInfo> elements, List<AttributeInfo> attributes, ElementInfo rElement, ContextInfo ctxInfo)
+        private void EnumerateSubElementsAndAttributes(List<ElementInfo> elements, List<AttributeInfo> attributes, ElementInfo rElement)
         {
             var type = rElement.GetElementType() as ComplexType;
             if (type != null)
@@ -172,7 +129,6 @@ namespace Syntactik.MonoDevelop.Schemas
                 var sAttributes = new List<AttributeInfo>();
                 sAttributes.AddRange(type.Attributes);
                 sAttributes.AddRange(type.Descendants.SelectMany(d => d.Attributes));
-                ctxInfo.AllDescendants.AddRange(type.Descendants.Where(d => !ctxInfo.AllDescendants.Any(a => a.Name == d.Name && a.Namespace == d.Namespace)));
                 foreach (var a in sAttributes)
                 {
                     attributes.Add(a);
@@ -186,7 +142,7 @@ namespace Syntactik.MonoDevelop.Schemas
                         continue;
 
                     elements.Add(subElement);
-                    EnumerateSubElementsAndAttributes(elements, attributes, subElement, ctxInfo);
+                    EnumerateSubElementsAndAttributes(elements, attributes, subElement);
                 }
             }
         }
