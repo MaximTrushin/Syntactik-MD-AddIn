@@ -157,7 +157,6 @@
     <Compile Include="Syntactik.MonoDevelop.Schemas\SimpleType.cs" />
     <Compile Include="Syntactik.MonoDevelop.Schemas\XmlSchemaInstanceNamespace.cs" />
     <Compile Include="Syntactik.MonoDevelop.Schemas\XmlSchemaNamespace.cs" />
-    <Compile Include="Syntactik.MonoDevelop.Schemas\XmlSchemaProvider.cs" />
     <Compile Include="Syntactik.MonoDevelop.Schemas\XsdSchemaProvider.cs" />
     <Compile Include="SyntactikIcons.cs" />
   </ItemGroup>
