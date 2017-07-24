@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Schema;
-using MonoDevelop.Projects;
 using Syntactik.DOM;
 using Syntactik.MonoDevelop.Completion;
 using Syntactik.MonoDevelop.Projects;
@@ -17,22 +16,20 @@ namespace Syntactik.MonoDevelop.Schemas
         readonly Dictionary<string, XmlSchema> _includes = new Dictionary<string, XmlSchema>();
 
         private readonly IProjectFilesProvider _provider;
+        private List<ElementInfo> _fullListOfElements;
+        private List<AttributeInfo> _fullListOfAttributes;
 
-        public List<ElementType> Types { get; private set; }
+        public List<ElementType> Types { get; }
         public List<ElementInfo> GlobalElements { get; private set; }
-        public List<AttributeInfo> GlobalAttributes { get; private set; }
-        public List<ElementTypeRef> TypeRefs { get; private set; }
-
-
+        public List<AttributeInfo> GlobalAttributes { get; }
+        public List<ElementTypeRef> TypeRefs { get; }
 
         public XsdSchemaProvider(IProjectFilesProvider provider)
         {
             _provider = provider;
             Types = new List<ElementType>();
-            GlobalElements = new List<ElementInfo>();
             GlobalAttributes = new List<AttributeInfo>();
             TypeRefs = new List<ElementTypeRef>();
-            UpdateSchemaInfo();
         }
 
         public IEnumerable<NamespaceInfo> GetNamespaces()
@@ -72,57 +69,76 @@ namespace Syntactik.MonoDevelop.Schemas
                 var exception = (XmlSchemaValidationException)args.Exception;
                 onErrorAction((XmlNode)exception.SourceObject, args.Message);
             });
-
         }
 
         public void PopulateContextInfo(Context context, ContextInfo ctxInfo)
         {
-
-            var elements = new List<ElementInfo>(GlobalElements);
-            var attributes = new List<AttributeInfo>(GlobalAttributes);
+            UpdateSchemaInfo();
 
             var lastNode = context.CompletionInfo.InTag == CompletionExpectation.NoExpectation
                 ? context.CompletionInfo.LastPair
-                : context.CompletionInfo.LastPair.Parent;
+                : context.CompletionInfo.LastPair.Parent; //if we are inside pair which is not finished then context is the node's parent
 
-            var element = lastNode as Element;
-            if (element != null)
+            var contextElement = lastNode as Element;
+            if (contextElement == null)
             {
-
-                var fElement = elements.FirstOrDefault(e => e.Name.Contains(element.Name));
-                if (fElement == null)
-                {
-                    var rootElements = elements.ToList();
-                    foreach (var rElement in rootElements)
-                    {
-                        EnumerateSubElementsAndAttributes(elements, attributes, rElement);
-                    }
-                    elements.ForEach(e => e.InSequence = false);
-                }
-                else
-                {
-                    var cTargetType = fElement.GetElementType() as ComplexType;
-                    if (cTargetType != null)
-                    {
-                        elements.Clear();
-                        attributes.Clear();
-
-                        elements.AddRange(cTargetType.Elements);
-                        attributes.AddRange(cTargetType.Attributes);
-
-                        foreach (var d in cTargetType.Descendants)
-                        {
-                            var dElements = d.Elements.Where(e => elements.All(ce => ce.Name != e.Name)).ToList();
-                            var dAttributes =
-                                d.Attributes.Where(a => attributes.All(ca => ca.Name != a.Name)).ToList();
-                            elements.AddRange(dElements);
-                            attributes.AddRange(dAttributes);
-                        }
-                    }
-                }
+                //If current node is not element then we show list of global elements and attributes,
+                //because they do not dependend on context.
+                ctxInfo.Elements.AddRange(GlobalElements);
+                ctxInfo.Attributes.AddRange(GlobalAttributes);
+                return;
             }
+
+            var contextElementSchemaInfo = GlobalElements.FirstOrDefault(e => e.Name == contextElement.Name);
+            if (contextElementSchemaInfo == null)
+            {
+                //Context element is not found in schema.
+                //Displaying list of all elements and attributes difined in all schemas.
+                ctxInfo.Elements.AddRange(FullListOfElements);
+                ctxInfo.Attributes.AddRange(FullListOfAttributes);
+                return;
+            }
+
+            var complexType = contextElementSchemaInfo.GetElementType() as ComplexType;
+
+            if (complexType == null) return;
+
+            var elements = new List<ElementInfo>(complexType.Elements);
+            var attributes = new List<AttributeInfo>(complexType.Attributes);
+
+            foreach (var descendant in complexType.Descendants)
+            {
+                elements.AddRange(descendant.Elements.Where(e => elements.All(ce => ce.Name != e.Name)));
+                attributes.AddRange(descendant.Attributes.Where(a => attributes.All(ca => ca.Name != a.Name)));
+            }
+            
             ctxInfo.Elements.AddRange(elements);
             ctxInfo.Attributes.AddRange(attributes);
+        }
+
+        private List<ElementInfo> FullListOfElements => _fullListOfElements?? (_fullListOfElements = CalculateFullListOfElements());
+        private List<AttributeInfo> FullListOfAttributes => _fullListOfAttributes ?? (_fullListOfAttributes = CalculateFullListOfAttributes());
+
+        private List<AttributeInfo> CalculateFullListOfAttributes()
+        {
+            CalculateFullListOfElements();
+            return _fullListOfAttributes;
+        }
+
+        private List<ElementInfo> CalculateFullListOfElements()
+        {
+            if (_fullListOfElements != null) return _fullListOfElements;
+
+            var elements = new List<ElementInfo>(GlobalElements);
+            var attributes = new List<AttributeInfo>(GlobalAttributes);
+            foreach (var elementInfo in GlobalElements)
+            {
+                EnumerateSubElementsAndAttributes(elements, attributes, elementInfo);
+            }
+            elements.ForEach(e => e.InSequence = false);
+            _fullListOfAttributes = attributes;
+            _fullListOfElements = elements;
+            return _fullListOfElements;
         }
 
         protected virtual IEnumerable<string> GetSchemaFiles()
@@ -131,8 +147,10 @@ namespace Syntactik.MonoDevelop.Schemas
         }
 
 
-        private void UpdateSchemaInfo()
+        private void UpdateSchemaInfo() //TODO: Call update when project schema set changed.
         {
+            if (GlobalElements != null) return;
+            GlobalElements = new List<ElementInfo>();
             TypeRefs.Clear();
             Types.Clear();
             GlobalElements.Clear();
@@ -174,7 +192,7 @@ namespace Syntactik.MonoDevelop.Schemas
                 }
             }
         }
-        private void UpdateServices()
+        private void UpdateSchemaSet()
         {
             _schemaset = new XmlSchemaSet {XmlResolver = null};
             _includes.Clear();
@@ -254,13 +272,13 @@ namespace Syntactik.MonoDevelop.Schemas
         {
            
             if (_schemaset == null)
-                UpdateServices();
+                UpdateSchemaSet();
             return _schemaset;
         }
 
-        private void EnumerateSubElementsAndAttributes(List<ElementInfo> elements, List<AttributeInfo> attributes, ElementInfo rElement)
+        private void EnumerateSubElementsAndAttributes(List<ElementInfo> elements, List<AttributeInfo> attributes, ElementInfo element)
         {
-            var type = rElement.GetElementType() as ComplexType;
+            var type = element.GetElementType() as ComplexType;
             if (type != null)
             {
 
@@ -328,9 +346,11 @@ namespace Syntactik.MonoDevelop.Schemas
             var sSimpleType = sType as XmlSchemaSimpleType;
             if (sSimpleType != null)
             {
-                var type = new SimpleType();
-                type.Name = sSimpleType.QualifiedName.Name;
-                type.Namespace = sSimpleType.QualifiedName.Namespace;
+                var type = new SimpleType
+                {
+                    Name = sSimpleType.QualifiedName.Name,
+                    Namespace = sSimpleType.QualifiedName.Namespace
+                };
                 var restrition = sSimpleType.Content as XmlSchemaSimpleTypeRestriction;
                 if (restrition != null)
                 {
@@ -346,10 +366,12 @@ namespace Syntactik.MonoDevelop.Schemas
 
         private AttributeInfo GetAttributeInfo(XmlSchemaAttribute sAttr, ComplexType parent)
         {
-            AttributeInfo attributeInfo = new AttributeInfo(parent);
-            attributeInfo.Name = sAttr.QualifiedName.Name;
-            attributeInfo.Namespace = sAttr.QualifiedName.Namespace;
-            attributeInfo.Optional = sAttr.Use != XmlSchemaUse.Required;
+            AttributeInfo attributeInfo = new AttributeInfo(parent)
+            {
+                Name = sAttr.QualifiedName.Name,
+                Namespace = sAttr.QualifiedName.Namespace,
+                Optional = sAttr.Use != XmlSchemaUse.Required
+            };
             var schema = GetSchemaFromElement(sAttr);
             attributeInfo.Qualified = schema.ElementFormDefault == XmlSchemaForm.Qualified;
 
@@ -367,10 +389,7 @@ namespace Syntactik.MonoDevelop.Schemas
             };
 
             var schema = GetSchemaFromElement(sElement);
-            elementInfo.Qualified = schema.ElementFormDefault == XmlSchemaForm.Qualified;
-
-            if (!string.IsNullOrEmpty(sElement.RefName.Name))
-                elementInfo.Qualified = true;
+            elementInfo.Qualified = schema.ElementFormDefault == XmlSchemaForm.Qualified || !string.IsNullOrEmpty(sElement.RefName.Name);
 
 
             if (string.IsNullOrEmpty(sElement.ElementSchemaType.QualifiedName.Name))
