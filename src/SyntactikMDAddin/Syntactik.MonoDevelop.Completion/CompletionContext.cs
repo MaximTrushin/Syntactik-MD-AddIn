@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using MonoDevelop.Components;
-using MonoDevelop.Ide;
 using Syntactik.Compiler;
 using Syntactik.Compiler.IO;
 using Syntactik.DOM;
@@ -25,18 +23,27 @@ namespace Syntactik.MonoDevelop.Completion
 
         public int Offset => _offset;
 
-        public CompletionContext(CancellationToken cancellationToken = new CancellationToken())
+        private CompletionContext(CancellationToken cancellationToken = new CancellationToken())
         {
             Expectations = new SortedSet<CompletionExpectation>();
             _cancellationToken = cancellationToken;
         }
 
-        public void Parse(string fileName, string text, int offset, Func<Dictionary<string, AliasDefinition>> aliasDefinitions)
+        public static CompletionContext CreateCompletionContext(string fileName, string text, int offset,
+            Func<Dictionary<string, AliasDefinition>> aliasDefinitions,
+            CancellationToken cancellationToken = new CancellationToken())
+        {
+            var result = new CompletionContext(cancellationToken);
+            result.Parse(fileName, text, offset, aliasDefinitions);
+            return result;
+        }
+
+        protected void Parse(string fileName, string text, int offset, Func<Dictionary<string, AliasDefinition>> aliasDefinitions)
         {
             _offset = offset - 1;
             _aliasDefinitions = aliasDefinitions;
             InputStream input;
-            var compilerParameters = CreateCompilerParametersForCompletion(fileName, text, _offset, out input);
+            var compilerParameters = CreateCompilerParametersForCompletion(fileName, text, _offset, _cancellationToken, out input);
             var compiler = new SyntactikCompiler(compilerParameters);
             _context = compiler.Run();
             StoreValues(_context);
@@ -46,9 +53,11 @@ namespace Syntactik.MonoDevelop.Completion
                 LastPair = (Pair)lastPair;
         }
 
+        private bool _expectationsCalculated;
         public void CalculateExpectations()
         {
-            Expectations.Clear();
+            if (_expectationsCalculated) return;
+            _expectationsCalculated = true;
             InTag = CompletionExpectation.NoExpectation;
             if (LastPair == null) //Module
             {
@@ -168,17 +177,18 @@ namespace Syntactik.MonoDevelop.Completion
             Expectations.Add(expectation);
         }
 
-        private CompilerParameters CreateCompilerParametersForCompletion(string fileName, string content, int offset, out InputStream input)
+        private static CompilerParameters CreateCompilerParametersForCompletion(string fileName, string content, 
+            int offset, CancellationToken cancellationToken, out InputStream input)
         {
             var compilerParameters = new CompilerParameters { Pipeline = new CompilerPipeline() };
             input = new InputStream(content, GetOffset(offset, content)); //This is performance hack to prevent copying of editors content.
-            compilerParameters.Pipeline.Steps.Add(new ParseForCompletionStep(_cancellationToken, input));
+            compilerParameters.Pipeline.Steps.Add(new ParseForCompletionStep(cancellationToken, input));
                 
             compilerParameters.Input.Add(new StringInput(fileName, content)); //This input is not really used. This is hack to prevent copying of editors content
             return compilerParameters;
         }
 
-        private int GetOffset(int offset, string content)
+        private static int GetOffset(int offset, string content)
         {
             var length = content.Length;
             if (offset >= length) return length;

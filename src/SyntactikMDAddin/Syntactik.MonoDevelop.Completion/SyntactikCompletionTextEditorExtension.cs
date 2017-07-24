@@ -130,11 +130,7 @@ namespace Syntactik.MonoDevelop.Completion
                         return _completionContextTask.Task;
                 }
                 _completionContextTask = new CompletionContextTask (Task.Run(
-                    () => {
-                        CompletionContext context = new CompletionContext(token);
-                        context.Parse(fileName, text, caretOffset, getAliasDefinitionList);
-                        return context;
-                    }, token
+                    () => CompletionContext.CreateCompletionContext(fileName, text, caretOffset, getAliasDefinitionList, token), token
                 ), version, caretOffset);
                 return _completionContextTask.Task;
             }
@@ -177,7 +173,7 @@ namespace Syntactik.MonoDevelop.Completion
                 var displayText = (string.IsNullOrEmpty(prefix) ? "" : (prefix + ".")) + element.Name;
 
                 //Skip element if it conflicts with the current completion text
-                if (rawPrefix != null && !displayText.StartsWith(rawPrefix)) continue;
+                if (rawPrefix != null && !displayText.Contains(rawPrefix)) continue;
                 var elementType = element.GetElementType();
                 bool haveExtensions;
                 var types = GetElementTypes(elementType, out haveExtensions);
@@ -194,7 +190,7 @@ namespace Syntactik.MonoDevelop.Completion
                     if (type.IsComplex)
                     {
                         data.DisplayText = $"{displayText}:{postfix}";
-                        data.CompletionText = $"{displayText}:";
+                        data.CompletionText = $"{displayText}: ";
                     }
                     else
                     {
@@ -222,7 +218,7 @@ namespace Syntactik.MonoDevelop.Completion
             return types;
         }
 
-        private static string ResolveNamespacePrefix(string @namespace, Pair completionContextLastPair, SchemasRepository schemasRepository, out bool newNs)
+        internal static string ResolveNamespacePrefix(string @namespace, Pair completionContextLastPair, SchemasRepository schemasRepository, out bool newNs)
         {
             NamespaceDefinition nsDef = null;
             newNs = false;

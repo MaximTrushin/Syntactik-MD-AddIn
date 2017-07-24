@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using Mono.TextEditor;
 using Mono.TextEditor.Highlighting;
 using MonoDevelop.Ide.CodeCompletion;
@@ -55,8 +56,7 @@ namespace SyntactikMDAddin.Tests
                 }
                 return aliasDefs;
             };
-            CompletionContext context = new CompletionContext();
-            context.Parse(GetTestCaseName(), input, input.Length, func);
+            var context = CompletionContext.CreateCompletionContext(GetTestCaseName(), input, input.Length, func);
             context.CalculateExpectations();
             var expectation = string.Join("\r\n", context.Expectations);
             if (IsRecordedTest() || IsRecordTest())
@@ -93,8 +93,7 @@ namespace SyntactikMDAddin.Tests
                 return aliasDefs;
             };
 
-            CompletionContext context = new CompletionContext();
-            context.Parse(fileName, text, text.Length, func);
+            CompletionContext context = CompletionContext.CreateCompletionContext(fileName, text, text.Length, func);
             context.CalculateExpectations();
             var lines = text.Split();
             var lastLine = lines[lines.Length - 1];
