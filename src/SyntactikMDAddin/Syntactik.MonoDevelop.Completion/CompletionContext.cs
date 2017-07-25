@@ -143,7 +143,6 @@ namespace Syntactik.MonoDevelop.Completion
                 if (document.NameInterval.End.Index >= _offset)
                 {
                     InTag = CompletionExpectation.Document;
-                    AddExpectation(CompletionExpectation.Element);
                     return;
                 }
                 if (document.Delimiter == DelimiterEnum.None) return;

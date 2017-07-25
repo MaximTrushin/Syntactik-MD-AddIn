@@ -58,6 +58,11 @@ namespace SyntactikMDAddin.Tests
             DoCompletionExpectationsTest();
         }
         [Test, RecordedTest]
+        public void Document2()
+        {
+            DoCompletionExpectationsTest();
+        }
+        [Test, RecordedTest]
         public void Module1()
         {
             DoCompletionExpectationsTest();
