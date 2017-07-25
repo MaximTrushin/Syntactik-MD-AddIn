@@ -133,17 +133,19 @@ namespace SyntactikMDAddin.Tests
         {
             var recordedDir = AssemblyDirectory + @"\Scenarios\" + GetTestClassName() + @"\Recorded\";
             var recordedFileName = recordedDir + GetTestCaseName() + "." + extension;
+
+            Console.WriteLine();
+            Console.WriteLine(@"Completion list:");
+
             if (record)
             {
+
                 SaveTest(result, extension);
                 Console.WriteLine(result);
             }
             else
             {
                 Assert.IsTrue(Directory.Exists(recordedDir), "Directory {0} doesn't exist", recordedDir);
-
-                //Equal number of files
-                Console.WriteLine();
 
                 result = result.Replace("\r\n", "\n");
                 var recorded = File.ReadAllText(recordedFileName).Replace("\r\n", "\n");

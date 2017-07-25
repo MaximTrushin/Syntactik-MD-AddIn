@@ -135,7 +135,27 @@ namespace Syntactik.MonoDevelop.Completion
                 var data = completionList.Add(text, SyntactikIcons.NamespaceDefinition);
                 data.CompletionCategory = category;
             }
+        }
 
+        internal static void DoNamespaceDefinitionValueCompletion(CompletionDataList completionList, CompletionContext context, CodeCompletionContext editorCompletionContext, ContextInfo schemaInfo, SchemasRepository schemasRepository)
+        {
+            var category = new SyntactikCompletionCategory { DisplayText = "Namespaces", Order = 0 };
+            foreach (var ns in schemasRepository.GetNamespaces())
+            {
+                if (ns.Prefix == "xml")
+                    continue;
+                var data = completionList.Add($" = {ns.Namespace}", SyntactikIcons.NamespaceDefinition, "", ns.Namespace);
+                data.CompletionCategory = category;
+            }
+            AdjustEditorCompletionContext(editorCompletionContext, ((IMappedPair) context.LastPair).ValueInterval);
+        }
+
+        private static void AdjustEditorCompletionContext(CodeCompletionContext editorCompletionContext, Interval valueInterval)
+        {
+            var delta = editorCompletionContext.TriggerOffset - valueInterval.Begin.Index;
+            editorCompletionContext.TriggerOffset = valueInterval.Begin.Index;
+            editorCompletionContext.TriggerLineOffset -= delta;
+            editorCompletionContext.TriggerWordLength += delta;
         }
 
         private static List<NamespaceDefinition> GetDeclaredNamespaceDefinitions(CompletionContext context)

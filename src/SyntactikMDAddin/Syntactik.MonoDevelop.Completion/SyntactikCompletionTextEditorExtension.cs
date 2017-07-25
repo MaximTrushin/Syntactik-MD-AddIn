@@ -149,6 +149,8 @@ namespace Syntactik.MonoDevelop.Completion
 
                 if (expectation == CompletionExpectation.NamespaceDefinition)
                     CompletionHelper.DoNamespaceDefinitionCompletion(completionList, context, editorCompletionContext, schemaInfo, schemasRepository);
+                if (expectation == CompletionExpectation.Value && context.InTag == CompletionExpectation.NamespaceDefinition)
+                    CompletionHelper.DoNamespaceDefinitionValueCompletion(completionList, context, editorCompletionContext, schemaInfo, schemasRepository);
             }
             return completionList;
         }

@@ -66,5 +66,10 @@ namespace SyntactikMDAddin.Tests
         {
             DoCompletionListTest();
         }
+        [Test, RecordedTest]
+        public void NamespaceDefinition1()
+        {
+            DoCompletionListTest();
+        }
     }
 }
