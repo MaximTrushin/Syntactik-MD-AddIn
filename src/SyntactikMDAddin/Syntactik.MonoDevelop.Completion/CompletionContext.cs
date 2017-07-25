@@ -159,6 +159,16 @@ namespace Syntactik.MonoDevelop.Completion
                     return;
                 }
             }
+            var nsDef = LastPair as Mapped.NamespaceDefinition;
+            if (nsDef != null)
+            {
+                InTag = CompletionExpectation.NamespaceDefinition;
+                if (nsDef.Delimiter == DelimiterEnum.E || nsDef.Delimiter == DelimiterEnum.EE)
+                {
+                    AddExpectation(CompletionExpectation.Value);
+                }
+                return;
+            }
         }
 
         /// <summary>

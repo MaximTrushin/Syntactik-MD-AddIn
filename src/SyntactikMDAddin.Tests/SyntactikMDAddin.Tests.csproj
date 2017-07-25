@@ -88,6 +88,9 @@
     <None Include="Scenarios\CompletionExpectations\Document1.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Scenarios\CompletionExpectations\NamespaceDefinition1.s4x">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Scenarios\CompletionExpectations\Module2.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

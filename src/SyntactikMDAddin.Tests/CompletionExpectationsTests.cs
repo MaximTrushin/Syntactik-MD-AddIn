@@ -14,7 +14,7 @@ namespace SyntactikMDAddin.Tests
     ///        Document,
     ///        AliasDefinition
     /// </summary>
-    [TestFixture]
+    [TestFixture, RecordedTest]
     public class CompletionExpectationsTests
     {
         [Test, RecordedTest]
@@ -64,6 +64,11 @@ namespace SyntactikMDAddin.Tests
         }
         [Test, RecordedTest]
         public void Module2()
+        {
+            DoCompletionExpectationsTest();
+        }
+        [Test, RecordedTest]
+        public void NamespaceDefinition1()
         {
             DoCompletionExpectationsTest();
         }

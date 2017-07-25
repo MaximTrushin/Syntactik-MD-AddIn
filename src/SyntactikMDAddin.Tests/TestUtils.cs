@@ -58,7 +58,7 @@ namespace SyntactikMDAddin.Tests
             };
             var context = CompletionContext.CreateCompletionContext(GetTestCaseName(), input, input.Length, func);
             context.CalculateExpectations();
-            var expectation = string.Join("\r\n", context.Expectations);
+            var expectation = "InTag: " + context.InTag + "\r\n" + string.Join("\r\n", context.Expectations);
             if (IsRecordedTest() || IsRecordTest())
                 CompareResultAndRecordedFiles(expectation, IsRecordTest(), "exp");
         }
