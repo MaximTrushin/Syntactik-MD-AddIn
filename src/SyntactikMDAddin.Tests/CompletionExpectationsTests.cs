@@ -57,13 +57,11 @@ namespace SyntactikMDAddin.Tests
         {
             DoCompletionExpectationsTest();
         }
-
         [Test, RecordedTest]
         public void Module1()
         {
             DoCompletionExpectationsTest();
         }
-
         [Test, RecordedTest]
         public void Module2()
         {
