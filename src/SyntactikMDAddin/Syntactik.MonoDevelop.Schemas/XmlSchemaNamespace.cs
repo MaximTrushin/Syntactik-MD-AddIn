@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
-using Syntactik.MonoDevelop.Completion;
 
 namespace Syntactik.MonoDevelop.Schemas
 {
@@ -10,7 +9,7 @@ namespace Syntactik.MonoDevelop.Schemas
         public static string Url = "http://www.w3.org/XML/1998/namespace";
         public IEnumerable<NamespaceInfo> GetNamespaces()
         {
-            yield return new NamespaceInfo { Name = "xml", Namespace = Url };
+            yield return new NamespaceInfo { Prefix = "xml", Namespace = Url };
         }
 
         public void Validate(XmlDocument doc, Action<XmlNode, string> onErrorAction)

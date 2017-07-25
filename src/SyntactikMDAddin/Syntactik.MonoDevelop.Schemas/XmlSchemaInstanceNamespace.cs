@@ -9,7 +9,7 @@ namespace Syntactik.MonoDevelop.Schemas
         public static string Url = "http://www.w3.org/2001/XMLSchema-instance";
         public IEnumerable<NamespaceInfo> GetNamespaces()
         {
-            yield return new NamespaceInfo { Name = "xsi", Namespace = Url };
+            yield return new NamespaceInfo { Prefix = "xsi", Namespace = Url };
         }
 
         public void Validate(XmlDocument doc, Action<XmlNode, string> onErrorAction)

@@ -1,6 +1,5 @@
 ﻿using MonoDevelop.Ide.CodeCompletion;
 using MonoDevelop.Ide.Editor.Extension;
-using MonoDevelop.Ide.Gui;
 
 namespace Syntactik.MonoDevelop.Completion
 {
@@ -17,7 +16,7 @@ namespace Syntactik.MonoDevelop.Completion
     public class CompletionItem : CompletionData
     {
         public ItemType ItemType { get; set; }
-        public bool NewNamespace { get; set; }
+        public bool UndeclaredNamespaceUsed { get; set; }
         public string Namespace { get; set; }
         public string NsPrefix { get; set; }
 

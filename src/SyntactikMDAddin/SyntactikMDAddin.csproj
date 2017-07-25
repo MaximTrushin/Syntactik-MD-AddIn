@@ -96,6 +96,7 @@
     <Compile Include="Syntactik.MonoDevelop.Commands\SchemaFolderCommandHandler.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\SyntactikCommandHandler.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\SyntactikCommands.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Completion\CompletionHelper.cs" />
     <Compile Include="Syntactik.MonoDevelop.Completion\CompletionVisitor.cs" />
     <Compile Include="Syntactik.MonoDevelop.Completion\CompletionContext.cs" />
     <Compile Include="Syntactik.MonoDevelop.Completion\CompletionContextTask.cs" />

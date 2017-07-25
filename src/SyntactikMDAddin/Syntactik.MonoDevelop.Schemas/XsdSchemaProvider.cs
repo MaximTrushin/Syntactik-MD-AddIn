@@ -40,7 +40,7 @@ namespace Syntactik.MonoDevelop.Schemas
             foreach (var xmlSchema in schemaSet.Schemas().Cast<XmlSchema>())
             {
                 var namespaces = xmlSchema.Namespaces.ToArray()
-                    .Select(ns => new NamespaceInfo { Namespace = ns.Namespace, Name = ns.Name });
+                    .Select(ns => new NamespaceInfo { Namespace = ns.Namespace, Prefix = ns.Name });
                 allNamespaces.AddRange(namespaces);
 
             }

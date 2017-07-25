@@ -64,7 +64,7 @@ namespace Syntactik.MonoDevelop.Completion
                 var module = _context.CompileUnit.Modules[0];
                 LastPair = module;
                 if (module.Members.Count == 0 && module.ModuleDocument == null)
-                    AddExpectation(CompletionExpectation.Namespace);
+                    AddExpectation(CompletionExpectation.NamespaceDefinition);
                 AddExpectation(CompletionExpectation.Alias);
                 AddExpectation(CompletionExpectation.Element);
                 AddExpectation(CompletionExpectation.Document);
@@ -223,7 +223,7 @@ namespace Syntactik.MonoDevelop.Completion
         Attribute,
         Document,
         Element,
-        Namespace,
+        NamespaceDefinition,
         Value,
     }
 }
