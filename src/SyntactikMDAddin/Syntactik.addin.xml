@@ -24,6 +24,7 @@
   </Extension>
 
   <Extension path = "/MonoDevelop/Ide/TextEditorExtensions">
+    <Class fileExtensions = ".s4x" class = "Syntactik.MonoDevelop.Formatting.SyntactikTextEditorIndentation" />
     <Class fileExtensions = ".s4x" class = "Syntactik.MonoDevelop.Completion.SyntactikCompletionTextEditorExtension" />
     <Class fileExtensions = ".s4x" class = "Syntactik.MonoDevelop.Parser.ErrorHandlerTextEditorExtension" />
     <Class fileExtensions = ".s4x" class = "Syntactik.MonoDevelop.Highlighting.HighlightUsagesExtension" />

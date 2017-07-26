@@ -27,6 +27,7 @@ namespace Syntactik.MonoDevelop.Completion.DOM
         {
             get
             {
+                if (ValueInterval == null) base.Value = string.Empty;
                 if (base.Value != null) return base.Value;
                 base.Value = Element.GetNameText(_input, ValueQuotesType, ValueInterval);
                 return base.Value;

@@ -72,7 +72,7 @@ namespace Syntactik.MonoDevelop.Highlighting
             if (CurRule.Name.StartsWith("string_high") && IsEndOfHighString(CurText[i - StartOffset]))
             {
                 FoundSpanEnd(CurSpan, i, 0);
-                return base.ScanSpanEnd(CurSpan, ref i); //return false so the current symbol will be processed with match rules
+                return CurSpan != null && base.ScanSpanEnd(CurSpan, ref i); //return false so the current symbol will be processed with match rules
             }
 
 

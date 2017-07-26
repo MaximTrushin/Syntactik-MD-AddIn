@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -127,54 +128,64 @@ namespace Syntactik.MonoDevelop.Projects
         internal Task<SyntactikParsedDocument> ParseSyntactikDocument(string fileName, string content,
             ITextSourceVersion version, CancellationToken cancellationToken, bool parseOnly = false)
         {
-            ParseInfo info;
-            if (version != null && CompileInfo.TryGetValue(fileName, out info))
+            try
             {
-                if (info.Version != null && version.BelongsToSameDocumentAs(info.Version) &&
-                    version.CompareAge(info.Version) == 0)
+                ParseInfo info;
+                if (version != null && CompileInfo.TryGetValue(fileName, out info))
                 {
-                    return Task.FromResult(info.Document);
-                }
-            }
-
-            var result = new SyntactikParsedDocument(fileName, version);
-            var compilerParameters = CreateParsingOnlyCompilerParameters(fileName, content, result, cancellationToken);
-            var compiler = new SyntactikCompiler(compilerParameters);
-            var context = compiler.Run();
-            result.AddErrors(context.Errors.Where(error => error.LexicalInfo.Line >= 0 && error.LexicalInfo.Column >= 0));
-            var module = context.CompileUnit.Modules[0];
-            result.Ast = module;
-
-            var modules = new PairCollection<Module>();
-            lock (_syncRoot)
-            {
-                if (CompileInfo.TryGetValue(fileName, out info))
-                {
-                    info.Document = result;
-                    info.Version = version;
-                }
-                else
-                    CompileInfo.Add(fileName,
-                        new ParseInfo
-                        {
-                            Document = result,
-                            Version = version
-                        }
-                    );
-                if (!parseOnly)
-                {
-                    foreach (var item in CompileInfo)
+                    if (info.Version != null && version.BelongsToSameDocumentAs(info.Version) &&
+                        version.CompareAge(info.Version) == 0)
                     {
-                        modules.Add((Module) item.Value.Document.Ast);
+                        return Task.FromResult(info.Document);
                     }
-                    compilerParameters = CreateValidationOnlyCompilerParameters(); //TODO: Use cancellation token
-                    compiler = new SyntactikCompiler(compilerParameters);
-                    context = compiler.Run(new CompileUnit {Modules = modules});
-                    CleanNonParserErrors();
-                    AddValidationError(context.Errors);
                 }
+
+                var result = new SyntactikParsedDocument(fileName, version);
+                var compilerParameters = CreateParsingOnlyCompilerParameters(fileName, content, result,
+                    cancellationToken);
+                var compiler = new SyntactikCompiler(compilerParameters);
+                var context = compiler.Run();
+                result.AddErrors(
+                    context.Errors.Where(error => error.LexicalInfo.Line >= 0 && error.LexicalInfo.Column >= 0));
+                var module = context.CompileUnit.Modules[0];
+                result.Ast = module;
+
+                var modules = new PairCollection<Module>();
+                lock (_syncRoot)
+                {
+                    if (CompileInfo.TryGetValue(fileName, out info))
+                    {
+                        info.Document = result;
+                        info.Version = version;
+                    }
+                    else
+                        CompileInfo.Add(fileName,
+                            new ParseInfo
+                            {
+                                Document = result,
+                                Version = version
+                            }
+                        );
+                    if (!parseOnly)
+                    {
+                        foreach (var item in CompileInfo)
+                        {
+                            modules.Add((Module) item.Value.Document.Ast);
+                        }
+                        compilerParameters = CreateValidationOnlyCompilerParameters(); //TODO: Use cancellation token
+                        compiler = new SyntactikCompiler(compilerParameters);
+                        context = compiler.Run(new CompileUnit {Modules = modules});
+                        CleanNonParserErrors();
+                        AddValidationError(context.Errors);
+                    }
+                }
+                return Task.FromResult(result);
             }
-            return Task.FromResult(result);
+            catch (Exception ex)
+            {
+                LoggingService.LogError("Unhandled exception in SyntactikProject.ParseSyntactikDocument.", ex);
+                throw;
+            }
         }
 
         private void AddValidationError(SortedSet<CompilerError> errors)

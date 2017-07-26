@@ -121,6 +121,7 @@
     <Compile Include="Syntactik.MonoDevelop.Completion\XmlCompletionPairFactory.cs" />
     <Compile Include="gtk-gui\CompilerOptionsWidget.cs" />
     <Compile Include="gtk-gui\generated.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Formatting\SyntactikTextEditorIndentation.cs" />
     <Compile Include="Syntactik.MonoDevelop.Highlighting\HighlightUsagesExtension.cs" />
     <Compile Include="Syntactik.MonoDevelop.Highlighting\SyntactikSpanParser.cs" />
     <Compile Include="Syntactik.MonoDevelop.Highlighting\SyntactikSyntaxMode.cs" />
