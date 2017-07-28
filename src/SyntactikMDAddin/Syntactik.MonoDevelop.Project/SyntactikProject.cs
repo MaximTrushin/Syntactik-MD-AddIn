@@ -214,7 +214,8 @@ namespace Syntactik.MonoDevelop.Projects
 
         private bool IsParserError(string errorId)
         {
-            return errorId == "MCE0007" || errorId == "MCE0032" || errorId == "MCE0100" || errorId == "MCE0100" || errorId == "MCE0102";
+            return errorId == "MCE0007" || errorId == "MCE0032" || errorId == "MCE0100" || errorId == "MCE0100" //TODO: Add property IsParserError to the error class.
+                    || errorId == "MCE0101" || errorId == "MCE0102";
         }
 
         private CompilerParameters CreateParsingOnlyCompilerParameters(string fileName, string content, SyntactikParsedDocument result, CancellationToken cancellationToken)
