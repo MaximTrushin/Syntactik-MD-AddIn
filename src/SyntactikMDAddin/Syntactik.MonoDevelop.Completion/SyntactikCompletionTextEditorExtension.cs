@@ -58,7 +58,7 @@ namespace Syntactik.MonoDevelop.Completion
             var pos = completionContext.TriggerOffset;
             if (pos < 0)
                 return null;
-            return HandleCodeCompletion(completionContext, true, default(CancellationToken), 0);
+            return HandleCodeCompletion(completionContext, true, default(CancellationToken), 0, (char) 0);
         }
 
         /// <summary>
@@ -90,13 +90,22 @@ namespace Syntactik.MonoDevelop.Completion
             }
             CurrentCompletionContext.TriggerOffset = cpos;
             CurrentCompletionContext.TriggerWordLength = wlen;
-            return await HandleCodeCompletion(completionContext, false, token, triggerWordLength);
+            return await HandleCodeCompletion(completionContext, false, token, triggerWordLength, completionChar);
         }
 
-        protected virtual async Task<ICompletionDataList> HandleCodeCompletion(CodeCompletionContext completionContext, bool forced, 
-            CancellationToken token, int triggerWordLength)
+        protected virtual async Task<ICompletionDataList> HandleCodeCompletion(CodeCompletionContext completionContext, bool forced, CancellationToken token, 
+            int triggerWordLength, char completionChar)
         {
-            return await GetCompletionListAsync(completionContext, token, triggerWordLength);
+            var result = await GetCompletionListAsync(completionContext, token, triggerWordLength);
+            if (completionChar != 0 && triggerWordLength == 1 && result != null && result.Count > 0)
+            {
+                //Don't return completion list if completion is triggered by single character and it has no completion choices after
+                // ListWidget.FilterWords is called.
+                var matcher = StringMatcher.GetMatcher(completionChar.ToString(), true);
+                if (result.Any(i => matcher.IsMatch(i.DisplayText))) return result;
+                return null;
+            }
+            return result;
         }
 
         private async Task<ICompletionDataList> GetCompletionListAsync(CodeCompletionContext completionContext,
