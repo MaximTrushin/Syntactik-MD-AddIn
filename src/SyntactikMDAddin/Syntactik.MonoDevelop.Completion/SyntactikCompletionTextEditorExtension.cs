@@ -351,7 +351,7 @@ namespace Syntactik.MonoDevelop.Completion
                 }
                 catch (Exception ex)
                 {
-                    LoggingService.LogError("Unhandled exception in FoldingTextEditorExtension.UpdateFoldings.", ex);
+                    LoggingService.LogError("Unhandled exception in SyntactikCompletionTextEditorExtension.UpdatePath.", ex);
                 }
                 finally
                 {

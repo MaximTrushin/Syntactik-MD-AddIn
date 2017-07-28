@@ -22,7 +22,7 @@ namespace Syntactik.MonoDevelop.Parser
 
         public override Task<IReadOnlyList<FoldingRegion>> GetFoldingsAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            return Task.FromResult(new List<FoldingRegion>() as IReadOnlyList<FoldingRegion>);
+            return Task.FromResult(Foldings as IReadOnlyList<FoldingRegion>);
         }
 
 

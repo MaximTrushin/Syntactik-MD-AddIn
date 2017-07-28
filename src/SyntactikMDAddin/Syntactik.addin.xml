@@ -28,7 +28,6 @@
     <Class fileExtensions = ".s4x" class = "Syntactik.MonoDevelop.Completion.SyntactikCompletionTextEditorExtension" />
     <Class fileExtensions = ".s4x" class = "Syntactik.MonoDevelop.Parser.ErrorHandlerTextEditorExtension" />
     <Class fileExtensions = ".s4x" class = "Syntactik.MonoDevelop.Highlighting.HighlightUsagesExtension" />
-    <Class  fileExtensions = ".s4x" class = "Syntactik.MonoDevelop.Parser.FoldingTextEditorExtension" />
   </Extension>
 
   <Extension path = "/MonoDevelop/Ide/FileTemplates">
