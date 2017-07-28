@@ -69,7 +69,8 @@ namespace Syntactik.MonoDevelop.Highlighting
         {
             if (CurSpan == null) return base.ScanSpanEnd(cur, ref i);
 
-            if (CurRule.Name.StartsWith("string_high") && IsEndOfHighString(CurText[i - StartOffset]))
+            if (CurRule.Name.StartsWith("string_high") 
+                && IsEndOfHighString(CurText[i - StartOffset]))
             {
                 FoundSpanEnd(CurSpan, i, 0);
                 return CurSpan != null && base.ScanSpanEnd(CurSpan, ref i); //return false so the current symbol will be processed with match rules
@@ -153,7 +154,7 @@ namespace Syntactik.MonoDevelop.Highlighting
         public static bool IsEndOfHighString(char c)
         {
             if (c > 61) return false;
-            return c == ':' || c == ',' || c == '\'' || c == '"' || c == ')' || c == '(';
+            return c == ':' || c == ',' || c == '\'' || c == '"' || c == ')' || c == '(' || c == '\r' || c == '\n';
         }
     }
 

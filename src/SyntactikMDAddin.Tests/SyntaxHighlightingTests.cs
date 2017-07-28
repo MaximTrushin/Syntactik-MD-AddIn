@@ -30,9 +30,13 @@ namespace SyntactikMDAddin.Tests
         {
             DoHighlightingTest();
         }
-
         [Test, RecordedTest]
         public void Attribute()
+        {
+            DoHighlightingTest();
+        }
+        [Test, RecordedTest]
+        public void AttributeNoDelimiter()
         {
             DoHighlightingTest();
         }

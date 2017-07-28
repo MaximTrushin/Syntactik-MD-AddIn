@@ -1,0 +1,3 @@
+﻿root:
+	@attr
+	el1 = text1

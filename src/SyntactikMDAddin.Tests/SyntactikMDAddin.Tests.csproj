@@ -142,6 +142,9 @@
     <None Include="Scenarios\SyntaxHighlighting\Arguments2.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Scenarios\SyntaxHighlighting\AttributeNoDelimiter.s4x">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Scenarios\SyntaxHighlighting\Attribute.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
