@@ -29,7 +29,7 @@ namespace Syntactik.MonoDevelop.Formatting
                 {
                     var oldIndent = Editor.GetLineIndent(newLine);
                     var prevIndent = Editor.GetLineIndent(newLine - 1);
-                    var indent = prevIndent + new string(module.IndentSymbol == 0?'\t': module.IndentSymbol, module.IndentMultiplicity);
+                    var indent = prevIndent + new string(module.IndentSymbol == 0?'\t': module.IndentSymbol, module.IndentMultiplicity == 0?1: module.IndentMultiplicity);
                     using (Editor.OpenUndoGroup())
                     {
                         Editor.ReplaceText(Editor.GetLine(newLine).Offset, oldIndent.Length, indent);
