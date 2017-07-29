@@ -17,7 +17,8 @@ namespace Syntactik.MonoDevelop.Formatting
             var ret = base.KeyPress(descriptor);
             if (descriptor.SpecialKey != SpecialKey.Return || Editor.CaretLine != newLine) return ret;
             var prevLineText = Editor.GetLineText(newLine - 1);
-            if (!prevLineText.TrimEnd().EndsWith(":")) return ret;
+            var prevLineTextTrimmed = prevLineText.TrimEnd();
+            if (!prevLineTextTrimmed.EndsWith(":")) return ret;
             var textEditorData = DocumentContext.GetContent<TextEditorData>();
                     
             var line = textEditorData.GetLine(newLine);
@@ -32,6 +33,10 @@ namespace Syntactik.MonoDevelop.Formatting
                     var indent = prevIndent + new string(module.IndentSymbol == 0?'\t': module.IndentSymbol, module.IndentMultiplicity == 0?1: module.IndentMultiplicity);
                     using (Editor.OpenUndoGroup())
                     {
+                        if (prevLineText.Length > prevLineTextTrimmed.Length)
+                        { //Trimming end of previous line
+                            Editor.ReplaceText(Editor.GetLine(newLine - 1).Offset, prevLineText.Length, prevLineTextTrimmed);
+                        }
                         Editor.ReplaceText(Editor.GetLine(newLine).Offset, oldIndent.Length, indent);
                     }
                 }
