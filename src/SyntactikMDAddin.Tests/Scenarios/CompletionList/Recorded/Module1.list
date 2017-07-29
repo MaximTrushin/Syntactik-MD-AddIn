@@ -1,4 +1,4 @@
-ipo.comment =
-ipo.purchaseOrder: 
-!#xsi = http://www.w3.org/2001/XMLSchema-instance
-!#ipo = http://www.example.com/myipo
+ipo.comment =  (ipo.comment =)
+ipo.purchaseOrder:  (ipo.purchaseOrder: )
+!#xsi = http://www.w3.org/2001/XMLSchema-instance (!#xsi = http://www.w3.org/2001/XMLSchema-instance)
+!#ipo = http://www.example.com/myipo (!#ipo = http://www.example.com/myipo)

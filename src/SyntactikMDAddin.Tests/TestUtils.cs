@@ -100,7 +100,7 @@ namespace SyntactikMDAddin.Tests
             var codeCompletionContext = new CodeCompletionContext { TriggerLineOffset = lastLine.Length > 0 ? lastLine.Length - 1 : 0 };
             var schemasRepository = new SchemasRepository(filesProvider);
             var list = SyntactikCompletionTextEditorExtension.GetCompletionList(context, codeCompletionContext, 0, func, schemasRepository);
-            return string.Join("\n", list.Select(item => item.CompletionText));
+            return string.Join("\n", list.Select(item => $"{item.DisplayText} ({item.CompletionText})"));
         }
 
         private static CompilerParameters CreateCompilerParameters(string fileName, string content)
