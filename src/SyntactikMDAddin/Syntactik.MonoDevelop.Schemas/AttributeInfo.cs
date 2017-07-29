@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Syntactik.MonoDevelop.Schemas
+﻿namespace Syntactik.MonoDevelop.Schemas
 {
     public class AttributeInfo
     {
@@ -12,11 +6,11 @@ namespace Syntactik.MonoDevelop.Schemas
         public bool Optional { get; set; }
         public string Namespace { get; set; }
         public bool Qualified { get; set; }
-        internal ComplexType Parent { get; private set; }
+        internal ComplexType ParentType { get; private set; }
         public bool IsGlobal { get; set; }
-        public AttributeInfo(ComplexType parent)
+        public AttributeInfo(ComplexType parentType)
         {
-            Parent = parent;
+            ParentType = parentType;
         }
         public AttributeInfo()
         {

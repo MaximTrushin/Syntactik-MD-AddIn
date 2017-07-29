@@ -8,6 +8,8 @@ using Syntactik.MonoDevelop.Schemas;
 using Alias = Syntactik.DOM.Mapped.Alias;
 using AliasDefinition = Syntactik.DOM.Mapped.AliasDefinition;
 using Argument = Syntactik.DOM.Mapped.Argument;
+using Attribute = Syntactik.DOM.Attribute;
+using Element = Syntactik.DOM.Mapped.Element;
 using Module = Syntactik.DOM.Module;
 using NamespaceDefinition = Syntactik.DOM.NamespaceDefinition;
 
@@ -72,12 +74,68 @@ namespace Syntactik.MonoDevelop.Completion
             completionList.AddRange(items.OrderBy(i => i.DisplayText));
         }
 
+        internal static void DoAttributeCompletion(CompletionDataList completionList, CompletionContext completionContext,
+            CodeCompletionContext editorCompletionContext, ContextInfo schemaInfo, SchemasRepository schemasRepository)
+        {
+            if (schemaInfo.CurrentType is SimpleType)
+                return;
+
+            var items = new List<CompletionData>();
+            var completionCategory = new SyntactikCompletionCategory { DisplayText = "Elements", Order = 2 };
+
+            var attributes = GetAttributesForCompletion(schemaInfo,  completionContext);
+            var contextElement = completionContext.LastPair as Element;
+
+            foreach (var attribute in attributes)
+            {
+                //Attribute has max quantity = 1. Checking if this attribute is already added to the element
+                if (contextElement != null && contextElement.Entities.Any(e => e is Attribute && e.Name == attribute.Name)) continue;
+
+                bool newNs = false;
+                string prefix = string.IsNullOrEmpty(attribute.Namespace) ? "" : GetNamespacePrefix(attribute.Namespace, completionContext.LastPair, schemasRepository, out newNs);
+                var displayText = (string.IsNullOrEmpty(prefix) ? "" : (prefix + ".")) + attribute.Name;
+                var data = new CompletionItem { ItemType = ItemType.Attribute, Namespace = attribute.Namespace, NsPrefix = prefix };
+                items.Add(data);
+                data.DisplayText = $"@{displayText} = ";
+                data.CompletionText = $"@{displayText} = ";
+                data.CompletionCategory = completionCategory;
+                data.Icon = attribute.Optional ? SyntactikIcons.OptElement : SyntactikIcons.Element;
+                data.UndeclaredNamespaceUsed = newNs;
+            }
+            completionList.AddRange(items.OrderBy(i => i.DisplayText));
+        }
+
+        /// <summary>
+        /// Get list of attributes for completion context.
+        /// The list consists of global attributes and attributes from the complex type of current element.
+        /// </summary>
+        /// <param name="schemaInfo"></param>
+        /// <param name="completionContext"></param>
+        /// <returns></returns>
+        private static List<AttributeInfo> GetAttributesForCompletion(ContextInfo schemaInfo, CompletionContext completionContext)
+        {
+            var attributes = new List<AttributeInfo>();
+            attributes.AddRange(schemaInfo.Attributes);
+            var complexType = schemaInfo.CurrentType as ComplexType;
+            if (complexType != null)
+            {
+                attributes.AddRange(complexType.Descendants.SelectMany(d => d.Attributes));
+            }
+            attributes =  attributes.Distinct().ToList();
+
+            var element = completionContext.LastPair as Element;
+
+            var explicitType = element?.Entities.FirstOrDefault(e => e is DOM.Attribute && e.Name == "type" && ((DOM.Attribute) e).NsPrefix == "xsi");
+            if (string.IsNullOrEmpty(explicitType?.Value)) return attributes;
+            var explicitTypeName = explicitType.Value.Split(':').Last();
+            return explicitTypeName == null ? attributes : attributes.Where(a => a.ParentType == null || (a.ParentType != null && a.ParentType.Name == explicitTypeName)).ToList();
+        }
+
         internal static void DoElementCompletion(CompletionDataList completionList, CompletionContext completionContext,
                 CodeCompletionContext editorCompletionContext, ContextInfo schemaInfo, SchemasRepository schemasRepository)
         {
             var items = new List<CompletionData>();
             var completionCategory = new SyntactikCompletionCategory { DisplayText = "Elements", Order = 2 };
-            var rawPrefix = GetPrefixForCurrentPair(completionContext, editorCompletionContext, CompletionExpectation.Element);
 
             foreach (var element in schemaInfo.Elements)
             {
@@ -85,8 +143,6 @@ namespace Syntactik.MonoDevelop.Completion
                 string prefix = string.IsNullOrEmpty(element.Namespace) ? "" : GetNamespacePrefix(element.Namespace, completionContext.LastPair, schemasRepository, out newNs);
                 var displayText = (string.IsNullOrEmpty(prefix) ? "" : (prefix + ".")) + element.Name;
 
-                //Skip element if it conflicts with the current completion text
-                if (rawPrefix != null && !displayText.Contains(rawPrefix)) continue;
                 var elementType = element.GetElementType();
                 bool haveExtensions;
                 var types = GetElementTypes(elementType, out haveExtensions);
@@ -94,7 +150,7 @@ namespace Syntactik.MonoDevelop.Completion
                 {
                     var data = new CompletionItem { ItemType = ItemType.Entity, Namespace = element.Namespace, NsPrefix = prefix };
                     items.Add(data);
-                    string postfix = String.Empty;
+                    string postfix = string.Empty;
                     if (type != elementType || haveExtensions)
                     {
                         postfix = $" ({type.Name})";
@@ -102,7 +158,7 @@ namespace Syntactik.MonoDevelop.Completion
 
                     if (type.IsComplex)
                     {
-                        data.DisplayText = $"{displayText}:{postfix}";
+                        data.DisplayText = $"{displayText}:{postfix} ";
                         data.CompletionText = $"{displayText}: ";
                     }
                     else

@@ -213,6 +213,9 @@ namespace Syntactik.MonoDevelop.Completion
         {
             var pair = LastPair;
             var list = new List<Pair>();
+            var document = pair as Document;
+            if (document != null && (document.Parent as Module)?.ModuleDocument == document) return list;
+
             while (pair != null)
             {
                 list.Add(pair);

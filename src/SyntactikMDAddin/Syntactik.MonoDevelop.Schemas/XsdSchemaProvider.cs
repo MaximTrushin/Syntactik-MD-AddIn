@@ -99,7 +99,9 @@ namespace Syntactik.MonoDevelop.Schemas
                 return;
             }
 
-            var complexType = contextElementSchemaInfo.GetElementType() as ComplexType;
+            ctxInfo.CurrentType = contextElementSchemaInfo.GetElementType();
+            var complexType = ctxInfo.CurrentType as ComplexType;
+            ctxInfo.Scope = complexType;
 
             if (complexType == null) return;
 

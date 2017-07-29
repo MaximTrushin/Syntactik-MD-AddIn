@@ -153,6 +153,9 @@ namespace Syntactik.MonoDevelop.Completion
                 if (expectation==CompletionExpectation.Argument)
                     CompletionHelper.DoArgumentCompletion(completionList, context, aliasListFunc);
 
+                if (expectation == CompletionExpectation.Attribute)
+                    CompletionHelper.DoAttributeCompletion(completionList, context, editorCompletionContext, schemaInfo, schemasRepository);
+
                 if (expectation == CompletionExpectation.Element)
                     CompletionHelper.DoElementCompletion(completionList, context, editorCompletionContext, schemaInfo, schemasRepository);
 
