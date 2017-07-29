@@ -1,0 +1,13 @@
+@orderDate = 
+@xml.id = 
+@xml.lang = 
+@xsi.nil = 
+@xsi.type = 
+billTo: (Address) 
+billTo: (EU-Address) 
+billTo: (US-Address) 
+ipo.comment = 
+Items: 
+shipTo: (Address) 
+shipTo: (EU-Address) 
+shipTo: (US-Address) 
