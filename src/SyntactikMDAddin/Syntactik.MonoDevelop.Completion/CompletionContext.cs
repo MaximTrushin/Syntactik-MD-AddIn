@@ -91,8 +91,8 @@ namespace Syntactik.MonoDevelop.Completion
                 }
                 if (alias.Delimiter == DelimiterEnum.C)
                 {
-                    AliasDefinition aliasDef; 
-                    if (_aliasDefinitions().TryGetValue(alias.Name, out aliasDef) && ((Mapped.AliasDefinition)aliasDef).Parameters.Count > 0)
+                    AliasDefinition aliasDef1; 
+                    if (_aliasDefinitions().TryGetValue(alias.Name, out aliasDef1) && ((Mapped.AliasDefinition)aliasDef1).Parameters.Count > 0)
                         AddExpectation(CompletionExpectation.Argument);
                     return;
                 }
@@ -167,6 +167,29 @@ namespace Syntactik.MonoDevelop.Completion
                     AddExpectation(CompletionExpectation.Value);
                 }
                 return;
+            }
+
+            var aliasDef = LastPair as Mapped.AliasDefinition;
+            if (aliasDef != null)
+            {
+                if (aliasDef.NameInterval.End.Index >= _offset)
+                {
+                    InTag = CompletionExpectation.AliasDefinition;
+                    return;
+                }
+                if (aliasDef.Delimiter == DelimiterEnum.None) return;
+                if (aliasDef.Delimiter == DelimiterEnum.E || aliasDef.Delimiter == DelimiterEnum.EE)
+                {
+                    AddExpectation(CompletionExpectation.Value);
+                    return;
+                }
+                if (aliasDef.Delimiter == DelimiterEnum.C)
+                {
+                    AddExpectation(CompletionExpectation.Attribute);
+                    AddExpectation(CompletionExpectation.Alias);
+                    AddExpectation(CompletionExpectation.Element);
+                    return;
+                }
             }
         }
 

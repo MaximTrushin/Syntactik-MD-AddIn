@@ -40,7 +40,16 @@ namespace SyntactikMDAddin.Tests
         {
             DoCompletionExpectationsTest();
         }
-
+        [Test, RecordedTest]
+        public void AliasDefinition1()
+        {
+            DoCompletionExpectationsTest();
+        }
+        [Test, RecordedTest]
+        public void AliasDefinition2()
+        {
+            DoCompletionExpectationsTest();
+        }
         [Test, RecordedTest]
         public void AliasWithArguments()
         {
