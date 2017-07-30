@@ -14,7 +14,7 @@ namespace SyntactikMDAddin.Tests
     ///        Document,
     ///        AliasDefinition
     /// </summary>
-    [TestFixture, RecordedTest]
+    [TestFixture]
     public class CompletionExpectationsTests
     {
         [Test, RecordedTest]

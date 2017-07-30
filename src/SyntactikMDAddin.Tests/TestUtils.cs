@@ -58,7 +58,8 @@ namespace SyntactikMDAddin.Tests
             };
             var context = CompletionContext.CreateCompletionContext(GetTestCaseName(), input, input.Length, func);
             context.CalculateExpectations();
-            var expectation = "InTag: " + context.InTag + "\r\n" + string.Join("\r\n", context.Expectations);
+            var expectation = "Context: " + context.LastPair?.GetType().Name + "\r\n" + "InTag: " + 
+                context.InTag + "\r\n" + string.Join("\r\n", context.Expectations);
             if (IsRecordedTest() || IsRecordTest())
                 CompareResultAndRecordedFiles(expectation, IsRecordTest(), "exp");
         }
@@ -135,7 +136,7 @@ namespace SyntactikMDAddin.Tests
             var recordedFileName = recordedDir + GetTestCaseName() + "." + extension;
 
             Console.WriteLine();
-            Console.WriteLine(@"Completion list:");
+            Console.WriteLine(@"Completion info:");
 
             if (record)
             {
