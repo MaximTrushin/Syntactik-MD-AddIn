@@ -75,7 +75,6 @@ namespace Syntactik.MonoDevelop.Completion
             var alias = LastPair as Mapped.Alias;
             if (alias != null)
             {
-                
                 if (alias.NameInterval.End.Index >= _offset)
                 {
                     InTag = CompletionExpectation.Alias;
@@ -94,8 +93,8 @@ namespace Syntactik.MonoDevelop.Completion
                     AliasDefinition aliasDef1; 
                     if (_aliasDefinitions().TryGetValue(alias.Name, out aliasDef1) && ((Mapped.AliasDefinition)aliasDef1).Parameters.Count > 0)
                         AddExpectation(CompletionExpectation.Argument);
-                    return;
                 }
+                return;
             }
             var argument = LastPair as Mapped.Argument;
             if (argument != null)
@@ -112,7 +111,32 @@ namespace Syntactik.MonoDevelop.Completion
                     AddExpectation(CompletionExpectation.Value);
                     return;
                 }
+                if (argument.Delimiter == DelimiterEnum.C)
+                {
+                    AddExpectation(CompletionExpectation.Alias);
+                    AddExpectation(CompletionExpectation.Element);
+                    AddExpectation(CompletionExpectation.Attribute);
+                }
+                return;
             }
+            var attribute = LastPair as Mapped.Attribute;
+            if (attribute != null)
+            {
+                if (attribute.NameInterval.End.Index >= _offset)
+                {
+                    InTag = CompletionExpectation.Attribute;
+                    AddExpectation(CompletionExpectation.Attribute);
+                    return;
+                }
+
+                if (attribute.Delimiter == DelimiterEnum.E || attribute.Delimiter == DelimiterEnum.EE)
+                {
+                    AddExpectation(CompletionExpectation.Value);
+                    return;
+                }
+                return;
+            }
+
             var element = LastPair as Mapped.Element;
             if (element != null)
             {
@@ -133,8 +157,8 @@ namespace Syntactik.MonoDevelop.Completion
                     AddExpectation(CompletionExpectation.Alias);
                     AddExpectation(CompletionExpectation.Element);
                     AddExpectation(CompletionExpectation.Attribute);
-                    return;
                 }
+                return;
             }
 
             var document = LastPair as Mapped.Document;
@@ -155,8 +179,8 @@ namespace Syntactik.MonoDevelop.Completion
                 {
                     AddExpectation(CompletionExpectation.Alias);
                     AddExpectation(CompletionExpectation.Element);
-                    return;
                 }
+                return;
             }
             var nsDef = LastPair as Mapped.NamespaceDefinition;
             if (nsDef != null)
@@ -188,8 +212,8 @@ namespace Syntactik.MonoDevelop.Completion
                     AddExpectation(CompletionExpectation.Attribute);
                     AddExpectation(CompletionExpectation.Alias);
                     AddExpectation(CompletionExpectation.Element);
-                    return;
                 }
+                return;
             }
         }
 

@@ -55,7 +55,16 @@ namespace SyntactikMDAddin.Tests
         {
             DoCompletionExpectationsTest();
         }
-
+        [Test, RecordedTest]
+        public void Attribute1()
+        {
+            DoCompletionExpectationsTest();
+        }
+        [Test, RecordedTest]
+        public void AttributeValue1()
+        {
+            DoCompletionExpectationsTest();
+        }
         [Test, RecordedTest]
         public void Element1()
         {
