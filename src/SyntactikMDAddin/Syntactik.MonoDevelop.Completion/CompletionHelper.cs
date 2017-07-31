@@ -77,7 +77,7 @@ namespace Syntactik.MonoDevelop.Completion
             var completionCategory = new SyntactikCompletionCategory { DisplayText = "Attributes", Order = 1 };
 
             var attributes = GetAttributesForCompletion(schemaInfo,  completionContext);
-            var contextElement = completionContext.LastPair as Element;
+            var contextElement = GetContextElement(completionContext);
 
             foreach (var attribute in attributes)
             {
@@ -99,6 +99,14 @@ namespace Syntactik.MonoDevelop.Completion
             completionList.AddRange(items.OrderBy(i => i.DisplayText));
         }
 
+        internal static Element GetContextElement(CompletionContext completionContext)
+        {
+            var contextElement = completionContext.LastPair as Element;
+            if (contextElement == null && completionContext.LastPair is DOM.Attribute)
+                contextElement = ((DOM.Attribute) completionContext.LastPair).Parent as Element;
+            return contextElement;
+        }
+
         /// <summary>
         /// Get list of attributes for completion context.
         /// The list consists of global attributes and attributes from the complex type of current element.
@@ -117,8 +125,7 @@ namespace Syntactik.MonoDevelop.Completion
             }
             attributes =  attributes.Distinct().ToList();
 
-            var element = completionContext.LastPair as Element;
-
+            var element = GetContextElement(completionContext);
             var explicitType = element?.Entities.FirstOrDefault(e => e is DOM.Attribute && e.Name == "type" && ((DOM.Attribute) e).NsPrefix == "xsi");
             if (string.IsNullOrEmpty(explicitType?.Value)) return attributes;
             var explicitTypeName = explicitType.Value.Split(':').Last();
