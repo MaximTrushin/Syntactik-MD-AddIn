@@ -62,6 +62,16 @@ namespace SyntactikMDAddin.Tests
             DoCompletionListTest();
         }
         [Test, RecordedTest]
+        public void Attribute2()
+        {
+            DoCompletionListTest();
+        }
+        [Test, RecordedTest]
+        public void Attribute3()
+        {
+            DoCompletionListTest();
+        }
+        [Test, RecordedTest]
         public void Document1()
         {
             DoCompletionListTest();
@@ -78,6 +88,11 @@ namespace SyntactikMDAddin.Tests
         }
         [Test, RecordedTest]
         public void Element3()
+        {
+            DoCompletionListTest();
+        }
+        [Test, RecordedTest]
+        public void IncorrectTree()
         {
             DoCompletionListTest();
         }

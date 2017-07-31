@@ -81,11 +81,12 @@ namespace Syntactik.MonoDevelop.Completion
 
             foreach (var attribute in attributes)
             {
-                //Attribute has max quantity = 1. Checking if this attribute is already added to the element
-                if (contextElement != null && contextElement.Entities.Any(e => e is Attribute && e.Name == attribute.Name)) continue;
-
-                bool newNs = false;
+                var newNs = false;
                 string prefix = string.IsNullOrEmpty(attribute.Namespace) ? "" : GetNamespacePrefix(attribute.Namespace, completionContext.LastPair, schemasRepository, out newNs);
+                //Attribute has max quantity = 1. Checking if this attribute is already added to the element
+                if (contextElement != null && contextElement.Entities.Any(e => e is Attribute && 
+                    e.Name == attribute.Name && (((INsNode) e).NsPrefix??"") == (prefix??""))) continue;
+
                 var displayText = (string.IsNullOrEmpty(prefix) ? "" : (prefix + ".")) + attribute.Name;
                 var data = new CompletionItem { ItemType = ItemType.Attribute, Namespace = attribute.Namespace, NsPrefix = prefix };
                 items.Add(data);
