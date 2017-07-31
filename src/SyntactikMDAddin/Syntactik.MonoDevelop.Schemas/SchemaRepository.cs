@@ -13,7 +13,6 @@ namespace Syntactik.MonoDevelop.Schemas
         public SchemasRepository(IProjectFilesProvider provider)
         {
             _providers.Add(new XmlSchemaInstanceNamespace());
-            _providers.Add(new XmlSchemaNamespace());
             _providers.Add(new XsdSchemaProvider(provider));
         }
 
