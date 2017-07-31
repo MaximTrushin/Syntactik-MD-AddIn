@@ -147,11 +147,8 @@ namespace Syntactik.MonoDevelop.Completion
             var completionList = new CompletionDataList {TriggerWordLength = triggerWordLength};
             foreach (var expectation in context.Expectations.AsEnumerable())
             {
-                if (expectation == CompletionExpectation.Alias)
-                    CompletionHelper.DoAliasCompletion(completionList, context, editorCompletionContext, aliasListFunc);
-                
-                if (expectation==CompletionExpectation.Argument)
-                    CompletionHelper.DoArgumentCompletion(completionList, context, aliasListFunc);
+                if (expectation == CompletionExpectation.NamespaceDefinition)
+                    CompletionHelper.DoNamespaceDefinitionCompletion(completionList, context, editorCompletionContext, schemaInfo, schemasRepository);
 
                 if (expectation == CompletionExpectation.Attribute)
                     CompletionHelper.DoAttributeCompletion(completionList, context, editorCompletionContext, schemaInfo, schemasRepository);
@@ -159,8 +156,12 @@ namespace Syntactik.MonoDevelop.Completion
                 if (expectation == CompletionExpectation.Element)
                     CompletionHelper.DoElementCompletion(completionList, context, editorCompletionContext, schemaInfo, schemasRepository);
 
-                if (expectation == CompletionExpectation.NamespaceDefinition)
-                    CompletionHelper.DoNamespaceDefinitionCompletion(completionList, context, editorCompletionContext, schemaInfo, schemasRepository);
+                if (expectation == CompletionExpectation.Alias)
+                    CompletionHelper.DoAliasCompletion(completionList, context, editorCompletionContext, aliasListFunc);
+                
+                if (expectation==CompletionExpectation.Argument)
+                    CompletionHelper.DoArgumentCompletion(completionList, context, aliasListFunc);
+
                 if (expectation == CompletionExpectation.Value && context.InTag == CompletionExpectation.NamespaceDefinition)
                     CompletionHelper.DoNamespaceDefinitionValueCompletion(completionList, context, editorCompletionContext, schemaInfo, schemasRepository);
             }

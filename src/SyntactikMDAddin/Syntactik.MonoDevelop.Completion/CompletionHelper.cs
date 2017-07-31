@@ -55,14 +55,7 @@ namespace Syntactik.MonoDevelop.Completion
                     items.Add(data);
                     data.CompletionCategory = category;
                     data.Icon = SyntactikIcons.Alias;
-                    if (String.IsNullOrEmpty(prefix))
-                    {
-                        data.DisplayText = "$" + alias;
-                    }
-                    else
-                    {
-                        data.DisplayText = alias;
-                    }
+                    data.DisplayText = string.IsNullOrEmpty(prefix) ? "$" + alias : alias;
                     data.CompletionText = data.DisplayText;
                 }
             }
@@ -81,7 +74,7 @@ namespace Syntactik.MonoDevelop.Completion
                 return;
 
             var items = new List<CompletionData>();
-            var completionCategory = new SyntactikCompletionCategory { DisplayText = "Elements", Order = 2 };
+            var completionCategory = new SyntactikCompletionCategory { DisplayText = "Attributes", Order = 1 };
 
             var attributes = GetAttributesForCompletion(schemaInfo,  completionContext);
             var contextElement = completionContext.LastPair as Element;
@@ -97,9 +90,10 @@ namespace Syntactik.MonoDevelop.Completion
                 var data = new CompletionItem { ItemType = ItemType.Attribute, Namespace = attribute.Namespace, NsPrefix = prefix };
                 items.Add(data);
                 data.DisplayText = $"@{displayText} = ";
-                data.CompletionText = $"@{displayText} = ";
+                data.CompletionText = $"@{displayText} =";
                 data.CompletionCategory = completionCategory;
-                data.Icon = attribute.Optional ? SyntactikIcons.OptElement : SyntactikIcons.Element;
+                //data.Icon = attribute.Optional ? SyntactikIcons.OptElement : SyntactikIcons.Element;
+                data.Icon = attribute.Optional ? SyntactikIcons.OptAttribute : SyntactikIcons.Attribute;
                 data.UndeclaredNamespaceUsed = newNs;
             }
             completionList.AddRange(items.OrderBy(i => i.DisplayText));
