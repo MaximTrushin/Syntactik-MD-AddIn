@@ -5,9 +5,12 @@ using Syntactik.Compiler;
 using Syntactik.Compiler.IO;
 using Syntactik.DOM;
 using Syntactik.IO;
+using Syntactik.MonoDevelop.Completion.DOM;
 using Mapped = Syntactik.DOM.Mapped;
 using Syntactik.MonoDevelop.Parser;
 using AliasDefinition = Syntactik.DOM.AliasDefinition;
+using Document = Syntactik.DOM.Document;
+using Module = Syntactik.DOM.Module;
 
 namespace Syntactik.MonoDevelop.Completion
 {
@@ -46,11 +49,11 @@ namespace Syntactik.MonoDevelop.Completion
             var compilerParameters = CreateCompilerParametersForCompletion(fileName, text, _offset, _cancellationToken, out input);
             var compiler = new SyntactikCompiler(compilerParameters);
             _context = compiler.Run();
-            StoreValues(_context);
-            input.Dispose();
             object lastPair;
             if (_context.InMemoryOutputObjects.TryGetValue("LastPair", out lastPair))
                 LastPair = (Pair)lastPair;
+            StoreValues(_context);
+            input.Dispose();
         }
 
         private bool _expectationsCalculated;
@@ -226,6 +229,8 @@ namespace Syntactik.MonoDevelop.Completion
         {
             var visitor = new CompletionVisitor();
             visitor.Visit(context.CompileUnit.Modules[0]);
+            //Calling StoreStringValues separately for LastPair for the case when it couldn't be added to he parent node, because of error
+            (LastPair as ICompletionNode)?.StoreStringValues(); 
         }
 
         private void AddExpectation(CompletionExpectation expectation)
