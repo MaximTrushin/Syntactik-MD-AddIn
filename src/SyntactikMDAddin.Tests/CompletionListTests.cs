@@ -77,6 +77,11 @@ namespace SyntactikMDAddin.Tests
             DoCompletionListTest();
         }
         [Test, RecordedTest]
+        public void Element3()
+        {
+            DoCompletionListTest();
+        }
+        [Test, RecordedTest]
         public void Module1()
         {
             DoCompletionListTest();
