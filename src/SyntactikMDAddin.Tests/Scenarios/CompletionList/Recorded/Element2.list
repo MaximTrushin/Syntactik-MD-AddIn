@@ -1,13 +1,11 @@
-@orderDate = 
-@xml.id = 
-@xml.lang = 
-@xsi.nil = 
-@xsi.type = 
-billTo: (Address) 
-billTo: (EU-Address) 
-billTo: (US-Address) 
-ipo.comment = 
-Items: 
-shipTo: (Address) 
-shipTo: (EU-Address) 
-shipTo: (US-Address) 
+@orderDate =  (@orderDate =)
+@xsi.nil =  (@xsi.nil =)
+@xsi.type =  (@xsi.type =)
+billTo: (Address)  (billTo: )
+billTo: (EU-Address)  (billTo: )
+billTo: (US-Address)  (billTo: )
+ipo.comment =  (ipo.comment =)
+Items:  (Items: )
+shipTo: (Address)  (shipTo: )
+shipTo: (EU-Address)  (shipTo: )
+shipTo: (US-Address)  (shipTo: )
