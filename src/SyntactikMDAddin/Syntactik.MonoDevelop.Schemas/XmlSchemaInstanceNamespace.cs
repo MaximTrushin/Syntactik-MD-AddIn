@@ -19,8 +19,8 @@ namespace Syntactik.MonoDevelop.Schemas
 
         public void PopulateContextInfo(Context context, ContextInfo ctxInfo)
         {
-            ctxInfo.Attributes.Add(new AttributeInfo { Name = "type", Namespace = Url, IsPrivate = true });
-            ctxInfo.Attributes.Add(new AttributeInfo { Name = "nil", Namespace = Url, IsPrivate = true });
+            ctxInfo.Attributes.Add(new AttributeInfo { Name = "type", Namespace = Url, IsPrivate = true, Optional = true});
+            ctxInfo.Attributes.Add(new AttributeInfo { Name = "nil", Namespace = Url, IsPrivate = true, Optional = true });
         }
     }
 }
