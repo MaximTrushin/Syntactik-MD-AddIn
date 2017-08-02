@@ -89,11 +89,17 @@ namespace Syntactik.MonoDevelop.Schemas
                 return;
             }
 
-            var contextElementSchemaInfo = GlobalElements.FirstOrDefault(e => e.Name == contextElement.Name);
+            PopulateCompletionContextOfElement(ctxInfo, contextElement);
+        }
+
+        private void PopulateCompletionContextOfElement(ContextInfo ctxInfo, Element contextElement)
+        {
+            var @namespace = CompletionHelper.GetNamespace(contextElement);
+            var contextElementSchemaInfo = GlobalElements.FirstOrDefault(e => e.Name == contextElement.Name && (e.Namespace ?? "") == @namespace);
             if (contextElementSchemaInfo == null)
             {
                 //Context element is not found in schema.
-                //Displaying list of all elements and attributes difined in all schemas.
+                //Displaying list of all elements and attributes defined in all schemas.
                 ctxInfo.Elements.AddRange(FullListOfElements);
                 ctxInfo.Attributes.AddRange(FullListOfAttributes);
                 return;
@@ -110,12 +116,16 @@ namespace Syntactik.MonoDevelop.Schemas
 
             foreach (var descendant in complexType.Descendants)
             {
-                elements.AddRange(descendant.Elements.Where(e => elements.All(ce => ce.Name != e.Name)));
+                elements.AddRange(descendant.Elements.Where(e => elements.All(ce => ce.Name != e.Name))); //TODO: Check ns prefix in lambda also
                 attributes.AddRange(descendant.Attributes.Where(a => attributes.All(ca => ca.Name != a.Name)));
             }
-            
-            ctxInfo.Elements.AddRange(elements);
+            //TODO: Limit set of elements and attributes based on schema and present entities:
             ctxInfo.Attributes.AddRange(attributes);
+            foreach (var element in elements)
+            {
+                ctxInfo.Elements.Add(element);
+                if (!element.Optional) break;
+            }
         }
 
         private List<ElementInfo> FullListOfElements => _fullListOfElements?? (_fullListOfElements = CalculateFullListOfElements());

@@ -37,7 +37,6 @@ namespace Syntactik.MonoDevelop.Completion
             base.Initialize();
             CompletionWindowManager.WordCompleted += CompletionWindowManager_WordCompleted;
             Editor.CaretPositionChanged += HandleCaretPositionChanged;
-
         }
 
         public override void Dispose()
@@ -45,6 +44,19 @@ namespace Syntactik.MonoDevelop.Completion
             Editor.CaretPositionChanged -= HandleCaretPositionChanged;
             CompletionWindowManager.WordCompleted -= CompletionWindowManager_WordCompleted;
             base.Dispose();
+        }
+
+        public override bool KeyPress(KeyDescriptor descriptor)
+        {
+            //Updating word selection for !@#$% because base class update it only for letters 
+            var ret = base.KeyPress(descriptor);
+            if ((CompletionLanguage == "S4X" || CompletionLanguage == "S4J") && CompletionWindowManager.IsVisible &&
+                (descriptor.KeyChar == '$' || descriptor.KeyChar == '@' || descriptor.KeyChar == '!' ||
+                 descriptor.KeyChar == '#' || descriptor.KeyChar == '%'))
+            {
+                CompletionWindowManager.UpdateWordSelection(CompletionWindowManager.Wnd.CurrentPartialWord);
+            }
+            return ret;
         }
 
         /// <summary>
@@ -145,7 +157,7 @@ namespace Syntactik.MonoDevelop.Completion
             
             var schemaInfo = schemasRepository.GetContextInfo(new Context { CompletionInfo = context });
             var completionList = new CompletionDataList {TriggerWordLength = triggerWordLength};
-            foreach (var expectation in context.Expectations.AsEnumerable())
+            foreach (var expectation in context.Expectations)
             {
                 if (expectation == CompletionExpectation.NamespaceDefinition)
                     CompletionHelper.DoNamespaceDefinitionCompletion(completionList, context, editorCompletionContext, schemaInfo, schemasRepository);

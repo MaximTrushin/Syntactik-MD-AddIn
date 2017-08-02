@@ -24,12 +24,12 @@ namespace Syntactik.MonoDevelop.Completion
             var category = new SyntactikCompletionCategory { DisplayText = "Aliases", Order = 3 };
 
             var aliases = GetListOfBlockAliasDefinitions(aliasListFunc, valuesOnly).Select(a => a.Value.Name);
-            var rawPrefix = GetPrefixForCurrentPair(context, editorCompletionContext, CompletionExpectation.Alias);
-            var prefix = rawPrefix ?? String.Empty;
+            var rawPrefix = GetCompletionPrefixForCurrentPair(context, editorCompletionContext, CompletionExpectation.Alias);
+            var prefix = rawPrefix ?? string.Empty;
             if (!prefix.EndsWith("."))
             {
                 var pos = prefix.LastIndexOf(".", StringComparison.Ordinal);
-                prefix = pos > 0 ? prefix.Substring(0, pos + 1) : String.Empty;
+                prefix = pos > 0 ? prefix.Substring(0, pos + 1) : string.Empty;
             }
 
             var grouped = aliases.Where(a => a.ToLower().StartsWith(prefix.ToLower())).Select(a => NameElement(a, prefix)).Distinct();
@@ -38,12 +38,12 @@ namespace Syntactik.MonoDevelop.Completion
                 CompletionData data;
                 if (alias.EndsWith("."))
                 {
-                    data = new CompletionItem { ItemType = ItemType.AliasNamespace };
+                    data = new CompletionItem { ItemType = ItemType.AliasNamespace, Priority = int.MinValue};
                     items.Add(data);
                     data.CompletionCategory = category;
                     data.Icon = SyntactikIcons.Namespace;
                     var name = alias.Substring(0, alias.Length - 1);
-                    if (String.IsNullOrEmpty(prefix))
+                    if (string.IsNullOrEmpty(prefix))
                         data.DisplayText = "$" + name;
                     else
                         data.DisplayText = name;
@@ -51,7 +51,7 @@ namespace Syntactik.MonoDevelop.Completion
                 }
                 else
                 {
-                    data = new CompletionItem { ItemType = ItemType.Alias };
+                    data = new CompletionItem { ItemType = ItemType.Alias, Priority = int.MinValue };
                     items.Add(data);
                     data.CompletionCategory = category;
                     data.Icon = SyntactikIcons.Alias;
@@ -88,7 +88,12 @@ namespace Syntactik.MonoDevelop.Completion
                     e.Name == attribute.Name && (((INsNode) e).NsPrefix??"") == (prefix??""))) continue;
 
                 var displayText = (string.IsNullOrEmpty(prefix) ? "" : (prefix + ".")) + attribute.Name;
-                var data = new CompletionItem { ItemType = ItemType.Attribute, Namespace = attribute.Namespace, NsPrefix = prefix };
+                var data = new CompletionItem {
+                    ItemType = ItemType.Attribute,
+                    Namespace = attribute.Namespace,
+                    NsPrefix = prefix,
+                    Priority = attribute.IsPrivate?10000:10001 //Low priority for xsi attributes
+                };
                 items.Add(data);
                 data.DisplayText = $"@{displayText} = ";
                 data.CompletionText = $"@{displayText} =";
@@ -271,33 +276,63 @@ namespace Syntactik.MonoDevelop.Completion
             completionList.AddRange(items.OrderBy(i => i.DisplayText));
         }
 
-        internal static string GetNamespacePrefix(string @namespace, Pair completionContextLastPair, SchemasRepository schemasRepository, out bool newNs)
+        internal static string GetNamespacePrefix(string @namespace, Pair pair, SchemasRepository schemasRepository, out bool newNs)
         {
             NamespaceDefinition nsDef = null;
             newNs = false;
-            while (completionContextLastPair != null)
+            while (pair != null)
             {
-                var moduleMember = completionContextLastPair as ModuleMember;
+                var moduleMember = pair as ModuleMember;
                 if (moduleMember != null)
                 {
                     nsDef = moduleMember.NamespaceDefinitions.FirstOrDefault(n => n.Value == @namespace);
                 }
                 else
                 {
-                    var module = completionContextLastPair as Module;
+                    var module = pair as Module;
                     if (module != null)
                     {
                         nsDef = module.NamespaceDefinitions.FirstOrDefault(n => n.Value == @namespace);
                     }
                 }
 
-                if (completionContextLastPair.Parent is CompileUnit) break;
-                completionContextLastPair = completionContextLastPair.Parent;
+                if (pair.Parent is CompileUnit) break;
+                pair = pair.Parent;
             }
             if (nsDef != null) return nsDef.Name;
 
+            //If namespace prefix is not found in the module then getting prefix from schema.
             newNs = true;
             return schemasRepository.GetNamespaces().First(n => n.Namespace == @namespace).Prefix;
+        }
+
+        internal static string GetNamespace( Pair pair)
+        {
+            string prefix = (pair as INsNode)?.NsPrefix;
+            if (prefix == null) return string.Empty;
+            NamespaceDefinition nsDef = null;
+            while (pair != null)
+            {
+                var moduleMember = pair as ModuleMember;
+                if (moduleMember != null)
+                {
+                    nsDef = moduleMember.NamespaceDefinitions.FirstOrDefault(n => n.Name == prefix);
+                }
+                else
+                {
+                    var module = pair as Module;
+                    if (module != null)
+                    {
+                        nsDef = module.NamespaceDefinitions.FirstOrDefault(n => n.Name == prefix);
+                    }
+                }
+
+                if (pair.Parent is CompileUnit) break;
+                pair = pair.Parent;
+            }
+            if (nsDef != null) return nsDef.Value;
+
+            return string.Empty;
         }
 
         internal static IEnumerable<KeyValuePair<string, Syntactik.DOM.AliasDefinition>> GetListOfBlockAliasDefinitions(
@@ -317,7 +352,7 @@ namespace Syntactik.MonoDevelop.Completion
             return result;
         }
 
-        private static string GetPrefixForCurrentPair(CompletionContext context, CodeCompletionContext editorCompletionContext, CompletionExpectation expectedNode)
+        private static string GetCompletionPrefixForCurrentPair(CompletionContext context, CodeCompletionContext editorCompletionContext, CompletionExpectation expectedNode)
         {
             var contextPair = context.LastPair;
             if (context.InTag != expectedNode) return null;

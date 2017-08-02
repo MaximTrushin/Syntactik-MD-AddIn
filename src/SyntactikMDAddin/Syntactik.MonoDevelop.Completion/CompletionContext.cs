@@ -288,6 +288,15 @@ namespace Syntactik.MonoDevelop.Completion
         Document,
         Element,
         NamespaceDefinition,
-        Value,
+        Value
+        //NoExpectation = -1,
+        //Alias = 3,
+        //AliasDefinition = 7,
+        //Argument = 4,
+        //Attribute = 1,
+        //Document = 6,
+        //Element = 2,
+        //NamespaceDefinition = 0,
+        //Value = 5,
     }
 }
