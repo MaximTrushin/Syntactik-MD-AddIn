@@ -127,9 +127,6 @@
     <None Include="Scenarios\CompletionList\IncorrectTree.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Scenarios\CompletionList\Attribute3.s4x">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Scenarios\CompletionList\Attribute2.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -101,6 +101,20 @@ namespace SyntactikMDAddin.Tests
             var codeCompletionContext = new CodeCompletionContext { TriggerLineOffset = lastLine.Length > 0 ? lastLine.Length - 1 : 0 };
             var schemasRepository = new SchemasRepository(filesProvider);
             var list = SyntactikCompletionTextEditorExtension.GetCompletionList(context, codeCompletionContext, 0, func, schemasRepository);
+
+            //Sorting list like in ListWidget.FilterWords()
+            list.Sort(delegate (CompletionData left, CompletionData right) {
+                var data1 = left;
+                var data2 = right;
+                if (data1 == null || data2 == null)
+                    return 0;
+                if (data1.PriorityGroup != data2.PriorityGroup)
+                    return data2.PriorityGroup.CompareTo(data1.PriorityGroup);
+               
+                 return left.CompareTo(right);
+            });
+
+
             return string.Join("\n", list.Select(item => $"{item.DisplayText} ({item.CompletionText})"));
         }
 

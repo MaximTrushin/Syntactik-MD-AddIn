@@ -195,8 +195,16 @@ namespace Syntactik.MonoDevelop.Completion
                     continue;
 
                 string text = $"!#{ns.Prefix} = {ns.Namespace}";
-                var data = completionList.Add(text, SyntactikIcons.NamespaceDefinition);
-                data.CompletionCategory = category;
+                var completionItem = new CompletionItem
+                {
+                    ItemType = ItemType.Namespace,
+                    Icon  = SyntactikIcons.NamespaceDefinition,
+                    DisplayText = text,
+                    CompletionText = text,
+                    CompletionCategory = category,
+                    Priority = -20000
+                };
+                completionList.Add(completionItem);
             }
         }
 

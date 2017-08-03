@@ -1,4 +1,3 @@
 ﻿!#ipo = http://www.example.com/myipo
 ipo.purchaseOrder:
-	@orderDate = 2017-07-31
 	@
