@@ -326,14 +326,13 @@ namespace Syntactik.MonoDevelop.Schemas
                     Namespace = sComplexType.QualifiedName.Namespace
                 };
 
-                var complexType = sComplexType.BaseXmlSchemaType as XmlSchemaComplexType;
-                if (complexType != null)
+                var baseComplexType = sComplexType.BaseXmlSchemaType as XmlSchemaComplexType;
+                if (baseComplexType != null)
                 {
-                    var sBase = complexType;
                     var typeRef = new ElementTypeRef
                     {
-                        Name = sBase.QualifiedName.Name,
-                        Namespace = sBase.QualifiedName.Namespace
+                        Name = baseComplexType.QualifiedName.Name,
+                        Namespace = baseComplexType.QualifiedName.Namespace
                     };
                     type.BaseTypeRef = typeRef;
                     TypeRefs.Add(typeRef);
@@ -358,7 +357,7 @@ namespace Syntactik.MonoDevelop.Schemas
             var sSimpleType = sType as XmlSchemaSimpleType;
             if (sSimpleType != null)
             {
-                var type = new SimpleType
+                var simpleType = new SimpleType
                 {
                     Name = sSimpleType.QualifiedName.Name,
                     Namespace = sSimpleType.QualifiedName.Namespace
@@ -368,10 +367,10 @@ namespace Syntactik.MonoDevelop.Schemas
                 {
                     foreach (var f in restrition.Facets.OfType<XmlSchemaEnumerationFacet>())
                     {
-                        type.EnumValues.Add(f.Value);
+                        simpleType.EnumValues.Add(f.Value);
                     }
                 }
-                return type;
+                return simpleType;
             }
             return null;
         }

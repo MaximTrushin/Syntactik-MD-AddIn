@@ -1,6 +1,7 @@
 ﻿using MonoDevelop.Components.Chart;
 using MonoDevelop.Ide.CodeCompletion;
 using MonoDevelop.Ide.Editor.Extension;
+using Syntactik.MonoDevelop.Schemas;
 
 namespace Syntactik.MonoDevelop.Completion
 {
@@ -19,8 +20,10 @@ namespace Syntactik.MonoDevelop.Completion
         private int _priorityGroup;
         public ItemType ItemType { get; set; }
         public bool UndeclaredNamespaceUsed { get; set; }
+        public bool XsiUndeclared { get; set; }
         public string Namespace { get; set; }
         public string NsPrefix { get; set; }
+        public ElementType ElementType { get; set; } //xsd schema element type
         public override int PriorityGroup => _priorityGroup;
 
         public int Priority

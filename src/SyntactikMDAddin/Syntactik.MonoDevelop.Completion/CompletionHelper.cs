@@ -143,7 +143,8 @@ namespace Syntactik.MonoDevelop.Completion
         {
             var items = new List<CompletionData>();
             var completionCategory = new SyntactikCompletionCategory { DisplayText = "Elements", Order = 2 };
-
+            bool xsiUndeclared;
+            GetNamespacePrefix(XmlSchemaInstanceNamespace.Url, completionContext.LastPair, schemasRepository, out xsiUndeclared);
             foreach (var element in schemaInfo.Elements)
             {
                 bool newNs = false;
@@ -155,7 +156,13 @@ namespace Syntactik.MonoDevelop.Completion
                 var types = GetElementTypes(elementType, out haveExtensions);
                 foreach (var type in types)
                 {
-                    var data = new CompletionItem { ItemType = ItemType.Entity, Namespace = element.Namespace, NsPrefix = prefix };
+                    var data = new CompletionItem
+                    {
+                        ItemType = ItemType.Entity,
+                        Namespace = element.Namespace,
+                        NsPrefix = prefix,
+                        ElementType = type
+                    };
                     items.Add(data);
                     string postfix = string.Empty;
                     if (type != elementType || haveExtensions)
@@ -177,6 +184,7 @@ namespace Syntactik.MonoDevelop.Completion
                     data.CompletionCategory = completionCategory;
                     data.Icon = element.Optional ? SyntactikIcons.OptElement : SyntactikIcons.Element;
                     data.UndeclaredNamespaceUsed = newNs;
+                    data.XsiUndeclared = xsiUndeclared;
                 }
             }
             completionList.AddRange(items.OrderBy(i => i.DisplayText));
