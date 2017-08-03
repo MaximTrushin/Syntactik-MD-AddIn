@@ -15,6 +15,6 @@
         public AttributeInfo()
         {
         }
-        public bool IsPrivate { get; set; }
+        public bool Builtin { get; set; } //xsi namespace
     }
 }

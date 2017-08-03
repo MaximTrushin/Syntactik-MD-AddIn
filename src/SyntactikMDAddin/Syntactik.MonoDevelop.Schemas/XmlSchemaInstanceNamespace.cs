@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
+using Syntactik.DOM;
+using Syntactik.MonoDevelop.Completion;
 
 namespace Syntactik.MonoDevelop.Schemas
 {
@@ -19,8 +22,20 @@ namespace Syntactik.MonoDevelop.Schemas
 
         public void PopulateContextInfo(Context context, ContextInfo ctxInfo)
         {
-            ctxInfo.Attributes.Add(new AttributeInfo { Name = "type", Namespace = Url, IsPrivate = true, Optional = true});
-            ctxInfo.Attributes.Add(new AttributeInfo { Name = "nil", Namespace = Url, IsPrivate = true, Optional = true });
+            var lastNode = context.CompletionInfo.InTag == CompletionExpectation.NoExpectation
+                    ? context.CompletionInfo.LastPair
+                    : context.CompletionInfo.LastPair.Parent; //if we are inside pair which is not finished then context is the node's parent
+
+
+
+            var contextElement = lastNode as Element;
+            if (contextElement == null) return;
+
+            if (contextElement.Entities.Any(e => e is DOM.Attribute && ((DOM.Attribute) e).NsPrefix != "xsi")) return;
+
+            //xsi - attribute can be added only if there are no other attribute present
+            ctxInfo.Attributes.Add(new AttributeInfo { Name = "type", Namespace = Url, Builtin = true, Optional = true });
+            ctxInfo.Attributes.Add(new AttributeInfo { Name = "nil", Namespace = Url, Builtin = true, Optional = true });
         }
     }
 }

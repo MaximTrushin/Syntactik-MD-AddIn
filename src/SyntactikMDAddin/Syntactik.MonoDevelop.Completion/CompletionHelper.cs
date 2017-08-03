@@ -92,7 +92,7 @@ namespace Syntactik.MonoDevelop.Completion
                     ItemType = ItemType.Attribute,
                     Namespace = attribute.Namespace,
                     NsPrefix = prefix,
-                    Priority = attribute.IsPrivate?10000:10001 //Low priority for xsi attributes
+                    Priority = attribute.Builtin?10000:10001 //Low priority for xsi attributes
                 };
                 items.Add(data);
                 data.DisplayText = $"@{displayText} = ";
