@@ -79,20 +79,10 @@ namespace Syntactik.MonoDevelop.Schemas
                 ? context.CompletionInfo.LastPair
                 : context.CompletionInfo.LastPair.Parent; //if we are inside pair which is not finished then context is the node's parent
 
-            var contextElement = lastNode as Element;
-            if (contextElement == null)
-            {
-                //If current node is not element then we show list of global elements and attributes,
-                //because they do not dependend on context.
-                ctxInfo.Elements.AddRange(GlobalElements);
-                ctxInfo.Attributes.AddRange(GlobalAttributes);
-                return;
-            }
-
-            PopulateCompletionContextOfElement(ctxInfo, contextElement);
+            PopulateCompletionContextOfElement(ctxInfo, lastNode);
         }
 
-        private void PopulateCompletionContextOfElement(ContextInfo contextInfo, Element contextElement)
+        private void PopulateCompletionContextOfElement(ContextInfo contextInfo, Pair contextElement)
         {
             var path = GetCompletionPath(contextElement);
             var elements = new List<ElementInfo>(GlobalElements);
@@ -144,21 +134,39 @@ namespace Syntactik.MonoDevelop.Schemas
                 elements = new List<ElementInfo>(complexType.Elements);
                 attributes = new List<AttributeInfo>(complexType.Attributes);
                 var explicitType = (pair as Element).Entities.OfType<DOM.Attribute>().FirstOrDefault(a => a.Name == "type" && ((INsNode) a).NsPrefix == "xsi")?.Value;
-                if (explicitType == null) continue;
-                var typeInfo = explicitType.Split(':');
-                var explicitTypeName = typeInfo[1];
-                var explicitTypeNameSpace = CompletionHelper.GetNamespace(pair);
-                foreach (var descendant in complexType.Descendants)
+                if (explicitType != null)
                 {
-                    if (descendant.Name != explicitTypeName || descendant.Namespace != explicitTypeNameSpace) continue;
-                    elements.AddRange(descendant.Elements.Where(e => elements.All(ce => ce.Name != e.Name || ce.Namespace != e.Namespace)));
-                    attributes.AddRange(descendant.Attributes.Where(a => attributes.All(ca => ca.Name != a.Name || ca.Namespace != a.Namespace)));
-                    break;
+                    var typeInfo = explicitType.Split(':');
+                    var explicitTypeName = typeInfo[1];
+                    var explicitTypeNameSpace = CompletionHelper.GetNamespace(pair);
+                    foreach (var descendant in complexType.Descendants)
+                    {
+                        if (descendant.Name != explicitTypeName || descendant.Namespace != explicitTypeNameSpace)
+                            continue;
+                        elements.AddRange(
+                            descendant.Elements.Where(
+                                e => elements.All(ce => ce.Name != e.Name || ce.Namespace != e.Namespace)));
+                        attributes.AddRange(
+                            descendant.Attributes.Where(
+                                a => attributes.All(ca => ca.Name != a.Name || ca.Namespace != a.Namespace)));
+                        break;
+                    }
                 }
+                elements = new List<ElementInfo>(elements.Select(
+                        e =>
+                        {
+                            var clone = (ElementInfo) e.Clone();
+                            clone.InSequence = true;
+                            return clone;
+                        }
+                    ));
+                
             }
 
             contextInfo.Attributes.AddRange(attributes);
-            var existingElements = new List<Element>(contextElement.Entities.OfType<Element>());
+            var element1 = contextElement as Element;
+            var existingElements = element1 != null ? new List<Element>(element1.Entities.OfType<Element>()) : new List<Element>();
+            
             foreach (var elementFromSchema in elements)
             {
                 var existingElementsToRemove = new List<Element>();
@@ -180,13 +188,11 @@ namespace Syntactik.MonoDevelop.Schemas
                 }
                 existingElementsToRemove.ForEach(e => existingElements.Remove(e));
                 if (found) continue;
-                var clone = (ElementInfo)elementFromSchema.Clone();
-                clone.InSequence = true;
-                contextInfo.Elements.Add(clone);
+                contextInfo.Elements.Add(elementFromSchema);
             }
         }
 
-        private static IEnumerable<Pair> GetCompletionPath(Element contextElement)
+        private static IEnumerable<Pair> GetCompletionPath(Pair contextElement)
         {
             return GetReversedCompletionPath(contextElement).Reverse();
         }
@@ -197,7 +203,7 @@ namespace Syntactik.MonoDevelop.Schemas
         /// </summary>
         /// <param name="contextElement"></param>
         /// <returns></returns>
-        private static IEnumerable<Pair> GetReversedCompletionPath(Element contextElement)
+        private static IEnumerable<Pair> GetReversedCompletionPath(Pair contextElement)
         {
             Pair pair = contextElement;
             while (pair != null)

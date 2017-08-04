@@ -28,7 +28,7 @@ namespace Syntactik.MonoDevelop.Schemas
 
 
 
-            var contextElement = lastNode as Element;
+            var contextElement = lastNode as IContainer;
             if (contextElement == null) return;
 
             if (contextElement.Entities.Any(e => e is DOM.Attribute && ((DOM.Attribute) e).NsPrefix != "xsi")) return;
