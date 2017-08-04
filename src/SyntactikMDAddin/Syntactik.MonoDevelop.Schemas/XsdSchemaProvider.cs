@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -95,7 +94,7 @@ namespace Syntactik.MonoDevelop.Schemas
 
         private void PopulateCompletionContextOfElement(ContextInfo contextInfo, Element contextElement)
         {
-            IEnumerable<Pair> path = GetCompletionPath(contextElement);
+            var path = GetCompletionPath(contextElement);
             var elements = new List<ElementInfo>(GlobalElements);
             var attributes = new List<AttributeInfo>(GlobalAttributes);
             foreach (var pair in path)
@@ -123,7 +122,7 @@ namespace Syntactik.MonoDevelop.Schemas
                 }
 
                 string @namespace = CompletionHelper.GetNamespace(element);
-                var contextElementSchemaInfo = GlobalElements.FirstOrDefault(e => e.Name == contextElement.Name && (e.Namespace ?? "") == @namespace);
+                var contextElementSchemaInfo = elements.FirstOrDefault(e => e.Name == element.Name && (e.Namespace ?? "") == @namespace);
                 if (contextElementSchemaInfo == null)
                 {
                     //Context element is not found in schema.
@@ -144,11 +143,17 @@ namespace Syntactik.MonoDevelop.Schemas
 
                 elements = new List<ElementInfo>(complexType.Elements);
                 attributes = new List<AttributeInfo>(complexType.Attributes);
-
+                var explicitType = (pair as Element).Entities.OfType<DOM.Attribute>().FirstOrDefault(a => a.Name == "type" && ((INsNode) a).NsPrefix == "xsi")?.Value;
+                if (explicitType == null) continue;
+                var typeInfo = explicitType.Split(':');
+                var explicitTypeName = typeInfo[1];
+                var explicitTypeNameSpace = CompletionHelper.GetNamespace(pair);
                 foreach (var descendant in complexType.Descendants)
                 {
+                    if (descendant.Name != explicitTypeName || descendant.Namespace != explicitTypeNameSpace) continue;
                     elements.AddRange(descendant.Elements.Where(e => elements.All(ce => ce.Name != e.Name || ce.Namespace != e.Namespace)));
                     attributes.AddRange(descendant.Attributes.Where(a => attributes.All(ca => ca.Name != a.Name || ca.Namespace != a.Namespace)));
+                    break;
                 }
             }
 
@@ -175,8 +180,9 @@ namespace Syntactik.MonoDevelop.Schemas
                 }
                 existingElementsToRemove.ForEach(e => existingElements.Remove(e));
                 if (found) continue;
-                contextInfo.Elements.Add(elementFromSchema);
-                if (!elementFromSchema.Optional) break;
+                var clone = (ElementInfo)elementFromSchema.Clone();
+                clone.InSequence = true;
+                contextInfo.Elements.Add(clone);
             }
         }
 

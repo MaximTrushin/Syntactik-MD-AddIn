@@ -1,6 +1,8 @@
-﻿namespace Syntactik.MonoDevelop.Schemas
+﻿using System;
+
+namespace Syntactik.MonoDevelop.Schemas
 {
-    public class ElementInfo
+    public class ElementInfo: ICloneable
     {
         public string Name { get; set; }
         public string Namespace { get; set; }
@@ -18,7 +20,7 @@
         public ElementInfo(ComplexType parent)
         {
             Parent = parent;
-            InSequence = true;
+            InSequence = false;
         }
         
         public ElementType GetElementType()
@@ -43,6 +45,19 @@
             return Type;
         }
 
-
+        public object Clone()
+        {
+            return new ElementInfo(Parent)
+            {
+                Name = Name,
+                Namespace = Namespace,
+                Type = Type,
+                Optional = Optional,
+                MaxOccurs = MaxOccurs,
+                Qualified = Qualified,
+                IsGlobal = IsGlobal,
+                InSequence = InSequence
+            };
+        }
     }
 }

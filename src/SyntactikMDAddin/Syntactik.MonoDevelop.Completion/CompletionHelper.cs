@@ -17,6 +17,9 @@ namespace Syntactik.MonoDevelop.Completion
 {
     public class CompletionHelper
     {
+        private static int AttributePriority = 10000;
+        private static int ElementPriority = 0;
+
         internal static void DoAliasCompletion(CompletionDataList completionList, CompletionContext context,
             CodeCompletionContext editorCompletionContext, Func<Dictionary<string, Syntactik.DOM.AliasDefinition>> aliasListFunc, bool valuesOnly = false)
         {
@@ -66,7 +69,6 @@ namespace Syntactik.MonoDevelop.Completion
             }
             completionList.AddRange(items.OrderBy(i => i.DisplayText));
         }
-
         internal static void DoAttributeCompletion(CompletionDataList completionList, CompletionContext completionContext,
             CodeCompletionContext editorCompletionContext, ContextInfo schemaInfo, SchemasRepository schemasRepository)
         {
@@ -88,11 +90,12 @@ namespace Syntactik.MonoDevelop.Completion
                     e.Name == attribute.Name && (((INsNode) e).NsPrefix??"") == (prefix??""))) continue;
 
                 var displayText = (string.IsNullOrEmpty(prefix) ? "" : (prefix + ".")) + attribute.Name;
+                
                 var data = new CompletionItem {
                     ItemType = ItemType.Attribute,
                     Namespace = attribute.Namespace,
                     NsPrefix = prefix,
-                    Priority = attribute.Builtin?10000:10001 //Low priority for xsi attributes
+                    Priority = attribute.Builtin?AttributePriority: (AttributePriority + 1) //Low priority for xsi attributes
                 };
                 items.Add(data);
                 data.DisplayText = $"@{displayText} = ";
@@ -143,6 +146,7 @@ namespace Syntactik.MonoDevelop.Completion
         {
             var items = new List<CompletionData>();
             var completionCategory = new SyntactikCompletionCategory { DisplayText = "Elements", Order = 2 };
+            var priority = ElementPriority;
             bool xsiUndeclared;
             GetNamespacePrefix(XmlSchemaInstanceNamespace.Url, completionContext.LastPair, schemasRepository, out xsiUndeclared);
             foreach (var element in schemaInfo.Elements)
@@ -161,7 +165,8 @@ namespace Syntactik.MonoDevelop.Completion
                         ItemType = ItemType.Entity,
                         Namespace = element.Namespace,
                         NsPrefix = prefix,
-                        ElementType = type
+                        ElementType = type,
+                        Priority = priority
                     };
                     items.Add(data);
                     string postfix = string.Empty;
@@ -186,8 +191,9 @@ namespace Syntactik.MonoDevelop.Completion
                     data.UndeclaredNamespaceUsed = newNs;
                     data.XsiUndeclared = xsiUndeclared;
                 }
+                if (element.InSequence) priority--;
             }
-            completionList.AddRange(items.OrderBy(i => i.DisplayText));
+            completionList.AddRange(items);
         }
 
         internal static void DoNamespaceDefinitionCompletion(CompletionDataList completionList, CompletionContext context, CodeCompletionContext editorCompletionContext, ContextInfo schemaInfo, SchemasRepository schemasRepository)
@@ -324,8 +330,13 @@ namespace Syntactik.MonoDevelop.Completion
 
         internal static string GetNamespace( Pair pair)
         {
-            string prefix = (pair as INsNode)?.NsPrefix;
+            var prefix = (pair as INsNode)?.NsPrefix;
             if (prefix == null) return string.Empty;
+            return GetNamespace(pair, prefix);
+        }
+
+        internal static string GetNamespace(Pair pair, string prefix)
+        {
             NamespaceDefinition nsDef = null;
             while (pair != null)
             {

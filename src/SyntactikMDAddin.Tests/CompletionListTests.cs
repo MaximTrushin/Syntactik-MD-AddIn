@@ -92,6 +92,11 @@ namespace SyntactikMDAddin.Tests
             DoCompletionListTest();
         }
         [Test, RecordedTest]
+        public void Element5()
+        {
+            DoCompletionListTest();
+        }
+        [Test, RecordedTest]
         public void IncorrectTree()
         {
             DoCompletionListTest();
