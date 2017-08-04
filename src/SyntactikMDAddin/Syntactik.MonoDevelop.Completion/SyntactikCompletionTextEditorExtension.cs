@@ -219,6 +219,10 @@ namespace Syntactik.MonoDevelop.Completion
                     var indent = prevIndent +
                                  new string(module.IndentSymbol == 0 ? '\t' : module.IndentSymbol,
                                      module.IndentMultiplicity == 0 ? 1 : module.IndentMultiplicity);
+                    bool newTypePrefix;
+                    var typePrefix = CompletionHelper.GetNamespacePrefix(SelectedCompletionItem.ElementType.Namespace,
+                        SelectedCompletionItem.CompletionContextPair,
+                        ((SyntactikProject) DocumentContext.Project).SchemasRepository, out newTypePrefix);
                     var typeAttr = "@xsi.type = " + SelectedCompletionItem.ElementType.Name;
                     using (Editor.OpenUndoGroup())
                     {
@@ -227,6 +231,8 @@ namespace Syntactik.MonoDevelop.Completion
                         Editor.ReplaceText(Editor.GetLine(currentLine + 1).Offset, 0, indent + typeAttr);
                         if (SelectedCompletionItem.XsiUndeclared)
                             AddNewNamespaceToModule("xsi", XmlSchemaInstanceNamespace.Url);
+                        if (newTypePrefix && typePrefix != "xsi")
+                            AddNewNamespaceToModule(typePrefix, SelectedCompletionItem.ElementType.Namespace);
                     }
                 }
             }

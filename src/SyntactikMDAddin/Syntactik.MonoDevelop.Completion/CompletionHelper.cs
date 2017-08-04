@@ -166,7 +166,8 @@ namespace Syntactik.MonoDevelop.Completion
                         Namespace = element.Namespace,
                         NsPrefix = prefix,
                         ElementType = type,
-                        Priority = priority
+                        Priority = priority,
+                        CompletionContextPair = completionContext.LastPair
                     };
                     items.Add(data);
                     string postfix = string.Empty;
