@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -92,39 +93,112 @@ namespace Syntactik.MonoDevelop.Schemas
             PopulateCompletionContextOfElement(ctxInfo, contextElement);
         }
 
-        private void PopulateCompletionContextOfElement(ContextInfo ctxInfo, Element contextElement)
+        private void PopulateCompletionContextOfElement(ContextInfo contextInfo, Element contextElement)
         {
-            var @namespace = CompletionHelper.GetNamespace(contextElement);
-            var contextElementSchemaInfo = GlobalElements.FirstOrDefault(e => e.Name == contextElement.Name && (e.Namespace ?? "") == @namespace);
-            if (contextElementSchemaInfo == null)
+            IEnumerable<Pair> path = GetCompletionPath(contextElement);
+            var elements = new List<ElementInfo>(GlobalElements);
+            var attributes = new List<AttributeInfo>(GlobalAttributes);
+            foreach (var pair in path)
             {
-                //Context element is not found in schema.
-                //Displaying list of all elements and attributes defined in all schemas.
-                ctxInfo.Elements.AddRange(FullListOfElements);
-                ctxInfo.Attributes.AddRange(FullListOfAttributes);
-                return;
+                if (pair is AliasDefinition || pair is Alias || pair is Argument || pair is Parameter)
+                {
+                    attributes = new List<AttributeInfo>(FullListOfAttributes);
+                    elements = new List<ElementInfo>(FullListOfElements);
+                    continue;
+                }
+
+                if (pair is Document || pair is Module)
+                {
+                    elements = new List<ElementInfo>(GlobalElements);
+                    attributes = new List<AttributeInfo>(GlobalAttributes);
+                    continue;
+                }
+
+                var element = pair as Element;
+                if (element == null) //TODO: Create logic for scope
+                {
+                    elements = new List<ElementInfo>(GlobalElements);
+                    attributes = new List<AttributeInfo>(GlobalAttributes);
+                    continue;
+                }
+
+                string @namespace = CompletionHelper.GetNamespace(element);
+                var contextElementSchemaInfo = GlobalElements.FirstOrDefault(e => e.Name == contextElement.Name && (e.Namespace ?? "") == @namespace);
+                if (contextElementSchemaInfo == null)
+                {
+                    //Context element is not found in schema.
+                    elements = new List<ElementInfo>(GlobalElements);
+                    attributes = new List<AttributeInfo>(GlobalAttributes);
+                    continue;
+                }
+                contextInfo.CurrentType = contextElementSchemaInfo.GetElementType();
+                var complexType = contextInfo.CurrentType as ComplexType;
+                contextInfo.Scope = complexType;
+
+                if (complexType == null)
+                {
+                    elements = new List<ElementInfo>(GlobalElements);
+                    attributes = new List<AttributeInfo>(GlobalAttributes);
+                    continue;
+                }
+
+                elements = new List<ElementInfo>(complexType.Elements);
+                attributes = new List<AttributeInfo>(complexType.Attributes);
+
+                foreach (var descendant in complexType.Descendants)
+                {
+                    elements.AddRange(descendant.Elements.Where(e => elements.All(ce => ce.Name != e.Name || ce.Namespace != e.Namespace)));
+                    attributes.AddRange(descendant.Attributes.Where(a => attributes.All(ca => ca.Name != a.Name || ca.Namespace != a.Namespace)));
+                }
             }
 
-            ctxInfo.CurrentType = contextElementSchemaInfo.GetElementType();
-            var complexType = ctxInfo.CurrentType as ComplexType;
-            ctxInfo.Scope = complexType;
-
-            if (complexType == null) return;
-
-            var elements = new List<ElementInfo>(complexType.Elements);
-            var attributes = new List<AttributeInfo>(complexType.Attributes);
-
-            foreach (var descendant in complexType.Descendants)
+            contextInfo.Attributes.AddRange(attributes);
+            var existingElements = new List<Element>(contextElement.Entities.OfType<Element>());
+            foreach (var elementFromSchema in elements)
             {
-                elements.AddRange(descendant.Elements.Where(e => elements.All(ce => ce.Name != e.Name))); //TODO: Check ns prefix in lambda also
-                attributes.AddRange(descendant.Attributes.Where(a => attributes.All(ca => ca.Name != a.Name)));
+                var existingElementsToRemove = new List<Element>();
+                var found = false;
+                var maxCount = elementFromSchema.MaxOccurs;
+                foreach (var existingElement in existingElements)
+                {
+                    existingElementsToRemove.Add(existingElement);
+                    if (existingElement.Name == elementFromSchema.Name
+                            && CompletionHelper.GetNamespace(existingElement) == elementFromSchema.Namespace)
+                    {
+                        maxCount--;
+                        if (maxCount == 0)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                existingElementsToRemove.ForEach(e => existingElements.Remove(e));
+                if (found) continue;
+                contextInfo.Elements.Add(elementFromSchema);
+                if (!elementFromSchema.Optional) break;
             }
-            //TODO: Limit set of elements and attributes based on schema and present entities:
-            ctxInfo.Attributes.AddRange(attributes);
-            foreach (var element in elements)
+        }
+
+        private static IEnumerable<Pair> GetCompletionPath(Element contextElement)
+        {
+            return GetReversedCompletionPath(contextElement).Reverse();
+        }
+
+        /// <summary>
+        /// Returns reversed completion path.
+        /// It goes up the chain using property parent till first pair which is not Element.
+        /// </summary>
+        /// <param name="contextElement"></param>
+        /// <returns></returns>
+        private static IEnumerable<Pair> GetReversedCompletionPath(Element contextElement)
+        {
+            Pair pair = contextElement;
+            while (pair != null)
             {
-                ctxInfo.Elements.Add(element);
-                if (!element.Optional) break;
+                yield return pair;
+                if (!(pair is Element) && !(pair is Scope)) yield break;
+                pair = pair.Parent;
             }
         }
 
@@ -157,7 +231,6 @@ namespace Syntactik.MonoDevelop.Schemas
         {
             return _provider.GetSchemaProjectFiles();
         }
-
 
         private void UpdateSchemaInfo() //TODO: Call update when project schema set changed.
         {
@@ -276,7 +349,6 @@ namespace Syntactik.MonoDevelop.Schemas
 
                     }
                 }
-
             }
         }
 

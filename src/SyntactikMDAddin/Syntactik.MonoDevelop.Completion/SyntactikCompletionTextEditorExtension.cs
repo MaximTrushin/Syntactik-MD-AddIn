@@ -161,23 +161,36 @@ namespace Syntactik.MonoDevelop.Completion
             var completionList = new CompletionDataList {TriggerWordLength = triggerWordLength};
             foreach (var expectation in context.Expectations)
             {
-                if (expectation == CompletionExpectation.NamespaceDefinition)
-                    CompletionHelper.DoNamespaceDefinitionCompletion(completionList, context, editorCompletionContext, schemaInfo, schemasRepository);
-
-                if (expectation == CompletionExpectation.Attribute)
-                    CompletionHelper.DoAttributeCompletion(completionList, context, editorCompletionContext, schemaInfo, schemasRepository);
-
-                if (expectation == CompletionExpectation.Element)
-                    CompletionHelper.DoElementCompletion(completionList, context, editorCompletionContext, schemaInfo, schemasRepository);
-
-                if (expectation == CompletionExpectation.Alias)
-                    CompletionHelper.DoAliasCompletion(completionList, context, editorCompletionContext, aliasListFunc);
-                
-                if (expectation==CompletionExpectation.Argument)
-                    CompletionHelper.DoArgumentCompletion(completionList, context, aliasListFunc);
-
-                if (expectation == CompletionExpectation.Value && context.InTag == CompletionExpectation.NamespaceDefinition)
-                    CompletionHelper.DoNamespaceDefinitionValueCompletion(completionList, context, editorCompletionContext, schemaInfo, schemasRepository);
+                switch (expectation)
+                {
+                    case CompletionExpectation.NamespaceDefinition:
+                        CompletionHelper.DoNamespaceDefinitionCompletion(completionList, context, editorCompletionContext, schemaInfo, schemasRepository);
+                        break;
+                    case CompletionExpectation.NoExpectation:
+                        break;
+                    case CompletionExpectation.Alias:
+                        CompletionHelper.DoAliasCompletion(completionList, context, editorCompletionContext, aliasListFunc);
+                        break;
+                    case CompletionExpectation.AliasDefinition:
+                        break;
+                    case CompletionExpectation.Argument:
+                        CompletionHelper.DoArgumentCompletion(completionList, context, aliasListFunc);
+                        break;
+                    case CompletionExpectation.Attribute:
+                        CompletionHelper.DoAttributeCompletion(completionList, context, editorCompletionContext, schemaInfo, schemasRepository);
+                        break;
+                    case CompletionExpectation.Document:
+                        break;
+                    case CompletionExpectation.Element:
+                        CompletionHelper.DoElementCompletion(completionList, context, editorCompletionContext, schemaInfo, schemasRepository);
+                        break;
+                    case CompletionExpectation.Value:
+                        if (context.InTag == CompletionExpectation.NamespaceDefinition)
+                            CompletionHelper.DoNamespaceDefinitionValueCompletion(completionList, context, editorCompletionContext, schemaInfo, schemasRepository);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
             return completionList;
         }
@@ -188,6 +201,11 @@ namespace Syntactik.MonoDevelop.Completion
                 return;
             if (SelectedCompletionItem.UndeclaredNamespaceUsed)
                 AddNewNamespaceToModule(SelectedCompletionItem.NsPrefix, SelectedCompletionItem.Namespace);
+            AddXsiTypeAttribute();
+        }
+
+        private void AddXsiTypeAttribute()
+        {
             if (SelectedCompletionItem.ElementType != null && !IsRootType(SelectedCompletionItem.ElementType))
             {
                 var doc = DocumentContext.ParsedDocument as SyntactikParsedDocument;
@@ -198,7 +216,9 @@ namespace Syntactik.MonoDevelop.Completion
                     var prevLineText = Editor.GetLineText(currentLine);
                     var prevLineTextTrimmed = prevLineText.TrimEnd() + Editor.EolMarker;
                     var prevIndent = Editor.GetLineIndent(currentLine);
-                    var indent = prevIndent + new string(module.IndentSymbol == 0 ? '\t' : module.IndentSymbol, module.IndentMultiplicity == 0 ? 1 : module.IndentMultiplicity);
+                    var indent = prevIndent +
+                                 new string(module.IndentSymbol == 0 ? '\t' : module.IndentSymbol,
+                                     module.IndentMultiplicity == 0 ? 1 : module.IndentMultiplicity);
                     var typeAttr = "@xsi.type = " + SelectedCompletionItem.ElementType.Name;
                     using (Editor.OpenUndoGroup())
                     {
