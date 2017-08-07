@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Gtk;
-using Mono.TextEditor;
 using MonoDevelop.Components;
 using MonoDevelop.Core;
 using MonoDevelop.Core.Text;
@@ -70,9 +69,7 @@ namespace Syntactik.MonoDevelop.Completion
         {
             Editor.EnsureCaretIsNotVirtual();
             var pos = completionContext.TriggerOffset;
-            if (pos < 0)
-                return null;
-            return HandleCodeCompletion(completionContext, true, default(CancellationToken), 0, (char) 0);
+            return pos < 0 ? null : HandleCodeCompletion(completionContext, true, default(CancellationToken), 0, (char) 0);
         }
 
         /// <summary>
@@ -186,7 +183,15 @@ namespace Syntactik.MonoDevelop.Completion
                         break;
                     case CompletionExpectation.Value:
                         if (context.InTag == CompletionExpectation.NamespaceDefinition)
+                        {
                             CompletionHelper.DoNamespaceDefinitionValueCompletion(completionList, context, editorCompletionContext, schemaInfo, schemasRepository);
+                            break;
+                        }
+                        if (context.InTag == CompletionExpectation.Attribute)
+                        {
+                            CompletionHelper.DoTypeAttributeValueCompletion(completionList, context, editorCompletionContext, schemaInfo, schemasRepository);
+                            break;
+                        }
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -206,35 +211,33 @@ namespace Syntactik.MonoDevelop.Completion
 
         private void AddXsiTypeAttribute()
         {
-            if (SelectedCompletionItem.ElementType != null && !IsRootType(SelectedCompletionItem.ElementType))
+            if (SelectedCompletionItem.ElementType == null || IsRootType(SelectedCompletionItem.ElementType)) return;
+
+            var doc = DocumentContext.ParsedDocument as SyntactikParsedDocument;
+            var module = doc?.Ast as Module;
+            if (module == null) return;
+
+            var currentLine = Editor.CaretLine;
+            var prevLineText = Editor.GetLineText(currentLine);
+            var prevLineTextTrimmed = prevLineText.TrimEnd() + Editor.EolMarker;
+            var prevIndent = Editor.GetLineIndent(currentLine);
+            var indent = prevIndent +
+                         new string(module.IndentSymbol == 0 ? '\t' : module.IndentSymbol,
+                             module.IndentMultiplicity == 0 ? 1 : module.IndentMultiplicity);
+            bool newTypePrefix;
+            var typePrefix = CompletionHelper.GetNamespacePrefix(SelectedCompletionItem.ElementType.Namespace,
+                SelectedCompletionItem.CompletionContextPair,
+                ((SyntactikProject) DocumentContext.Project).SchemasRepository, out newTypePrefix);
+            var typeAttr = "@xsi.type = " + SelectedCompletionItem.ElementType.Name;
+            using (Editor.OpenUndoGroup())
             {
-                var doc = DocumentContext.ParsedDocument as SyntactikParsedDocument;
-                var module = doc?.Ast as Module;
-                if (module != null)
-                {
-                    var currentLine = Editor.CaretLine;
-                    var prevLineText = Editor.GetLineText(currentLine);
-                    var prevLineTextTrimmed = prevLineText.TrimEnd() + Editor.EolMarker;
-                    var prevIndent = Editor.GetLineIndent(currentLine);
-                    var indent = prevIndent +
-                                 new string(module.IndentSymbol == 0 ? '\t' : module.IndentSymbol,
-                                     module.IndentMultiplicity == 0 ? 1 : module.IndentMultiplicity);
-                    bool newTypePrefix;
-                    var typePrefix = CompletionHelper.GetNamespacePrefix(SelectedCompletionItem.ElementType.Namespace,
-                        SelectedCompletionItem.CompletionContextPair,
-                        ((SyntactikProject) DocumentContext.Project).SchemasRepository, out newTypePrefix);
-                    var typeAttr = "@xsi.type = " + SelectedCompletionItem.ElementType.Name;
-                    using (Editor.OpenUndoGroup())
-                    {
-                        //Trimming end of previous line
-                        Editor.ReplaceText(Editor.GetLine(currentLine).Offset, prevLineText.Length, prevLineTextTrimmed);
-                        Editor.ReplaceText(Editor.GetLine(currentLine + 1).Offset, 0, indent + typeAttr);
-                        if (SelectedCompletionItem.XsiUndeclared)
-                            AddNewNamespaceToModule("xsi", XmlSchemaInstanceNamespace.Url);
-                        if (newTypePrefix && typePrefix != "xsi")
-                            AddNewNamespaceToModule(typePrefix, SelectedCompletionItem.ElementType.Namespace);
-                    }
-                }
+                //Trimming end of previous line
+                Editor.ReplaceText(Editor.GetLine(currentLine).Offset, prevLineText.Length, prevLineTextTrimmed);
+                Editor.ReplaceText(Editor.GetLine(currentLine + 1).Offset, 0, indent + typeAttr);
+                if (SelectedCompletionItem.XsiUndeclared)
+                    AddNewNamespaceToModule("xsi", XmlSchemaInstanceNamespace.Url);
+                if (newTypePrefix && typePrefix != "xsi")
+                    AddNewNamespaceToModule(typePrefix, SelectedCompletionItem.ElementType.Namespace);
             }
         }
 
@@ -243,10 +246,10 @@ namespace Syntactik.MonoDevelop.Completion
         /// </summary>
         /// <param name="elementType"></param>
         /// <returns></returns>
-        private bool IsRootType(ElementType elementType)
+        private static bool IsRootType(ElementType elementType)
         {
             var complexType = elementType as ComplexType;
-            if (complexType == null || complexType.BaseType == null) return true;
+            if (complexType?.BaseType == null) return true;
             if (complexType.BaseType.Name == "anyType" &&
                 complexType.BaseType.Namespace == "http://www.w3.org/2001/XMLSchema") return true;
             return false;

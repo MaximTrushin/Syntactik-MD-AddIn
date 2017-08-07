@@ -236,6 +236,28 @@ namespace Syntactik.MonoDevelop.Completion
             AdjustEditorCompletionContext(editorCompletionContext, ((IMappedPair) context.LastPair).ValueInterval);
         }
 
+        public static void DoTypeAttributeValueCompletion(CompletionDataList completionList, CompletionContext context, CodeCompletionContext editorCompletionContext, ContextInfo schemaInfo, SchemasRepository schemasRepository)
+        {
+            var attribute = context.LastPair as DOM.Attribute;
+            if (attribute?.Name != "type" || attribute.NsPrefix != "xsi") return;
+            if (schemaInfo.Scope != null)
+            {
+                var nsPrefix = "";
+                bool newNs;
+                var ns = GetNamespacePrefix(schemaInfo.Scope.Namespace, context.LastPair, schemasRepository, out newNs);
+                if (ns != null)
+                    nsPrefix = ns + ":";
+                var category = new SyntactikCompletionCategory {DisplayText = "Values", Icon = SyntactikIcons.Enum};
+                foreach (var d in schemaInfo.Scope.Descendants)
+                {
+                    string text = $"{nsPrefix}{d.Name}";
+                    var data = completionList.Add(text, SyntactikIcons.Enum);
+                    data.CompletionCategory = category;
+                    data.CompletionText = text;
+                }
+            }
+        }
+
         private static void AdjustEditorCompletionContext(CodeCompletionContext editorCompletionContext, Interval valueInterval)
         {
             var delta = editorCompletionContext.TriggerOffset - valueInterval.Begin.Index;
@@ -326,7 +348,7 @@ namespace Syntactik.MonoDevelop.Completion
 
             //If namespace prefix is not found in the module then getting prefix from schema.
             newNs = true;
-            return schemasRepository.GetNamespaces().First(n => n.Namespace == @namespace).Prefix;
+            return schemasRepository.GetNamespaces().FirstOrDefault(n => n.Namespace == @namespace)?.Prefix;
         }
 
         internal static string GetNamespace( Pair pair)
@@ -407,7 +429,6 @@ namespace Syntactik.MonoDevelop.Completion
             }
             return types;
         }
-
     }
 
 }

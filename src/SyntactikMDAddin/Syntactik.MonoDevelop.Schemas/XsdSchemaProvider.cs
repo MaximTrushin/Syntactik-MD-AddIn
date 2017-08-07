@@ -134,9 +134,9 @@ namespace Syntactik.MonoDevelop.Schemas
                 elements = new List<ElementInfo>(complexType.Elements);
                 attributes = new List<AttributeInfo>(complexType.Attributes);
                 var explicitType = (pair as Element).Entities.OfType<DOM.Attribute>().FirstOrDefault(a => a.Name == "type" && ((INsNode) a).NsPrefix == "xsi")?.Value;
-                if (explicitType != null)
+                var typeInfo = explicitType?.Split(':');
+                if (typeInfo?.Length > 1)
                 {
-                    var typeInfo = explicitType.Split(':');
                     var explicitTypeName = typeInfo[1];
                     var explicitTypeNameSpace = CompletionHelper.GetNamespace(pair, typeInfo[0]);
                     foreach (var descendant in complexType.Descendants)
@@ -160,7 +160,6 @@ namespace Syntactik.MonoDevelop.Schemas
                             return clone;
                         }
                     ));
-                
             }
 
             contextInfo.Attributes.AddRange(attributes);

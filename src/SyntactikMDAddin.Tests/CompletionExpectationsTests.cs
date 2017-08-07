@@ -105,6 +105,10 @@ namespace SyntactikMDAddin.Tests
         {
             DoCompletionExpectationsTest();
         }
-
+        [Test, RecordedTest]
+        public void TypeAttribute1()
+        {
+            DoCompletionExpectationsTest();
+        }
     }
 }

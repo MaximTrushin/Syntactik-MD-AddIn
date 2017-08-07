@@ -125,9 +125,9 @@ namespace Syntactik.MonoDevelop.Completion
             var attribute = LastPair as Mapped.Attribute;
             if (attribute != null)
             {
+                InTag = CompletionExpectation.Attribute;
                 if (attribute.NameInterval.End.Index >= _offset)
                 {
-                    InTag = CompletionExpectation.Attribute;
                     AddExpectation(CompletionExpectation.Attribute);
                     return;
                 }
