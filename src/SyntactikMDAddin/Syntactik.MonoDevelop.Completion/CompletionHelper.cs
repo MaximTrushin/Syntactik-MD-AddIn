@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Web;
 using MonoDevelop.Ide.CodeCompletion;
 using Syntactik.DOM;
 using Syntactik.DOM.Mapped;
@@ -251,11 +253,18 @@ namespace Syntactik.MonoDevelop.Completion
                 foreach (var d in schemaInfo.Scope.Descendants)
                 {
                     string text = $"{nsPrefix}{d.Name}";
-                    var data = completionList.Add(text, SyntactikIcons.Enum);
+                    var data = completionList.Add(text, SyntactikIcons.Enum, null, attribute.Delimiter == DelimiterEnum.E?text:EncodeSQString(text, true));
                     data.CompletionCategory = category;
-                    data.CompletionText = text;
                 }
             }
+        }
+
+        private static string EncodeSQString(string text, bool addSingleBrackets)
+        {
+            var sb = new StringBuilder(addSingleBrackets ? "'" : "");
+            sb.Append(HttpUtility.JavaScriptStringEncode(text));
+            if (addSingleBrackets) sb.Append("'");
+            return sb.ToString();
         }
 
         private static void AdjustEditorCompletionContext(CodeCompletionContext editorCompletionContext, Interval valueInterval)
