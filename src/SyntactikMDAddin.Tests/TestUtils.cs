@@ -189,7 +189,7 @@ namespace SyntactikMDAddin.Tests
             Console.WriteLine(Path.GetFileName(fileName));
             var code = File.ReadAllText(fileName);
             PrintCode(code);
-            return code;
+            return code.TrimEnd('~');
         }
 
 

@@ -1,5 +1,5 @@
 @orderDate =  (@orderDate =)
-@xsi.nil =  (@xsi.nil =)
+@xsi.type =  (@xsi.type =)
 shipTo: (Address)  (shipTo: )
 shipTo: (EU-Address)  (shipTo: )
 shipTo: (US-Address)  (shipTo: )

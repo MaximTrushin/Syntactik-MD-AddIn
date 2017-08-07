@@ -1,4 +1,4 @@
 ﻿!#ipo = http://www.example.com/myipo
 ipo.purchaseOrder:
-	@xsi.type = ipo:EU-Address
+	@xsi.nil = false
 	

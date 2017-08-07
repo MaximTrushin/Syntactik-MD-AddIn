@@ -138,7 +138,7 @@ namespace Syntactik.MonoDevelop.Schemas
                 {
                     var typeInfo = explicitType.Split(':');
                     var explicitTypeName = typeInfo[1];
-                    var explicitTypeNameSpace = CompletionHelper.GetNamespace(pair);
+                    var explicitTypeNameSpace = CompletionHelper.GetNamespace(pair, typeInfo[0]);
                     foreach (var descendant in complexType.Descendants)
                     {
                         if (descendant.Name != explicitTypeName || descendant.Namespace != explicitTypeNameSpace)
