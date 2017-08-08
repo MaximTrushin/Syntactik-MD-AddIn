@@ -172,24 +172,39 @@ namespace Syntactik.MonoDevelop.Schemas
                 var existingElementsToRemove = new List<Element>();
                 var found = false;
                 var maxCount = elementFromSchema.MaxOccurs;
+
+                //1. Delete leading existing elements that are not part of schema
+                DeleteLeadingNonSchemaElements(existingElements, elements);
                 foreach (var existingElement in existingElements)
                 {
-                    existingElementsToRemove.Add(existingElement);
+                    
                     if (existingElement.Name == elementFromSchema.Name
                             && CompletionHelper.GetNamespace(existingElement) == elementFromSchema.Namespace)
                     {
+                        existingElementsToRemove.Add(existingElement);
                         maxCount--;
-                        if (maxCount == 0)
-                        {
-                            found = true;
-                            break;
-                        }
+                        if (maxCount != 0) continue;
+                        found = true;
                     }
+                    break;
                 }
                 existingElementsToRemove.ForEach(e => existingElements.Remove(e));
-                if (found) continue;
-                contextInfo.Elements.Add(elementFromSchema);
+                if (!found && existingElements.Count == 0)
+                {
+                    contextInfo.Elements.Add(elementFromSchema);
+                }
             }
+        }
+
+        /// <summary>
+        /// Deletes all leading existing elements from the list which are not found in the schema info.
+        /// </summary>
+        /// <param name="existingElements"></param>
+        /// <param name="elements"></param>
+        private void DeleteLeadingNonSchemaElements(List<Element> existingElements, List<ElementInfo> elements)
+        {
+            var existingElementsToRemove = existingElements.Where(existingElement => !elements.Any(e => existingElement.Name == e.Name && CompletionHelper.GetNamespace(existingElement) == e.Namespace)).ToList();
+            existingElementsToRemove.ForEach(e => existingElements.Remove(e));
         }
 
         private static IEnumerable<Pair> GetCompletionPath(Pair contextElement)
