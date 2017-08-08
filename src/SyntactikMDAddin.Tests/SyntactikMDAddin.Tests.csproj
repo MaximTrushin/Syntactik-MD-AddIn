@@ -127,7 +127,16 @@
     <None Include="Scenarios\CompletionList\AliasDefinition1.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Scenarios\CompletionList\TypeAttribute4.s4x">
+    <None Include="Scenarios\CompletionList\Attribute4.s4x">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scenarios\CompletionList\Attribute3.s4x">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scenarios\CompletionList\Element8.s4x">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scenarios\CompletionList\Element7.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Scenarios\CompletionList\TypeAttribute3.s4x">

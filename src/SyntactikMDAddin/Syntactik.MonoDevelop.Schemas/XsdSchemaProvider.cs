@@ -162,11 +162,13 @@ namespace Syntactik.MonoDevelop.Schemas
                         }
                     ));
             }
-
-            contextInfo.Attributes.AddRange(attributes);
+            
             var element1 = contextElement as Element;
             var existingElements = element1 != null ? new List<Element>(element1.Entities.OfType<Element>()) : new List<Element>();
-            
+
+            if (existingElements.Count == 0)
+                contextInfo.Attributes.AddRange(attributes.Distinct());
+
             foreach (var elementFromSchema in elements)
             {
                 var existingElementsToRemove = new List<Element>();

@@ -67,6 +67,16 @@ namespace SyntactikMDAddin.Tests
             DoCompletionListTest();
         }
         [Test, RecordedTest]
+        public void Attribute3()
+        {
+            DoCompletionListTest();
+        }
+        [Test, RecordedTest]
+        public void Attribute4()
+        {
+            DoCompletionListTest();
+        }
+        [Test, RecordedTest]
         public void Document1()
         {
             DoCompletionListTest();
@@ -102,6 +112,16 @@ namespace SyntactikMDAddin.Tests
             DoCompletionListTest();
         }
         [Test, RecordedTest]
+        public void Element7()
+        {
+            DoCompletionListTest();
+        }
+        [Test, RecordedTest]
+        public void Element8()
+        {
+            DoCompletionListTest();
+        }
+        [Test, RecordedTest]
         public void IncorrectTree()
         {
             DoCompletionListTest();
@@ -131,10 +151,6 @@ namespace SyntactikMDAddin.Tests
         {
             DoCompletionListTest();
         }
-        [Test, RecordedTest]
-        public void TypeAttribute4()
-        {
-            DoCompletionListTest();
-        }
+
     }
 }

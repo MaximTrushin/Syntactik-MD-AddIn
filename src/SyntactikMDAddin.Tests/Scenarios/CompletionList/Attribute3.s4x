@@ -1,0 +1,7 @@
+﻿''' No xsi attributes after non-xsi attribute present
+!#ipo = http://www.example.com/myipo
+ipo.purchaseOrder:
+	shipTo:
+		@xsi.type == 'ipo:EU-Address'
+		@export-code = 2
+		~

@@ -80,7 +80,7 @@ namespace Syntactik.MonoDevelop.Completion
             var items = new List<CompletionData>();
             var completionCategory = new SyntactikCompletionCategory { DisplayText = "Attributes", Order = 1 };
 
-            var attributes = GetAttributesForCompletion(schemaInfo,  completionContext);
+            var attributes = schemaInfo.Attributes;
             var contextElement = GetContextElement(completionContext);
 
             foreach (var attribute in attributes)
@@ -103,7 +103,6 @@ namespace Syntactik.MonoDevelop.Completion
                 data.DisplayText = $"@{displayText} = ";
                 data.CompletionText = $"@{displayText} =";
                 data.CompletionCategory = completionCategory;
-                //data.Icon = attribute.Optional ? SyntactikIcons.OptElement : SyntactikIcons.Element;
                 data.Icon = attribute.Optional ? SyntactikIcons.OptAttribute : SyntactikIcons.Attribute;
                 data.UndeclaredNamespaceUsed = newNs;
             }
@@ -117,32 +116,6 @@ namespace Syntactik.MonoDevelop.Completion
                 contextElement = ((DOM.Attribute) completionContext.LastPair).Parent as Element;
             return contextElement;
         }
-
-        /// <summary>
-        /// Get list of attributes for completion context.
-        /// The list consists of global attributes and attributes from the complex type of current element.
-        /// </summary>
-        /// <param name="schemaInfo"></param>
-        /// <param name="completionContext"></param>
-        /// <returns></returns>
-        private static List<AttributeInfo> GetAttributesForCompletion(ContextInfo schemaInfo, CompletionContext completionContext)
-        {
-            var attributes = new List<AttributeInfo>();
-            attributes.AddRange(schemaInfo.Attributes);
-            var complexType = schemaInfo.CurrentType as ComplexType;
-            if (complexType != null)
-            {
-                attributes.AddRange(complexType.Descendants.SelectMany(d => d.Attributes));
-            }
-            attributes =  attributes.Distinct().ToList();
-
-            var element = GetContextElement(completionContext);
-            var explicitType = element?.Entities.FirstOrDefault(e => e is DOM.Attribute && e.Name == "type" && ((DOM.Attribute) e).NsPrefix == "xsi");
-            if (string.IsNullOrEmpty(explicitType?.Value)) return attributes;
-            var explicitTypeName = explicitType.Value.Split(':').Last();
-            return explicitTypeName == null ? attributes : attributes.Where(a => a.ParentType == null || (a.ParentType != null && a.ParentType.Name == explicitTypeName)).ToList();
-        }
-
         internal static void DoElementCompletion(CompletionDataList completionList, CompletionContext completionContext,
                 CodeCompletionContext editorCompletionContext, ContextInfo schemaInfo, SchemasRepository schemasRepository)
         {
