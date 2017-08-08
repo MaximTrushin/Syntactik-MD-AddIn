@@ -253,9 +253,53 @@ namespace Syntactik.MonoDevelop.Completion
                 foreach (var d in schemaInfo.Scope.Descendants)
                 {
                     string text = $"{nsPrefix}{d.Name}";
-                    var data = completionList.Add(text, SyntactikIcons.Enum, null, attribute.Delimiter == DelimiterEnum.E?text:EncodeSQString(text, true));
-                    data.CompletionCategory = category;
+                    var completionItem = new CompletionItem
+                    {
+                        ItemType = ItemType.Attribute,
+                        Icon = SyntactikIcons.Enum,
+                        DisplayText = text,
+                        CompletionText = attribute.Delimiter == DelimiterEnum.E ? text : EncodeSQString(text, true),
+                        CompletionCategory = category
+                    };
+                    if (newNs)
+                    {
+                        completionItem.UndeclaredNamespaceUsed = true;
+                        completionItem.NsPrefix = ns;
+                        completionItem.Namespace = schemaInfo.Scope.Namespace;
+                    }
+                    completionList.Add(completionItem);
                 }
+                return;
+            }
+            if (schemaInfo.AllDescendants.Any())
+            {
+                var category = new SyntactikCompletionCategory { DisplayText = "Values", Icon = SyntactikIcons.Enum };
+                foreach (var desc in schemaInfo.AllDescendants)
+                {
+                    var nsPrefix = "";
+                    bool newNs;
+                    var ns = GetNamespacePrefix(desc.Namespace, context.LastPair, schemasRepository, out newNs);
+                    if (ns != null)
+                        nsPrefix = ns + ":";
+
+                    string text = $"{nsPrefix}{desc.Name}";
+                    var completionItem = new CompletionItem
+                    {
+                        ItemType = ItemType.Attribute,
+                        Icon = SyntactikIcons.Enum,
+                        DisplayText = text,
+                        CompletionText = attribute.Delimiter == DelimiterEnum.E ? text : EncodeSQString(text, true),
+                        CompletionCategory = category
+                    };
+                    if (newNs)
+                    {
+                        completionItem.UndeclaredNamespaceUsed = true;
+                        completionItem.NsPrefix = ns;
+                        completionItem.Namespace = desc.Namespace;
+                    }
+                    completionList.Add(completionItem);
+                }
+                return;
             }
         }
 

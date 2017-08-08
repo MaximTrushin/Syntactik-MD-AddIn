@@ -18,6 +18,7 @@ namespace Syntactik.MonoDevelop.Schemas
         private readonly IProjectFilesProvider _provider;
         private List<ElementInfo> _fullListOfElements;
         private List<AttributeInfo> _fullListOfAttributes;
+        private List<ComplexType> _allDescendants;
 
         public List<ElementType> Types { get; }
         public List<ElementInfo> GlobalElements { get; private set; }
@@ -74,7 +75,7 @@ namespace Syntactik.MonoDevelop.Schemas
         public void PopulateContextInfo(Context context, ContextInfo ctxInfo)
         {
             UpdateSchemaInfo();
-
+            ctxInfo.AllDescendants = AllDescendants;
             var lastNode = context.CompletionInfo.InTag == CompletionExpectation.NoExpectation
                 ? context.CompletionInfo.LastPair
                 : context.CompletionInfo.LastPair.Parent; //if we are inside pair which is not finished then context is the node's parent
@@ -215,6 +216,13 @@ namespace Syntactik.MonoDevelop.Schemas
 
         private List<ElementInfo> FullListOfElements => _fullListOfElements?? (_fullListOfElements = CalculateFullListOfElements());
         private List<AttributeInfo> FullListOfAttributes => _fullListOfAttributes ?? (_fullListOfAttributes = CalculateFullListOfAttributes());
+        private List<ComplexType> AllDescendants => _allDescendants?? (_allDescendants = CalculateListOfAllDescendants());
+
+        private List<ComplexType> CalculateListOfAllDescendants()
+        {
+            CalculateFullListOfElements();
+            return _allDescendants;
+        }
 
         private List<AttributeInfo> CalculateFullListOfAttributes()
         {
@@ -226,15 +234,13 @@ namespace Syntactik.MonoDevelop.Schemas
         {
             if (_fullListOfElements != null) return _fullListOfElements;
 
-            var elements = new List<ElementInfo>(GlobalElements);
-            var attributes = new List<AttributeInfo>(GlobalAttributes);
+            _fullListOfElements = new List<ElementInfo>(GlobalElements);
+            _fullListOfAttributes = new List<AttributeInfo>(GlobalAttributes);
+            _allDescendants = new List<ComplexType>();
             foreach (var elementInfo in GlobalElements)
             {
-                EnumerateSubElementsAndAttributes(elements, attributes, elementInfo);
+                EnumerateSubElementsAndAttributes(_fullListOfElements, _fullListOfAttributes, _allDescendants, elementInfo);
             }
-            elements.ForEach(e => e.InSequence = false);
-            _fullListOfAttributes = attributes;
-            _fullListOfElements = elements;
             return _fullListOfElements;
         }
 
@@ -371,30 +377,28 @@ namespace Syntactik.MonoDevelop.Schemas
             return _schemaset;
         }
 
-        private void EnumerateSubElementsAndAttributes(List<ElementInfo> elements, List<AttributeInfo> attributes, ElementInfo element)
+        private void EnumerateSubElementsAndAttributes(List<ElementInfo> elementList, List<AttributeInfo> attributeList, List<ComplexType> allDescendants, ElementInfo element)
         {
             var type = element.GetElementType() as ComplexType;
-            if (type != null)
+            if (type == null) return;
+
+            allDescendants.AddRange(type.Descendants.Where(d => !allDescendants.Any(a => a.Name == d.Name && a.Namespace == d.Namespace)));
+
+            var attributes = new List<AttributeInfo>();
+            attributes.AddRange(type.Attributes);
+            attributes.AddRange(type.Descendants.SelectMany(d => d.Attributes));
+            attributeList.AddRange(attributes);
+            
+            var elements = new List<ElementInfo>();
+            elements.AddRange(type.Elements);
+            elements.AddRange(type.Descendants.SelectMany(d => d.Elements));
+            foreach (var subElement in elements)
             {
+                if (elementList.Any(e => e.Name == subElement.Name && e.Namespace == subElement.Namespace))
+                    continue;
 
-                var sAttributes = new List<AttributeInfo>();
-                sAttributes.AddRange(type.Attributes);
-                sAttributes.AddRange(type.Descendants.SelectMany(d => d.Attributes));
-                foreach (var a in sAttributes)
-                {
-                    attributes.Add(a);
-                }
-                var sElements = new List<ElementInfo>();
-                sElements.AddRange(type.Elements);
-                sElements.AddRange(type.Descendants.SelectMany(d => d.Elements));
-                foreach (var subElement in sElements)
-                {
-                    if (elements.Any(e => e.Name == subElement.Name && e.Namespace == subElement.Namespace))
-                        continue;
-
-                    elements.Add(subElement);
-                    EnumerateSubElementsAndAttributes(elements, attributes, subElement);
-                }
+                elementList.Add(subElement);
+                EnumerateSubElementsAndAttributes(elementList, attributeList, allDescendants, subElement);
             }
         }
 
