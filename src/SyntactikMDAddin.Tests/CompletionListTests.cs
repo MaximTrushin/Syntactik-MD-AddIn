@@ -82,6 +82,11 @@ namespace SyntactikMDAddin.Tests
             DoCompletionListTest();
         }
         [Test, RecordedTest]
+        public void Attribute6()
+        {
+            DoCompletionListTest();
+        }
+        [Test, RecordedTest]
         public void Document1()
         {
             DoCompletionListTest();

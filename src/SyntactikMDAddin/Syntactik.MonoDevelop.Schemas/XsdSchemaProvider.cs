@@ -7,6 +7,7 @@ using System.Xml.Schema;
 using Syntactik.DOM;
 using Syntactik.MonoDevelop.Completion;
 using Syntactik.MonoDevelop.Projects;
+using Attribute = Syntactik.DOM.Attribute;
 
 namespace Syntactik.MonoDevelop.Schemas
 {
@@ -165,8 +166,7 @@ namespace Syntactik.MonoDevelop.Schemas
             
             var element1 = contextElement as Element;
             var existingElements = element1 != null ? new List<Element>(element1.Entities.OfType<Element>()) : new List<Element>();
-
-            if (existingElements.Count == 0)
+            if (element1 == null || element1.Entities.Count == 0 || element1.Entities.All(e => e is Attribute))
                 contextInfo.Attributes.AddRange(attributes.Distinct());
 
             foreach (var elementFromSchema in elements)
