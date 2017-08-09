@@ -228,7 +228,8 @@ namespace Syntactik.MonoDevelop.Completion
             var typePrefix = CompletionHelper.GetNamespacePrefix(SelectedCompletionItem.ElementType.Namespace,
                 SelectedCompletionItem.CompletionContextPair,
                 ((SyntactikProject) DocumentContext.Project).SchemasRepository, out newTypePrefix);
-            var typeAttr = "@xsi.type = " + SelectedCompletionItem.ElementType.Name;
+            if (!string.IsNullOrEmpty(typePrefix)) typePrefix += ":"; 
+            var typeAttr = $"@xsi.type = {typePrefix}{SelectedCompletionItem.ElementType.Name}";
             using (Editor.OpenUndoGroup())
             {
                 //Trimming end of previous line

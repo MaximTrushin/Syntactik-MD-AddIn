@@ -192,7 +192,7 @@ namespace Syntactik.MonoDevelop.Completion
                     DisplayText = text,
                     CompletionText = text,
                     CompletionCategory = category,
-                    Priority = -20000
+                    Priority = int.MaxValue
                 };
                 completionList.Add(completionItem);
             }
