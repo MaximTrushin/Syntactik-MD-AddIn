@@ -29,7 +29,7 @@ namespace Syntactik.MonoDevelop.Schemas
             if (contextElement == null) return;
 
             if (contextElement.Entities.Any(e => e is DOM.Attribute && ((DOM.Attribute) e).NsPrefix != "xsi")) return;
-            if (contextElement.Entities.Any(e => e is DOM.Element)) return;
+            if (contextElement.Entities.Any(e => !(e is DOM.Attribute))) return;
 
             //xsi - attribute can be added only if there are no other attribute present
             ctxInfo.Attributes.Add(new AttributeInfo { Name = "type", Namespace = Url, Builtin = true, Optional = true });
