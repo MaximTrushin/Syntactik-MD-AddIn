@@ -21,6 +21,7 @@ using Syntactik.MonoDevelop.Highlighting;
 using Syntactik.MonoDevelop.Projects;
 using Syntactik.MonoDevelop.Schemas;
 using CompilerParameters = Syntactik.Compiler.CompilerParameters;
+using Module = Syntactik.DOM.Module;
 
 namespace SyntactikMDAddin.Tests
 {
@@ -63,6 +64,33 @@ namespace SyntactikMDAddin.Tests
             if (IsRecordedTest() || IsRecordTest())
                 CompareResultAndRecordedFiles(expectation, IsRecordTest(), "exp");
         }
+
+        public static void DoCompletionContextTest(int offset = 0)
+        {
+            var input = PrintTestScenario();
+
+            Func<Dictionary<string, AliasDefinition>> func = () => new Dictionary<string, AliasDefinition>();
+
+            var context = CompletionContext.CreateCompletionContext(GetTestCaseName(), input, input.Length - offset, func);
+
+            var expectation = "";
+            foreach (var item in context.GetPath().Reverse())
+            {
+                if (item is CompileUnit) continue;
+                if (item is Module) continue;
+                if (item is Document && (item.Parent as Module)?.ModuleDocument == item) continue;
+
+                var nsNode = item as INsNode;
+                var prefix = "";
+                if (!string.IsNullOrEmpty(nsNode?.NsPrefix)) prefix = nsNode.NsPrefix + ".";
+                expectation += prefix + item.Name + Environment.NewLine;
+            }
+            
+            if (IsRecordedTest() || IsRecordTest())
+                CompareResultAndRecordedFiles(expectation, IsRecordTest(), "list");
+        }
+
+        
 
 
         public static void DoCompletionListTest()

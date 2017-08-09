@@ -254,11 +254,15 @@ namespace Syntactik.MonoDevelop.Completion
             var length = content.Length;
             if (offset >= length) return length;
             offset++;
+            var startValue = offset;
+            var nonSpaceMet = false;
             while (offset < length && !IntegerCharExtensions.IsEndOfOpenName(content[offset]))
             {
+                if (content[offset] != ' ' && content[offset] != '\t')
+                    nonSpaceMet = true;
                 offset++;
             }
-            return offset;
+            return nonSpaceMet?offset:startValue;
         }
 
         public IEnumerable<Pair> GetPath()

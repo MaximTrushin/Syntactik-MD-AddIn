@@ -1,0 +1,12 @@
+﻿!#ipo = http://www.example.com/myipo
+!#xsi = http://www.w3.org/2001/XMLSchema-instance
+
+!$Templates.PurchaseOrder:
+	ipo.purchaseOrder:
+		shipTo:
+			!%shipTo
+		billTo:
+			!%billTo
+		ipo.comment := !%comment =
+		Items: !%items
+			~
