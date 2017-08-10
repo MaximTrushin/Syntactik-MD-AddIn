@@ -28,7 +28,12 @@ namespace Syntactik.MonoDevelop.Schemas
             var contextElement = lastNode as IContainer;
             if (contextElement == null) return;
 
-            if (contextElement.Entities.Any(e => e is DOM.Attribute && ((DOM.Attribute) e).NsPrefix != "xsi")) return;
+            if (context.CompletionInfo.InTag != CompletionExpectation.Attribute ||
+                    contextElement.Entities.OfType<DOM.Attribute>().Count() > 1) //Do the following check only if we are not inside the sole attribute
+            {
+                if (contextElement.Entities.Any(e => e is DOM.Attribute && ((DOM.Attribute)e).NsPrefix != "xsi")) return;
+            }
+            
             if (contextElement.Entities.Any(e => !(e is DOM.Attribute))) return;
 
             //xsi - attribute can be added only if there are no other attribute present
