@@ -36,6 +36,9 @@ namespace Syntactik.MonoDevelop.Completion
         public override void InsertCompletionText(CompletionListWindow window, ref KeyActions ka, KeyDescriptor descriptor)
         {
             ((SyntactikCompletionTextEditorExtension)window.Extension).SelectedCompletionItem = this;
+            var editor = window.Extension.Editor;
+            var c = editor.Text[editor.CaretOffset - 1];
+            if (c == '=') CompletionText = " " + CompletionText;
             base.InsertCompletionText(window, ref ka, descriptor);
         }
 
