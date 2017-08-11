@@ -109,12 +109,12 @@ namespace Syntactik.MonoDevelop.Completion
             completionList.AddRange(items.OrderBy(i => i.DisplayText));
         }
 
-        internal static Element GetContextElement(CompletionContext completionContext)
+        internal static IContainer GetContextElement(CompletionContext completionContext)
         {
-            var contextElement = completionContext.LastPair as Element;
-            if (contextElement == null && completionContext.LastPair is DOM.Attribute)
-                contextElement = ((DOM.Attribute) completionContext.LastPair).Parent as Element;
-            return contextElement;
+            var container = completionContext.LastPair as IContainer;
+            if (container == null && completionContext.LastPair is DOM.Attribute)
+                container = ((DOM.Attribute) completionContext.LastPair).Parent as IContainer;
+            return container;
         }
         internal static void DoElementCompletion(CompletionDataList completionList, CompletionContext completionContext,
                 CodeCompletionContext editorCompletionContext, ContextInfo schemaInfo, SchemasRepository schemasRepository)
@@ -211,10 +211,12 @@ namespace Syntactik.MonoDevelop.Completion
             AdjustEditorCompletionContext(editorCompletionContext, ((IMappedPair) context.LastPair).ValueInterval);
         }
 
-        public static void DoTypeAttributeValueCompletion(CompletionDataList completionList, CompletionContext context, CodeCompletionContext editorCompletionContext, ContextInfo schemaInfo, SchemasRepository schemasRepository)
+        public static void DoTypeAttributeValueCompletion(CompletionDataList completionList, CompletionContext context,
+            CodeCompletionContext editorCompletionContext, ContextInfo schemaInfo, SchemasRepository schemasRepository)
         {
             var attribute = context.LastPair as DOM.Attribute;
             if (attribute?.Name != "type" || attribute.NsPrefix != "xsi") return;
+            var category = new SyntactikCompletionCategory { DisplayText = "Values", Icon = SyntactikIcons.Enum };
             if (schemaInfo.Scope != null)
             {
                 var nsPrefix = "";
@@ -222,7 +224,7 @@ namespace Syntactik.MonoDevelop.Completion
                 var ns = GetNamespacePrefix(schemaInfo.Scope.Namespace, context.LastPair, schemasRepository, out newNs);
                 if (ns != null)
                     nsPrefix = ns + ":";
-                var category = new SyntactikCompletionCategory {DisplayText = "Values", Icon = SyntactikIcons.Enum};
+                
                 foreach (var d in schemaInfo.Scope.Descendants)
                 {
                     string text = $"{nsPrefix}{d.Name}";
@@ -244,35 +246,31 @@ namespace Syntactik.MonoDevelop.Completion
                 }
                 return;
             }
-            if (schemaInfo.AllDescendants.Any())
-            {
-                var category = new SyntactikCompletionCategory { DisplayText = "Values", Icon = SyntactikIcons.Enum };
-                foreach (var desc in schemaInfo.AllDescendants)
-                {
-                    var nsPrefix = "";
-                    bool newNs;
-                    var ns = GetNamespacePrefix(desc.Namespace, context.LastPair, schemasRepository, out newNs);
-                    if (ns != null)
-                        nsPrefix = ns + ":";
 
-                    string text = $"{nsPrefix}{desc.Name}";
-                    var completionItem = new CompletionItem
-                    {
-                        ItemType = ItemType.Attribute,
-                        Icon = SyntactikIcons.Enum,
-                        DisplayText = text,
-                        CompletionText = attribute.Delimiter == DelimiterEnum.E ? text : EncodeSQString(text, true),
-                        CompletionCategory = category
-                    };
-                    if (newNs)
-                    {
-                        completionItem.UndeclaredNamespaceUsed = true;
-                        completionItem.NsPrefix = ns;
-                        completionItem.Namespace = desc.Namespace;
-                    }
-                    completionList.Add(completionItem);
+            foreach (var desc in schemaInfo.AllTypes)
+            {
+                var nsPrefix = "";
+                bool newNs;
+                var ns = GetNamespacePrefix(desc.Namespace, context.LastPair, schemasRepository, out newNs);
+                if (ns != null)
+                    nsPrefix = ns + ":";
+
+                string text = $"{nsPrefix}{desc.Name}";
+                var completionItem = new CompletionItem
+                {
+                    ItemType = ItemType.Attribute,
+                    Icon = SyntactikIcons.Enum,
+                    DisplayText = text,
+                    CompletionText = attribute.Delimiter == DelimiterEnum.E ? text : EncodeSQString(text, true),
+                    CompletionCategory = category
+                };
+                if (newNs)
+                {
+                    completionItem.UndeclaredNamespaceUsed = true;
+                    completionItem.NsPrefix = ns;
+                    completionItem.Namespace = desc.Namespace;
                 }
-                return;
+                completionList.Add(completionItem);
             }
         }
 

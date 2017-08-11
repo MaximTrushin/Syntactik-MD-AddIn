@@ -8,7 +8,7 @@ namespace Syntactik.MonoDevelop.Schemas
         public List<AttributeInfo> Attributes { get; private set; }
         public ElementType CurrentType { get; set; }
         public ComplexType Scope { get; set; }
-        public List<ComplexType> AllDescendants { get; set; }
+        public List<ComplexType> AllTypes { get; set; }
         public ContextInfo()
         {
             Elements = new List<ElementInfo>();

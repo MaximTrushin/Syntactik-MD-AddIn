@@ -1,2 +1,5 @@
+ipo:Address ('ipo:Address')
 ipo:EU-Address ('ipo:EU-Address')
+ipo:Items ('ipo:Items')
+ipo:PurchaseOrderType ('ipo:PurchaseOrderType')
 ipo:US-Address ('ipo:US-Address')

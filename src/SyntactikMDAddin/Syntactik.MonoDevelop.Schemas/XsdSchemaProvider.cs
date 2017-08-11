@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace Syntactik.MonoDevelop.Schemas
         private readonly IProjectFilesProvider _provider;
         private List<ElementInfo> _fullListOfElements;
         private List<AttributeInfo> _fullListOfAttributes;
-        private List<ComplexType> _allDescendants;
+        private List<ComplexType> _allTypes;
 
         public List<ElementType> Types { get; }
         public List<ElementInfo> GlobalElements { get; private set; }
@@ -76,7 +77,7 @@ namespace Syntactik.MonoDevelop.Schemas
         public void PopulateContextInfo(Context context, ContextInfo ctxInfo)
         {
             UpdateSchemaInfo();
-            ctxInfo.AllDescendants = AllDescendants;
+            ctxInfo.AllTypes = AllTypes;
             var lastNode = context.CompletionInfo.InTag == CompletionExpectation.NoExpectation
                 ? context.CompletionInfo.LastPair
                 : context.CompletionInfo.LastPair.Parent; //if we are inside pair which is not finished then context is the node's parent
@@ -91,13 +92,6 @@ namespace Syntactik.MonoDevelop.Schemas
             var attributes = new List<AttributeInfo>(GlobalAttributes);
             foreach (var pair in path)
             {
-                if (pair is AliasDefinition || pair is Alias || pair is Argument || pair is Parameter)
-                {
-                    attributes = new List<AttributeInfo>(FullListOfAttributes);
-                    elements = new List<ElementInfo>(FullListOfElements);
-                    continue;
-                }
-
                 if (pair is Document || pair is Module)
                 {
                     elements = new List<ElementInfo>(GlobalElements);
@@ -105,55 +99,43 @@ namespace Syntactik.MonoDevelop.Schemas
                     continue;
                 }
 
-                var element = pair as Element;
-                if (element == null) //TODO: Create logic for scope
+                ComplexType complexType;
+                if (pair is AliasDefinition || pair is Alias || pair is Argument || pair is Parameter)
                 {
-                    elements = new List<ElementInfo>(GlobalElements);
-                    attributes = new List<AttributeInfo>(GlobalAttributes);
-                    continue;
-                }
+                    complexType = GetSchemaType(pair, contextInfo, elements) as ComplexType;
 
-                string @namespace = CompletionHelper.GetNamespace(element);
-                var contextElementSchemaInfo = elements.FirstOrDefault(e => e.Name == element.Name && (e.Namespace ?? "") == @namespace);
-                if (contextElementSchemaInfo == null)
-                {
-                    //Context element is not found in schema.
-                    elements = new List<ElementInfo>(GlobalElements);
-                    attributes = new List<AttributeInfo>(GlobalAttributes);
-                    continue;
-                }
-                contextInfo.CurrentType = contextElementSchemaInfo.GetElementType();
-                var complexType = contextInfo.CurrentType as ComplexType;
-                contextInfo.Scope = complexType;
-
-                if (complexType == null)
-                {
-                    elements = new List<ElementInfo>(GlobalElements);
-                    attributes = new List<AttributeInfo>(GlobalAttributes);
-                    continue;
-                }
-
-                elements = new List<ElementInfo>(complexType.Elements);
-                attributes = new List<AttributeInfo>(complexType.Attributes);
-                var explicitType = (pair as Element).Entities.OfType<DOM.Attribute>().FirstOrDefault(a => a.Name == "type" && ((INsNode) a).NsPrefix == "xsi")?.Value;
-                var typeInfo = explicitType?.Split(':');
-                if (typeInfo?.Length > 1)
-                {
-                    var explicitTypeName = typeInfo[1];
-                    var explicitTypeNameSpace = CompletionHelper.GetNamespace(pair, typeInfo[0]);
-                    foreach (var descendant in complexType.Descendants)
+                    if (complexType == null)
                     {
-                        if (descendant.Name != explicitTypeName || descendant.Namespace != explicitTypeNameSpace)
-                            continue;
-                        elements.AddRange(
-                            descendant.Elements.Where(
-                                e => elements.All(ce => ce.Name != e.Name || ce.Namespace != e.Namespace)));
-                        attributes.AddRange(
-                            descendant.Attributes.Where(
-                                a => attributes.All(ca => ca.Name != a.Name || ca.Namespace != a.Namespace)));
-                        break;
+                        attributes = new List<AttributeInfo>(FullListOfAttributes);
+                        elements = new List<ElementInfo>(FullListOfElements);
+                        continue;
                     }
                 }
+                else
+                {
+                    var element = pair as Element;
+                    if (element == null) //TODO: Create logic for scope
+                    {
+                        elements = new List<ElementInfo>(GlobalElements);
+                        attributes = new List<AttributeInfo>(GlobalAttributes);
+                        continue;
+                    }
+
+                    contextInfo.CurrentType = GetSchemaType(pair, contextInfo, elements);
+
+                    complexType = contextInfo.CurrentType as ComplexType;
+                    contextInfo.Scope = complexType;
+
+                    if (complexType == null)
+                    {
+                        elements = new List<ElementInfo>(GlobalElements);
+                        attributes = new List<AttributeInfo>(GlobalAttributes);
+                        continue;
+                    }
+                }
+
+                GetEntitiesOfSchemaType(complexType, out attributes, out elements);
+
                 elements = new List<ElementInfo>(elements.Select(
                         e =>
                         {
@@ -198,6 +180,64 @@ namespace Syntactik.MonoDevelop.Schemas
             }
         }
 
+        private void GetEntitiesOfSchemaType(ComplexType complexType, out List<AttributeInfo> attributes, out List<ElementInfo> elements)
+        {
+            var resultAttributes = new List<AttributeInfo>();
+            var resultElements = new List<ElementInfo>();
+
+            foreach (var descendant in GetDescendancyPath(complexType))
+            {
+                resultElements.AddRange(
+                    descendant.Elements.Where(
+                        e => resultElements.All(ce => ce.Name != e.Name || ce.Namespace != e.Namespace)));
+                resultAttributes.AddRange(
+                    descendant.Attributes.Where(
+                        a => resultAttributes.All(ca => ca.Name != a.Name || ca.Namespace != a.Namespace)));
+            }
+            attributes = resultAttributes;
+            elements = resultElements;
+        }
+
+        internal static IEnumerable<ComplexType> GetDescendancyPath(ComplexType complexType)
+        {
+            return GetDescendancyReversedPath(complexType).Reverse();
+        }
+
+        internal static IEnumerable<ComplexType> GetDescendancyReversedPath(ComplexType complexType)
+        {
+            while (complexType != null && complexType.Name != "anyType")
+            {
+                yield return complexType;
+                complexType = complexType.BaseType;
+            }
+        }
+
+        private ElementType GetSchemaType(Pair pair, ContextInfo contextInfo, List<ElementInfo> elements)
+        {
+            var container = pair as IContainer;
+            if (container != null)
+            {
+                var explicitType = container.Entities.OfType<Attribute>().FirstOrDefault(a => a.Name == "type" && ((INsNode)a).NsPrefix == "xsi")?.Value;
+                var typeInfo = explicitType?.Split(':');
+                if (typeInfo?.Length > 1)
+                {
+                    var typeName = typeInfo[1];
+                    var typeNamespace = CompletionHelper.GetNamespace(pair, typeInfo[0]);
+                    var complexType = contextInfo.AllTypes.FirstOrDefault(t => t.Name == typeName && t.Namespace == typeNamespace);
+                    if (complexType != null) return complexType;
+                }
+                if (!(pair is Element)) return null;
+
+                var element = pair as Element;
+                string @namespace = CompletionHelper.GetNamespace(element);
+                var contextElementSchemaInfo =
+                    elements.FirstOrDefault(e => e.Name == element.Name && (e.Namespace ?? "") == @namespace);
+                return contextElementSchemaInfo?.GetElementType();
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// Deletes all leading existing elements from the list which are not found in the schema info.
         /// </summary>
@@ -233,12 +273,12 @@ namespace Syntactik.MonoDevelop.Schemas
 
         private List<ElementInfo> FullListOfElements => _fullListOfElements?? (_fullListOfElements = CalculateFullListOfElements());
         private List<AttributeInfo> FullListOfAttributes => _fullListOfAttributes ?? (_fullListOfAttributes = CalculateFullListOfAttributes());
-        private List<ComplexType> AllDescendants => _allDescendants?? (_allDescendants = CalculateListOfAllDescendants());
+        private List<ComplexType> AllTypes => _allTypes?? (_allTypes = CalculateListOfAllTypes());
 
-        private List<ComplexType> CalculateListOfAllDescendants()
+        private List<ComplexType> CalculateListOfAllTypes()
         {
             CalculateFullListOfElements();
-            return _allDescendants;
+            return _allTypes;
         }
 
         private List<AttributeInfo> CalculateFullListOfAttributes()
@@ -253,10 +293,10 @@ namespace Syntactik.MonoDevelop.Schemas
 
             _fullListOfElements = new List<ElementInfo>(GlobalElements);
             _fullListOfAttributes = new List<AttributeInfo>(GlobalAttributes);
-            _allDescendants = new List<ComplexType>();
+            _allTypes = new List<ComplexType>();
             foreach (var elementInfo in GlobalElements)
             {
-                EnumerateSubElementsAndAttributes(_fullListOfElements, _fullListOfAttributes, _allDescendants, elementInfo);
+                EnumerateSubElementsAndAttributes(_fullListOfElements, _fullListOfAttributes, _allTypes, elementInfo);
             }
             return _fullListOfElements;
         }
@@ -380,7 +420,6 @@ namespace Syntactik.MonoDevelop.Schemas
                             LoadIncludes(dir, schemaSet, iSchema);
                             include.Schema = iSchema;
                         }
-
                     }
                 }
             }
@@ -388,7 +427,6 @@ namespace Syntactik.MonoDevelop.Schemas
 
         protected virtual XmlSchemaSet GetSchemaSet()
         {
-           
             if (_schemaset == null)
                 UpdateSchemaSet();
             return _schemaset;
@@ -399,7 +437,11 @@ namespace Syntactik.MonoDevelop.Schemas
             var type = element.GetElementType() as ComplexType;
             if (type == null) return;
 
-            allDescendants.AddRange(type.Descendants.Where(d => !allDescendants.Any(a => a.Name == d.Name && a.Namespace == d.Namespace)));
+            if (!string.IsNullOrEmpty(type.Name) && !allDescendants.Any(a => a.Name == type.Name && a.Namespace == type.Namespace))
+                allDescendants.Add(type);
+
+            allDescendants.AddRange(
+                type.Descendants.Where(d => !string.IsNullOrEmpty(d.Name) && !allDescendants.Any(a => a.Name == d.Name && a.Namespace == d.Namespace)));
 
             var attributes = new List<AttributeInfo>();
             attributes.AddRange(type.Attributes);
@@ -440,7 +482,6 @@ namespace Syntactik.MonoDevelop.Schemas
                     };
                     type.BaseTypeRef = typeRef;
                     TypeRefs.Add(typeRef);
-
                 }
 
                 foreach (var sAttr in sComplexType.AttributeUses.Values.OfType<XmlSchemaAttribute>())
