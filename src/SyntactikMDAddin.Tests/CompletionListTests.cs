@@ -37,7 +37,17 @@ namespace SyntactikMDAddin.Tests
             DoCompletionListTest();
         }
         [Test, RecordedTest]
-        public void AliasDefinitionWithType()
+        public void AliasDefinitionWithType1()
+        {
+            DoCompletionListTest();
+        }
+        [Test, RecordedTest]
+        public void AliasDefinitionWithType2()
+        {
+            DoCompletionListTest();
+        }
+        [Test, RecordedTest]
+        public void AliasDefinitionWithType3()
         {
             DoCompletionListTest();
         }

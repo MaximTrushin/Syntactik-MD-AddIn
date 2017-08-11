@@ -134,7 +134,13 @@
     <None Include="Scenarios\CompletionList\AliasComplex3.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Scenarios\CompletionList\AliasDefinitionWithType.s4x">
+    <None Include="Scenarios\CompletionList\AliasDefinitionWithType3.s4x">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scenarios\CompletionList\AliasDefinitionWithType2.s4x">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scenarios\CompletionList\AliasDefinitionWithType1.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Scenarios\CompletionList\AliasDefinition1.s4x">

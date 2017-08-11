@@ -1,0 +1,6 @@
+﻿!#xsi = http://www.w3.org/2001/XMLSchema-instance
+!#ipo = http://www.example.com/myipo
+!$Address.UK.Cambridge:
+	@xsi.type = ipo:EU-Address
+	@export-code = 1
+	~

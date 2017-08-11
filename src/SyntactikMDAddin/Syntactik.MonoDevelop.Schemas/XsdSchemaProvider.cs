@@ -146,9 +146,9 @@ namespace Syntactik.MonoDevelop.Schemas
                     ));
             }
             
-            var element1 = contextElement as Element;
-            var existingElements = element1 != null ? new List<Element>(element1.Entities.OfType<Element>()) : new List<Element>();
-            if (element1 == null || element1.Entities.Count == 0 || element1.Entities.All(e => e is Attribute))
+            var container = contextElement as IContainer;
+            var existingElements = container != null ? new List<Element>(container.Entities.OfType<Element>()) : new List<Element>();
+            if (container == null || container.Entities.Count == 0 || container.Entities.All(e => e is Attribute))
                 contextInfo.Attributes.AddRange(attributes.Distinct());
 
             foreach (var elementFromSchema in elements)
@@ -161,7 +161,6 @@ namespace Syntactik.MonoDevelop.Schemas
                 DeleteLeadingNonSchemaElements(existingElements, elements);
                 foreach (var existingElement in existingElements)
                 {
-                    
                     if (existingElement.Name == elementFromSchema.Name
                             && CompletionHelper.GetNamespace(existingElement) == elementFromSchema.Namespace)
                     {
