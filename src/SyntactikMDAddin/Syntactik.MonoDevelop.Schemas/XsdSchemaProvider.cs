@@ -120,7 +120,7 @@ namespace Syntactik.MonoDevelop.Schemas
                     contextInfo.CurrentType = GetSchemaType(pair, contextInfo, elements);
 
                     complexType = contextInfo.CurrentType as ComplexType;
-                    contextInfo.Scope = complexType;
+                    contextInfo.Scope = string.IsNullOrEmpty(complexType?.Name)?null:complexType;
 
                     if (complexType == null)
                     {
