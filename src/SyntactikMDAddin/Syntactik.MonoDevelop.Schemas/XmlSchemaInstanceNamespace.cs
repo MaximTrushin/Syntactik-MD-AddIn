@@ -20,7 +20,7 @@ namespace Syntactik.MonoDevelop.Schemas
 
         }
 
-        public void PopulateContextInfo(Context context, ContextInfo ctxInfo)
+        public void PopulateContextInfo(Context context, ContextInfo contextInfo)
         {
             var lastNode = context.CompletionInfo.InTag == CompletionExpectation.NoExpectation
                     ? context.CompletionInfo.LastPair
@@ -37,8 +37,8 @@ namespace Syntactik.MonoDevelop.Schemas
             if (contextElement.Entities.Any(e => !(e is DOM.Attribute))) return;
 
             //xsi - attribute can be added only if there are no other attribute present
-            ctxInfo.Attributes.Add(new AttributeInfo { Name = "type", Namespace = Url, Builtin = true, Optional = true });
-            ctxInfo.Attributes.Add(new AttributeInfo { Name = "nil", Namespace = Url, Builtin = true, Optional = true });
+            contextInfo.Attributes.Add(new AttributeInfo { Name = "type", Namespace = Url, Builtin = true, Optional = true });
+            contextInfo.Attributes.Add(new AttributeInfo { Name = "nil", Namespace = Url, Builtin = true, Optional = true });
         }
     }
 }

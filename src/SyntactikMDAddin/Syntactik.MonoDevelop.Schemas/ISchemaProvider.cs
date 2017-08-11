@@ -8,6 +8,6 @@ namespace Syntactik.MonoDevelop.Schemas
     {
         IEnumerable<NamespaceInfo> GetNamespaces();
         void Validate(XmlDocument doc, Action<XmlNode, string> onErrorAction);
-        void PopulateContextInfo(Context context, ContextInfo ctxInfo);
+        void PopulateContextInfo(Context context, ContextInfo contextInfo);
     }
 }

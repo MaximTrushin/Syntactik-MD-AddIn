@@ -1,0 +1,8 @@
+﻿!#xsi = http://www.w3.org/2001/XMLSchema-instance
+!#ipo = http://www.example.com/myipo
+!$Address.US.NJ:
+	@xsi.type = ipo:US-Address
+	ipo.name = Robert Smith
+	ipo.street = 8 Oak Avenue
+	ipo.city = Old Town
+	ipo.state = ~

@@ -11,7 +11,6 @@ using Alias = Syntactik.DOM.Mapped.Alias;
 using AliasDefinition = Syntactik.DOM.Mapped.AliasDefinition;
 using Argument = Syntactik.DOM.Mapped.Argument;
 using Attribute = Syntactik.DOM.Attribute;
-using Element = Syntactik.DOM.Mapped.Element;
 using Module = Syntactik.DOM.Module;
 using NamespaceDefinition = Syntactik.DOM.NamespaceDefinition;
 
@@ -209,6 +208,38 @@ namespace Syntactik.MonoDevelop.Completion
                 data.CompletionCategory = category;
             }
             AdjustEditorCompletionContext(editorCompletionContext, ((IMappedPair) context.LastPair).ValueInterval);
+        }
+
+        public static void DoAttributeValueCompletion(CompletionDataList completionList, CompletionContext context,
+            CodeCompletionContext editorCompletionContext, ContextInfo schemaInfo, SchemasRepository schemasRepository)
+        {
+            var attribute = context.LastPair as DOM.Attribute;
+            if (attribute?.Name == "type" && attribute.NsPrefix == "xsi")
+            {
+                DoTypeAttributeValueCompletion(completionList, context, editorCompletionContext, schemaInfo,
+                    schemasRepository);
+                return;
+            }
+        }
+
+        public static void DoElementValueCompletion(CompletionDataList completionList, CompletionContext context,
+            CodeCompletionContext editorCompletionContext, ContextInfo schemaInfo, SchemasRepository schemasRepository)
+        {
+            var simpleType = schemaInfo.CurrentType as SimpleType;
+            if (simpleType == null) return;
+            var category = new SyntactikCompletionCategory { DisplayText = "Values", Order = 0 };
+            foreach (var value in simpleType.EnumValues)
+            {
+                var completionItem = new CompletionItem
+                {
+                    ItemType = ItemType.Attribute,
+                    Icon = SyntactikIcons.Enum,
+                    DisplayText = value,
+                    CompletionText = context.LastPair.Delimiter == DelimiterEnum.E ? value : EncodeSQString(value, true),
+                    CompletionCategory = category
+                };
+                completionList.Add(completionItem);
+            }
         }
 
         public static void DoTypeAttributeValueCompletion(CompletionDataList completionList, CompletionContext context,

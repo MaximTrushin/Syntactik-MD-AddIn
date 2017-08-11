@@ -81,6 +81,11 @@ namespace SyntactikMDAddin.Tests
             DoCompletionExpectationsTest();
         }
         [Test, RecordedTest]
+        public void Enum1()
+        {
+            DoCompletionExpectationsTest();
+        }
+        [Test, RecordedTest]
         public void Document1()
         {
             DoCompletionExpectationsTest();

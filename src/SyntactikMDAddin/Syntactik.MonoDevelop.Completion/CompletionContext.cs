@@ -125,9 +125,10 @@ namespace Syntactik.MonoDevelop.Completion
             var attribute = LastPair as Mapped.Attribute;
             if (attribute != null)
             {
-                InTag = CompletionExpectation.Attribute;
+                
                 if (attribute.NameInterval.End.Index >= _offset)
                 {
+                    InTag = CompletionExpectation.Attribute;
                     AddExpectation(CompletionExpectation.Attribute);
                     return;
                 }
@@ -188,7 +189,12 @@ namespace Syntactik.MonoDevelop.Completion
             var nsDef = LastPair as Mapped.NamespaceDefinition;
             if (nsDef != null)
             {
-                InTag = CompletionExpectation.NamespaceDefinition;
+                if (nsDef.NameInterval.End.Index >= _offset)
+                {
+                    InTag = CompletionExpectation.NamespaceDefinition;
+                    return;
+                }
+                
                 if (nsDef.Delimiter == DelimiterEnum.E || nsDef.Delimiter == DelimiterEnum.EE)
                 {
                     AddExpectation(CompletionExpectation.Value);

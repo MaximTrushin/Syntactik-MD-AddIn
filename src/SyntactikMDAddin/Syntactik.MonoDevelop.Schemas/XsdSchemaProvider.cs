@@ -74,20 +74,16 @@ namespace Syntactik.MonoDevelop.Schemas
             });
         }
 
-        public void PopulateContextInfo(Context context, ContextInfo ctxInfo)
+        public void PopulateContextInfo(Context context, ContextInfo contextInfo)
         {
             UpdateSchemaInfo();
-            ctxInfo.AllTypes = AllTypes;
-            var lastNode = context.CompletionInfo.InTag == CompletionExpectation.NoExpectation
+            contextInfo.AllTypes = AllTypes;
+            var contextElement = context.CompletionInfo.InTag == CompletionExpectation.NoExpectation
                 ? context.CompletionInfo.LastPair
                 : context.CompletionInfo.LastPair.Parent; //if we are inside pair which is not finished then context is the node's parent
 
-            PopulateCompletionContextOfElement(ctxInfo, lastNode);
-        }
 
-        private void PopulateCompletionContextOfElement(ContextInfo contextInfo, Pair contextElement)
-        {
-            var path = GetCompletionPath(contextElement);
+            var path = GetCompletionPath(context);
             var elements = new List<ElementInfo>(GlobalElements);
             var attributes = new List<AttributeInfo>(GlobalAttributes);
             foreach (var pair in path)
@@ -248,8 +244,12 @@ namespace Syntactik.MonoDevelop.Schemas
             existingElementsToRemove.ForEach(e => existingElements.Remove(e));
         }
 
-        private static IEnumerable<Pair> GetCompletionPath(Pair contextElement)
+        private static IEnumerable<Pair> GetCompletionPath(Context context)
         {
+            var contextElement = context.CompletionInfo.LastPair;
+            contextElement = context.CompletionInfo.InTag == CompletionExpectation.NoExpectation
+                ? contextElement
+                : contextElement.Parent; //if we are inside pair which is not finished then context is the node's parent
             return GetReversedCompletionPath(contextElement).Reverse();
         }
 
@@ -265,8 +265,8 @@ namespace Syntactik.MonoDevelop.Schemas
             while (pair != null)
             {
                 yield return pair;
-                if (!(pair is Element) && !(pair is Scope)) yield break;
                 pair = pair.Parent;
+                if (!(pair is IContainer)) yield break;
             }
         }
 

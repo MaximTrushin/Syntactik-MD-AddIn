@@ -182,14 +182,19 @@ namespace Syntactik.MonoDevelop.Completion
                         CompletionHelper.DoElementCompletion(completionList, context, editorCompletionContext, schemaInfo, schemasRepository);
                         break;
                     case CompletionExpectation.Value:
-                        if (context.InTag == CompletionExpectation.NamespaceDefinition)
+                        if (context.InTag == CompletionExpectation.NoExpectation && context.LastPair is DOM.NamespaceDefinition)
                         {
                             CompletionHelper.DoNamespaceDefinitionValueCompletion(completionList, context, editorCompletionContext, schemaInfo, schemasRepository);
                             break;
                         }
-                        if (context.InTag == CompletionExpectation.Attribute)
+                        if (context.InTag == CompletionExpectation.NoExpectation && context.LastPair is DOM.Attribute)
                         {
-                            CompletionHelper.DoTypeAttributeValueCompletion(completionList, context, editorCompletionContext, schemaInfo, schemasRepository);
+                            CompletionHelper.DoAttributeValueCompletion(completionList, context, editorCompletionContext, schemaInfo, schemasRepository);
+                            break;
+                        }
+                        if (context.InTag == CompletionExpectation.NoExpectation && context.LastPair is DOM.Element)
+                        {
+                            CompletionHelper.DoElementValueCompletion(completionList, context, editorCompletionContext, schemaInfo, schemasRepository);
                             break;
                         }
                         break;

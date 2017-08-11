@@ -147,6 +147,11 @@ namespace SyntactikMDAddin.Tests
             DoCompletionListTest();
         }
         [Test, RecordedTest]
+        public void Enum1()
+        {
+            DoCompletionListTest();
+        }
+        [Test, RecordedTest]
         public void IncorrectTree()
         {
             DoCompletionListTest();
