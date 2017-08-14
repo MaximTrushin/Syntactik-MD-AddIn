@@ -108,7 +108,8 @@ namespace Syntactik.MonoDevelop.Completion
             int triggerWordLength, char completionChar)
         {
             var result = await GetCompletionListAsync(completionContext, token, triggerWordLength);
-            if (completionChar != 0 && triggerWordLength == 1 && result != null && result.Count > 0)
+            ((CompletionDataList)result).DefaultCompletionString = result.Count > 0 ? result[0].CompletionText : null;
+            if (completionChar != 0 && triggerWordLength == 1 && result.Count > 0)
             {
                 //Don't return completion list if completion is triggered by single character and it has no completion choices after
                 // ListWidget.FilterWords is called.
@@ -202,7 +203,18 @@ namespace Syntactik.MonoDevelop.Completion
                         throw new ArgumentOutOfRangeException();
                 }
             }
+            completionList.Sort(new DataItemComparer());
             return completionList;
+        }
+
+        class DataItemComparer : IComparer<CompletionData>
+        {
+            public int Compare(CompletionData a, CompletionData b)
+            {
+                if (a is IComparable && b is IComparable)
+                    return ((IComparable)a).CompareTo(b);
+                return CompletionData.Compare(a, b);
+            }
         }
 
         private void CompletionWindowManager_WordCompleted(object sender, CodeCompletionContextEventArgs e)
@@ -414,7 +426,6 @@ namespace Syntactik.MonoDevelop.Completion
         private CancellationTokenSource _pathUpdateTokenSource;
         private void UpdatePath(ITextSourceVersion version, int caretOffset, string fileName, string text, Func<Dictionary<string, Syntactik.DOM.AliasDefinition>> getAliasDefinitionList)
         {
-            //var content = (DocumentContext as global::MonoDevelop.Ide.Gui.Document).
             CancellationTokenSource src = null;
                 try
                 {
