@@ -281,6 +281,20 @@ namespace Syntactik.MonoDevelop.Projects
         protected override Task<BuildResult> DoBuild(ProgressMonitor monitor, ConfigurationSelector configuration)
         {
             var projectConfig = (SyntactikProjectConfiguration)this.GetConfiguration(configuration);
+
+            try
+            {
+                if (Directory.Exists(projectConfig.XMLOutputFolder))
+                {
+                    Directory.Delete(projectConfig.XMLOutputFolder, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError("Unhandled exception in SyntactikProject.DoBuild().", ex);
+            }
+
+
             var compilerParameters = CreateCompilerParameters(projectConfig.XMLOutputFolder, GetProjectFiles(this));
             var compiler = new SyntactikCompiler(compilerParameters);
             var context = compiler.Run();
