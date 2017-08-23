@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Gtk;
+using ICSharpCode.NRefactory.Editor;
+using Mono.TextEditor;
 using MonoDevelop.Components;
 using MonoDevelop.Core;
 using MonoDevelop.Core.Text;
@@ -20,11 +24,14 @@ using Syntactik.MonoDevelop.Parser;
 using Syntactik.MonoDevelop.Projects;
 using Syntactik.MonoDevelop.Schemas;
 using Document = Syntactik.DOM.Document;
+using ISegment = ICSharpCode.NRefactory.Editor.ISegment;
+using ITextSourceVersion = MonoDevelop.Core.Text.ITextSourceVersion;
 using Module = Syntactik.DOM.Module;
+using TextSegment = MonoDevelop.Core.Text.TextSegment;
 
 namespace Syntactik.MonoDevelop.Completion
 {
-    public class SyntactikCompletionTextEditorExtension : CompletionTextEditorExtension, IPathedDocument
+    public class SyntactikCompletionTextEditorExtension : CompletionTextEditorExtension, IPathedDocument, ITextPasteHandler
     {
         private readonly object _syncLock = new object();
         private PathEntry[] _currentPath;
@@ -32,12 +39,13 @@ namespace Syntactik.MonoDevelop.Completion
         private CompletionContextTask _completionContextTask;
         public override string CompletionLanguage => "S4X";
 
-
         protected override void Initialize()
         {
             base.Initialize();
             CompletionWindowManager.WordCompleted += CompletionWindowManager_WordCompleted;
             Editor.CaretPositionChanged += HandleCaretPositionChanged;
+            var data = DocumentContext.GetContent<TextEditorData>();
+            data.TextPasteHandler = this;
         }
 
         public override void Dispose()
@@ -517,5 +525,53 @@ namespace Syntactik.MonoDevelop.Completion
             if (pair is Syntactik.DOM.AliasDefinition) return SyntactikIcons.AliasDef;
             return SyntactikIcons.Enum;
         }
+
+        public string FormatPlainText(int offset, string text, byte[] copyData)
+        {
+            if (copyData != null)
+            {
+                var firstLineIndent = BitConverter.ToInt32(copyData, 0);
+                text = new string('\t', firstLineIndent) + text;
+            }
+            var line = Editor.GetLineByOffset(offset);
+            var column = offset - line.Offset;
+
+            text = Normalize(text, column);
+            return text;
+        }
+
+        public byte[] GetCopyData(ISegment segment)
+        {
+            var startLine = Editor.GetLineByOffset(segment.Offset);
+            var prefix = Editor.GetTextAt(new TextSegment(startLine.Offset, segment.Offset - startLine.Offset));
+            var indent = 0;
+            if (string.IsNullOrEmpty(prefix.Trim()))
+                indent = prefix.Length;
+            return BitConverter.GetBytes(indent);
+        }
+
+        static readonly Regex rxNormalizeIndents = new Regex(@"((?<indent>[\t ]*)(?<text>[^\n\r]*(\r\n|\n\r|\r|\n)?))");
+        private string Normalize(string text, int column)
+        {
+            var matches = rxNormalizeIndents.Matches(text).Cast<Match>().Where(m => m.Length > 0).Select(m => new { Indent = m.Groups["indent"].Value, Text = m.Groups["text"].Value }).ToList();
+            var nonEmpty = matches.Where(m => !string.IsNullOrEmpty(m.Text.Trim())).ToList();
+            var minIndent = 0;
+            if (nonEmpty.Any())
+                minIndent = nonEmpty.Min(m => m.Indent.Length);
+
+            var normlized = new StringBuilder();
+            var rawLines = matches.Select(m => new { Indent = new string('\t', m.Indent.Length != 0 ? m.Indent.Length - minIndent : 0), m.Text }).ToList();
+            foreach (var l in rawLines)
+            {
+                var indent = l.Indent;
+                if (rawLines[0] != l)
+                    indent += new string('\t', column);
+                normlized.AppendFormat("{0}{1}", indent, l.Text);
+            }
+            var result = normlized.ToString();
+
+            return result;
+        }
+
     }
 }
