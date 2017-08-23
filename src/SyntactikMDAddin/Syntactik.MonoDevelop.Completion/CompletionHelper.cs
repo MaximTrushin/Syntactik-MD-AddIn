@@ -34,6 +34,12 @@ namespace Syntactik.MonoDevelop.Completion
             {
                 var pos = prefix.LastIndexOf(".", StringComparison.Ordinal);
                 prefix = pos > 0 ? prefix.Substring(0, pos + 1) : string.Empty;
+                if (pos > 0)
+                    editorCompletionContext.TriggerWordLength = prefix.Length - pos;
+            }
+            else
+            {
+                editorCompletionContext.TriggerWordLength = 0;
             }
 
             var grouped = aliases.Where(a => a.ToLower().StartsWith(prefix.ToLower())).Select(a => NameElement(a, prefix)).Distinct();

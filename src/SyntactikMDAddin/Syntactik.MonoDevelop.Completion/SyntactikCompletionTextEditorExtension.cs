@@ -211,8 +211,10 @@ namespace Syntactik.MonoDevelop.Completion
         {
             public int Compare(CompletionData a, CompletionData b)
             {
-                if (a is IComparable && b is IComparable)
-                    return ((IComparable)a).CompareTo(b);
+                var comparable1 = a as IComparable;
+                var comparable2 = b as IComparable;
+                if (comparable1 != null && comparable2 != null)
+                    return comparable1.CompareTo(comparable2);
                 return CompletionData.Compare(a, b);
             }
         }
