@@ -31,6 +31,7 @@ namespace Syntactik.MonoDevelop.Projects
         }
 
         public SchemasRepository SchemasRepository { get; private set; }
+        public CompilerContext CompilerContext { get; private set; }
 
         readonly object _syncRoot = new object();
         internal Dictionary<string, ParseInfo> CompileInfo { get; } = new Dictionary<string, ParseInfo>();
@@ -150,7 +151,7 @@ namespace Syntactik.MonoDevelop.Projects
                 var module = context.CompileUnit.Modules[0];
                 result.Ast = module;
 
-                var modules = new PairCollection<Module>();
+                
                 lock (_syncRoot)
                 {
                     if (CompileInfo.TryGetValue(fileName, out info))
@@ -168,6 +169,7 @@ namespace Syntactik.MonoDevelop.Projects
                         );
                     if (!parseOnly)
                     {
+                        var modules = new PairCollection<Module>();
                         foreach (var item in CompileInfo)
                         {
                             modules.Add((Module) item.Value.Document.Ast);
@@ -177,6 +179,7 @@ namespace Syntactik.MonoDevelop.Projects
                         context = compiler.Run(new CompileUnit {Modules = modules});
                         CleanNonParserErrors();
                         AddValidationError(context.Errors);
+                        CompilerContext = context;
                     }
                 }
                 return Task.FromResult(result);

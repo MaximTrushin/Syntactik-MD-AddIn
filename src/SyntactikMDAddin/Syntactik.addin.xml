@@ -85,12 +85,13 @@
 
   <Extension path = "/MonoDevelop/Ide/Commands">
     <Category _name = "Syntactik" id = "Syntactik">
-      <Command id = "Syntactik.MonoDevelop.Commands.SyntactikCommands.AddSchema"
-       _label = "Add Schema"
-       icon = "gtk-add" />
+      <Command id = "Syntactik.MonoDevelop.Commands.SyntactikCommands.AddSchema" _label = "Add Schema" icon = "gtk-add" />
+      <Command id = "Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyAsXml" 
+               defaultHandler = "Syntactik.MonoDevelop.Commands.CopyAsXmlHandler"
+               _label = "Copy Selection as XML" 
+               icon = "gtk-copy"/>
     </Category>
   </Extension>
-
 
   <ExtensionPoint path = "/MonoDevelop/Syntactik/ContextMenu/ProjectPad/SchemaFolder">
     <ExtensionNodeSet id="MonoDevelop.Components.Commands.ItemSet"/>
@@ -98,6 +99,16 @@
 
   <Extension path = "/MonoDevelop/Syntactik/ContextMenu/ProjectPad/SchemaFolder">
     <CommandItem id = "Syntactik.MonoDevelop.Commands.SyntactikCommands.AddSchema" />
-  </Extension>  
+  </Extension>
   
+  <Extension path="/MonoDevelop/Ide/MainMenu/Edit">
+    <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyAsXml" insertafter="MonoDevelop.Ide.Commands.EditCommands.Copy" />
+  </Extension>
+
+  <Extension path = "/MonoDevelop/SourceEditor2/ContextMenu/Editor">
+    <Condition id="FileType" fileExtensions=".s4x">
+      <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyAsXml" insertafter="MonoDevelop.Ide.Commands.EditCommands.Copy" />
+    </Condition>
+  </Extension>
+
 </ExtensionModel>

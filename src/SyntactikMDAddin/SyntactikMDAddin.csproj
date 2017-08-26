@@ -94,6 +94,9 @@
   <ItemGroup>
     <Compile Include="AddinInfo.cs" />
     <Compile Include="CompilerOptionsWidget.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Commands\CopyAsXmlHandler.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Commands\GenerateXmlForSelectionStep.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Commands\GenerateXmlForSelectionVisitor.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\SchemaFolderCommandHandler.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\SyntactikCommandHandler.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\SyntactikCommands.cs" />
