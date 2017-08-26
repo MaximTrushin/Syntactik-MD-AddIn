@@ -14,11 +14,11 @@ namespace Syntactik.MonoDevelop
 		protected void Build ()
 		{
 			global::Stetic.Gui.Initialize (this);
-			// Widget MalinaBinding.CompilerOptionsWidget
+			// Widget CompilerOptionsWidget
 			global::Stetic.BinContainer.Attach (this);
-			this.Name = "MalinaBinding.CompilerOptionsWidget";
-			// Container child MalinaBinding.CompilerOptionsWidget.Gtk.Container+ContainerChild
-			this.vbox2 = new global::Gtk.VBox ();
+			this.Name = "SyntactikBinding.CompilerOptionsWidget";
+            // Container child SyntactikBinding.CompilerOptionsWidget.Gtk.Container+ContainerChild
+            this.vbox2 = new global::Gtk.VBox ();
 			this.vbox2.Name = "vbox2";
 			this.vbox2.Spacing = 6;
 			// Container child vbox2.Gtk.Box+BoxChild
