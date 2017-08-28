@@ -90,6 +90,10 @@
                defaultHandler = "Syntactik.MonoDevelop.Commands.CopyAsXmlHandler"
                _label = "Copy Selection as XML" 
                icon = "gtk-copy"/>
+      <Command id = "Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyDocAsXml"
+               defaultHandler = "Syntactik.MonoDevelop.Commands.CopyDocAsXmlHandler"
+               _label = "Copy Document as XML"
+               icon = "gtk-copy"/>      
     </Category>
   </Extension>
 
@@ -103,11 +107,14 @@
   
   <Extension path="/MonoDevelop/Ide/MainMenu/Edit">
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyAsXml" insertafter="MonoDevelop.Ide.Commands.EditCommands.Copy" />
+    <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyDocAsXml" />
+    
   </Extension>
 
   <Extension path = "/MonoDevelop/SourceEditor2/ContextMenu/Editor">
     <Condition id="FileType" fileExtensions=".s4x">
       <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyAsXml" insertafter="MonoDevelop.Ide.Commands.EditCommands.Copy" />
+      <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyDocAsXml" />
     </Condition>
   </Extension>
 

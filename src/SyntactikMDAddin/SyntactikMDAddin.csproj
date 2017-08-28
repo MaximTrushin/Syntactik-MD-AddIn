@@ -95,6 +95,9 @@
     <Compile Include="AddinInfo.cs" />
     <Compile Include="CompilerOptionsWidget.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\CopyAsXmlHandler.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Commands\CopyDocAsXmlHandler.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Commands\GenerateXmlForDocumentStep.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Commands\GenerateXmlForDocumentVisitor.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\GenerateXmlForSelectionStep.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\GenerateXmlForSelectionVisitor.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\SchemaFolderCommandHandler.cs" />
