@@ -1,12 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Xml;
 using MonoDevelop.Core.Text;
 using Syntactik.Compiler;
 using Syntactik.Compiler.Generator;
-using Syntactik.Compiler.Steps;
-using Syntactik.DOM;
 using Syntactik.DOM.Mapped;
 using Alias = Syntactik.DOM.Alias;
 using Document = Syntactik.DOM.Mapped.Document;
@@ -15,14 +12,12 @@ using Parameter = Syntactik.DOM.Mapped.Parameter;
 
 namespace Syntactik.MonoDevelop.Commands
 {
-    internal class GenerateXmlForSelectionVisitor : AliasResolvingVisitor
+    internal class GenerateXmlForSelectionVisitor : XmlGenerator
     {
-        private readonly XmlWriter _xmlTextWriter;
         private readonly ISegment _selectionRange;
-        private readonly Stack<ChoiceInfo> _choiceStack = new Stack<ChoiceInfo>();
 
         public GenerateXmlForSelectionVisitor(XmlWriter xmlTextWriter, CompilerContext context, ISegment selectionRange)
-            : base(context)
+            : base(name => xmlTextWriter, null, context)
         {
             _xmlTextWriter = xmlTextWriter;
             _selectionRange = selectionRange;
@@ -32,42 +27,8 @@ namespace Syntactik.MonoDevelop.Commands
         {
             _currentDocument = (Document) document;
             _choiceStack.Push(_currentDocument.ChoiceInfo);
-            base.OnDocument(document);
+            Visit(document.Entities);
             _currentDocument = null;
-        }
-
-        private bool EnterChoiceContainer(DOM.Mapped.Alias alias, PairCollection<Entity> entities)
-        {
-            if (alias.AliasDefinition.Delimiter != DelimiterEnum.CC &&
-                alias.AliasDefinition.Delimiter != DelimiterEnum.ECC
-                || entities == null || entities.Count == 0)
-                return false;
-
-            var choice = _choiceStack.Peek();
-            var choiceInfo = FindChoiceInfo(choice, alias);
-            if (choice.ChoiceNode != alias)
-            {
-                _choiceStack.Push(choiceInfo);
-            }
-            _choiceStack.Push(choiceInfo.Children[0]);
-            if (((Element) choiceInfo.Children[0].ChoiceNode).Entities.Count > 0)
-                Visit(((Element) choiceInfo.Children[0].ChoiceNode).Entities);
-
-            _choiceStack.Pop();
-            if (choice.ChoiceNode != alias)
-                _choiceStack.Pop();
-            return true;
-        }
-
-        internal static ChoiceInfo FindChoiceInfo(ChoiceInfo choice, Pair pair)
-        {
-            if (choice.ChoiceNode == pair) return choice;
-            if (choice.Children != null)
-                foreach (var child in choice.Children)
-                {
-                    if (child.ChoiceNode == pair) return child;
-                }
-            return null;
         }
 
         public override void OnElement(Element pair)
@@ -140,7 +101,7 @@ namespace Syntactik.MonoDevelop.Commands
                    pair.DelimiterInterval.End.Index <= selectionRange.EndOffset;
         }
 
-        public override void OnAlias(DOM.Alias alias)
+        public override void OnAlias(Alias alias)
         {
             var inSelection = IsInSelection(alias as IMappedPair, _selectionRange);
 
@@ -168,19 +129,7 @@ namespace Syntactik.MonoDevelop.Commands
             }
         }
 
-        public override void OnValue(string value, ValueType type)
-        {
-            _xmlTextWriter.WriteString(value);
-        }
 
-        protected override void ResolveSqsEscape(EscapeMatch escapeMatch, StringBuilder sb)
-        {
-            char c = ResolveSqsEscapeChar(escapeMatch);
-            if (XmlGenerator.IsLegalXmlChar(c))
-            {
-                sb.Append(c);
-            }
-        }
 
         public override void OnAttribute(DOM.Attribute pair)
         {

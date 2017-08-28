@@ -1,5 +1,4 @@
-﻿using Mono.TextEditor;
-using MonoDevelop.Components.Commands;
+﻿using MonoDevelop.Components.Commands;
 using MonoDevelop.Core.Text;
 using MonoDevelop.Ide;
 using Syntactik.Compiler;
@@ -8,7 +7,7 @@ using Syntactik.MonoDevelop.Projects;
 
 namespace Syntactik.MonoDevelop.Commands
 {
-    public class CopyAsXmlHandler : CommandHandler
+    public class CopyAsXmlHandler : CommandHandler  //TODO: Unit tests
     {
         protected override void Run()
         {
@@ -42,9 +41,7 @@ namespace Syntactik.MonoDevelop.Commands
 
             if (!info.Visible) return;
             
-            if (!IdeApp.Workbench.RootWindow.HasToplevelFocus) return;
-
-            var textEditor = IdeApp.Workbench.RootWindow.Focus as TextArea;
+            var textEditor = IdeApp.Workbench.ActiveDocument?.Editor;
             if (!string.IsNullOrEmpty(textEditor?.SelectedText))
                 info.Enabled = true;
         }
