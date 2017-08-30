@@ -43,7 +43,11 @@ namespace Syntactik.MonoDevelop.Converter
             _sb = new StringBuilder();
             _elementStack = new Stack<ElementInfo>();
             _declaredNamespaces = declaredNamespaces;
-            if (insertNewLine) _sb.AppendLine("");
+            if (insertNewLine)
+            {
+                _sb.AppendLine("");
+                _sb.Append(_indent);
+            }
 
             s4x = "";
 

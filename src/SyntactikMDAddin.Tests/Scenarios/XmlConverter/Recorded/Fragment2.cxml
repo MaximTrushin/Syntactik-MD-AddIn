@@ -1,0 +1,8 @@
+
+	shipTo:
+		@xsi.type = ipo:EU-Address
+		@export-code = 1
+		ipo.name = Helen Zoe
+		ipo.street = 47 Eden Street
+		ipo.city = Cambridge
+		ipo.postcode = 126

@@ -144,11 +144,11 @@ namespace SyntactikMDAddin.Tests
             return string.Join("\n", list.Select(item => $"{item.DisplayText} ({item.CompletionText})"));
         }
 
-        public static void DoXmlConverterTest(ListDictionary declaredNamespaces = null)
+        public static void DoXmlConverterTest(ListDictionary declaredNamespaces = null, int indent = 0, char indentChar = '\t', int indentMultiplicity = 1, bool insertNewLine = false)
         {
             if (declaredNamespaces == null) declaredNamespaces = new ListDictionary();
             var input = PrintTestScenario(".text");
-            string xml = ConvertXml(input, declaredNamespaces);
+            string xml = ConvertXml(input, declaredNamespaces, indent, indentChar, indentMultiplicity, insertNewLine);
             if (IsRecordedTest() || IsRecordTest())
                 CompareResultAndRecordedFiles(xml, IsRecordTest(), "cxml");
         }

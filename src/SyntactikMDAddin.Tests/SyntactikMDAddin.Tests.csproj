@@ -297,6 +297,9 @@
     <None Include="Scenarios\SyntaxHighlighting\OpenName.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Scenarios\XmlConverter\Fragment2.text">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Scenarios\XmlConverter\NamespaceResolution2.text">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

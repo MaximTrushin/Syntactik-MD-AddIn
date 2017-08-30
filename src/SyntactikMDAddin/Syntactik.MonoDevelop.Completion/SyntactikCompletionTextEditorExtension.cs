@@ -232,7 +232,12 @@ namespace Syntactik.MonoDevelop.Completion
             if (SelectedCompletionItem == null)
                 return;
             if (SelectedCompletionItem.UndeclaredNamespaceUsed)
-                AddNewNamespaceToModule(SelectedCompletionItem.NsPrefix, SelectedCompletionItem.Namespace);
+            {
+                using (Editor.OpenUndoGroup())
+                {
+                    AddNewNamespaceToModule(SelectedCompletionItem.NsPrefix, SelectedCompletionItem.Namespace);
+                }
+            }
             AddXsiTypeAttribute();
         }
 
