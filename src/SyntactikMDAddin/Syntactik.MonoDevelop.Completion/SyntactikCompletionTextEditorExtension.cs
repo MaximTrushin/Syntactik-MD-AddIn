@@ -139,7 +139,7 @@ namespace Syntactik.MonoDevelop.Completion
                 ((SyntactikProject)DocumentContext.Project).SchemasRepository);
         }
 
-        private Task<CompletionContext> GetCompletionContextAsync(CancellationToken token, ITextSourceVersion version, int caretOffset, string fileName, string text, Func<Dictionary<string, Syntactik.DOM.AliasDefinition>> getAliasDefinitionList)
+        internal Task<CompletionContext> GetCompletionContextAsync(CancellationToken token, ITextSourceVersion version, int caretOffset, string fileName, string text, Func<Dictionary<string, Syntactik.DOM.AliasDefinition>> getAliasDefinitionList)
         {
             lock (_syncLock)
             {
@@ -151,7 +151,7 @@ namespace Syntactik.MonoDevelop.Completion
                 }
                 _completionContextTask = new CompletionContextTask (Task.Run(
                     () => CompletionContext.CreateCompletionContext(fileName, text, caretOffset, getAliasDefinitionList, token), token
-                ), version, caretOffset);
+                ), version, caretOffset, token);
                 return _completionContextTask.Task;
             }
         }
@@ -409,6 +409,8 @@ namespace Syntactik.MonoDevelop.Completion
         public PathEntry[] CurrentPath => _currentPath;
         protected internal CompletionItem SelectedCompletionItem { get; internal set; }
 
+        internal CompletionContextTask CompletionContextTask => _completionContextTask;
+
         public event EventHandler<DocumentPathChangedEventArgs> PathChanged;
 
 
@@ -482,7 +484,7 @@ namespace Syntactik.MonoDevelop.Completion
                 }
         }
 
-        private List<PathEntry> GetPathEntries(IEnumerable<Pair> pairs)
+        internal static List<PathEntry> GetPathEntries(IEnumerable<Pair> pairs)
         {
             var list = new List<PathEntry>();
             foreach (var pair in pairs)

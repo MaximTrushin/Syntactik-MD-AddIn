@@ -26,6 +26,8 @@ namespace Syntactik.MonoDevelop.Completion
 
         public int Offset => _offset;
 
+        public CompilerContext Context => _context;
+
         private CompletionContext(CancellationToken cancellationToken = new CancellationToken())
         {
             Expectations = new SortedSet<CompletionExpectation>();

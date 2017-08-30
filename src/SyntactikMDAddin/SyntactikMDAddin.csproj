@@ -74,6 +74,10 @@
     <Reference Include="MonoDevelop.Ide">
       <HintPath>..\..\external\monodevelop\main\build\bin\MonoDevelop.Ide.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Syntactik">
       <HintPath>..\..\external\syntactik\Syntactik\bin\Debug\Syntactik.dll</HintPath>
     </Reference>
@@ -100,6 +104,7 @@
     <Compile Include="Syntactik.MonoDevelop.Commands\GenerateXmlForDocumentVisitor.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\GenerateXmlForSelectionStep.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\GenerateXmlForSelectionVisitor.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Commands\PasteXmlHandler.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\SchemaFolderCommandHandler.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\SyntactikCommandHandler.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\SyntactikCommands.cs" />
@@ -128,6 +133,7 @@
     <Compile Include="Syntactik.MonoDevelop.Completion\XmlCompletionPairFactory.cs" />
     <Compile Include="gtk-gui\CompilerOptionsWidget.cs" />
     <Compile Include="gtk-gui\generated.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Converter\XmlToSyntactikConverter.cs" />
     <Compile Include="Syntactik.MonoDevelop.Formatting\SyntactikTextEditorIndentation.cs" />
     <Compile Include="Syntactik.MonoDevelop.Highlighting\HighlightUsagesExtension.cs" />
     <Compile Include="Syntactik.MonoDevelop.Highlighting\SyntactikSpanParser.cs" />
@@ -192,6 +198,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="gtk-gui\gui.stetic" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="icons\24.gif" />
