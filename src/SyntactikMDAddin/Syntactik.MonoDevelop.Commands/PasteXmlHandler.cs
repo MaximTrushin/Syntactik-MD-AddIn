@@ -80,7 +80,10 @@ namespace Syntactik.MonoDevelop.Commands
             var converter = new XmlToSyntactikConverter(text);
             if (converter.Convert(indent, indentChar, indentMultiplicity, insertNewLine, declaredNamespaces, out s4x))
             {
-                textEditor.InsertAtCaret(s4x);
+                using (textEditor.OpenUndoGroup())
+                {
+                    textEditor.InsertAtCaret(s4x);
+                }
             }
         }
 
