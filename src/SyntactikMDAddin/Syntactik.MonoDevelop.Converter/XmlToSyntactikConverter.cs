@@ -13,8 +13,8 @@ namespace Syntactik.MonoDevelop.Converter
     internal class ElementInfo
     {
         public int BlockCounter;
-        public string DefaultNamespace; ////Used to track default ns declarations
-        public ListDictionary NsDeclarations; //Used to track ns declarations
+        public string DefaultNamespace; // Used to track default ns declarations
+        public ListDictionary NsDeclarations; // Used to track ns declarations
     }
     public class XmlToSyntactikConverter
     {
@@ -34,7 +34,7 @@ namespace Syntactik.MonoDevelop.Converter
             _text = text;
         }
 
-        public bool Convert(int indent, char indentChar, int indentMultiplicity, bool insertNewLine, out string s4x)
+        public bool Convert(int indent, char indentChar, int indentMultiplicity, bool insertNewLine, ListDictionary declaredNamespaces, out string s4x)
         {
             _indentChar = indentChar;
             _indentMultiplicity = indentMultiplicity;
@@ -42,7 +42,7 @@ namespace Syntactik.MonoDevelop.Converter
             _indent = new string(indentChar, indent * indentMultiplicity);
             _sb = new StringBuilder();
             _elementStack = new Stack<ElementInfo>();
-            _declaredNamespaces = new ListDictionary();
+            _declaredNamespaces = declaredNamespaces;
             if (insertNewLine) _sb.AppendLine("");
 
             s4x = "";
@@ -56,9 +56,11 @@ namespace Syntactik.MonoDevelop.Converter
             //      DtdProcessing = DtdProcessing.Ignore,
             //      ValidationFlags = XmlSchemaValidationFlags.None
             //  }
-            using (var xmlReader = new XmlTextReader(new StringReader(_text)))
+            using(var stringReader = new StringReader(_text))
+            using (var xmlReader = new XmlTextReader(stringReader))
             {
                 xmlReader.Namespaces = false;
+                xmlReader.DtdProcessing = DtdProcessing.Ignore;
                 try
                 {
                     //var e = xmlReader.ReadElementString();
@@ -142,13 +144,12 @@ namespace Syntactik.MonoDevelop.Converter
                             case XmlNodeType.EntityReference:
 
                                 break;
-
                         }
                     }
                 }
-                catch (Exception)
+                catch
                 {
-                    return false;
+                    // ignored
                 }
             }
             s4x = _sb.ToString();
@@ -202,18 +203,42 @@ namespace Syntactik.MonoDevelop.Converter
         private List<Tuple<string, string, string>> ProcessAttributes(XmlTextReader xmlReader)
         {
             xmlReader.MoveToFirstAttribute();
-            List<Tuple<string, string, string>> attributes = null;
+            List<Tuple<string, string, string>> attributes = new List<Tuple<string, string, string>>();
             do
             {
                 string ns, name;
                 GetNsAndName(xmlReader.Name, out ns, out name);
-                if (ns != "xmlns" && !(string.IsNullOrEmpty(ns) && name == "xmlns"))
+                if (ns == "xsi" || ns == "xml")
                 {
-                    if (attributes == null) attributes = new List<Tuple<string, string, string>>();
+                    //Process xsi and xml attributes
+                    var value = xmlReader.Value;
+                    if (ns == "xsi" && name == "type")
+                    {
+                        var s = value.Split(new[] {':',}, StringSplitOptions.RemoveEmptyEntries);
+                        if (s.Length == 2)
+                        {
+                            var prefix = ResolveNsPrefix(s[0]);
+                            value = $"{prefix}:{s[1]}";
+                        }
+                    }
+
+                    if (attributes.Count > 0)
+                        attributes.Insert(0, new Tuple<string, string, string>(ns, name, value));
+                    else
+                        attributes.Add(new Tuple<string, string, string>(ns, name, value));
+                }
+                else if (ns != "xmlns" && !(string.IsNullOrEmpty(ns) && name == "xmlns"))
+                {
+                    //process regular attributes
+                    if (!string.IsNullOrEmpty(ns))
+                    {
+                        ns = ResolveNsPrefix(ns);
+                    }
                     attributes.Add(new Tuple<string, string, string>(ns, name, xmlReader.Value));
                 }
                 else
                 {
+                    //Process namespace declaration
                     ProcessNsAttribute(ns, name, xmlReader.Value);
                 }
             } while (xmlReader.MoveToNextAttribute());

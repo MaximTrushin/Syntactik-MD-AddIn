@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -143,19 +144,20 @@ namespace SyntactikMDAddin.Tests
             return string.Join("\n", list.Select(item => $"{item.DisplayText} ({item.CompletionText})"));
         }
 
-        public static void DoXmlConverterTest()
+        public static void DoXmlConverterTest(ListDictionary declaredNamespaces = null)
         {
+            if (declaredNamespaces == null) declaredNamespaces = new ListDictionary();
             var input = PrintTestScenario(".text");
-            string xml = ConvertXml(input);
+            string xml = ConvertXml(input, declaredNamespaces);
             if (IsRecordedTest() || IsRecordTest())
                 CompareResultAndRecordedFiles(xml, IsRecordTest(), "cxml");
         }
 
-        private static string ConvertXml(string text, int indent = 0, char indentChar = '\t', int indentMultiplicity = 1, bool insertNewLine = false)
+        private static string ConvertXml(string text, ListDictionary declaredNamespaces, int indent = 0, char indentChar = '\t', int indentMultiplicity = 1, bool insertNewLine = false)
         {
             var converter = new XmlToSyntactikConverter(text);
             string output;
-            converter.Convert(indent, indentChar, indentMultiplicity, insertNewLine, out output);
+            converter.Convert(indent, indentChar, indentMultiplicity, insertNewLine, declaredNamespaces, out output);
             return output;
         }
 

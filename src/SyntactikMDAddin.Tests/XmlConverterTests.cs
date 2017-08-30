@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Collections.Specialized;
+using NUnit.Framework;
 using static SyntactikMDAddin.Tests.TestUtils;
 
 namespace SyntactikMDAddin.Tests
@@ -15,6 +16,12 @@ namespace SyntactikMDAddin.Tests
         public void NamespaceResolution1()
         {
             DoXmlConverterTest();
+        }
+        [Test, RecordedTest]
+        public void NamespaceResolution2()
+        {
+            var declaredNamespaces = new ListDictionary { { "ipo", "http://www.example.com/IPO"} };
+            DoXmlConverterTest(declaredNamespaces);
         }
     }
 }

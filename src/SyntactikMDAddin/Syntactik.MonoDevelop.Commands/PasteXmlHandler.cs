@@ -1,16 +1,20 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Specialized;
 using System.IO;
 using System.Threading.Tasks;
 using System.Xml;
 using MonoDevelop.Components.Commands;
 using MonoDevelop.Ide;
 using MonoDevelop.Ide.Editor;
+using Syntactik.Compiler;
 using Syntactik.DOM;
 using Syntactik.DOM.Mapped;
 using Syntactik.MonoDevelop.Completion;
 using Syntactik.MonoDevelop.Converter;
 using Syntactik.MonoDevelop.Projects;
 using Module = Syntactik.DOM.Module;
+using NamespaceDefinition = Syntactik.DOM.NamespaceDefinition;
 
 namespace Syntactik.MonoDevelop.Commands
 {
@@ -32,6 +36,7 @@ namespace Syntactik.MonoDevelop.Commands
             var indent = 0;
             var indentChar = '\t';
             var indentMultiplicity = 1;
+            ListDictionary declaredNamespaces = null;
 
             //var pair = FindCurrentPairInModule(module, textEditor.CaretOffset);
             var ext = textEditor.GetContent<SyntactikCompletionTextEditorExtension>();
@@ -45,6 +50,7 @@ namespace Syntactik.MonoDevelop.Commands
 #endif
                 if (task.Status != TaskStatus.RanToCompletion) return;
                 CompletionContext context = task.Result;
+                declaredNamespaces = GetDeclaredNamespaces(context.Context);
                 GetIndentInfo(context, textEditor, out indentChar, out indentMultiplicity);
                 var lastPair = context.LastPair as IMappedPair;
                 if (lastPair == null) return;
@@ -72,11 +78,48 @@ namespace Syntactik.MonoDevelop.Commands
             string text = clipboard.WaitForText().TrimStart();
             string s4x = null;
             var converter = new XmlToSyntactikConverter(text);
-            if (converter.Convert(indent, indentChar, indentMultiplicity, insertNewLine, out s4x))
+            if (converter.Convert(indent, indentChar, indentMultiplicity, insertNewLine, declaredNamespaces, out s4x))
             {
                 textEditor.InsertAtCaret(s4x);
             }
+        }
 
+        private ListDictionary GetDeclaredNamespaces(CompilerContext context)
+        {
+            var result = new ListDictionary();
+            var module = context.CompileUnit.Modules[0];
+            foreach (var nsDef in module.NamespaceDefinitions)
+            {
+                AddNsDefToListDict(result, nsDef);
+            }
+            if (module.Members.Count <= 0) return result;
+            
+            var member = module.Members[0];
+            foreach (var nsDef in member.NamespaceDefinitions)
+            {
+                AddNsDefToListDict(result, nsDef);
+            }
+
+            return result;
+        }
+
+        private void AddNsDefToListDict(ListDictionary result, NamespaceDefinition nsDef)
+        {
+            foreach (var item in result)
+            {
+                var entry = (DictionaryEntry)item;
+                if (entry.Value.ToString() == nsDef.Value)
+                {
+                    entry.Key = nsDef.Name;
+                    return;
+                }
+                if (entry.Key.ToString() == nsDef.Name)
+                {
+                    entry.Value = nsDef.Value;
+                    return;
+                }
+            }
+            result.Add(nsDef.Name, nsDef.Value);
         }
 
         private void GetIndentInfo(CompletionContext context, TextEditor textEditor, out char indentSymbol, out int indentMultiplicity)
