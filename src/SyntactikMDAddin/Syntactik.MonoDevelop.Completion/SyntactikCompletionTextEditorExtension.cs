@@ -288,7 +288,7 @@ namespace Syntactik.MonoDevelop.Completion
             return false;
         }
 
-        private void AddNewNamespaceToModule(string nsPrefix, string ns)
+        internal void AddNewNamespaceToModule(string nsPrefix, string ns)
         {
             var document = DocumentContext.ParsedDocument;
             var module = document.Ast as Syntactik.DOM.Mapped.Module;

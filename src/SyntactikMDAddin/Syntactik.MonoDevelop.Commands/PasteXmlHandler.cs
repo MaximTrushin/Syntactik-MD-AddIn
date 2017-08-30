@@ -2,8 +2,10 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
+using Mono.Addins;
 using MonoDevelop.Components.Commands;
 using MonoDevelop.Ide;
 using MonoDevelop.Ide.Editor;
@@ -78,11 +80,31 @@ namespace Syntactik.MonoDevelop.Commands
             string text = clipboard.WaitForText().TrimStart();
             string s4x = null;
             var converter = new XmlToSyntactikConverter(text);
-            if (converter.Convert(indent, indentChar, indentMultiplicity, insertNewLine, declaredNamespaces, out s4x))
+            var namespaces = new ListDictionary();
+            if (declaredNamespaces != null)
+            foreach (var declaredNamespace in declaredNamespaces)
+            {
+                var entry = (DictionaryEntry) declaredNamespace;
+                namespaces.Add(entry.Key, entry.Value);
+            }
+            if (converter.Convert(indent, indentChar, indentMultiplicity, insertNewLine, namespaces, out s4x))
             {
                 using (textEditor.OpenUndoGroup())
                 {
                     textEditor.InsertAtCaret(s4x);
+                    AddMissingNamespaces(declaredNamespaces, namespaces, ext);
+                }
+            }
+        }
+
+        private void AddMissingNamespaces(ListDictionary declaredNamespaces, ListDictionary namespaces, SyntactikCompletionTextEditorExtension ext)
+        {
+            foreach (var item in namespaces)
+            {
+                var entry = (DictionaryEntry)item;
+                if (!declaredNamespaces.Values.OfType<string>().Contains(entry.Value))
+                {
+                    ext.AddNewNamespaceToModule(entry.Key.ToString(), entry.Value.ToString());
                 }
             }
         }
