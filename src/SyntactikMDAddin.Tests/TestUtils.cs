@@ -17,6 +17,7 @@ using Syntactik.Compiler.IO;
 using Syntactik.Compiler.Pipelines;
 using Syntactik.DOM;
 using Syntactik.MonoDevelop.Completion;
+using Syntactik.MonoDevelop.Converter;
 using Syntactik.MonoDevelop.Highlighting;
 using Syntactik.MonoDevelop.Projects;
 using Syntactik.MonoDevelop.Schemas;
@@ -90,9 +91,6 @@ namespace SyntactikMDAddin.Tests
                 CompareResultAndRecordedFiles(expectation, IsRecordTest(), "list");
         }
 
-        
-
-
         public static void DoCompletionListTest()
         {
             var input = PrintTestScenario();
@@ -142,8 +140,23 @@ namespace SyntactikMDAddin.Tests
                  return left.CompareTo(right);
             });
 
-
             return string.Join("\n", list.Select(item => $"{item.DisplayText} ({item.CompletionText})"));
+        }
+
+        public static void DoXmlConverterTest()
+        {
+            var input = PrintTestScenario(".text");
+            string xml = ConvertXml(input);
+            if (IsRecordedTest() || IsRecordTest())
+                CompareResultAndRecordedFiles(xml, IsRecordTest(), "cxml");
+        }
+
+        private static string ConvertXml(string text, int indent = 0, char indentChar = '\t', int indentMultiplicity = 1, bool insertNewLine = false)
+        {
+            var converter = new XmlToSyntactikConverter(text);
+            string output;
+            converter.Convert(indent, indentChar, indentMultiplicity, insertNewLine, out output);
+            return output;
         }
 
         private static CompilerParameters CreateCompilerParameters(string fileName, string content)
@@ -207,11 +220,11 @@ namespace SyntactikMDAddin.Tests
         }
 
 
-        private static string PrintTestScenario()
+        private static string PrintTestScenario(string extension = ".s4x")
         {
             var testCaseName = GetTestCaseName();
 
-            var fileName = new StringBuilder(AssemblyDirectory + @"\Scenarios\").Append(GetTestClassName() + "\\"). Append(testCaseName).Append(".s4x").ToString();
+            var fileName = new StringBuilder(AssemblyDirectory + @"\Scenarios\").Append(GetTestClassName() + "\\"). Append(testCaseName).Append(extension).ToString();
 
             Console.WriteLine();
             Console.WriteLine(Path.GetFileName(fileName));

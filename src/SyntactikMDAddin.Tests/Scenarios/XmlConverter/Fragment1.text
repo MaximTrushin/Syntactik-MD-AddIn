@@ -1,0 +1,6 @@
+﻿<shipTo export-code="1" xsi:type="ipo:EU-Address">
+	<ipo:name>Helen Zoe</ipo:name>
+	<ipo:street>47 Eden Street</ipo:street>
+	<ipo:city>Cambridge</ipo:city>
+	<ipo:postcode>126</ipo:postcode>
+</shipTo>
