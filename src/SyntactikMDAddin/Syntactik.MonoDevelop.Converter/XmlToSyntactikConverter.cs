@@ -1,16 +1,20 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Text;
 using System.Web;
 using System.Xml;
-using System.Xml.Schema;
+
 
 namespace Syntactik.MonoDevelop.Converter
 {
     internal class ElementInfo
     {
         public int BlockCounter;
+        public string DefaultNamespace; ////Used to track default ns declarations
+        public ListDictionary NsDeclarations; //Used to track ns declarations
     }
     public class XmlToSyntactikConverter
     {
@@ -23,6 +27,7 @@ namespace Syntactik.MonoDevelop.Converter
         Stack<ElementInfo> _elementStack;
         private char _indentChar;
         private int _indentMultiplicity;
+        private ListDictionary _declaredNamespaces;
 
         public XmlToSyntactikConverter(string text)
         {
@@ -37,6 +42,7 @@ namespace Syntactik.MonoDevelop.Converter
             _indent = new string(indentChar, indent * indentMultiplicity);
             _sb = new StringBuilder();
             _elementStack = new Stack<ElementInfo>();
+            _declaredNamespaces = new ListDictionary();
             if (insertNewLine) _sb.AppendLine("");
 
             s4x = "";
@@ -66,19 +72,40 @@ namespace Syntactik.MonoDevelop.Converter
                             case XmlNodeType.Element:
                                 _currentIndent++;
                                 StartWithNewLine();
+                                _elementStack.Push(new ElementInfo { BlockCounter = 0 });
                                 GetNsAndName(xmlReader.Name, out ns, out name);
+                                List<Tuple<string, string, string>> attributes = null;
+                                if (xmlReader.HasAttributes) attributes = ProcessAttributes(xmlReader);
+
                                 if (ns != null)
                                 {
-                                    _sb.Append(ns);
+                                    _sb.Append(ResolveNsPrefix(ns));
                                     _sb.Append(".");
                                 }
                                 _sb.Append(name);
                                 _value = null;
                                 _newLine = false;
-                                IncreaseBlockCounter();
-                                _elementStack.Push(new ElementInfo {BlockCounter = 0});
-                                if (xmlReader.HasAttributes) ProcessAttributes(xmlReader);
                                 
+                                
+                                if (attributes != null)
+                                {
+                                    _currentIndent++;
+                                    foreach (var tuple in attributes)
+                                    {
+                                        StartWithNewLine();
+                                        _sb.Append('@');
+                                        if (tuple.Item1 != null) //namespace prefix
+                                        {
+                                            _sb.Append(tuple.Item1);
+                                            _sb.Append(".");
+                                        }
+                                        _sb.Append(tuple.Item2); // name
+                                        _newLine = false;
+                                        IncreaseBlockCounter();
+                                        if (!string.IsNullOrEmpty(tuple.Item3)) WriteValue(tuple.Item3);
+                                    }
+                                    _currentIndent--;
+                                }
                                 break;
                             case XmlNodeType.EndElement:
                                 if (_value != null)
@@ -88,19 +115,6 @@ namespace Syntactik.MonoDevelop.Converter
                                 }
                                 _currentIndent--;
                                 _elementStack.Pop();
-                                break;
-                            case XmlNodeType.Attribute:
-                                StartWithNewLine();
-
-                                GetNsAndName(xmlReader.Name, out ns, out name);
-                                if (ns != null)
-                                {
-                                    _sb.Append(ns);
-                                    _sb.Append(".");
-                                }
-                                _sb.Append(name);
-                                _value = null;
-                                _newLine = false;
                                 IncreaseBlockCounter();
                                 break;
                             case XmlNodeType.Text:
@@ -141,6 +155,33 @@ namespace Syntactik.MonoDevelop.Converter
             return true;
         }
 
+        private string ResolveNsPrefix(string ns)
+        {
+            var @namespace = GetNamespace(ns);
+
+            if (@namespace == null) return ns;
+            foreach (var declaredNamespace in _declaredNamespaces)
+            {
+                var entry = (DictionaryEntry)declaredNamespace;
+                if (entry.Value.ToString() == @namespace) return (string)entry.Key;
+            }
+            return ns;
+        }
+
+        private string GetNamespace(string ns)
+        {
+            foreach (var elementInfo in _elementStack)
+            {
+                if (elementInfo.NsDeclarations == null) continue;
+                foreach (var item in elementInfo.NsDeclarations)
+                {
+                    var entry = (DictionaryEntry)item;
+                    if (entry.Key.ToString() == ns) return (string) entry.Value;
+                }
+            }
+            return null;
+        }
+
         private void WriteValue(string s)
         {
             var conv = HttpUtility.JavaScriptStringEncode(s, false);
@@ -158,27 +199,47 @@ namespace Syntactik.MonoDevelop.Converter
             }
         }
 
-        private void ProcessAttributes(XmlTextReader xmlReader)
+        private List<Tuple<string, string, string>> ProcessAttributes(XmlTextReader xmlReader)
         {
-            _currentIndent++;
             xmlReader.MoveToFirstAttribute();
+            List<Tuple<string, string, string>> attributes = null;
             do
             {
-                StartWithNewLine();
-                _sb.Append('@');
                 string ns, name;
                 GetNsAndName(xmlReader.Name, out ns, out name);
-                if (ns != null)
+                if (ns != "xmlns" && !(string.IsNullOrEmpty(ns) && name == "xmlns"))
                 {
-                    _sb.Append(ns);
-                    _sb.Append(".");
+                    if (attributes == null) attributes = new List<Tuple<string, string, string>>();
+                    attributes.Add(new Tuple<string, string, string>(ns, name, xmlReader.Value));
                 }
-                _sb.Append(name);
-                _newLine = false;
-                IncreaseBlockCounter();
-                if (!string.IsNullOrEmpty(xmlReader.Value)) WriteValue(xmlReader.Value);
+                else
+                {
+                    ProcessNsAttribute(ns, name, xmlReader.Value);
+                }
             } while (xmlReader.MoveToNextAttribute());
-            _currentIndent--;
+            return attributes;
+        }
+
+        private void ProcessNsAttribute(string ns, string name, string value)
+        {
+            if (string.IsNullOrEmpty(ns) && name == "xmlns")
+            {
+                _elementStack.Peek().DefaultNamespace = value;
+                return;
+            }
+            if (ns == "xmlns" && !string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(value))
+            {
+                //if (name == "xsi") return; //ignoring xsi namespace declaration
+                var elementInfo = _elementStack.Peek();
+                if (elementInfo.NsDeclarations == null) elementInfo.NsDeclarations = new ListDictionary();
+                elementInfo.NsDeclarations[name] = value;
+                foreach (var declaredNamespace in _declaredNamespaces)
+                {
+                    var entry = (DictionaryEntry)declaredNamespace;
+                    if (entry.Value.ToString() == value) return;
+                }
+                _declaredNamespaces[name] = value;
+            }
         }
 
         private void GetNsAndName(string localName, out string ns, out string name)
