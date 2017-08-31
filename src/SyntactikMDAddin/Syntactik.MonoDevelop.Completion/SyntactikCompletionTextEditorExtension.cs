@@ -538,10 +538,13 @@ namespace Syntactik.MonoDevelop.Completion
             if (copyData != null)
             {
                 var firstLineIndent = BitConverter.ToInt32(copyData, 0);
-                text = new string('\t', firstLineIndent) + text;
+                if (firstLineIndent > 0)
+                    text = new string('\t', firstLineIndent) + text;
             }
+            Editor.EnsureCaretIsNotVirtual();
             var line = Editor.GetLineByOffset(offset);
-            var column = offset - line.Offset;
+            var lineText = Editor.GetLineText(line.LineNumber);
+            var column = lineText.Length - lineText.TrimStart().Length;
 
             text = Normalize(text, column);
             return text;
@@ -550,11 +553,10 @@ namespace Syntactik.MonoDevelop.Completion
         public byte[] GetCopyData(ISegment segment)
         {
             var startLine = Editor.GetLineByOffset(segment.Offset);
+            //prefix is beginning of the line before selection segment
             var prefix = Editor.GetTextAt(new TextSegment(startLine.Offset, segment.Offset - startLine.Offset));
-            var indent = 0;
-            if (string.IsNullOrEmpty(prefix.Trim()))
-                indent = prefix.Length;
-            return BitConverter.GetBytes(indent);
+            var indent = prefix.Length - prefix.TrimStart().Length;
+            return BitConverter.GetBytes(indent);//storing calculated indent in copy data
         }
 
         static readonly Regex rxNormalizeIndents = new Regex(@"((?<indent>[\t ]*)(?<text>[^\n\r]*(\r\n|\n\r|\r|\n)?))");
