@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -496,7 +497,7 @@ namespace Syntactik.MonoDevelop.Completion
             {
                 if (pair is Module) break;
                 if (pair is Document && (pair.Parent as Module)?.ModuleDocument == pair) break;
-                list.Add(new PathEntry(ImageService.GetIcon(GetIconSourceName(pair)), GetMarkup(pair)) { Tag = pair });
+                list.Add(new PathEntry(ImageService.GetIcon(GetIconSourceName(pair)), WebUtility.HtmlEncode(GetMarkup(pair))) { Tag = pair });
             }
             list.Reverse();
             return list;
