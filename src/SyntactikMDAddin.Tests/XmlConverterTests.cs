@@ -33,5 +33,17 @@ namespace SyntactikMDAddin.Tests
             var declaredNamespaces = new ListDictionary { { "ipo", "http://www.example.com/IPO"} };
             DoXmlConverterTest(declaredNamespaces);
         }
+        [Test, RecordedTest]
+        public void NamespaceResolution3()
+        {
+            var declaredNamespaces = new ListDictionary();
+            DoXmlConverterTest(declaredNamespaces);
+        }
+        [Test, RecordedTest]
+        public void NamespaceResolution4()
+        {
+            var declaredNamespaces = new ListDictionary();
+            DoXmlConverterTest(declaredNamespaces);
+        }
     }
 }
