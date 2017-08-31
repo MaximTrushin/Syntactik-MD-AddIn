@@ -29,15 +29,7 @@ namespace Syntactik.MonoDevelop.Highlighting
                     {
                         quote = r.Groups[1].Value[0];
                         var prev = RuleStack.Count > 1 ? RuleStack.ElementAt(1) : null;
-                        string ruleName;
-                        if (quote == '\'')
-                        {
-                            ruleName = "sq_string";
-                        }
-                        else
-                        {
-                            ruleName = "dq_string";
-                        }
+                        var ruleName = quote == '\'' ? "sq_string" : "dq_string";
                         if (CurRule.Name.EndsWith("_sl")) ruleName += "_sl";
                         FoundSpanBegin(new IndentSpan
                                 {

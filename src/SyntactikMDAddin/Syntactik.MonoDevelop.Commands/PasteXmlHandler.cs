@@ -91,8 +91,9 @@ namespace Syntactik.MonoDevelop.Commands
             {
                 using (textEditor.OpenUndoGroup())
                 {
-                    textEditor.InsertAtCaret(s4x);
                     AddMissingNamespaces(declaredNamespaces, namespaces, ext);
+                    textEditor.InsertAtCaret(s4x);
+                    
                 }
             }
         }
@@ -165,39 +166,6 @@ namespace Syntactik.MonoDevelop.Commands
             indentMultiplicity = 1;
             indentSymbol = '\t';
         }
-
-        //private XmlDocument GetXmlDocument(string text)
-        //{
-        //    var doc = new XmlDocument();
-        //    try
-        //    {
-        //        XmlReaderSettings settings = new XmlReaderSettings
-        //        {
-        //            ConformanceLevel = ConformanceLevel.Fragment,
-        //            ValidationFlags = XmlSchemaValidationFlags.None,
-        //            ValidationType = ValidationType.None
-        //        };
-        //        using (var ms = new MemoryStream())
-        //        {
-        //            StreamWriter writer = new StreamWriter(ms);
-        //            text = text.TrimStart(' ', '\r', '\n', '\t');
-                    
-        //            writer.Flush();
-        //            ms.Position = 0;
-        //            using (var xmlReader = new XmlTextReader(ms))
-        //            {
-        //                xmlReader.Namespaces = false;
-        //                doc.Load(xmlReader);
-        //            }
-        //        }
-        //    }
-        //    catch (XmlException)
-        //    {
-        //        return null;
-        //    }
-        //    return doc;
-        //}
-
         protected override void Update(CommandInfo info)
         {
             info.Enabled = false;

@@ -309,6 +309,7 @@ namespace Syntactik.MonoDevelop.Completion
             if (result == 0) return 0;
             result++;
             var line = Editor.GetLineByOffset(result);
+            if (line == null) return 0;
             var text = Editor.GetLineText(line);
             var offset = result - line.Offset + 1;
             while (offset < text.Length && !IntegerCharExtensions.IsEndOfOpenName(text[offset]))
