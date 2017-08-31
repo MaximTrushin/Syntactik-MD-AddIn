@@ -53,7 +53,7 @@ namespace Syntactik.MonoDevelop.Commands
                 if (task.Status != TaskStatus.RanToCompletion) return;
                 CompletionContext context = task.Result;
                 declaredNamespaces = GetDeclaredNamespaces(context.Context);
-                GetIndentInfo(context, textEditor, out indentChar, out indentMultiplicity);
+                GetIndentInfo(module, textEditor, out indentChar, out indentMultiplicity);
                 var lastPair = context.LastPair as IMappedPair;
                 if (lastPair == null) return;
 
@@ -147,22 +147,23 @@ namespace Syntactik.MonoDevelop.Commands
             result.Add(nsDef.Name, nsDef.Value);
         }
 
-        private void GetIndentInfo(CompletionContext context, TextEditor textEditor, out char indentSymbol, out int indentMultiplicity)
+        private void GetIndentInfo(Module module, TextEditor textEditor, out char indentSymbol, out int indentMultiplicity)
         {
-            var m = context.Context.CompileUnit.Modules[0];
-            indentSymbol = m.IndentSymbol;
-            indentMultiplicity = m.IndentMultiplicity;
-            if (indentMultiplicity == 0)
+            indentSymbol = module.IndentSymbol;
+            indentMultiplicity = module.IndentMultiplicity;
+            if (indentMultiplicity != 0) return;
+
+            var text = textEditor.GetLineText(textEditor.CaretLine);
+            if (string.IsNullOrEmpty(text))
             {
-                var text = textEditor.GetLineText(textEditor.CaretLine);
-                if (string.IsNullOrEmpty(text))
-                {
-                    indentMultiplicity = 1;
-                    return;
-                }
-                indentMultiplicity = text.Length - text.TrimStart().Length;
-                indentSymbol = text[0];
+                indentMultiplicity = 1;
+                return;
             }
+            indentMultiplicity = text.Length - text.TrimStart().Length;
+            indentSymbol = text[0];
+            if (indentMultiplicity != 0) return;
+            indentMultiplicity = 1;
+            indentSymbol = '\t';
         }
 
         //private XmlDocument GetXmlDocument(string text)
