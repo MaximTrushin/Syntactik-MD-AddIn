@@ -18,6 +18,11 @@ namespace SyntactikMDAddin.Tests
             DoXmlConverterTest(null, 1, insertNewLine: true);
         }
         [Test, RecordedTest]
+        public void Fragment3()
+        {
+            DoXmlConverterTest(null, 1, insertNewLine: true);
+        }
+        [Test, RecordedTest]
         public void NamespaceResolution1()
         {
             DoXmlConverterTest();

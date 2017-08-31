@@ -61,14 +61,16 @@ namespace Syntactik.MonoDevelop.Converter
             //      ValidationFlags = XmlSchemaValidationFlags.None
             //  }
             using(var stringReader = new StringReader(_text))
-            using (var xmlReader = new XmlTextReader(stringReader))
+            using (var xmlReader = new XmlTextReader(new FakeRootStreamReader(stringReader)))
             {
+                
                 xmlReader.Namespaces = false;
                 xmlReader.DtdProcessing = DtdProcessing.Ignore;
                 try
                 {
                     //var e = xmlReader.ReadElementString();
                     //xmlReader.MoveToContent();
+                    xmlReader.Read();
                     while (xmlReader.Read())
                     {
                         string ns;
@@ -91,27 +93,7 @@ namespace Syntactik.MonoDevelop.Converter
                                 _sb.Append(name);
                                 _value = null;
                                 _newLine = false;
-                                
-                                
-                                if (attributes != null)
-                                {
-                                    _currentIndent++;
-                                    foreach (var tuple in attributes)
-                                    {
-                                        StartWithNewLine();
-                                        _sb.Append('@');
-                                        if (tuple.Item1 != null) //namespace prefix
-                                        {
-                                            _sb.Append(tuple.Item1);
-                                            _sb.Append(".");
-                                        }
-                                        _sb.Append(tuple.Item2); // name
-                                        _newLine = false;
-                                        IncreaseBlockCounter();
-                                        if (!string.IsNullOrEmpty(tuple.Item3)) WriteValue(tuple.Item3);
-                                    }
-                                    _currentIndent--;
-                                }
+                                ProcessAttributes(attributes);
                                 break;
                             case XmlNodeType.EndElement:
                                 if (_value != null)
@@ -120,7 +102,7 @@ namespace Syntactik.MonoDevelop.Converter
                                     _value = null;
                                 }
                                 _currentIndent--;
-                                _elementStack.Pop();
+                                if (_elementStack.Count > 0) _elementStack.Pop();
                                 IncreaseBlockCounter();
                                 break;
                             case XmlNodeType.Text:
@@ -160,6 +142,29 @@ namespace Syntactik.MonoDevelop.Converter
             return true;
         }
 
+        private void ProcessAttributes(List<Tuple<string, string, string>> attributes)
+        {
+            if (attributes != null)
+            {
+                _currentIndent++;
+                foreach (var tuple in attributes)
+                {
+                    StartWithNewLine();
+                    _sb.Append('@');
+                    if (tuple.Item1 != null) //namespace prefix
+                    {
+                        _sb.Append(tuple.Item1);
+                        _sb.Append(".");
+                    }
+                    _sb.Append(tuple.Item2); // name
+                    _newLine = false;
+                    IncreaseBlockCounter();
+                    if (!string.IsNullOrEmpty(tuple.Item3)) WriteValue(tuple.Item3);
+                }
+                _currentIndent--;
+            }
+        }
+
         private string ResolveNsPrefix(string ns)
         {
             var @namespace = GetNamespace(ns);
@@ -189,12 +194,12 @@ namespace Syntactik.MonoDevelop.Converter
 
         private void WriteValue(string s)
         {
-            var conv = HttpUtility.JavaScriptStringEncode(s, false);
+            var conv = EncodeValue(s);
 
             if (s.Length != conv.Length || s.StartsWith(" ") || s.EndsWith(" "))
             {
                 _sb.Append(" == '");
-                _sb.Append(s);
+                _sb.Append(conv);
                 _sb.Append("'");
             }
             else
@@ -303,62 +308,56 @@ namespace Syntactik.MonoDevelop.Converter
 
         public bool FirstNodeInBlock => _elementStack.Count > 0 && _elementStack.Peek().BlockCounter == 0;
 
-        //public static string cleanForJSON(string s)
-        //{
-        //    if (s == null || s.Length == 0)
-        //    {
-        //        return "";
-        //    }
+        public static string EncodeValue(string s)
+        {
+            if (string.IsNullOrEmpty(s)) return "";
+            int i;
+            var len = s.Length;
+            var sb = new StringBuilder(len + 4);
 
-        //    char c = '\0';
-        //    int i;
-        //    int len = s.Length;
-        //    StringBuilder sb = new StringBuilder(len + 4);
-        //    String t;
-
-        //    for (i = 0; i < len; i += 1)
-        //    {
-        //        c = s[i];
-        //        switch (c)
-        //        {
-        //            case '\\':
-        //            case '"':
-        //                sb.Append('\\');
-        //                sb.Append(c);
-        //                break;
-        //            case '/':
-        //                sb.Append('\\');
-        //                sb.Append(c);
-        //                break;
-        //            case '\b':
-        //                sb.Append("\\b");
-        //                break;
-        //            case '\t':
-        //                sb.Append("\\t");
-        //                break;
-        //            case '\n':
-        //                sb.Append("\\n");
-        //                break;
-        //            case '\f':
-        //                sb.Append("\\f");
-        //                break;
-        //            case '\r':
-        //                sb.Append("\\r");
-        //                break;
-        //            default:
-        //                if (c < ' ')
-        //                {
-        //                    t = "000" + String.Format("X", c);
-        //                    sb.Append("\\u" + t.Substring(t.Length - 4));
-        //                }
-        //                else
-        //                {
-        //                    sb.Append(c);
-        //                }
-        //                break;
-        //        }
-        //    }
-        //    return sb.ToString();
-        //}
+            for (i = 0; i < len; i += 1)
+            {
+                var c = s[i];
+                switch (c)
+                {
+                    case '\\':
+                    case '\'':
+                        sb.Append('\\');
+                        sb.Append(c);
+                        break;
+                    case '/':
+                        sb.Append('\\');
+                        sb.Append(c);
+                        break;
+                    case '\b':
+                        sb.Append("\\b");
+                        break;
+                    case '\t':
+                        sb.Append("\\t");
+                        break;
+                    case '\n':
+                        sb.Append("\\n");
+                        break;
+                    case '\f':
+                        sb.Append("\\f");
+                        break;
+                    case '\r':
+                        sb.Append("\\r");
+                        break;
+                    default:
+                        if (c < ' ')
+                        {
+                            var t = "000" + $"{System.Convert.ToInt32(c):X}";
+                            sb.Append("\\u" + t.Substring(t.Length - 4));
+                        }
+                        else
+                        {
+                            sb.Append(c);
+                        }
+                        break;
+                }
+            }
+            return sb.ToString();
+        }
     }
 }
