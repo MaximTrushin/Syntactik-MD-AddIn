@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Specialized;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml;
-using Gtk;
-using Mono.Addins;
 using MonoDevelop.Components.Commands;
 using MonoDevelop.Ide;
 using MonoDevelop.Ide.Editor;
@@ -61,7 +56,7 @@ namespace Syntactik.MonoDevelop.Commands
 
                 var caretLine = textEditor.CaretLine;
 
-                if (lastPair.ValueInterval != null)
+                if (lastPair.ValueInterval != null) //TODO: Create unit tests
                 {
                     if (caretLine == lastPair.ValueInterval.End.Line)
                     {

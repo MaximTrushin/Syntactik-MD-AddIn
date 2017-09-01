@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Gtk;
 using ICSharpCode.NRefactory.Editor;
+using ICSharpCode.NRefactory.TypeSystem;
 using Mono.TextEditor;
 using MonoDevelop.Components;
 using MonoDevelop.Core;
@@ -537,18 +538,6 @@ namespace Syntactik.MonoDevelop.Completion
 
         public string FormatPlainText(int offset, string text, byte[] copyData)
         {
-            if (copyData != null)
-            {
-                var firstLineIndent = BitConverter.ToInt32(copyData, 0);
-                if (firstLineIndent > 0)
-                    text = new string('\t', firstLineIndent) + text;
-            }
-            Editor.EnsureCaretIsNotVirtual();
-            var line = Editor.GetLineByOffset(offset);
-            var lineText = Editor.GetLineText(line.LineNumber);
-            var column = lineText.Length - lineText.TrimStart().Length;
-
-            text = Normalize(text, column);
             return text;
         }
 
@@ -558,31 +547,19 @@ namespace Syntactik.MonoDevelop.Completion
             //prefix is beginning of the line before selection segment
             var prefix = Editor.GetTextAt(new TextSegment(startLine.Offset, segment.Offset - startLine.Offset));
             var indent = prefix.Length - prefix.TrimStart().Length;
-            return BitConverter.GetBytes(indent);//storing calculated indent in copy data
-        }
-
-        static readonly Regex rxNormalizeIndents = new Regex(@"((?<indent>[\t ]*)(?<text>[^\n\r]*(\r\n|\n\r|\r|\n)?))");
-        private string Normalize(string text, int column)
-        {
-            var matches = rxNormalizeIndents.Matches(text).Cast<Match>().Where(m => m.Length > 0).Select(m => new { Indent = m.Groups["indent"].Value, Text = m.Groups["text"].Value }).ToList();
-            var nonEmpty = matches.Where(m => !string.IsNullOrEmpty(m.Text.Trim())).ToList();
-            var minIndent = 0;
-            if (nonEmpty.Any())
-                minIndent = nonEmpty.Min(m => m.Indent.Length);
-
-            var normlized = new StringBuilder();
-            var rawLines = matches.Select(m => new { Indent = new string('\t', m.Indent.Length != 0 ? m.Indent.Length - minIndent : 0), m.Text }).ToList();
-            foreach (var l in rawLines)
+            var result = new List<byte>();
+            var doc = DocumentContext.ParsedDocument as SyntactikParsedDocument;
+            var module = doc?.Ast as Module;
+            if (module != null)
             {
-                var indent = l.Indent;
-                if (rawLines[0] != l)
-                    indent += new string('\t', column);
-                normlized.AppendFormat("{0}{1}", indent, l.Text);
+                result.AddRange(BitConverter.GetBytes(indent / (module.IndentMultiplicity == 0 ? 1 : module.IndentMultiplicity)));
+                result.AddRange(BitConverter.GetBytes(module.IndentMultiplicity == 0 ? 1 : module.IndentMultiplicity));
+                result.AddRange(BitConverter.GetBytes(module.IndentSymbol == 0 ? '\t' : module.IndentSymbol));
             }
-            var result = normlized.ToString();
 
-            return result;
+            return result.ToArray();//storing calculated indent in copy data
         }
+
 
     }
 }
