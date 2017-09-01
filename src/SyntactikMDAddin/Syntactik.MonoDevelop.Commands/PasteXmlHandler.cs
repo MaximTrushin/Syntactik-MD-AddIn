@@ -67,18 +67,18 @@ namespace Syntactik.MonoDevelop.Commands
                     {
                         insertNewLine = true;
                     }
-                    indent = lastPair.ValueIndent - 1;
+                    indent = lastPair.ValueIndent / indentMultiplicity - 1;
                 }
                 else if (caretLine == lastPair.NameInterval.End.Line)
                 {
                     insertNewLine = true;
                     var pair = (Pair) lastPair;
-                    indent = lastPair.ValueIndent - 1;
+                    indent = lastPair.ValueIndent / indentMultiplicity - 1;
                     if (pair.Delimiter == DelimiterEnum.C || pair.Delimiter == DelimiterEnum.CC) indent++;
                 }
                 else
                 {
-                    indent = lastPair.ValueIndent;
+                    indent = lastPair.ValueIndent / indentMultiplicity;
                 }
             }
             var clipboard = Gtk.Clipboard.Get(Gdk.Atom.Intern("CLIPBOARD", false));
