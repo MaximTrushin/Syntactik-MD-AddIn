@@ -5,10 +5,12 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
+using Gtk;
 using Mono.Addins;
 using MonoDevelop.Components.Commands;
 using MonoDevelop.Ide;
 using MonoDevelop.Ide.Editor;
+using MonoDevelop.Ide.Gui.Content;
 using Syntactik.Compiler;
 using Syntactik.DOM;
 using Syntactik.DOM.Mapped;
@@ -20,7 +22,7 @@ using NamespaceDefinition = Syntactik.DOM.NamespaceDefinition;
 
 namespace Syntactik.MonoDevelop.Commands
 {
-    internal class PasteXmlHandler : CommandHandler  //TODO: Unit tests
+    internal class PasteXmlHandler : CommandHandler //TODO: Unit tests
     {
         protected override void Run()
         {
@@ -48,7 +50,7 @@ namespace Syntactik.MonoDevelop.Commands
 #if DEBUG
                 task.Wait(ext.CompletionContextTask.CancellationToken);
 #else
-            task.Wait(2000, ext.CompletionContextTask.CancellationToken);
+                task.Wait(2000, ext.CompletionContextTask.CancellationToken);
 #endif
                 if (task.Status != TaskStatus.RanToCompletion) return;
                 CompletionContext context = task.Result;
@@ -74,35 +76,38 @@ namespace Syntactik.MonoDevelop.Commands
                     indent = lastPair.ValueIndent - 1;
                     if (pair.Delimiter == DelimiterEnum.C || pair.Delimiter == DelimiterEnum.CC) indent++;
                 }
-                else { indent = lastPair.ValueIndent; }
+                else
+                {
+                    indent = lastPair.ValueIndent;
+                }
             }
             var clipboard = Gtk.Clipboard.Get(Gdk.Atom.Intern("CLIPBOARD", false));
             string text = clipboard.WaitForText().TrimStart();
-            string s4x = null;
+            string s4x;
             var converter = new XmlToSyntactikConverter(text);
             var namespaces = new ListDictionary();
             if (declaredNamespaces != null)
-            foreach (var declaredNamespace in declaredNamespaces)
-            {
-                var entry = (DictionaryEntry) declaredNamespace;
-                namespaces.Add(entry.Key, entry.Value);
-            }
+                foreach (var declaredNamespace in declaredNamespaces)
+                {
+                    var entry = (DictionaryEntry) declaredNamespace;
+                    namespaces.Add(entry.Key, entry.Value);
+                }
             if (converter.Convert(indent, indentChar, indentMultiplicity, insertNewLine, namespaces, out s4x))
             {
                 using (textEditor.OpenUndoGroup())
                 {
                     AddMissingNamespaces(declaredNamespaces, namespaces, ext);
                     textEditor.InsertAtCaret(s4x);
-                    
                 }
             }
         }
 
-        private void AddMissingNamespaces(ListDictionary declaredNamespaces, ListDictionary namespaces, SyntactikCompletionTextEditorExtension ext)
+        private void AddMissingNamespaces(ListDictionary declaredNamespaces, ListDictionary namespaces,
+            SyntactikCompletionTextEditorExtension ext)
         {
             foreach (var item in namespaces)
             {
-                var entry = (DictionaryEntry)item;
+                var entry = (DictionaryEntry) item;
                 if (!declaredNamespaces.Values.OfType<string>().Contains(entry.Value))
                 {
                     ext.AddNewNamespaceToModule(entry.Key.ToString(), entry.Value.ToString());
@@ -119,7 +124,7 @@ namespace Syntactik.MonoDevelop.Commands
                 AddNsDefToListDict(result, nsDef);
             }
             if (module.Members.Count <= 0) return result;
-            
+
             var member = module.Members[0];
             foreach (var nsDef in member.NamespaceDefinitions)
             {
@@ -133,7 +138,7 @@ namespace Syntactik.MonoDevelop.Commands
         {
             foreach (var item in result)
             {
-                var entry = (DictionaryEntry)item;
+                var entry = (DictionaryEntry) item;
                 if (entry.Value.ToString() == nsDef.Value)
                 {
                     entry.Key = nsDef.Name;
@@ -148,7 +153,8 @@ namespace Syntactik.MonoDevelop.Commands
             result.Add(nsDef.Name, nsDef.Value);
         }
 
-        private void GetIndentInfo(Module module, TextEditor textEditor, out char indentSymbol, out int indentMultiplicity)
+        private void GetIndentInfo(Module module, TextEditor textEditor, out char indentSymbol,
+            out int indentMultiplicity)
         {
             indentSymbol = module.IndentSymbol;
             indentMultiplicity = module.IndentMultiplicity;
@@ -166,6 +172,7 @@ namespace Syntactik.MonoDevelop.Commands
             indentMultiplicity = 1;
             indentSymbol = '\t';
         }
+
         protected override void Update(CommandInfo info)
         {
             info.Enabled = false;
@@ -173,12 +180,17 @@ namespace Syntactik.MonoDevelop.Commands
             info.Visible = doc.FileName.Extension.ToLower() == ".s4x";
 
             if (!info.Visible) return;
-
-            var clipboard = Gtk.Clipboard.Get(Gdk.Atom.Intern("CLIPBOARD", false));
-            if (!clipboard.WaitIsTextAvailable()) return ;
-            info.Enabled = true;
+            bool inWpf = false;
+#if WIN32
+			if (System.Windows.Input.Keyboard.FocusedElement != null)
+				inWpf = true;
+#endif
+            var handler = doc.GetContent<IClipboardHandler>();
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            if (!inWpf && handler != null && handler.EnablePaste)
+                info.Enabled = true;
+            else
+                info.Bypass = true;
         }
-
-
     }
 }
