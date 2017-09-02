@@ -7,6 +7,7 @@
         CopyAsXml,
         CopyDocAsXml,
         PasteXml,
+        PasteSyntactik,
         ExtractAlias,
         LicenseInfo
     }

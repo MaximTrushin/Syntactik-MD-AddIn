@@ -104,6 +104,7 @@
     <Compile Include="Syntactik.MonoDevelop.Commands\GenerateXmlForDocumentVisitor.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\GenerateXmlForSelectionStep.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\GenerateXmlForSelectionVisitor.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Commands\PasteSyntactikHandler.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\PasteXmlHandler.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\SchemaFolderCommandHandler.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\SyntactikCommandHandler.cs" />

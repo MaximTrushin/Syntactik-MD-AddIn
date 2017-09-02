@@ -88,6 +88,8 @@
       <Command id = "Syntactik.MonoDevelop.Commands.SyntactikCommands.AddSchema" _label = "Add Schema" icon = "gtk-add" />
       <Command id = "Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyAsXml" 
                defaultHandler = "Syntactik.MonoDevelop.Commands.CopyAsXmlHandler"
+               shortcut = "Control|Alt|C"
+                macShortcut = "Shift|Meta|C"
                _label = "Copy Selection as XML" 
                icon = "gtk-copy"/>
       <Command id = "Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyDocAsXml"
@@ -98,6 +100,12 @@
          defaultHandler = "Syntactik.MonoDevelop.Commands.PasteXmlHandler"
          shortcut = "Control|Shift|V"
          _label = "Paste XML"
+         icon = "gtk-paste"/>
+      <Command id = "Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteSyntactik"
+         defaultHandler = "Syntactik.MonoDevelop.Commands.PasteSyntactikHandler"
+         shortcut = "Control|Alt|V"
+         macShortcut = "Shift|Meta|V"
+         _label = "Paste Syntactik Fragment"
          icon = "gtk-paste"/>
     </Category>
   </Extension>
@@ -114,6 +122,7 @@
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyAsXml" insertafter="MonoDevelop.Ide.Commands.EditCommands.Copy" />
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyDocAsXml" />
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteXml"  insertafter="MonoDevelop.Ide.Commands.EditCommands.Paste" />
+    <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteSyntactik" />
   </Extension>
 
   <Extension path = "/MonoDevelop/SourceEditor2/ContextMenu/Editor">
@@ -121,6 +130,7 @@
       <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyAsXml" insertafter="MonoDevelop.Ide.Commands.EditCommands.Copy" />
       <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyDocAsXml" />
       <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteXml"  insertafter="MonoDevelop.Ide.Commands.EditCommands.Paste" />
+      <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteSyntactik" />
     </Condition>
   </Extension>
 

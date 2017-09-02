@@ -23,7 +23,7 @@ namespace Syntactik.MonoDevelop.Commands
         {
             var textEditor = IdeApp.Workbench.ActiveDocument?.Editor;
             if (textEditor == null) return;
-            textEditor.EnsureCaretIsNotVirtual();
+            
             var document = IdeApp.Workbench.ActiveDocument;
             var project = document.Project as SyntactikProject;
             var module = document?.ParsedDocument?.Ast as Module;
@@ -91,6 +91,7 @@ namespace Syntactik.MonoDevelop.Commands
             {
                 using (textEditor.OpenUndoGroup())
                 {
+                    textEditor.EnsureCaretIsNotVirtual();
                     AddMissingNamespaces(declaredNamespaces, namespaces, ext);
                     textEditor.InsertAtCaret(s4x);
                 }
@@ -110,7 +111,7 @@ namespace Syntactik.MonoDevelop.Commands
             }
         }
 
-        private ListDictionary GetDeclaredNamespaces(CompilerContext context)
+        internal static ListDictionary GetDeclaredNamespaces(CompilerContext context)
         {
             var result = new ListDictionary();
             var module = context.CompileUnit.Modules[0];
@@ -129,7 +130,7 @@ namespace Syntactik.MonoDevelop.Commands
             return result;
         }
 
-        private void AddNsDefToListDict(ListDictionary result, NamespaceDefinition nsDef)
+        private static void AddNsDefToListDict(ListDictionary result, NamespaceDefinition nsDef)
         {
             foreach (var item in result)
             {
@@ -148,7 +149,7 @@ namespace Syntactik.MonoDevelop.Commands
             result.Add(nsDef.Name, nsDef.Value);
         }
 
-        private void GetIndentInfo(Module module, TextEditor textEditor, out char indentSymbol,
+        internal static void GetIndentInfo(Module module, TextEditor textEditor, out char indentSymbol,
             out int indentMultiplicity)
         {
             indentSymbol = module.IndentSymbol;

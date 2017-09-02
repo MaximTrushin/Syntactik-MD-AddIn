@@ -545,14 +545,14 @@ namespace Syntactik.MonoDevelop.Completion
         {
             var startLine = Editor.GetLineByOffset(segment.Offset);
             //prefix is beginning of the line before selection segment
-            var prefix = Editor.GetTextAt(new TextSegment(startLine.Offset, segment.Offset - startLine.Offset));
-            var indent = prefix.Length - prefix.TrimStart().Length;
+            var line = Editor.GetLineText(startLine);
+            var indent = line.Length - line.TrimStart().Length;
             var result = new List<byte>();
             var doc = DocumentContext.ParsedDocument as SyntactikParsedDocument;
             var module = doc?.Ast as Module;
             if (module != null)
             {
-                result.AddRange(BitConverter.GetBytes(indent / (module.IndentMultiplicity == 0 ? 1 : module.IndentMultiplicity)));
+                result.AddRange(BitConverter.GetBytes(indent));
                 result.AddRange(BitConverter.GetBytes(module.IndentMultiplicity == 0 ? 1 : module.IndentMultiplicity));
                 result.AddRange(BitConverter.GetBytes(module.IndentSymbol == 0 ? '\t' : module.IndentSymbol));
             }
