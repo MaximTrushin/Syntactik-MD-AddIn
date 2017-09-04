@@ -33,9 +33,10 @@ namespace Syntactik.MonoDevelop.Completion
             if (!prefix.EndsWith("."))
             {
                 var pos = prefix.LastIndexOf(".", StringComparison.Ordinal);
-                prefix = pos > 0 ? prefix.Substring(0, pos + 1) : string.Empty;
                 if (pos > 0)
-                    editorCompletionContext.TriggerWordLength = prefix.Length - pos;
+                    editorCompletionContext.TriggerWordLength = prefix.Length - (pos + 1);
+                prefix = pos > 0 ? prefix.Substring(0, pos + 1) : string.Empty;
+
             }
             else
             {

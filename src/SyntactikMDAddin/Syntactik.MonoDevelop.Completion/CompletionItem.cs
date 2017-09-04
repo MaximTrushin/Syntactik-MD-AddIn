@@ -37,8 +37,11 @@ namespace Syntactik.MonoDevelop.Completion
         {
             ((SyntactikCompletionTextEditorExtension)window.Extension).SelectedCompletionItem = this;
             var editor = window.Extension.Editor;
-            var c = editor.Text[window.CodeCompletionContext.TriggerOffset - 1];
-            if (c == '=') CompletionText = " " + CompletionText;
+            if (window.CodeCompletionContext.TriggerOffset > 0)
+            {
+                var c = editor.Text[window.CodeCompletionContext.TriggerOffset - 1];
+                if (c == '=') CompletionText = " " + CompletionText;
+            }
             base.InsertCompletionText(window, ref ka, descriptor);
         }
 

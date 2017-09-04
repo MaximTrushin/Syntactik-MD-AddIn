@@ -17,6 +17,11 @@ namespace SyntactikMDAddin.Tests
             DoCompletionListTest();
         }
         [Test, RecordedTest]
+        public void Alias3()
+        {
+            DoCompletionListTest();
+        }
+        [Test, RecordedTest]
         public void AliasComplex1()
         {
             DoCompletionListTest();
