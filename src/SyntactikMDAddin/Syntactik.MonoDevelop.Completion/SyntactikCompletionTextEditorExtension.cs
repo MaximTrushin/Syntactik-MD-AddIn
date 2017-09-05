@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Gtk;
 using ICSharpCode.NRefactory.Editor;
-using ICSharpCode.NRefactory.TypeSystem;
 using Mono.TextEditor;
 using MonoDevelop.Components;
 using MonoDevelop.Core;
@@ -29,7 +26,6 @@ using Document = Syntactik.DOM.Document;
 using ISegment = ICSharpCode.NRefactory.Editor.ISegment;
 using ITextSourceVersion = MonoDevelop.Core.Text.ITextSourceVersion;
 using Module = Syntactik.DOM.Module;
-using TextSegment = MonoDevelop.Core.Text.TextSegment;
 
 namespace Syntactik.MonoDevelop.Completion
 {
@@ -70,6 +66,8 @@ namespace Syntactik.MonoDevelop.Completion
             return ret;
         }
 
+
+        CancellationTokenSource _completionTokenSrc;
         /// <summary>
         /// This method is called when completion command is executed (Ctrl+Space).
         /// </summary>
@@ -77,9 +75,36 @@ namespace Syntactik.MonoDevelop.Completion
         /// <returns></returns>
         public override Task<ICompletionDataList> CodeCompletionCommand(CodeCompletionContext completionContext)
         {
-            Editor.EnsureCaretIsNotVirtual();
-            var pos = completionContext.TriggerOffset;
-            return pos < 0 ? null : HandleCodeCompletion(completionContext, true, default(CancellationToken), 0, (char) 0);
+            CancellationToken token;
+            CancellationTokenSource src;
+            lock (_syncLock)
+            {
+                _completionTokenSrc?.Cancel();
+                _completionTokenSrc?.Dispose();
+                src = _completionTokenSrc = new CancellationTokenSource();
+                token = _completionTokenSrc.Token;
+            }
+            try
+            {
+                //Editor.EnsureCaretIsNotVirtual();
+                var pos = completionContext.TriggerOffset;
+                return pos < 0 ? null : HandleCodeCompletion(completionContext, true, token, 0, (char) 0);
+            }
+            catch (TaskCanceledException)
+            {
+            }
+            catch (AggregateException)
+            {
+            }
+            finally
+            {
+                lock (_syncLock)
+                {
+                    if (_completionTokenSrc == src) _completionTokenSrc = null;
+                    src.Dispose();
+                }
+            }
+            return null;
         }
 
         /// <summary>
@@ -92,7 +117,6 @@ namespace Syntactik.MonoDevelop.Completion
         public override async Task<ICompletionDataList> HandleCodeCompletionAsync(CodeCompletionContext completionContext,
             char completionChar, CancellationToken token = default(CancellationToken))
         {
-            Editor.EnsureCaretIsNotVirtual();
             int pos = completionContext.TriggerOffset;
             char ch = completionContext.TriggerOffset > 0 ? Editor.GetCharAt(completionContext.TriggerOffset - 1) : '\0';
 
@@ -148,8 +172,11 @@ namespace Syntactik.MonoDevelop.Completion
                 if (_completionContextTask != null)
                 {
                     if (_completionContextTask.Version.BelongsToSameDocumentAs(version) &&
-                    _completionContextTask.Version.CompareAge(version) == 0 && _completionContextTask.Offset == caretOffset)
+                        _completionContextTask.Version.CompareAge(version) == 0 &&
+                        _completionContextTask.Offset == caretOffset)
+                    {
                         return _completionContextTask.Task;
+                    }
                 }
                 _completionContextTask = new CompletionContextTask (Task.Run(
                     () => CompletionContext.CreateCompletionContext(fileName, text, caretOffset, getAliasDefinitionList, token), token
@@ -166,7 +193,7 @@ namespace Syntactik.MonoDevelop.Completion
         {
             
             var schemaInfo = schemasRepository.GetContextInfo(new Context { CompletionInfo = context });
-            var completionList = new CompletionDataList {TriggerWordLength = triggerWordLength};
+            var completionList = new CompletionDataList {TriggerWordLength = editorCompletionContext.TriggerWordLength };
             foreach (var expectation in context.Expectations)
             {
                 switch (expectation)
@@ -321,31 +348,63 @@ namespace Syntactik.MonoDevelop.Completion
             return result;
         }
 
+
+        CancellationTokenSource _completionCommandOffsetTokenSrc;
         // return false if completion can't be shown
         public override bool GetCompletionCommandOffset(out int cpos, out int wlen)
         {
-            Editor.EnsureCaretIsNotVirtual();
-
-            int pos = Editor.CaretOffset - 1;
-            while (pos >= 0)
+            cpos = Editor.CaretOffset;
+            wlen = 0;
+            CancellationToken token;
+            CancellationTokenSource src;
+            lock (_syncLock)
             {
-                char c = Editor.GetCharAt(pos);
-                if (!IsCompletionChar(c))
-                    break;
-                pos--;
+                _completionCommandOffsetTokenSrc?.Cancel();
+                _completionCommandOffsetTokenSrc?.Dispose();
+                src = _completionCommandOffsetTokenSrc = new CancellationTokenSource();
+                token = _completionCommandOffsetTokenSrc.Token;
             }
-            pos++;
-            cpos = pos;
-            int len = Editor.Length;
-
-            while (pos < len)
+            try
             {
-                char c = Editor.GetCharAt(pos);
-                if (!IsCompletionChar(c))
-                    break;
-                pos++;
+                var task = GetCompletionContextAsync(token, Editor.Version, Editor.CaretOffset,
+                    Editor.FileName, Editor.Text, ((SyntactikProject)DocumentContext.Project).GetAliasDefinitionList);
+#if DEBUG
+                task.Wait(token);
+#else
+                task.Wait(2000, token);
+#endif
+                if (task.Status != TaskStatus.RanToCompletion) return false;
+                CompletionContext context = task.Result;
+                var pair = context.LastPair as IMappedPair;
+                if (pair?.ValueInterval != null && pair.ValueInterval != Interval.Empty && pair.ValueInterval.Begin.Index <= cpos)
+                {
+                    wlen = cpos - pair.ValueInterval.Begin.Index;
+                    cpos = pair.ValueInterval.Begin.Index;
+                    return true;
+                }
+                if (pair?.DelimiterInterval != null) return true;
+
+                if (pair != null)
+                {
+                    wlen = cpos - pair.NameInterval.Begin.Index;
+                    cpos = pair.NameInterval.Begin.Index;
+                }
+                return true;
             }
-            wlen = pos - cpos;
+            catch (TaskCanceledException)
+            {
+            }
+            catch (AggregateException)
+            {
+            }
+            finally
+            {
+                lock (_syncLock)
+                {
+                    if (_completionCommandOffsetTokenSrc == src) _completionCommandOffsetTokenSrc = null;
+                    src.Dispose();
+                }
+            }
             return true;
         }
 
@@ -364,23 +423,6 @@ namespace Syntactik.MonoDevelop.Completion
                 Goto(_currentPath[index].Tag as Pair);
             };
             menu.Add(mi);
-            //mi.Activated += delegate
-            //{
-            //    SelectPath(index);
-            //};
-            //menu.Add(mi);
-            //mi = new MenuItem("Select Content");
-            //mi.Activated += delegate
-            //{
-            //    SelectContent(index);
-            //};
-            //menu.Add(mi);
-            //mi = new MenuItem("Select Next Node");
-            //mi.Activated += delegate
-            //{
-            //    SelectNextNode(index);
-            //};
-            //menu.Add(mi);
             menu.ShowAll();
             return menu;
         }
@@ -399,21 +441,6 @@ namespace Syntactik.MonoDevelop.Completion
             return pair.ValueInterval.Begin;
         }
 
-        //private void SelectNextNode(int index)
-        //{
-            
-        //}
-
-        //private void SelectContent(int index)
-        //{
-            
-        //}
-
-        //private void SelectPath(int index)
-        //{
-
-        //}
-
         public PathEntry[] CurrentPath => _currentPath;
         protected internal CompletionItem SelectedCompletionItem { get; internal set; }
 
@@ -429,7 +456,8 @@ namespace Syntactik.MonoDevelop.Completion
                 return;
             _pathUpdateQueued = true;
             var editor = Editor;
-            editor.EnsureCaretIsNotVirtual();
+            editor.EnsureCaretIsNotVirtual(); //TODO: To find how to parse completion context with virtual caret.
+            
             GLib.Timeout.Add(UpdatePathInterval, delegate
                 {
                     _pathUpdateQueued = false;

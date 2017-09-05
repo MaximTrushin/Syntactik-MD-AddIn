@@ -211,7 +211,7 @@ namespace Syntactik.MonoDevelop.Completion
             {
                 if (ns.Prefix == "xml")
                     continue;
-                var data = completionList.Add($" = {ns.Namespace}", SyntactikIcons.NamespaceDefinition, "", ns.Namespace);
+                var data = completionList.Add(ns.Namespace, SyntactikIcons.NamespaceDefinition, "", ns.Namespace);
                 data.CompletionCategory = category;
             }
             AdjustEditorCompletionContext(editorCompletionContext, ((IMappedPair) context.LastPair).ValueInterval);
@@ -254,6 +254,8 @@ namespace Syntactik.MonoDevelop.Completion
         {
             var attribute = context.LastPair as DOM.Attribute;
             if (attribute?.Name != "type" || attribute.NsPrefix != "xsi") return;
+            if (attribute.ValueInterval != null && attribute.ValueInterval != Interval.Empty)
+                editorCompletionContext.TriggerWordLength = attribute.ValueInterval.End.Index - attribute.ValueInterval.Begin.Index + 1 - (attribute.ValueQuotesType == 0?0:1);
             var category = new SyntactikCompletionCategory { DisplayText = "Values", Icon = SyntactikIcons.Enum };
             if (schemaInfo.Scope != null)
             {
