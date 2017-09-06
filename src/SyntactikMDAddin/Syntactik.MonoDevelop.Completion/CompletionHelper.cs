@@ -41,6 +41,7 @@ namespace Syntactik.MonoDevelop.Completion
             else
             {
                 editorCompletionContext.TriggerWordLength = 0;
+                completionList.TriggerWordLength = 0;
             }
 
             var grouped = aliases.Where(a => a.ToLower().StartsWith(prefix.ToLower())).Select(a => NameElement(a, prefix)).Distinct();
@@ -214,7 +215,6 @@ namespace Syntactik.MonoDevelop.Completion
                 var data = completionList.Add(ns.Namespace, SyntactikIcons.NamespaceDefinition, "", ns.Namespace);
                 data.CompletionCategory = category;
             }
-            AdjustEditorCompletionContext(editorCompletionContext, ((IMappedPair) context.LastPair).ValueInterval);
         }
 
         public static void DoAttributeValueCompletion(CompletionDataList completionList, CompletionContext context,

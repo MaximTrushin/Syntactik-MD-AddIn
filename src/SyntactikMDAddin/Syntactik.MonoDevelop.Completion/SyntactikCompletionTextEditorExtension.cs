@@ -86,7 +86,7 @@ namespace Syntactik.MonoDevelop.Completion
             }
             try
             {
-                //Editor.EnsureCaretIsNotVirtual();
+                Editor.EnsureCaretIsNotVirtual();
                 var pos = completionContext.TriggerOffset;
                 return pos < 0 ? null : HandleCodeCompletion(completionContext, true, token, 0, (char) 0);
             }
@@ -353,6 +353,7 @@ namespace Syntactik.MonoDevelop.Completion
         // return false if completion can't be shown
         public override bool GetCompletionCommandOffset(out int cpos, out int wlen)
         {
+            Editor.EnsureCaretIsNotVirtual();
             cpos = Editor.CaretOffset;
             wlen = 0;
             CancellationToken token;
@@ -373,7 +374,8 @@ namespace Syntactik.MonoDevelop.Completion
 #else
                 task.Wait(2000, token);
 #endif
-                if (task.Status != TaskStatus.RanToCompletion) return false;
+                if (task.Status != TaskStatus.RanToCompletion)
+                    return false;
                 CompletionContext context = task.Result;
                 var pair = context.LastPair as IMappedPair;
                 if (pair?.ValueInterval != null && pair.ValueInterval != Interval.Empty && pair.ValueInterval.Begin.Index <= cpos)
