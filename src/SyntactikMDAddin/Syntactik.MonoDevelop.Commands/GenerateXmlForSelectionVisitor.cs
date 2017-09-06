@@ -83,7 +83,7 @@ namespace Syntactik.MonoDevelop.Commands
 
         private bool IsInSelection(IMappedPair pair, ISegment selectionRange)
         {
-            if (AliasContext.Count > 1) return true;
+            if (AliasContext.Count > 0) return true;
 
             if (pair == null) return false;
 
@@ -126,6 +126,7 @@ namespace Syntactik.MonoDevelop.Commands
             else
             {
                 Visit(alias.Entities);
+                Visit(alias.Arguments);
             }
         }
 
