@@ -49,11 +49,15 @@ namespace Syntactik.MonoDevelop.Commands
                 CompletionContext context = task.Result;
                 PasteXmlHandler.GetIndentInfo(module, textEditor, out indentChar, out indentMultiplicity);
                 var lastPair = context.LastPair as IMappedPair;
-                if (lastPair == null) return;
+                
 
                 var caretLine = textEditor.CaretLine;
+                if (lastPair == null)
+                {
+                    //module
 
-                if (lastPair.ValueInterval != null) //TODO: Create unit tests
+                }
+                else if (lastPair.ValueInterval != null) //TODO: Create unit tests
                 {
                     if (caretLine == lastPair.ValueInterval.End.Line)
                     {
@@ -146,14 +150,20 @@ namespace Syntactik.MonoDevelop.Commands
             info.Visible = doc.FileName.Extension.ToLower() == ".s4x";
 
             if (!info.Visible) return;
-            bool inWpf = false;
 #if WIN32
+            bool inWpf = false;
 			if (System.Windows.Input.Keyboard.FocusedElement != null)
 				inWpf = true;
 #endif
             var handler = doc.GetContent<IClipboardHandler>();
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            if (!inWpf && handler != null && handler.EnablePaste)
+            var clipboard = Gtk.Clipboard.Get(Gdk.Atom.Intern("CLIPBOARD", false));
+#if WIN32
+            if (!inWpf && handler != null && handler.EnablePaste &&
+#else
+            if (handler != null && handler.EnablePaste &&
+#endif
+                clipboard.WaitIsTargetAvailable(ClipboardActions.CopyOperation.MD_ATOM))
                 info.Enabled = true;
             else
                 info.Bypass = true;
