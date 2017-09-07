@@ -71,6 +71,7 @@ namespace Syntactik.MonoDevelop.Projects
 
         protected override void OnInitializeFromTemplate(ProjectCreateInformation projectCreateInfo, XmlElement template)
         {
+            base.OnInitializeFromTemplate(projectCreateInfo, template);
             Configurations.Add(CreateConfiguration("Default"));
         }
 
@@ -111,7 +112,6 @@ namespace Syntactik.MonoDevelop.Projects
             {
                 ParseProjectFile(file);
             }
-
         }
 
         protected override string[] OnGetSupportedLanguages()
