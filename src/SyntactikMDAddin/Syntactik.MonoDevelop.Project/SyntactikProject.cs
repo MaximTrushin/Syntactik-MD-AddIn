@@ -169,17 +169,7 @@ namespace Syntactik.MonoDevelop.Projects
                         );
                     if (!parseOnly)
                     {
-                        var modules = new PairCollection<Module>();
-                        foreach (var item in CompileInfo)
-                        {
-                            modules.Add((Module) item.Value.Document.Ast);
-                        }
-                        compilerParameters = CreateValidationOnlyCompilerParameters(); //TODO: Use cancellation token
-                        compiler = new SyntactikCompiler(compilerParameters);
-                        context = compiler.Run(new CompileUnit {Modules = modules});
-                        CleanNonParserErrors();
-                        AddValidationError(context.Errors);
-                        CompilerContext = context;
+                        CompilerContext = ValidateModules(CompileInfo);
                     }
                 }
                 return Task.FromResult(result);
@@ -191,21 +181,36 @@ namespace Syntactik.MonoDevelop.Projects
             }
         }
 
-        private void AddValidationError(SortedSet<CompilerError> errors)
+        private static CompilerContext ValidateModules(Dictionary<string, ParseInfo> compileInfo)
+        {
+            var modules = new PairCollection<Module>();
+            foreach (var item in compileInfo)
+            {
+                modules.Add((Module) item.Value.Document.Ast);
+            }
+            var compilerParameters = CreateValidationOnlyCompilerParameters();
+            var compiler = new SyntactikCompiler(compilerParameters);
+            var context = compiler.Run(new CompileUnit {Modules = modules});
+            CleanNonParserErrors(compileInfo);
+            AddValidationError(context.Errors, compileInfo);
+            return context;
+        }
+
+        private static void AddValidationError(SortedSet<CompilerError> errors, Dictionary<string, ParseInfo> compileInfo)
         {
             foreach (var error in errors)
             {
                 ParseInfo info;
-                if (CompileInfo.TryGetValue(error.LexicalInfo.FileName, out info))
+                if (compileInfo.TryGetValue(error.LexicalInfo.FileName, out info))
                 {
                     info.Document.Add(error);
                 }
             }
         }
 
-        private void CleanNonParserErrors()
+        private static void CleanNonParserErrors(Dictionary<string, ParseInfo> compileInfo)
         {
-            foreach (var info in CompileInfo)
+            foreach (var info in compileInfo)
             {
                 var errors = new List<Error>();
                 foreach (var error in info.Value.Document.Errors)
@@ -215,7 +220,7 @@ namespace Syntactik.MonoDevelop.Projects
             }
         }
 
-        private bool IsParserError(string errorId)
+        private static bool IsParserError(string errorId)
         {
             return errorId == "MCE0007" || errorId == "MCE0032" || errorId == "MCE0100" || errorId == "MCE0100" //TODO: Add property IsParserError to the error class.
                     || errorId == "MCE0101" || errorId == "MCE0102";
@@ -229,7 +234,7 @@ namespace Syntactik.MonoDevelop.Projects
             return compilerParameters;
         }
 
-        private CompilerParameters CreateValidationOnlyCompilerParameters()
+        private static CompilerParameters CreateValidationOnlyCompilerParameters()
         {
             var compilerParameters = new CompilerParameters { Pipeline = new CompilerPipeline() };
             compilerParameters.Pipeline.Steps.Add(new ProcessAliasesAndNamespaces());
@@ -267,6 +272,7 @@ namespace Syntactik.MonoDevelop.Projects
                     CompileInfo.Remove(file.ProjectFile.FilePath);
                 }
             }
+            CompilerContext = ValidateModules(CompileInfo);
         }
 
         protected override void OnFileRenamedInProject(ProjectFileRenamedEventArgs e)
@@ -278,7 +284,10 @@ namespace Syntactik.MonoDevelop.Projects
                 {
                     CompileInfo.Remove(file.OldName);
                 }
+                this.ParseProjectFile(file.NewName);
             }
+            CompilerContext = ValidateModules(CompileInfo);
+            
         }
 
         protected override Task<BuildResult> DoBuild(ProgressMonitor monitor, ConfigurationSelector configuration)
