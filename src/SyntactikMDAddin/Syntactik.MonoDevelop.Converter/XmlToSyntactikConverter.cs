@@ -246,9 +246,10 @@ namespace Syntactik.MonoDevelop.Converter
 
         private void WriteValue(string s)
         {
-            var conv = EncodeValue(s);
+            bool escapeSymbolsFound;
+            var conv = EncodeValue(s, out escapeSymbolsFound);
 
-            if (s.Length != conv.Length || s.StartsWith(" ") || s.EndsWith(" "))
+            if (escapeSymbolsFound || s.StartsWith(" ") || s.EndsWith(" "))
             {
                 _sb.Append(" == '");
                 _sb.Append(conv);
@@ -362,8 +363,9 @@ namespace Syntactik.MonoDevelop.Converter
 
         public bool FirstNodeInBlock => _elementStack.Count > 0 && _elementStack.Peek().BlockCounter == 0;
 
-        public static string EncodeValue(string s)
+        public static string EncodeValue(string s, out bool escapeSymbolsFound)
         {
+            escapeSymbolsFound = false;
             if (string.IsNullOrEmpty(s)) return "";
             int i;
             var len = s.Length;
@@ -374,35 +376,38 @@ namespace Syntactik.MonoDevelop.Converter
                 var c = s[i];
                 switch (c)
                 {
-                    case '\\':
                     case '\'':
-                        sb.Append('\\');
-                        sb.Append(c);
-                        break;
+                    case '\\':
                     case '/':
                         sb.Append('\\');
                         sb.Append(c);
                         break;
                     case '\b':
                         sb.Append("\\b");
+                        escapeSymbolsFound = true;
                         break;
                     case '\t':
                         sb.Append("\\t");
+                        escapeSymbolsFound = true;
                         break;
                     case '\n':
                         sb.Append("\\n");
+                        escapeSymbolsFound = true;
                         break;
                     case '\f':
                         sb.Append("\\f");
+                        escapeSymbolsFound = true;
                         break;
                     case '\r':
                         sb.Append("\\r");
+                        escapeSymbolsFound = true;
                         break;
                     default:
                         if (c < ' ')
                         {
                             var t = "000" + $"{System.Convert.ToInt32(c):X}";
                             sb.Append("\\u" + t.Substring(t.Length - 4));
+                            escapeSymbolsFound = true;
                         }
                         else
                         {
