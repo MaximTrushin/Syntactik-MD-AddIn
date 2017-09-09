@@ -52,7 +52,6 @@ namespace Syntactik.MonoDevelop.Projects
             //Preventing setting of brakepoints in files of Syntactik project.
             var breakpoints = DebuggingService.Breakpoints;
             breakpoints.CheckingReadOnly += BreakpointsOnCheckingReadOnly;
-            SchemasRepository = new SchemasRepository(this);
         }
 
         protected override void OnDispose()
@@ -265,29 +264,51 @@ namespace Syntactik.MonoDevelop.Projects
         protected override void OnFileRemovedFromProject(ProjectFileEventArgs e)
         {
             base.OnFileRemovedFromProject(e);
+            var sourceFileRemoved = false;
             foreach (var file in e)
             {
+                if (file.ProjectFile.FilePath.IsDirectory) continue;
+                sourceFileRemoved = true;
                 lock (_syncRoot)
                 {
                     CompileInfo.Remove(file.ProjectFile.FilePath);
                 }
             }
-            CompilerContext = ValidateModules(CompileInfo);
+            if (sourceFileRemoved)
+                CompilerContext = ValidateModules(CompileInfo);
         }
 
         protected override void OnFileRenamedInProject(ProjectFileRenamedEventArgs e)
         {
             base.OnFileRenamedInProject(e);
+            var sourceFileRenamed = false;
             foreach (var file in e)
             {
                 lock (_syncRoot)
                 {
                     CompileInfo.Remove(file.OldName);
                 }
-                this.ParseProjectFile(file.NewName);
+                if (file.NewName.IsDirectory) continue;
+                ParseProjectFile(file.NewName);
+                sourceFileRenamed = true;
             }
-            CompilerContext = ValidateModules(CompileInfo);
+            if (sourceFileRenamed)
+                CompilerContext = ValidateModules(CompileInfo);
             
+        }
+
+        protected override void OnFileAddedToProject(ProjectFileEventArgs e)
+        {
+            base.OnFileAddedToProject(e);
+            var schemasAdded = false;
+            foreach (var file in e)
+            {
+                if (file.ProjectFile.ProjectVirtualPath.ParentDirectory.FileName == "Schemas")
+                    schemasAdded = true;
+                
+            }
+            if (schemasAdded)
+                SchemasRepository = new SchemasRepository(this);
         }
 
         protected override Task<BuildResult> DoBuild(ProgressMonitor monitor, ConfigurationSelector configuration)
