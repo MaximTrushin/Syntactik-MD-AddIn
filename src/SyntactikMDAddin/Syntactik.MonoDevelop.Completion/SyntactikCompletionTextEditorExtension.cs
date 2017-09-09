@@ -40,7 +40,6 @@ namespace Syntactik.MonoDevelop.Completion
         protected override void Initialize()
         {
             base.Initialize();
-            CompletionWindowManager.WordCompleted += CompletionWindowManager_WordCompleted;
             Editor.CaretPositionChanged += HandleCaretPositionChanged;
             var data = DocumentContext.GetContent<TextEditorData>();
             data.TextPasteHandler = this;
@@ -49,7 +48,6 @@ namespace Syntactik.MonoDevelop.Completion
         public override void Dispose()
         {
             Editor.CaretPositionChanged -= HandleCaretPositionChanged;
-            CompletionWindowManager.WordCompleted -= CompletionWindowManager_WordCompleted;
             base.Dispose();
         }
 
@@ -256,18 +254,25 @@ namespace Syntactik.MonoDevelop.Completion
             }
         }
 
-        private void CompletionWindowManager_WordCompleted(object sender, CodeCompletionContextEventArgs e)
+        internal void CompletionWindowManager_WordCompleted(object sender, CodeCompletionContextEventArgs e)
         {
-            if (SelectedCompletionItem == null)
-                return;
-            if (SelectedCompletionItem.UndeclaredNamespaceUsed)
+            try
             {
-                using (Editor.OpenUndoGroup())
+                if (SelectedCompletionItem == null)
+                    return;
+                if (SelectedCompletionItem.UndeclaredNamespaceUsed)
                 {
-                    AddNewNamespaceToModule(SelectedCompletionItem.NsPrefix, SelectedCompletionItem.Namespace);
+                    using (Editor.OpenUndoGroup())
+                    {
+                        AddNewNamespaceToModule(SelectedCompletionItem.NsPrefix, SelectedCompletionItem.Namespace);
+                    }
                 }
+                AddXsiTypeAttribute();
             }
-            AddXsiTypeAttribute();
+            finally
+            {
+                CompletionWindowManager.WordCompleted -= CompletionWindowManager_WordCompleted;
+            }
         }
 
         private void AddXsiTypeAttribute()

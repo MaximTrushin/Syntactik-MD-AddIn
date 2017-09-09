@@ -1,5 +1,4 @@
-﻿using MonoDevelop.Components.Chart;
-using MonoDevelop.Ide.CodeCompletion;
+﻿using MonoDevelop.Ide.CodeCompletion;
 using MonoDevelop.Ide.Editor.Extension;
 using Syntactik.DOM;
 using Syntactik.MonoDevelop.Schemas;
@@ -42,6 +41,7 @@ namespace Syntactik.MonoDevelop.Completion
                 var c = editor.Text[window.CodeCompletionContext.TriggerOffset - 1];
                 if (c == '=') CompletionText = " " + CompletionText;
             }
+            CompletionWindowManager.WordCompleted += ((SyntactikCompletionTextEditorExtension)window.Extension).CompletionWindowManager_WordCompleted;
             base.InsertCompletionText(window, ref ka, descriptor);
         }
 
