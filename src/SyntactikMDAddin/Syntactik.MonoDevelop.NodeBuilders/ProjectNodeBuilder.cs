@@ -37,33 +37,8 @@ namespace Syntactik.MonoDevelop.NodeBuilders
             {
                 if (treeBuilder.DataItem is SchemaFolder)
                     continue;
-                if (IsHiddenItem(treeBuilder.DataItem))
-                {
-                    treeBuilder.Remove();
-                    move = true;
-                }
-                else
-                    move = treeBuilder.MoveNext();
+                move = treeBuilder.MoveNext();
             } while (move);
-        }
-
-        private bool IsHiddenItem(object dataItem)
-        {
-            var folder = dataItem as ProjectFolder;
-            return folder != null && folder.Name == "Schemas";
-        }
-
-        public override int CompareObjects(ITreeNavigator thisNode, ITreeNavigator otherNode)
-        {
-            int a = 0;
-            int b = 0;
-            a = thisNode.NodeName == "Reference" ? 1 : a;
-            a = thisNode.NodeName == "Schemas" ? 2 : a;
-            a = thisNode.NodeName == "Fixtures" ? 3 : a;
-            b = thisNode.NodeName == "Reference" ? 1 : b;
-            b = thisNode.NodeName == "Schemas" ? 2 : b;
-            b = thisNode.NodeName == "Fixtures" ? 3 : b;
-            return a - b;
         }
     }
 }
