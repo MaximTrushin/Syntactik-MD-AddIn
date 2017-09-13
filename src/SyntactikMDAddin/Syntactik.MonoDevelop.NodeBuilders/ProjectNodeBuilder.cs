@@ -37,8 +37,18 @@ namespace Syntactik.MonoDevelop.NodeBuilders
             {
                 if (treeBuilder.DataItem is SchemaFolder)
                     continue;
+                if (IsHiddenItem(treeBuilder.DataItem))
+                {
+                    treeBuilder.Remove();
+                }
                 move = treeBuilder.MoveNext();
             } while (move);
+        }
+
+        private bool IsHiddenItem(object dataItem)
+        {
+            var folder = dataItem as ProjectFolder;
+            return folder != null && folder.Name == "Schemas";
         }
     }
 }
