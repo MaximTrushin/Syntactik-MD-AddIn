@@ -1,0 +1,18 @@
+﻿el1 == "multiline
+	double quoted
+	string"
+el:
+	el2 == 'multiline
+		single quoted
+		string'
+
+el3 == multiline
+	open
+	string
+el:
+	el3 = multiline
+		free open
+		string
+	el
+el2 == line1
+	line2 ''' not a comment 

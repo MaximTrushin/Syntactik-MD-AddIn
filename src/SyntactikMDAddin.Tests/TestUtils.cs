@@ -38,6 +38,15 @@ namespace SyntactikMDAddin.Tests
             if (IsRecordedTest() || IsRecordTest())
                 CompareResultAndRecordedFiles(markup, IsRecordTest(), "html");
         }
+        public static void DoJsonHighlightingTest()
+        {
+            var input = PrintTestScenario(".s4j");
+
+            string markup = GetMarkup(input, "text/x-syntactik4json");
+
+            if (IsRecordedTest() || IsRecordTest())
+                CompareResultAndRecordedFiles(markup, IsRecordTest(), "html");
+        }
 
         public static void DoCompletionExpectationsTest()
         {
@@ -168,18 +177,18 @@ namespace SyntactikMDAddin.Tests
             return compilerParameters;
         }
 
-        public static string GetMarkup(string input)
+        public static string GetMarkup(string input, string mimeType = "text/x-syntactik4xml")
         {
-            var data = new TextEditorData(new TextDocument(input));
+            var doc = new TextDocument(input) {MimeType = mimeType};
+            var data = new TextEditorData(doc);
             var syntaxMode = new SyntactikSyntaxMode(data.Document);
-            data.Document.MimeType = "text/x-syntactik4xml";
+            data.Document.MimeType = mimeType;
             data.Document.SyntaxMode = syntaxMode;
             var schema = ColorScheme.LoadFrom(File.OpenRead(Path.Combine(AssemblyDirectory, "SyntactikColorSchema.json")));
             SyntaxModeService.AddStyle(schema);
             data.ColorStyle = SyntaxModeService.GetColorStyle("Syntactik");
             return "<span>&nbsp;</span>" + data.GetMarkup(0, data.Length, false).Replace("foreground=\"", "style=\"color:").Replace("\r\n", "<br><span>&nbsp;</span>").Replace("\n", "<br><span>&nbsp;</span>");
         }
-
 
         /// <summary>
         /// Record result file or compare it with previously recorded result

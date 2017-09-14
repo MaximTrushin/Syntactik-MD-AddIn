@@ -246,7 +246,25 @@
     <None Include="Scenarios\CompletionList\AliasWithArguments1.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Scenarios\SyntaxHighlighting\AliasDefJson.s4j">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scenarios\SyntaxHighlighting\AliasJson.s4j">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scenarios\SyntaxHighlighting\ArgumentsJson2.s4j">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scenarios\SyntaxHighlighting\ArgumentsJson.s4j">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Scenarios\SyntaxHighlighting\Arguments2.s4x">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scenarios\SyntaxHighlighting\AttributeJson.s4j">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scenarios\SyntaxHighlighting\AttributeNoDelimiterJson.s4j">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Scenarios\SyntaxHighlighting\AttributeNoDelimiter.s4x">
@@ -261,7 +279,28 @@
     <None Include="Scenarios\SyntaxHighlighting\AliasDef.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Scenarios\SyntaxHighlighting\CommentsInWsaJson.s4j">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Scenarios\SyntaxHighlighting\CommentsInWsa.s4x">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scenarios\SyntaxHighlighting\DocumentJson.s4j">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scenarios\SyntaxHighlighting\DQNameJson.s4j">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scenarios\SyntaxHighlighting\FreeOpenString.s4x">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scenarios\SyntaxHighlighting\MultilineCommentJson.s4j">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scenarios\SyntaxHighlighting\MultilineStringsJson.s4j">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scenarios\SyntaxHighlighting\NsDefAndScopeJson.s4j">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Scenarios\SyntaxHighlighting\NsDefAndScope.s4x">
@@ -270,7 +309,22 @@
     <None Include="Scenarios\SyntaxHighlighting\MultilineStrings.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Scenarios\SyntaxHighlighting\OpenNameJson.s4j">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scenarios\SyntaxHighlighting\OpenStringJson.s4j">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scenarios\SyntaxHighlighting\SQEscapesJson.s4j">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Scenarios\SyntaxHighlighting\SQEscapes.s4x">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scenarios\SyntaxHighlighting\SQNameJson.s4j">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scenarios\SyntaxHighlighting\WsaJson.s4j">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Scenarios\SyntaxHighlighting\Wsa.s4x">
@@ -288,7 +342,7 @@
     <None Include="Scenarios\SyntaxHighlighting\OpenString.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Scenarios\SyntaxHighlighting\FreeOpenString.s4x">
+    <None Include="Scenarios\SyntaxHighlighting\FreeOpenStringJson.s4j">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Scenarios\SyntaxHighlighting\SQName.s4x">

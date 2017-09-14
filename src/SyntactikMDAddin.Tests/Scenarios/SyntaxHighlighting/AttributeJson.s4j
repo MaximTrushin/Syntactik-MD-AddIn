@@ -1,0 +1,5 @@
+﻿!$Address.UK.Cambridge:
+	@xsi.type = ipo:EU-Address
+
+!$Address.UK.Cambridge:
+	(@xsi.type = "ipo:EU-Address")

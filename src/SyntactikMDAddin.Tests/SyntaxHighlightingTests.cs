@@ -13,17 +13,31 @@ namespace SyntactikMDAddin.Tests
         {
             DoHighlightingTest();
         }
+        [Test, RecordedTest]
+        public void AliasJson()
+        {
+            DoJsonHighlightingTest();
+        }
 
         [Test, RecordedTest]
         public void AliasDef()
         {
             DoHighlightingTest();
         }
-
+        [Test, RecordedTest]
+        public void AliasDefJson()
+        {
+            DoJsonHighlightingTest();
+        }
         [Test, RecordedTest]
         public void Arguments()
         {
             DoHighlightingTest();
+        }
+        [Test, RecordedTest]
+        public void ArgumentsJson()
+        {
+            DoJsonHighlightingTest();
         }
         [Test, RecordedTest]
         public void Arguments2()
@@ -31,19 +45,40 @@ namespace SyntactikMDAddin.Tests
             DoHighlightingTest();
         }
         [Test, RecordedTest]
+        public void ArgumentsJson2()
+        {
+            DoJsonHighlightingTest();
+        }
+        [Test, RecordedTest]
         public void Attribute()
         {
             DoHighlightingTest();
         }
+        [Test, RecordedTest]
+        public void AttributeJson()
+        {
+            DoJsonHighlightingTest();
+        }
+
         [Test, RecordedTest]
         public void AttributeNoDelimiter()
         {
             DoHighlightingTest();
         }
         [Test, RecordedTest]
+        public void AttributeNoDelimiterJson()
+        {
+            DoJsonHighlightingTest();
+        }
+        [Test, RecordedTest]
         public void CommentsInWsa()
         {
             DoHighlightingTest();
+        }
+        [Test, RecordedTest]
+        public void CommentsInWsaJson()
+        {
+            DoJsonHighlightingTest();
         }
 
         [Test, RecordedTest]
@@ -51,38 +86,64 @@ namespace SyntactikMDAddin.Tests
         {
             DoHighlightingTest();
         }
+        [Test, RecordedTest]
+        public void DocumentJson()
+        {
+            DoJsonHighlightingTest();
+        }
 
         [Test, RecordedTest]
         public void DQName()
         {
             DoHighlightingTest();
         }
-
+        [Test, RecordedTest]
+        public void DQNameJson()
+        {
+            DoJsonHighlightingTest();
+        }
         [Test, RecordedTest]
         public void FreeOpenString()
         {
             DoHighlightingTest();
         }
-        
         [Test, RecordedTest]
-        public void MultilineStrings()
+        public void FreeOpenStringJson()
         {
-            DoHighlightingTest();
+            DoJsonHighlightingTest();
         }
-
-
         [Test, RecordedTest]
         public void MultilineComment()
         {
             DoHighlightingTest();
         }
-        
+        [Test, RecordedTest]
+        public void MultilineCommentJson()
+        {
+            DoJsonHighlightingTest();
+        }
+        [Test, RecordedTest]
+        public void MultilineStrings()
+        {
+            DoHighlightingTest();
+        }
+        [Test, RecordedTest]
+        public void MultilineStringsJson()
+        {
+            DoJsonHighlightingTest();
+        }
+
         [Test, RecordedTest]
         public void NsDefAndScope()
         {
             DoHighlightingTest();
         }
 
+        [Test, RecordedTest]
+        public void NsDefAndScopeJson()
+        {
+            DoJsonHighlightingTest();
+        }
 
         [Test, RecordedTest]
         public void OpenName()
@@ -91,28 +152,50 @@ namespace SyntactikMDAddin.Tests
         }
 
         [Test, RecordedTest]
+        public void OpenNameJson()
+        {
+            DoJsonHighlightingTest();
+        }
+
+        [Test, RecordedTest]
         public void OpenString()
         {
             DoHighlightingTest();
         }
-        
+        [Test, RecordedTest]
+        public void OpenStringJson()
+        {
+            DoJsonHighlightingTest();
+        }
         [Test, RecordedTest]
         public void SQEscapes()
         {
             DoHighlightingTest();
         }
-
-
+        [Test, RecordedTest]
+        public void SQEscapesJson()
+        {
+            DoJsonHighlightingTest();
+        }
         [Test, RecordedTest]
         public void SQName()
         {
             DoHighlightingTest();
         }
-
+        [Test, RecordedTest]
+        public void SQNameJson()
+        {
+            DoJsonHighlightingTest();
+        }
         [Test, RecordedTest]
         public void Wsa()
         {
             DoHighlightingTest();
+        }
+        [Test, RecordedTest]
+        public void WsaJson()
+        {
+            DoJsonHighlightingTest();
         }
 
         [Test, RecordedTest]
