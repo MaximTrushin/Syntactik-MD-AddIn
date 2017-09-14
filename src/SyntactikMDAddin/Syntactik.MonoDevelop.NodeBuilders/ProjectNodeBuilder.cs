@@ -11,7 +11,7 @@ namespace Syntactik.MonoDevelop.NodeBuilders
     {
         public override Type CommandHandlerType => typeof(SyntactikCommandHandler);
 
-        public override bool CanBuildNode(Type dataType) => typeof(SyntactikProject).IsAssignableFrom(dataType);
+        public override bool CanBuildNode(Type dataType) => typeof(SyntactikXmlProject).IsAssignableFrom(dataType);
 
         public override void BuildChildNodes(ITreeBuilder treeBuilder, object dataObject)
         {

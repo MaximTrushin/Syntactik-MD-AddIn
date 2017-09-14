@@ -3,6 +3,7 @@
 
   <Extension path = "/MonoDevelop/Ide/ProjectTemplates">
     <ProjectTemplate id = "SyntactikProject" resource = "Syntactik.MonoDevelop.Templates.SyntactikProject.xpt.xml"/>
+    <ProjectTemplate id = "SyntactikJsonProject" resource = "Syntactik.MonoDevelop.Templates.SyntactikJsonProject.xpt.xml"/>
   </Extension>
 
   <Extension path = "/MonoDevelop/ProjectModel/LanguageBindings">
@@ -11,6 +12,11 @@
 		                 singleLineCommentTag = "'''"
 		                 blockCommentStartTag = '"""'
 		                 blockCommentEndTag = '"""' />
+    <LanguageBinding id = "S4J"
+                 extensions = ".s4j"
+                 singleLineCommentTag = "'''"
+                 blockCommentStartTag = '"""'
+                 blockCommentEndTag = '"""' />
   </Extension>
 
   <Extension path="/MonoDevelop/ProjectModel/MSBuildItemTypes">
@@ -19,8 +25,15 @@
         extension="s4xproj"
         guid = "{2857B73E-F847-4B02-9238-064979017E34}"
         alias = "SyntactikProject"
-        type="Syntactik.MonoDevelop.Projects.SyntactikProject"
+        type="Syntactik.MonoDevelop.Projects.SyntactikXmlProject"
         msbuildSupport ="NotSupported "/>
+    <ProjectType
+        language="S4J"
+        extension="s4jproj"
+        guid = "{6FFB6BD7-013B-4643-8085-6A489F7CD7A1}"
+        alias = "SyntactikJsonProject"
+        type="Syntactik.MonoDevelop.Projects.SyntactikJsonProject"
+        msbuildSupport ="NotSupported "/>    
   </Extension>
 
   <Extension path = "/MonoDevelop/Ide/TextEditorExtensions">

@@ -3,7 +3,7 @@
 
   <!-- Template Header -->
   <TemplateConfiguration>
-    <_Name>Syntactik Project</_Name>
+    <_Name>Syntactik XML Project</_Name>
     <Icon>md-project</Icon>
     <_Category>other/misc/general</_Category>    
     <LanguageName>S4X</LanguageName>

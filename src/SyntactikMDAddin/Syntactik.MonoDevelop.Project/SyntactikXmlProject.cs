@@ -17,53 +17,39 @@ using Syntactik.Compiler.Pipelines;
 using Syntactik.Compiler.Steps;
 using Syntactik.DOM;
 using Syntactik.MonoDevelop.Parser;
+using Syntactik.MonoDevelop.Schemas;
 
 namespace Syntactik.MonoDevelop.Projects
 {
     [ProjectModelDataItem]
-    public abstract class SyntactikProject : Project{
-        internal class ParseInfo
-        {
-            public ITextSourceVersion Version;
-            public SyntactikParsedDocument Document;
-        }
+    public class SyntactikXmlProject : SyntactikProject, IProjectFilesProvider
+    {
 
-        public CompilerContext CompilerContext { get; protected set; }
+        public SchemasRepository SchemasRepository { get; private set; }
+       
 
         readonly object _syncRoot = new object();
-        internal Dictionary<string, ParseInfo> CompileInfo { get; } = new Dictionary<string, ParseInfo>();
+       
 
-        protected SyntactikProject()
+        public SyntactikXmlProject()
 		{
-            Init();
         }
 
-        protected SyntactikProject(ProjectCreateInformation info, XmlElement projectOptions): base(info, projectOptions)
+        public SyntactikXmlProject(ProjectCreateInformation info, XmlElement projectOptions): base(info, projectOptions)
         {
-            Configurations.Add(CreateConfiguration("Default"));
-            Init();
         }
 
-        private void Init()
-        {
-            //Preventing setting of brakepoints in files of Syntactik project.
-            var breakpoints = DebuggingService.Breakpoints;
-            breakpoints.CheckingReadOnly += BreakpointsOnCheckingReadOnly;
-        }
-
-        protected override void OnDispose()
-        {
-            var breakpoints = DebuggingService.Breakpoints;
-            breakpoints.CheckingReadOnly -= BreakpointsOnCheckingReadOnly;
-            base.OnDispose();
-        }
 
         private void BreakpointsOnCheckingReadOnly(object sender, ReadOnlyCheckEventArgs readOnlyCheckEventArgs)
         {
             readOnlyCheckEventArgs.SetReadOnly(true);
         }
 
-        internal Dictionary<string, Task<SyntactikParsedDocument>> CompiledDocuments { get; } = new Dictionary<string, Task<SyntactikParsedDocument>>();
+        protected override string[] OnGetSupportedLanguages()
+        {
+            return new[] { "", //Adds html, txt and xml to the list of file templates in the New File dialog
+                "S4X" };
+        }
 
         protected override void OnInitializeFromTemplate(ProjectCreateInformation projectCreateInfo, XmlElement template)
         {
@@ -110,72 +96,66 @@ namespace Syntactik.MonoDevelop.Projects
             }
         }
 
-        protected override string[] OnGetSupportedLanguages()
-        {
-            return new[] { "", //Adds html, txt and xml to the list of file templates in the New File dialog
-                "S4X", "S4J" };
-        }
-
         private void ParseProjectFile(string fileName)
         {
             string content = File.ReadAllText(fileName);
             ParseSyntactikDocument(fileName, content, null, new CancellationToken());
         }
 
-        internal Task<SyntactikParsedDocument> ParseSyntactikDocument(string fileName, string content,
-            ITextSourceVersion version, CancellationToken cancellationToken, bool parseOnly = false)
-        {
-            try
-            {
-                ParseInfo info;
-                if (version != null && CompileInfo.TryGetValue(fileName, out info))
-                {
-                    if (info.Version != null && version.BelongsToSameDocumentAs(info.Version) &&
-                        version.CompareAge(info.Version) == 0)
-                    {
-                        return Task.FromResult(info.Document);
-                    }
-                }
+        //internal Task<SyntactikParsedDocument> ParseSyntactikDocument(string fileName, string content,
+        //    ITextSourceVersion version, CancellationToken cancellationToken, bool parseOnly = false)
+        //{
+        //    try
+        //    {
+        //        ParseInfo info;
+        //        if (version != null && CompileInfo.TryGetValue(fileName, out info))
+        //        {
+        //            if (info.Version != null && version.BelongsToSameDocumentAs(info.Version) &&
+        //                version.CompareAge(info.Version) == 0)
+        //            {
+        //                return Task.FromResult(info.Document);
+        //            }
+        //        }
 
-                var result = new SyntactikParsedDocument(fileName, version);
-                var compilerParameters = CreateParsingOnlyCompilerParameters(fileName, content, result,
-                    cancellationToken);
-                var compiler = new SyntactikCompiler(compilerParameters);
-                var context = compiler.Run();
-                result.AddErrors(
-                    context.Errors.Where(error => error.LexicalInfo.Line >= 0 && error.LexicalInfo.Column >= 0));
-                var module = context.CompileUnit.Modules[0];
-                result.Ast = module;
+        //        var result = new SyntactikParsedDocument(fileName, version);
+        //        var compilerParameters = CreateParsingOnlyCompilerParameters(fileName, content, result,
+        //            cancellationToken);
+        //        var compiler = new SyntactikCompiler(compilerParameters);
+        //        var context = compiler.Run();
+        //        result.AddErrors(
+        //            context.Errors.Where(error => error.LexicalInfo.Line >= 0 && error.LexicalInfo.Column >= 0));
+        //        var module = context.CompileUnit.Modules[0];
+        //        result.Ast = module;
 
                 
-                lock (_syncRoot)
-                {
-                    if (CompileInfo.TryGetValue(fileName, out info))
-                    {
-                        info.Document = result;
-                        info.Version = version;
-                    }
-                    else
-                        CompileInfo.Add(fileName,
-                            new ParseInfo
-                            {
-                                Document = result,
-                                Version = version
-                            }
-                        );
-                    if (!parseOnly)
-                    {
-                        CompilerContext = ValidateModules(CompileInfo);
-                    }
-                }
-                return Task.FromResult(result);
-            }
-            catch (Exception ex)
-            {
-                LoggingService.LogError("Unhandled exception in SyntactikProject.ParseSyntactikDocument.", ex);
-                throw;
-            }
-        }
+        //        lock (_syncRoot)
+        //        {
+        //            if (CompileInfo.TryGetValue(fileName, out info))
+        //            {
+        //                info.Document = result;
+        //                info.Version = version;
+        //            }
+        //            else
+        //                CompileInfo.Add(fileName,
+        //                    new ParseInfo
+        //                    {
+        //                        Document = result,
+        //                        Version = version
+        //                    }
+        //                );
+        //            if (!parseOnly)
+        //            {
+        //                CompilerContext = ValidateModules(CompileInfo);
+        //            }
+        //        }
+        //        return Task.FromResult(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        LoggingService.LogError("Unhandled exception in SyntactikProject.ParseSyntactikDocument.", ex);
+        //        throw;
+        //    }
+        //}
 
         private static CompilerContext ValidateModules(Dictionary<string, ParseInfo> compileInfo)
         {
@@ -222,13 +202,6 @@ namespace Syntactik.MonoDevelop.Projects
                     || errorId == "MCE0101" || errorId == "MCE0102";
         }
 
-        private CompilerParameters CreateParsingOnlyCompilerParameters(string fileName, string content, SyntactikParsedDocument result, CancellationToken cancellationToken)
-        {
-            var compilerParameters = new CompilerParameters { Pipeline = new CompilerPipeline() };
-            compilerParameters.Pipeline.Steps.Add(new ParseAndCreateFoldingStep(result, cancellationToken));
-            compilerParameters.Input.Add(new StringInput(fileName, content));
-            return compilerParameters;
-        }
 
         private static CompilerParameters CreateValidationOnlyCompilerParameters()
         {
@@ -236,6 +209,26 @@ namespace Syntactik.MonoDevelop.Projects
             compilerParameters.Pipeline.Steps.Add(new ProcessAliasesAndNamespaces());
             compilerParameters.Pipeline.Steps.Add(new ValidateDocuments());
             return compilerParameters;
+        }
+
+        public Dictionary<string, AliasDefinition> GetAliasDefinitionList()
+        {
+            var aliasDefs = new Dictionary<string, AliasDefinition>();
+            lock (_syncRoot)
+            {
+                foreach (var item in CompileInfo)
+                {
+                    var module = item.Value.Document.Ast as Module;
+                    if (module == null) continue;
+                    foreach (var moduleMember in module.Members)
+                    {
+                        var aliasDef = moduleMember as AliasDefinition;
+                        if (aliasDef != null && !aliasDefs.ContainsKey(aliasDef.Name))
+                            aliasDefs.Add(aliasDef.Name, aliasDef);
+                    }
+                }
+            }
+            return aliasDefs;
         }
 
         protected override void OnFileRemovedFromProject(ProjectFileEventArgs e)
@@ -272,6 +265,20 @@ namespace Syntactik.MonoDevelop.Projects
             if (sourceFileRenamed)
                 CompilerContext = ValidateModules(CompileInfo);
             
+        }
+
+        protected override void OnFileAddedToProject(ProjectFileEventArgs e)
+        {
+            base.OnFileAddedToProject(e);
+            var schemasAdded = false;
+            foreach (var file in e)
+            {
+                if (file.ProjectFile.ProjectVirtualPath.ParentDirectory.FileName == "Schemas")
+                    schemasAdded = true;
+                
+            }
+            if (schemasAdded)
+                SchemasRepository = new SchemasRepository(this);
         }
 
         protected override Task<BuildResult> DoBuild(ProgressMonitor monitor, ConfigurationSelector configuration)
@@ -313,6 +320,14 @@ namespace Syntactik.MonoDevelop.Projects
                 .Where(i => i.Subtype != Subtype.Directory && (i.FilePath.Extension.ToLower() == ".s4x" || i.FilePath.Extension.ToLower() == ".xsd"))
                 .Select(i => i.FilePath.FullPath.ToString());
             return sources;
+        }
+        public IEnumerable<string> GetSchemaProjectFiles()
+        {
+            var services = Items.OfType<ProjectFile>()
+                .Where(i => i.ProjectVirtualPath.ParentDirectory.FileNameWithoutExtension.ToLower() == "schemas" &&
+                i.ProjectVirtualPath.ParentDirectory.ParentDirectory.FileNameWithoutExtension == "" &&
+                i.FilePath.Extension == ".xsd").Select(i => i.FilePath.ToString());
+            return services;
         }
 
         private static CompilerParameters CreateCompilerParameters(string outputDirectory, IEnumerable<string> files)
