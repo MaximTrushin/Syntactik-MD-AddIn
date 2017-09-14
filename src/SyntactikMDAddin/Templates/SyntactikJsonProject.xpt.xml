@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<Template>
+
+  <!-- Template Header -->
+  <TemplateConfiguration>
+    <_Name>Syntactik JSON Project</_Name>
+    <Icon>md-project</Icon>
+    <_Category>other/misc/general</_Category>    
+    <LanguageName>S4J</LanguageName>
+    <FileExtension>.s4jproj</FileExtension>
+    <_Description>Syntactik for JSON project</_Description>
+  </TemplateConfiguration>
+
+
+  <Actions>
+    <Open filename = "main.s4j"/>
+  </Actions>
+
+  <!-- Template Content -->
+  <Combine name = "${ProjectName}" directory = ".">
+    <Options>
+      <StartupProject>${ProjectName}</StartupProject>
+    </Options>
+
+    <Project name = "${ProjectName}" type ="SyntactikJsonProject" directory = ".">
+      <Options/>
+      <Files>
+        <File name="main.s4j" AddStandardHeader="True">
+          <![CDATA[!Document:
+	Element
+]]>
+        </File>
+
+      </Files> 
+    </Project>
+  </Combine>
+</Template>

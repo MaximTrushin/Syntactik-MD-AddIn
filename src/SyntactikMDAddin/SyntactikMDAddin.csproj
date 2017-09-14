@@ -151,6 +151,8 @@
     <Compile Include="Syntactik.MonoDevelop.Parser\TypeSystemParser.cs" />
     <Compile Include="Syntactik.MonoDevelop.Project\CompilerOptionsPanel.cs" />
     <Compile Include="Syntactik.MonoDevelop.Project\IProjectFilesProvider.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Project\SyntactikJsonProject.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Project\SyntactikXmlProject.cs" />
     <Compile Include="Syntactik.MonoDevelop.Project\SyntactikProjectConfiguration.cs" />
     <Compile Include="Syntactik.MonoDevelop.Project\SyntactikProjectRunConfigurationEditor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -190,7 +192,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Templates\SyntactikSyntaxMode.xml" />
+    <EmbeddedResource Include="Templates\SyntactikSyntaxMode.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Templates\EmptyS4XFile.xft.xml" />
@@ -220,6 +224,11 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="icons\alias-def-16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\SyntactikJsonProject.xpt.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
