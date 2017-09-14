@@ -33,7 +33,6 @@ namespace Syntactik.MonoDevelop.Highlighting
                 opt.Changed += (sender, args) => { textEditorData.ColorStyle = scheme; };
 
                 var syntaxMode = new SyntactikSyntaxMode(textEditorData.Document);
-                textEditorData.Document.MimeType = "text/x-syntactik4xml";
                 textEditorData.Document.SyntaxMode = syntaxMode;
             }
         }

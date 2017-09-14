@@ -9,7 +9,8 @@ namespace Syntactik.MonoDevelop.Highlighting
     {
         public SyntactikSyntaxMode(TextDocument doc) : base(doc)
         {
-            ResourceStreamProvider provider = new ResourceStreamProvider(typeof(SyntactikSyntaxMode).Assembly, typeof(SyntactikSyntaxMode).Assembly.GetManifestResourceNames().First(s => s.Contains("SyntactikSyntaxMode")));
+            string modeName = doc.MimeType == "text/x-syntactik4json" ? "SyntactikJsonSyntaxMode":"SyntactikSyntaxMode";
+            ResourceStreamProvider provider = new ResourceStreamProvider(typeof(SyntactikSyntaxMode).Assembly, typeof(SyntactikSyntaxMode).Assembly.GetManifestResourceNames().First(s => s.Contains(modeName)));
             using (var stream = provider.Open())
             {
                 SyntaxMode baseMode = SyntaxMode.Read(stream);

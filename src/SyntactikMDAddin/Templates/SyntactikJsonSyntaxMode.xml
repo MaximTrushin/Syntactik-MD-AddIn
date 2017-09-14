@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<SyntaxMode name = "syntactik4xml" mimeTypes="text/x-syntactik4xml">
+<SyntaxMode name = "syntactikJson4xml" mimeTypes="text/x-syntactik4json">
   <!-- single line comment -->
   <EolSpan color = "Comment(Line)" rule="comment">'''</EolSpan>
   <!-- multi line comment -->
@@ -75,93 +75,11 @@
 <Rule name = "free_open_string">
   <Match color = "Xml Text">(.*)</Match>
 </Rule>
-  
-<Rule name = "free_open_string_high_attr">
-  <Match color = "String">(.*)</Match>
-</Rule>  
-
-<!-- attribute -->
-<Span color = "String(Escape)" rule ="string_high_attr">
-  <Begin>@</Begin>
-</Span>
-  
-<!-- namespace definition -->
-<Span color = "Keyword(Declaration)" rule ="string_high_ns_def">
-  <Begin>!#</Begin>
-</Span>  
-  
-
-<Rule name = "string_high_attr">
-  <!-- open string -->
-  <Span color = "Punctuation" rule ="open_string">
-    <Begin>==</Begin>
-  </Span>
-
-  <!-- free open string -->
-  <Span color = "Punctuation" rule ="free_open_string_high_attr">
-    <Begin>=</Begin>
-  </Span>
-
-  <Match color = "String(Escape)">[^=:()'", ]+</Match>
-  <Match color = "Punctuation">[ \t]+</Match>
-  
-</Rule>  
-  
-<Rule name = "string_high_attr_sl">
-  <!-- open string -->
-  <Span color = "Punctuation" rule ="open_string_sl">
-    <Begin>==</Begin>
-  </Span>
-
-  <!-- free open string -->
-  <Span color = "Punctuation" rule ="open_string_sl">
-    <Begin>=</Begin>
-  </Span>
-
-  <Match color = "String(Escape)">[^=:()'", ]+</Match>
-  <Match color = "Punctuation">[ \t]+</Match>
-  
-</Rule>    
-  
-  
-<Rule name = "string_high_ns_def">
-  <!-- open string -->
-  <Span color = "Punctuation" rule ="open_string">
-    <Begin>==</Begin>
-  </Span>
-
-  <!-- free open string -->
-  <Span color = "Punctuation" rule ="free_open_string_high_attr">
-    <Begin>=</Begin>
-  </Span>
-
-  <Match color = "Keyword(Declaration)">[^=:()'", ]+</Match>
-  <Match color = "Punctuation">[ \t]+</Match>
-  
-</Rule>   
-  
-<Rule name = "string_high_ns_def_sl">
-  <!-- open string -->
-  <Span color = "Punctuation" rule ="open_string">
-    <Begin>==</Begin>
-  </Span>
-
-  <!-- free open string -->
-  <Span color = "Punctuation" rule ="open_string">
-    <Begin>=</Begin>
-  </Span>
-
-  <Match color = "Keyword(Declaration)">[^=:()'", ]+</Match>
-  <Match color = "Punctuation">[ \t]+</Match>
-</Rule>    
 
   <!-- sq name -->
   <Match color = "Keyword(Type)">'(?:\\.|.)*?(?:'|$)</Match>
   <!-- dq name -->
   <Match color = "Keyword(Type)">".*?(?:"|$)</Match>
-
-  <!-- scope  -->
-  <Match color = "Keyword(Declaration)">\s*#[^=:()'",.]*\.?</Match>
 
   <!-- parameter -->
   <Match color = "Keyword(Exception)">\s*!%[^=:()'",]*</Match>
@@ -211,30 +129,11 @@
       <Begin>=</Begin>
     </Span>  
 
-    <!-- attribute -->
-    <Span color = "String(Escape)" rule ="string_high_attr_sl">
-      <Begin>@</Begin>
-    </Span>    
-    
-    <!-- ns def -->
-    <Span color = "Keyword(Declaration)" rule ="string_high_ns_def_sl">
-      <Begin>!#</Begin>
-    </Span>      
-
-    <!-- namespace definition -->
-    <Match color = "Keyword(Declaration)">\s*!#[^=:()'",]*</Match>
-
-    <!-- scope  -->
-    <Match color = "Keyword(Declaration)">\s*#[^=:()'",.]*\.?</Match>
-
     <!-- parameter -->
     <Match color = "Keyword(Exception)">\s*!%[^=:()'",]*</Match>
 
     <!-- argument -->
     <Match color = "Keyword(Exception)">\s*%[^=:()'",]*</Match>
-
-    <!-- attribute -->
-    <Match color = "String(Escape)">\s*@[^=:()'",]*</Match>
 
     <!-- document & alias def-->
     <Match color = "User Types">\s*![^=:()'",]*</Match>
