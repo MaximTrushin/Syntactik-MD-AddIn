@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Template Originator="Syntactik" Language="S4J" Created="9/14/2017" LastModified="9/14/2017">
+
+  <TemplateConfiguration>
+    <_Name>Empty Syntactik for JSON File</_Name>
+    <Icon>md-text-file-icon</Icon>
+    <_Category>General</_Category>
+    <LanguageName>S4J</LanguageName>
+    <_Description>Creates an empty S4J file.</_Description>
+    <DefaultFilename>S4JFile</DefaultFilename>
+  </TemplateConfiguration>
+
+  <TemplateFiles>
+    <File DefaultExtension=".s4j" DefaultName="S4JFile" AddStandardHeader="True">
+    </File>
+  </TemplateFiles>
+
+  <FileOptions/>
+
+</Template>

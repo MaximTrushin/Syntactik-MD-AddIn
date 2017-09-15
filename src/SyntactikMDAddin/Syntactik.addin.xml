@@ -37,7 +37,7 @@
   </Extension>
 
   <Extension path = "/MonoDevelop/Ide/TextEditorExtensions">
-    <Class fileExtensions = ".s4x" class = "Syntactik.MonoDevelop.Formatting.SyntactikTextEditorIndentation" />
+    <Class fileExtensions = ".s4x,.s4j" class = "Syntactik.MonoDevelop.Formatting.SyntactikTextEditorIndentation" />
     <Class fileExtensions = ".s4x" class = "Syntactik.MonoDevelop.Completion.SyntactikCompletionTextEditorExtension" />
     <Class fileExtensions = ".s4x" class = "Syntactik.MonoDevelop.Parser.ErrorHandlerTextEditorExtension" />
     <Class fileExtensions = ".s4x,.s4j" class = "Syntactik.MonoDevelop.Highlighting.HighlightUsagesExtension" />
@@ -45,6 +45,7 @@
 
   <Extension path = "/MonoDevelop/Ide/FileTemplates">
     <FileTemplate id = "EmptyS4XFile" resource = "Syntactik.MonoDevelop.Templates.EmptyS4XFile.xft.xml"/>
+    <FileTemplate id = "EmptyS4JFile" resource = "Syntactik.MonoDevelop.Templates.EmptyS4JFile.xft.xml"/>
   </Extension>
 
   <Extension path = "/MonoDevelop/Core/MimeTypes">
