@@ -91,24 +91,18 @@ namespace Syntactik.MonoDevelop.Projects
 
         protected override void OnEndLoad()
         {
-            base.OnEndLoad();
-            ParseProjectFiles();
-        }
-
-        private void ParseProjectFiles()
-        {
-            var files =
-                from projectItem in this.Items.OfType<ProjectFile>()
-                let pfile = projectItem
-                let isDir = Directory.Exists(pfile.FilePath.FullPath)
-                where !isDir
-                where pfile.FilePath.Extension.ToLower() == ".s4x"
-                select projectItem.FilePath.FullPath.ToString();
-            foreach (var file in files)
+            try
             {
-                ParseProjectFile(file);
+                base.OnEndLoad();
+                ParseProjectFiles();
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError("Unhandled exception in SyntactikProject.OnEndLoad.", ex);
             }
         }
+
+        protected abstract void ParseProjectFiles();
 
         protected override string[] OnGetSupportedLanguages()
         {
@@ -116,7 +110,7 @@ namespace Syntactik.MonoDevelop.Projects
                 "S4X", "S4J" };
         }
 
-        private void ParseProjectFile(string fileName)
+        protected void ParseProjectFile(string fileName)
         {
             string content = File.ReadAllText(fileName);
             ParseSyntactikDocument(fileName, content, null, new CancellationToken());
@@ -206,7 +200,7 @@ namespace Syntactik.MonoDevelop.Projects
                 }
                 else
                 {
-                    LoggingService.LogError("Error in SyntactikProject.AddValidationError.", error.Message);
+                    LoggingService.LogError($"Error in SyntactikProject.AddValidationError: {error.Code} - {error.Message} ", error.InnerException);
                 }
             }
         }
@@ -297,7 +291,6 @@ namespace Syntactik.MonoDevelop.Projects
                 LoggingService.LogError("Unhandled exception in SyntactikProject.DoBuild().", ex);
             }
 
-
             var compilerParameters = CreateCompilerParameters(projectConfig.XMLOutputFolder, GetProjectFiles(this));
             var compiler = new SyntactikCompiler(compilerParameters);
             var context = compiler.Run();
@@ -340,6 +333,25 @@ namespace Syntactik.MonoDevelop.Projects
             }
 
             return compilerParameters;
+        }
+        public Dictionary<string, AliasDefinition> GetAliasDefinitionList()
+        {
+            var aliasDefs = new Dictionary<string, AliasDefinition>();
+            lock (_syncRoot)
+            {
+                foreach (var item in CompileInfo)
+                {
+                    var module = item.Value.Document.Ast as Module;
+                    if (module == null) continue;
+                    foreach (var moduleMember in module.Members)
+                    {
+                        var aliasDef = moduleMember as AliasDefinition;
+                        if (aliasDef != null && !aliasDefs.ContainsKey(aliasDef.Name))
+                            aliasDefs.Add(aliasDef.Name, aliasDef);
+                    }
+                }
+            }
+            return aliasDefs;
         }
     }
 }

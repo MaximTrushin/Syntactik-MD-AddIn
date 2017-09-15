@@ -81,6 +81,7 @@ namespace Syntactik.MonoDevelop.Completion
         internal static void DoAttributeCompletion(CompletionDataList completionList, CompletionContext completionContext,
             CodeCompletionContext editorCompletionContext, ContextInfo schemaInfo, SchemasRepository schemasRepository)
         {
+            if (schemasRepository == null) return;
             if (schemaInfo.CurrentType is SimpleType)
                 return;
 
@@ -126,6 +127,7 @@ namespace Syntactik.MonoDevelop.Completion
         internal static void DoElementCompletion(CompletionDataList completionList, CompletionContext completionContext,
                 CodeCompletionContext editorCompletionContext, ContextInfo schemaInfo, SchemasRepository schemasRepository)
         {
+            if (schemasRepository == null) return;
             var items = new List<CompletionData>();
             var completionCategory = new SyntactikCompletionCategory { DisplayText = "Elements", Order = 2 };
             var priority = ElementPriority;
@@ -181,6 +183,7 @@ namespace Syntactik.MonoDevelop.Completion
 
         internal static void DoNamespaceDefinitionCompletion(CompletionDataList completionList, CompletionContext context, CodeCompletionContext editorCompletionContext, ContextInfo schemaInfo, SchemasRepository schemasRepository)
         {
+            if (schemasRepository == null) return;
             List<NamespaceDefinition> declaredNamespaceDefinitions = GetDeclaredNamespaceDefinitions(context);
             var undeclaredNamespaces =
                 schemasRepository.GetNamespaces()
@@ -207,6 +210,7 @@ namespace Syntactik.MonoDevelop.Completion
 
         internal static void DoNamespaceDefinitionValueCompletion(CompletionDataList completionList, CompletionContext context, CodeCompletionContext editorCompletionContext, ContextInfo schemaInfo, SchemasRepository schemasRepository)
         {
+            if (schemasRepository == null) return;
             var category = new SyntactikCompletionCategory { DisplayText = "Namespaces", Order = 0 };
             foreach (var ns in schemasRepository.GetNamespaces())
             {
@@ -220,6 +224,7 @@ namespace Syntactik.MonoDevelop.Completion
         public static void DoAttributeValueCompletion(CompletionDataList completionList, CompletionContext context,
             CodeCompletionContext editorCompletionContext, ContextInfo schemaInfo, SchemasRepository schemasRepository)
         {
+            if (schemasRepository == null) return;
             var attribute = context.LastPair as DOM.Attribute;
             if (attribute?.Name == "type" && attribute.NsPrefix == "xsi")
             {
@@ -232,6 +237,7 @@ namespace Syntactik.MonoDevelop.Completion
         public static void DoElementValueCompletion(CompletionDataList completionList, CompletionContext context,
             CodeCompletionContext editorCompletionContext, ContextInfo schemaInfo, SchemasRepository schemasRepository)
         {
+            if (schemasRepository == null) return;
             var simpleType = schemaInfo.CurrentType as SimpleType;
             if (simpleType == null) return;
             var category = new SyntactikCompletionCategory { DisplayText = "Values", Order = 0 };

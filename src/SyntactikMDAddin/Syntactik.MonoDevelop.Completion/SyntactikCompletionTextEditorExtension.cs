@@ -156,11 +156,11 @@ namespace Syntactik.MonoDevelop.Completion
             CancellationToken token, int triggerWordLength)
         {
             CompletionContext context = await GetCompletionContextAsync(token, Editor.Version, Editor.CaretOffset,
-                   Editor.FileName, Editor.Text, ((SyntactikXmlProject)DocumentContext.Project).GetAliasDefinitionList);
+                   Editor.FileName, Editor.Text, ((SyntactikProject)DocumentContext.Project).GetAliasDefinitionList);
             context.CalculateExpectations();
             return GetCompletionList(context, completionContext, triggerWordLength,
-                ((SyntactikXmlProject)DocumentContext.Project).GetAliasDefinitionList,
-                ((SyntactikXmlProject)DocumentContext.Project).SchemasRepository);
+                ((SyntactikProject)DocumentContext.Project).GetAliasDefinitionList,
+                (DocumentContext.Project as SyntactikXmlProject)?.SchemasRepository);
         }
 
         internal Task<CompletionContext> GetCompletionContextAsync(CancellationToken token, ITextSourceVersion version, int caretOffset, string fileName, string text, Func<Dictionary<string, Syntactik.DOM.AliasDefinition>> getAliasDefinitionList)
@@ -190,7 +190,7 @@ namespace Syntactik.MonoDevelop.Completion
             SchemasRepository schemasRepository)
         {
             
-            var schemaInfo = schemasRepository.GetContextInfo(new Context { CompletionInfo = context });
+            var schemaInfo = schemasRepository?.GetContextInfo(new Context { CompletionInfo = context });
             var completionList = new CompletionDataList {TriggerWordLength = editorCompletionContext.TriggerWordLength };
             foreach (var expectation in context.Expectations)
             {
@@ -373,7 +373,7 @@ namespace Syntactik.MonoDevelop.Completion
             try
             {
                 var task = GetCompletionContextAsync(token, Editor.Version, Editor.CaretOffset,
-                    Editor.FileName, Editor.Text, ((SyntactikXmlProject)DocumentContext.Project).GetAliasDefinitionList);
+                    Editor.FileName, Editor.Text, ((SyntactikProject)DocumentContext.Project).GetAliasDefinitionList);
 #if DEBUG
                 task.Wait(token);
 #else
@@ -470,7 +470,7 @@ namespace Syntactik.MonoDevelop.Completion
                     _pathUpdateQueued = false;
                     Task.Run(() =>
                     {
-                        UpdatePath(editor.Version, editor.CaretOffset, editor.FileName, editor.Text, ((SyntactikXmlProject)DocumentContext.Project).GetAliasDefinitionList);
+                        UpdatePath(editor.Version, editor.CaretOffset, editor.FileName, editor.Text, ((SyntactikProject)DocumentContext.Project).GetAliasDefinitionList);
                     });
                     return false;
                 }
