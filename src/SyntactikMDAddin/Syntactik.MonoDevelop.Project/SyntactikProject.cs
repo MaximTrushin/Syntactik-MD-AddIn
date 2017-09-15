@@ -196,10 +196,17 @@ namespace Syntactik.MonoDevelop.Projects
         {
             foreach (var error in errors)
             {
-                ParseInfo info;
-                if (compileInfo.TryGetValue(error.LexicalInfo.FileName, out info))
+                if (error.LexicalInfo.FileName != null)
                 {
-                    info.Document.Add(error);
+                    ParseInfo info;
+                    if (compileInfo.TryGetValue(error.LexicalInfo.FileName, out info))
+                    {
+                        info.Document.Add(error);
+                    }
+                }
+                else
+                {
+                    LoggingService.LogError("Error in SyntactikProject.AddValidationError.", error.Message);
                 }
             }
         }

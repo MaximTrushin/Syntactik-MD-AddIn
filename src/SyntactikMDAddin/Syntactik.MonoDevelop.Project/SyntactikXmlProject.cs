@@ -39,12 +39,6 @@ namespace Syntactik.MonoDevelop.Projects
         {
         }
 
-
-        private void BreakpointsOnCheckingReadOnly(object sender, ReadOnlyCheckEventArgs readOnlyCheckEventArgs)
-        {
-            readOnlyCheckEventArgs.SetReadOnly(true);
-        }
-
         protected override string[] OnGetSupportedLanguages()
         {
             return new[] { "", //Adds html, txt and xml to the list of file templates in the New File dialog
@@ -78,7 +72,15 @@ namespace Syntactik.MonoDevelop.Projects
         protected override void OnEndLoad()
         {
             base.OnEndLoad();
-            ParseProjectFiles();
+            try
+            {
+                ParseProjectFiles();
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError("Unhandled exception in SyntactikXmlProject.OnEndLoad.", ex);
+            }
+            
         }
 
         private void ParseProjectFiles()
