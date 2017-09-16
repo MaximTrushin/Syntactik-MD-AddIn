@@ -307,13 +307,8 @@ namespace Syntactik.MonoDevelop.Projects
             return result;
         }
 
-        private static IEnumerable<string> GetProjectFiles(SyntactikProject project)
-        {
-            var sources = project.Items.GetAll<ProjectFile>()
-                .Where(i => i.Subtype != Subtype.Directory && (i.FilePath.Extension.ToLower() == ".s4x" || i.FilePath.Extension.ToLower() == ".xsd"))
-                .Select(i => i.FilePath.FullPath.ToString());
-            return sources;
-        }
+        protected abstract IEnumerable<string> GetProjectFiles(SyntactikProject project);
+
 
         private static CompilerParameters CreateCompilerParameters(string outputDirectory, IEnumerable<string> files)
         {
@@ -324,7 +319,7 @@ namespace Syntactik.MonoDevelop.Projects
             };
             foreach (var fileName in files)
             {
-                if (fileName.EndsWith(".s4x"))
+                if (fileName.EndsWith(".s4x") || fileName.EndsWith(".s4j"))
                 {
                     compilerParameters.Input.Add(new FileInput(fileName));
                     continue;

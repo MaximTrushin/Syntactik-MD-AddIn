@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml;
 using MonoDevelop.Projects;
@@ -29,6 +30,14 @@ namespace Syntactik.MonoDevelop.Projects
             {
                 ParseProjectFile(file);
             }
+        }
+
+        protected override IEnumerable<string> GetProjectFiles(SyntactikProject project)
+        {
+            var sources = project.Items.GetAll<ProjectFile>()
+                .Where(i => i.Subtype != Subtype.Directory && (i.FilePath.Extension.ToLower() == ".s4j"))
+                .Select(i => i.FilePath.FullPath.ToString());
+            return sources;
         }
 
         protected override string[] OnGetSupportedLanguages()

@@ -40,6 +40,14 @@ namespace Syntactik.MonoDevelop.Projects
             }
         }
 
+        protected override IEnumerable<string> GetProjectFiles(SyntactikProject project)
+        {
+            var sources = project.Items.GetAll<ProjectFile>()
+                .Where(i => i.Subtype != Subtype.Directory && (i.FilePath.Extension.ToLower() == ".s4x" || i.FilePath.Extension.ToLower() == ".xsd"))
+                .Select(i => i.FilePath.FullPath.ToString());
+            return sources;
+        }
+
         protected override void OnFileAddedToProject(ProjectFileEventArgs e)
         {
             base.OnFileAddedToProject(e);
