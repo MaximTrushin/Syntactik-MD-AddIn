@@ -13,6 +13,6 @@ el:
 	el3 = multiline
 		free open
 		string
-	el
+	el =
 el2 == line1
 	line2 ''' not a comment 

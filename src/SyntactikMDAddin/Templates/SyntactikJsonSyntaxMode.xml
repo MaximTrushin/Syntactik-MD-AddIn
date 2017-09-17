@@ -27,6 +27,16 @@
     <Begin>==</Begin>
   </Span>
 
+  <!-- sq string start -->
+  <Span color = "Xml Text" stopateol = "true" rule ="sq_string">
+    <Begin>'</Begin>
+  </Span>
+
+  <!-- dq string start -->
+  <Span color = "Xml Text" stopateol = "true" rule ="dq_string">
+    <Begin>"</Begin>
+  </Span>
+  
   <Rule name = "open_string">
   </Rule>
 
@@ -82,9 +92,9 @@
   </Rule>
 
   <!-- sq name -->
-  <Match color = "Keyword(Type)">'(?:\\.|.)*?(?:'|$)</Match>
+  <Match color = "Keyword(Type)">'(?:\\.|.)*?(?:'\s*(?=:|=))</Match>
   <!-- dq name -->
-  <Match color = "Keyword(Type)">".*?(?:"|$)</Match>
+  <Match color = "Keyword(Type)">".*?(?:"\s*(?=:|=))</Match>
 
   <!-- parameter -->
   <Match color = "Keyword(Exception)">\s*!%[^=:()'",]*</Match>
@@ -99,10 +109,15 @@
   <Match color = "Diff Header">\s*\$[^=:()'",]*</Match>
 
   <!-- open name -->
-  <Match color = "Keyword(Type)">\s*[^=:()'",][^=:()'",]*</Match>
+  <Match color = "Keyword(Type)">\s*[^=:()'",]+\s*(?=:|=)</Match>
+  
+  <!-- json literal -->
+  <Match color = "Keyword(Constants)">\s*(?:false|true|null|-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?)\s*(?=[()'"",]|$)</Match>
+
+  <!-- value -->
+  <Match color = "Xml Text">\s*[^=:()'",]+\s*(?=[()'"",]|$)</Match>
 
   <Rule name = "wsa">
-
     <!-- single line comment -->
     <EolSpan color = "Comment(Line)" rule="comment">'''</EolSpan>
     <!-- multi line comment -->
@@ -134,6 +149,16 @@
       <Begin>=</Begin>
     </Span>
 
+    <!-- sq string start -->
+    <Span color = "Xml Text" stopateol = "true" rule ="sq_string_sl">
+      <Begin>'</Begin>
+    </Span>
+
+    <!-- dq string start -->
+    <Span color = "Xml Text" stopateol = "true" rule ="dq_string_sl">
+      <Begin>"</Begin>
+    </Span>
+
     <!-- parameter -->
     <Match color = "Keyword(Exception)">\s*!%[^=:()'",]*</Match>
 
@@ -147,13 +172,19 @@
     <Match color = "Diff Header">\s*\$[^=:()'",]*</Match>
 
     <!-- sq name -->
-    <Match color = "Keyword(Type)">'(?:\\.|.)*?(?:'|$)</Match>
+    <Match color = "Keyword(Type)">'(?:\\.|.)*?(?:'\s*(?=:|=))</Match>
 
     <!-- dq name -->
-    <Match color = "Keyword(Type)">".*?(?:"|$)</Match>
+    <Match color = "Keyword(Type)">".*?(?:"\s*(?=:|=))</Match>
 
     <!-- open name -->
-    <Match color = "Keyword(Type)">\s?[^=:()'",]+</Match>
+    <Match color = "Keyword(Type)">\s?[^=:()'",]+\s*(?=:|=)</Match>
+    
+    <!-- json literal -->
+    <Match color = "Keyword(Constants)">\s*(?:false|true|null|-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?)\s*(?=[()'"",]|$)</Match>
+
+    <!-- value -->
+    <Match color = "Xml Text">\s*[^=:()'",]+\s*(?=[()'"",]|$)</Match>
 
   </Rule>
 

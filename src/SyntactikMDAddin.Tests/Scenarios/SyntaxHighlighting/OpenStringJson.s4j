@@ -1,1 +1,18 @@
 ﻿el1 == text1
+(el1 == text1,el1 == text1,el1=="text1",el1=='text1',
+	el1 == true,
+	el1==null, el1==123
+)
+el1: abc, 123, true,false,null,123.34
+el1: (abc, 
+	123, 
+			true,
+		false,
+				null,
+123.34)
+el1:
+	abc, 
+	123, 
+	true,
+	false,
+	null, 123.34

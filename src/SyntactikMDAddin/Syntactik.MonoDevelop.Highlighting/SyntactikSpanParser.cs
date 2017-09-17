@@ -89,11 +89,12 @@ namespace Syntactik.MonoDevelop.Highlighting
                 return CurSpan != null && base.ScanSpanEnd(CurSpan, ref i); //return false so the current symbol will be processed with match rules
             }
 
+            var indentSpan = CurSpan as IndentSpan;
+
             if (CurRule.Name.StartsWith("open_string") //Ending Open string
                 && IsEndOfOpenString(CurText[i - StartOffset]) ) //And end of open string found
             {
                 var c = (CurText[i - StartOffset]);
-                var indentSpan = CurSpan as IndentSpan;
                 if (c != '\'' && c != '"' || (indentSpan != null && indentSpan.FirstLine)) //quotes end open string on first line only if it's already started 
                 {
                     FoundSpanEnd(CurSpan, i, 0);
@@ -110,11 +111,17 @@ namespace Syntactik.MonoDevelop.Highlighting
                 if (CurRule.Name.StartsWith("string_high")) FoundSpanEnd(CurSpan, i, 1);
                 return true;
             }
-
-            if ((CurRule.Name.StartsWith("free_open_string") || CurRule.Name.StartsWith("open_string") || CurRule.Name.StartsWith("sq_string") || CurRule.Name.StartsWith("dq_string")) &&
-                CurSpan is IndentSpan)
+           
+            if (indentSpan != null && 
+                    (
+                        CurRule.Name.StartsWith("free_open_string") || 
+                        CurRule.Name.StartsWith("open_string") || 
+                        CurRule.Name.StartsWith("sq_string") || 
+                        CurRule.Name.StartsWith("dq_string")
+                    ) 
+                )
             {
-                var indentSpan = (IndentSpan) CurSpan;
+                
                 if (indentSpan.FirstLine && i == StartOffset)
                 {
                     indentSpan.FirstLine = false; //This is redundant because Span.Clone is not virtual 
@@ -161,7 +168,34 @@ namespace Syntactik.MonoDevelop.Highlighting
                     }
                 }
             }
+
+            if (indentSpan == null && //rules sq_string or dq_string started from syntax mode but not by span parser
+                (
+                    CurRule.Name.StartsWith("sq_string") && CurText[i - StartOffset] == '\'' || 
+                    CurRule.Name.StartsWith("dq_string") && CurText[i - StartOffset] == '"'
+                )
+            )
+            {
+                if (FollowedByDelimiter(CurText, i - StartOffset))
+                {
+                    CurSpan.Color = "Keyword(Type)";
+                }
+                FoundSpanEnd(CurSpan, i, 1);
+                return true;
+
+            }
             return base.ScanSpanEnd(CurSpan, ref i);
+        }
+
+        private static bool FollowedByDelimiter(string curText, int i)
+        {
+            var length = curText.Length;
+            while (++i < length)
+            {
+                if (curText[i] == ':' || curText[i] == '=') return true;
+                if (curText[i] != ' ' && curText[i] == '\t') break;
+            }
+            return false;
         }
 
         public static bool IsEndOfOpenString(char c)
