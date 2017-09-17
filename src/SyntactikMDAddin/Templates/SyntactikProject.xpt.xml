@@ -5,7 +5,7 @@
   <TemplateConfiguration>
     <_Name>Syntactik XML Project</_Name>
     <Icon>md-project</Icon>
-    <_Category>other/misc/general</_Category>    
+    <_Category>other/misc/general</_Category>
     <LanguageName>S4X</LanguageName>
     <FileExtension>.s4xproj</FileExtension>
     <_Description>Syntactik for XML project</_Description>
@@ -32,7 +32,7 @@
 ]]>
         </File>
 
-      </Files> 
+      </Files>
     </Project>
   </Combine>
 </Template>

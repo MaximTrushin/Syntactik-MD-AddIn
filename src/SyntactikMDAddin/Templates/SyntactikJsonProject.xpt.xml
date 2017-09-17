@@ -5,7 +5,7 @@
   <TemplateConfiguration>
     <_Name>Syntactik JSON Project</_Name>
     <Icon>md-project</Icon>
-    <_Category>other/misc/general</_Category>    
+    <_Category>other/misc/general</_Category>
     <LanguageName>S4J</LanguageName>
     <FileExtension>.s4jproj</FileExtension>
     <_Description>Syntactik for JSON project</_Description>
@@ -31,7 +31,7 @@
 ]]>
         </File>
 
-      </Files> 
+      </Files>
     </Project>
   </Combine>
 </Template>

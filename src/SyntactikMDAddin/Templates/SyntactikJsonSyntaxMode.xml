@@ -8,76 +8,78 @@
     <End>"""</End>
   </Span>
 
-<!-- wsa -->
-<Span color = "Punctuation" rule ="wsa" tagColor = "Punctuation">
-  <Begin>(</Begin>
-  <End>)</End>
-</Span>
+  <!-- wsa -->
+  <Span color = "Punctuation" rule ="wsa" tagColor = "Punctuation">
+    <Begin>(</Begin>
+    <End>)</End>
+  </Span>
 
-<Match color = "Punctuation">[ \t]+</Match>
-<Match color = "Punctuation">,</Match>  
-<Match color = "Punctuation">:=</Match>  
-<Match color = "Punctuation">::</Match>
-<Match color = "Punctuation">:</Match>
-<Match color = "Punctuation">=::</Match>
-<Match color = "Punctuation">=:</Match>
-  
-<!-- open string -->
-<Span color = "Xml Text" rule ="open_string" tagColor="Punctuation">
-  <Begin>==</Begin>
-</Span>
+  <Match color = "Punctuation">[ \t]+</Match>
+  <Match color = "Punctuation">,</Match>
+  <Match color = "Punctuation">:=</Match>
+  <Match color = "Punctuation">::</Match>
+  <Match color = "Punctuation">:</Match>
+  <Match color = "Punctuation">=::</Match>
+  <Match color = "Punctuation">=:</Match>
 
-<Rule name = "open_string">
-</Rule>  
-  
-<Rule name = "open_string_sl">
-</Rule>
+  <!-- open string -->
+  <Span color = "Xml Text" rule ="open_string" tagColor="Punctuation">
+    <Begin>==</Begin>
+  </Span>
 
-<Rule name = "dq_string">
-</Rule>
+  <Rule name = "open_string">
+  </Rule>
 
-<Rule name = "dq_string_sl">
-</Rule>
+  <Rule name = "open_string_sl">
+  </Rule>
 
- <Rule name = "sq_string">  <!--rule is activated by method ScanSpan-->
-  <!--valid escape-->
-  <Match color = "Diff Header">\\["'\\\/bfnrt]</Match>
-  <!-- utf encode-->
-  <Match color = "Diff Header">\\u[a-fA-F0-9]{0,4}</Match>
-  <!--Alias or parameter with brackets-->
-  <Match color = "Diff Header">\\(?:\$|!%)\([ \t]*(?:(?:_|[A-Z]|[a-z]|[\xC0-\xD6]|[\xD8-\xF6]|[\xF8-\u02FF]|[\u0370-\u037D]|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD])(?:[A-Z]|[a-z]|[\xC0-\xD6]|[\xD8-\xF6]|[\xF8-\u02FF]|[\u0370-\u037D]|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]|-|\.|[0-9]|\xB7|[\u0300-\u036F]|[\u203F-\u2040])*)[ \t]*\)?</Match>
-  <!--Alias or parameter without brakets-->
-  <Match color = "Diff Header">\\(?:\$|!%)(?:(?:_|[A-Z]|[a-z]|[\xC0-\xD6]|[\xD8-\xF6]|[\xF8-\u02FF]|[\u0370-\u037D]|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD])(?:[A-Z]|[a-z]|[\xC0-\xD6]|[\xD8-\xF6]|[\xF8-\u02FF]|[\u0370-\u037D]|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]|-|\.|[0-9]|\xB7|[\u0300-\u036F]|[\u203F-\u2040])*)</Match>
-  <!--invalid escape-->
-  <Match color = "Diff Header">\\.</Match>
-</Rule>  
-  
-  
-<Rule name = "sq_string_sl">  <!-- COPY OF sq_string-->
-  <!--valid escape-->
-  <Match color = "Diff Header">\\["'\\\/bfnrt]</Match>
-  <!-- utf encode-->
-  <Match color = "Diff Header">\\u[a-fA-F0-9]{0,4}</Match>
-  <!--Alias or parameter with brackets-->
-  <Match color = "Diff Header">\\(?:\$|!%)\([ \t]*(?:(?:_|[A-Z]|[a-z]|[\xC0-\xD6]|[\xD8-\xF6]|[\xF8-\u02FF]|[\u0370-\u037D]|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD])(?:[A-Z]|[a-z]|[\xC0-\xD6]|[\xD8-\xF6]|[\xF8-\u02FF]|[\u0370-\u037D]|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]|-|\.|[0-9]|\xB7|[\u0300-\u036F]|[\u203F-\u2040])*)[ \t]*\)?</Match>
-  <!--Alias or parameter without brakets-->
-  <Match color = "Diff Header">\\(?:\$|!%)(?:(?:_|[A-Z]|[a-z]|[\xC0-\xD6]|[\xD8-\xF6]|[\xF8-\u02FF]|[\u0370-\u037D]|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD])(?:[A-Z]|[a-z]|[\xC0-\xD6]|[\xD8-\xF6]|[\xF8-\u02FF]|[\u0370-\u037D]|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]|-|\.|[0-9]|\xB7|[\u0300-\u036F]|[\u203F-\u2040])*)</Match>
-  <!--invalid escape-->
-  <Match color = "Diff Header">\\.</Match>
-</Rule>    
-    
-  
-<!-- free open string -->
-<Span color = "Punctuation" rule ="free_open_string">
-  <Begin>=</Begin>
-</Span>
+  <Rule name = "dq_string">
+  </Rule>
 
-<Rule name = "free_open_string">
-  <!--
+  <Rule name = "dq_string_sl">
+  </Rule>
+
+  <Rule name = "sq_string">
+    <!--rule is activated by method ScanSpan-->
+    <!--valid escape-->
+    <Match color = "Diff Header">\\["'\\\/bfnrt]</Match>
+    <!-- utf encode-->
+    <Match color = "Diff Header">\\u[a-fA-F0-9]{0,4}</Match>
+    <!--Alias or parameter with brackets-->
+    <Match color = "Diff Header">\\(?:\$|!%)\([ \t]*(?:(?:_|[A-Z]|[a-z]|[\xC0-\xD6]|[\xD8-\xF6]|[\xF8-\u02FF]|[\u0370-\u037D]|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD])(?:[A-Z]|[a-z]|[\xC0-\xD6]|[\xD8-\xF6]|[\xF8-\u02FF]|[\u0370-\u037D]|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]|-|\.|[0-9]|\xB7|[\u0300-\u036F]|[\u203F-\u2040])*)[ \t]*\)?</Match>
+    <!--Alias or parameter without brakets-->
+    <Match color = "Diff Header">\\(?:\$|!%)(?:(?:_|[A-Z]|[a-z]|[\xC0-\xD6]|[\xD8-\xF6]|[\xF8-\u02FF]|[\u0370-\u037D]|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD])(?:[A-Z]|[a-z]|[\xC0-\xD6]|[\xD8-\xF6]|[\xF8-\u02FF]|[\u0370-\u037D]|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]|-|\.|[0-9]|\xB7|[\u0300-\u036F]|[\u203F-\u2040])*)</Match>
+    <!--invalid escape-->
+    <Match color = "Diff Header">\\.</Match>
+  </Rule>
+
+
+  <Rule name = "sq_string_sl">
+    <!-- COPY OF sq_string-->
+    <!--valid escape-->
+    <Match color = "Diff Header">\\["'\\\/bfnrt]</Match>
+    <!-- utf encode-->
+    <Match color = "Diff Header">\\u[a-fA-F0-9]{0,4}</Match>
+    <!--Alias or parameter with brackets-->
+    <Match color = "Diff Header">\\(?:\$|!%)\([ \t]*(?:(?:_|[A-Z]|[a-z]|[\xC0-\xD6]|[\xD8-\xF6]|[\xF8-\u02FF]|[\u0370-\u037D]|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD])(?:[A-Z]|[a-z]|[\xC0-\xD6]|[\xD8-\xF6]|[\xF8-\u02FF]|[\u0370-\u037D]|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]|-|\.|[0-9]|\xB7|[\u0300-\u036F]|[\u203F-\u2040])*)[ \t]*\)?</Match>
+    <!--Alias or parameter without brakets-->
+    <Match color = "Diff Header">\\(?:\$|!%)(?:(?:_|[A-Z]|[a-z]|[\xC0-\xD6]|[\xD8-\xF6]|[\xF8-\u02FF]|[\u0370-\u037D]|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD])(?:[A-Z]|[a-z]|[\xC0-\xD6]|[\xD8-\xF6]|[\xF8-\u02FF]|[\u0370-\u037D]|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]|-|\.|[0-9]|\xB7|[\u0300-\u036F]|[\u203F-\u2040])*)</Match>
+    <!--invalid escape-->
+    <Match color = "Diff Header">\\.</Match>
+  </Rule>
+
+
+  <!-- free open string -->
+  <Span color = "Punctuation" rule ="free_open_string">
+    <Begin>=</Begin>
+  </Span>
+
+  <Rule name = "free_open_string">
+    <!--
   <Match color = "Keyword(Constants)">\s*(?:false|true|null)\s*$</Match>
   <Match color = "Keyword(Constants)">\s*-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?\s*$</Match>
   <Match color = "Xml Text">(?:.*)</Match>-->
-</Rule>
+  </Rule>
 
   <!-- sq name -->
   <Match color = "Keyword(Type)">'(?:\\.|.)*?(?:'|$)</Match>
@@ -89,7 +91,7 @@
 
   <!-- argument -->
   <Match color = "Keyword(Exception)">\s*%[^=:()'",]*</Match>
-  
+
   <!-- document & alias def-->
   <Match color = "User Types">\s*![^=:()'",]*</Match>
 
@@ -97,8 +99,8 @@
   <Match color = "Diff Header">\s*\$[^=:()'",]*</Match>
 
   <!-- open name -->
-  <Match color = "Keyword(Type)">\s*[^=:()'",][^=:()'",]*</Match>  
-  
+  <Match color = "Keyword(Type)">\s*[^=:()'",][^=:()'",]*</Match>
+
   <Rule name = "wsa">
 
     <!-- single line comment -->
@@ -112,25 +114,25 @@
     <Span color = "Punctuation" rule ="wsa" tagColor ="Punctuation">
       <Begin>(</Begin>
       <End>)</End>
-    </Span> 
-    
+    </Span>
+
     <Match color = "Punctuation">[ \t]+</Match>
-    <Match color = "Punctuation">,</Match>  
-    <Match color = "Punctuation">:=</Match>  
+    <Match color = "Punctuation">,</Match>
+    <Match color = "Punctuation">:=</Match>
     <Match color = "Punctuation">::</Match>
     <Match color = "Punctuation">:</Match>
     <Match color = "Punctuation">=::</Match>
-    <Match color = "Punctuation">=:</Match>    
-  
-    
+    <Match color = "Punctuation">=:</Match>
+
+
     <!-- single line string -->
     <Span color = "Xml Text" rule ="open_string_sl" tagColor="Punctuation">
       <Begin>==</Begin>
-    </Span>    
-    
+    </Span>
+
     <Span color = "Xml Text" rule ="open_string_sl" tagColor="Punctuation">
       <Begin>=</Begin>
-    </Span>  
+    </Span>
 
     <!-- parameter -->
     <Match color = "Keyword(Exception)">\s*!%[^=:()'",]*</Match>
@@ -146,31 +148,31 @@
 
     <!-- sq name -->
     <Match color = "Keyword(Type)">'(?:\\.|.)*?(?:'|$)</Match>
-    
+
     <!-- dq name -->
     <Match color = "Keyword(Type)">".*?(?:"|$)</Match>
-    
+
     <!-- open name -->
     <Match color = "Keyword(Type)">\s?[^=:()'",]+</Match>
 
-  </Rule>  
+  </Rule>
 
   <Rule name = "string_sl">
 
     <!-- sq string value -->
-    <Match color = "Xml Text">'.*?(?:'|$)</Match>    
+    <Match color = "Xml Text">'.*?(?:'|$)</Match>
 
     <!-- dq string value -->
-    <Match color = "Xml Text">".*?(?:"|$)</Match>  
+    <Match color = "Xml Text">".*?(?:"|$)</Match>
 
     <!-- open string value -->
-    <Match color = "Xml Text">[^=:()'",]*</Match>  
-  
-  </Rule>  
- 
+    <Match color = "Xml Text">[^=:()'",]*</Match>
+
+  </Rule>
+
   <Rule name = "comment">
   </Rule>
   <Rule name = "delimiter">
-  </Rule> 
- 
+  </Rule>
+
 </SyntaxMode>
