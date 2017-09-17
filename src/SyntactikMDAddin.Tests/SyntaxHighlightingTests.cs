@@ -91,7 +91,6 @@ namespace SyntactikMDAddin.Tests
         {
             DoJsonHighlightingTest();
         }
-
         [Test, RecordedTest]
         public void DQName()
         {
@@ -103,12 +102,27 @@ namespace SyntactikMDAddin.Tests
             DoJsonHighlightingTest();
         }
         [Test, RecordedTest]
+        public void DQValue()
+        {
+            DoHighlightingTest();
+        }
+        [Test, RecordedTest]
+        public void DQValueJson()
+        {
+            DoJsonHighlightingTest();
+        }
+        [Test, RecordedTest]
         public void FreeOpenString()
         {
             DoHighlightingTest();
         }
         [Test, RecordedTest]
         public void FreeOpenStringJson()
+        {
+            DoJsonHighlightingTest();
+        }
+        [Test, RecordedTest]
+        public void JsonLiterals()
         {
             DoJsonHighlightingTest();
         }

@@ -1,0 +1,46 @@
+﻿i = 1
+i1 = 1.1
+t1=true
+t2= true
+t3=true 
+f1=false
+f2= false
+f3=false 
+n1=null
+n2= null
+n3=null 
+s = 1
+	2
+s = true
+	2
+s = null
+	2
+
+i = 1 a
+t1=true a
+f1=false a
+n1=null 1
+
+
+i == 1
+i1 == 1.1
+t1==true
+t2== true
+t3==true 
+f1==false
+f2== false
+f3==false 
+n1==null
+n2== null
+n3==null 
+s == 1
+	2
+s == true
+	2
+s == null
+	2
+
+i == '1'
+t1=='true'
+f1=='false'
+n1=='null'

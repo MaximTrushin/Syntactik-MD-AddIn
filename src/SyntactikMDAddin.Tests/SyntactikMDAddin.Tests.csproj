@@ -288,10 +288,19 @@
     <None Include="Scenarios\SyntaxHighlighting\DocumentJson.s4j">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Scenarios\SyntaxHighlighting\DQValueJson.s4j">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scenarios\SyntaxHighlighting\DQValue.s4x">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Scenarios\SyntaxHighlighting\DQNameJson.s4j">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Scenarios\SyntaxHighlighting\FreeOpenString.s4x">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Scenarios\SyntaxHighlighting\JsonLiterals.s4j">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Scenarios\SyntaxHighlighting\MultilineCommentJson.s4j">

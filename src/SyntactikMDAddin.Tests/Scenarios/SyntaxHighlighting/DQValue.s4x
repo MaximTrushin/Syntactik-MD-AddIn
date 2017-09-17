@@ -1,0 +1,12 @@
+﻿e=="value"
+e=="value" 
+e== "value"
+e== "value" 
+e==value'''comment
+e==value '''comment
+e== value'''comment
+e== value '''comment
+e==value"""comment"""
+e==value """comment"""
+e== value"""comment"""
+e== value """comment"""
