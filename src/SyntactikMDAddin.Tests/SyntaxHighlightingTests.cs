@@ -202,6 +202,16 @@ namespace SyntactikMDAddin.Tests
             DoJsonHighlightingTest();
         }
         [Test, RecordedTest]
+        public void SQValue()
+        {
+            DoHighlightingTest();
+        }
+        [Test, RecordedTest]
+        public void SQValueJson()
+        {
+            DoJsonHighlightingTest();
+        }
+        [Test, RecordedTest]
         public void Wsa()
         {
             DoHighlightingTest();
