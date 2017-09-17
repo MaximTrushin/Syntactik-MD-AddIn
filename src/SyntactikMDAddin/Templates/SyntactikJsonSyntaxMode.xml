@@ -39,7 +39,7 @@
 <Rule name = "dq_string_sl">
 </Rule>
 
-  <Rule name = "sq_string">  <!--rule is called from method ScanSpan-->
+ <Rule name = "sq_string">  <!--rule is activated by method ScanSpan-->
   <!--valid escape-->
   <Match color = "Diff Header">\\["'\\\/bfnrt]</Match>
   <!-- utf encode-->
@@ -73,7 +73,10 @@
 </Span>
 
 <Rule name = "free_open_string">
-  <Match color = "Xml Text">(.*)</Match>
+  <!--
+  <Match color = "Keyword(Constants)">\s*(?:false|true|null)\s*$</Match>
+  <Match color = "Keyword(Constants)">\s*-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?\s*$</Match>
+  <Match color = "Xml Text">(?:.*)</Match>-->
 </Rule>
 
   <!-- sq name -->

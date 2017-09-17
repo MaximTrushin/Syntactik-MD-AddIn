@@ -2,18 +2,22 @@
 using System.Linq;
 using Mono.TextEditor;
 using Mono.TextEditor.Highlighting;
+using Syntactik.DOM.Mapped;
 
 namespace Syntactik.MonoDevelop.Highlighting
 {
     public class SyntactikSyntaxMode : SyntaxMode
     {
+        private readonly Module.TargetFormats _targetFormat;
+
         public SyntactikSyntaxMode(TextDocument doc) : base(doc)
         {
-            string modeName = doc.MimeType == "text/x-syntactik4json" ? "SyntactikJsonSyntaxMode":"SyntactikSyntaxMode";
+            _targetFormat = doc.MimeType == "text/x-syntactik4json" ? Module.TargetFormats.Json:Module.TargetFormats.Xml;
+            string modeName = _targetFormat == Module.TargetFormats.Json ? "SyntactikJsonSyntaxMode":"SyntactikSyntaxMode";
             ResourceStreamProvider provider = new ResourceStreamProvider(typeof(SyntactikSyntaxMode).Assembly, typeof(SyntactikSyntaxMode).Assembly.GetManifestResourceNames().First(s => s.Contains(modeName)));
             using (var stream = provider.Open())
             {
-                SyntaxMode baseMode = SyntaxMode.Read(stream);
+                SyntaxMode baseMode = Read(stream);
                 this.rules = new List<Rule>(baseMode.Rules);
                 this.keywords = new List<Keywords>(baseMode.Keywords);
                 this.spans = new List<Span>(baseMode.Spans).ToArray();
@@ -36,7 +40,7 @@ namespace Syntactik.MonoDevelop.Highlighting
 
         public override SpanParser CreateSpanParser(DocumentLine line, CloneableStack<Span> spanStack)
         {
-            return new SyntactikSpanParser(this, spanStack ?? line.StartSpan.Clone());
+            return new SyntactikSpanParser(this, spanStack ?? line.StartSpan.Clone(), _targetFormat);
         }
     }
 }
