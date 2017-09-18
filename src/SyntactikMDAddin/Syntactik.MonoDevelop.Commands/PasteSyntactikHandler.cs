@@ -147,7 +147,7 @@ namespace Syntactik.MonoDevelop.Commands
         {
             info.Enabled = false;
             var doc = IdeApp.Workbench.ActiveDocument;
-            info.Visible = doc.FileName.Extension.ToLower() == ".s4x";
+            info.Visible = doc.FileName.Extension.ToLower() == ".s4x" || doc.FileName.Extension.ToLower() == ".s4j";
 
             if (!info.Visible) return;
 #if WIN32

@@ -152,8 +152,13 @@
       <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyAsXml" insertafter="MonoDevelop.Ide.Commands.EditCommands.Copy" />
       <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyDocAsXml" />
       <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteXml"  insertafter="MonoDevelop.Ide.Commands.EditCommands.Paste" />
+    </Condition>
+    <Condition id="FileType" fileExtensions=".s4x">
       <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteSyntactik" />
     </Condition>
+    <Condition id="FileType" fileExtensions=".s4j">
+      <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteSyntactik" insertafter="MonoDevelop.Ide.Commands.EditCommands.Paste" />
+    </Condition>
+    
   </Extension>
-
 </ExtensionModel>
