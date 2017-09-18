@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading;
 using Syntactik.Compiler;
 using Syntactik.Compiler.Steps;
 using Syntactik.DOM;
@@ -15,16 +10,14 @@ namespace Syntactik.MonoDevelop.Completion
     {
         private CancellationToken _cancellationToken;
         private readonly CompilerContext _context;
-        private Module _module;
         private readonly IPairFactory _pairFactory;
         private Pair _lastPair;
 
 
-        public JsonCompletionPairFactory(CompilerContext context, Module module, CancellationToken _cancellationToken)
+        public JsonCompletionPairFactory(CompilerContext context, Module module, CancellationToken cancellationToken)
         {
-            this._context = context;
-            this._module = module;
-            this._cancellationToken = _cancellationToken;
+            _context = context;
+            _cancellationToken = cancellationToken;
             _pairFactory = new ReportingPairFactoryForJson(context, module);
         }
 
