@@ -22,11 +22,26 @@ namespace Syntactik.MonoDevelop.Commands
             var compilerParameters = CreateCompilerParameters(project.CompilerContext, textEditor.SelectionRange);
             var compiler = new SyntactikCompiler(compilerParameters);
             var context = compiler.Run(new CompileUnit {Modules = modules });
-
-            var clipboard = Gtk.Clipboard.Get(Gdk.Atom.Intern("CLIPBOARD", false));
-            clipboard.Text = (string) context.InMemoryOutputObjects["CLIPBOARD"];
+            using (var monitor = IdeApp.Workbench.ProgressMonitors.GetBuildProgressMonitor())
+            {
+                object s;
+                if (context.InMemoryOutputObjects.TryGetValue("CLIPBOARD", out s))
+                {
+                    var clipboard = Gtk.Clipboard.Get(Gdk.Atom.Intern("CLIPBOARD", false));
+                    clipboard.Text = (string) context.InMemoryOutputObjects["CLIPBOARD"];
+                    monitor.ReportSuccess(SuccessMessage);
+                }
+                else
+                {
+                    monitor.ReportError(ErrorMessage);
+                }
+            }
         }
-        private CompilerParameters CreateCompilerParameters(CompilerContext projectCompilerContext, ISegment textEditorSelectionRange)
+
+        protected virtual string SuccessMessage => "XML is copied to clipboard.";
+        protected virtual string ErrorMessage => "Selection can't be converted to valid XML.";
+
+        protected virtual CompilerParameters CreateCompilerParameters(CompilerContext projectCompilerContext, ISegment textEditorSelectionRange)
         {
             var compilerParameters = new CompilerParameters { Pipeline = new CompilerPipeline() };
             compilerParameters.Pipeline.Steps.Add(new GenerateXmlForSelectionStep(projectCompilerContext, textEditorSelectionRange));

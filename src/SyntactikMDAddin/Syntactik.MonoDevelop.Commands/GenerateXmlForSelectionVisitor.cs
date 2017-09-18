@@ -36,10 +36,11 @@ namespace Syntactik.MonoDevelop.Commands
             var inSelection = IsInSelection(pair as IMappedPair, _selectionRange);
             if (inSelection)
             {
-                string prefix, ns;
-                NamespaceResolver.GetPrefixAndNs(pair, _currentDocument,
-                    () => ScopeContext.Peek(),
-                    out prefix, out ns);
+                string prefix = null, ns;
+                if (_currentDocument != null) //User can copy from AliasDef
+                    NamespaceResolver.GetPrefixAndNs(pair, _currentDocument,
+                        () => ScopeContext.Peek(),
+                        out prefix, out ns);
                 
                 //Starting Element
                 if (!string.IsNullOrEmpty(pair.Name)) //not text node
@@ -56,6 +57,11 @@ namespace Syntactik.MonoDevelop.Commands
                 if (!string.IsNullOrEmpty(pair.Name)) //not text node
                     _xmlTextWriter.WriteEndElement();
             }
+        }
+
+        public override void OnAliasDefinition(DOM.AliasDefinition aliasDef)
+        {
+            Visit(aliasDef.Entities);        
         }
 
         /// <summary>
@@ -83,7 +89,7 @@ namespace Syntactik.MonoDevelop.Commands
 
         private bool IsInSelection(IMappedPair pair, ISegment selectionRange)
         {
-            if (AliasContext.Count > 0) return true;
+            if (AliasContext.Count > 1) return true;
 
             if (pair == null) return false;
 

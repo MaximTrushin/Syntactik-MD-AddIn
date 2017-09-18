@@ -5,8 +5,11 @@
         AddSyntactikFromXml,
         AddSchema,
         CopyAsXml,
+        CopyAsJson,
         CopyDocAsXml,
+        CopyDocAsJson,
         PasteXml,
+        PasteJson,
         PasteSyntactik,
         ExtractAlias,
         LicenseInfo

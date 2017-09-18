@@ -17,12 +17,14 @@ namespace Syntactik.MonoDevelop.Commands
         public override void OnDocument(Document document)
         {
             _currentDocument = (DOM.Mapped.Document)document;
+            _currentModuleMember = document;
             _choiceStack.Push(_currentDocument.ChoiceInfo);
             _xmlTextWriter.WriteStartDocument();
             _rootElementAdded = false;
             Visit(document.Entities);
             _xmlTextWriter.WriteEndDocument();
             _currentDocument = null;
+            _currentModuleMember = null;
         }
 
         protected override void AddLocationMapRecord(string fileName, IMappedPair pair)

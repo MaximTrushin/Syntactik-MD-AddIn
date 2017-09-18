@@ -114,6 +114,12 @@
                 macShortcut = "Shift|Meta|C"
                _label = "Copy Selection as XML" 
                icon = "gtk-copy"/>
+      <Command id = "Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyAsJson" 
+               defaultHandler = "Syntactik.MonoDevelop.Commands.CopyAsJsonHandler"
+               shortcut = "Control|Alt|C"
+                macShortcut = "Shift|Meta|C"
+               _label = "Copy Selection as JSON" 
+               icon = "gtk-copy"/>      
       <Command id = "Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyDocAsXml"
                defaultHandler = "Syntactik.MonoDevelop.Commands.CopyDocAsXmlHandler"
                _label = "Copy Document as XML"
@@ -142,6 +148,7 @@
   
   <Extension path="/MonoDevelop/Ide/MainMenu/Edit">
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyAsXml" insertafter="MonoDevelop.Ide.Commands.EditCommands.Copy" />
+    <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyAsJson" insertafter="MonoDevelop.Ide.Commands.EditCommands.Copy" />
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyDocAsXml" />
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteXml"  insertafter="MonoDevelop.Ide.Commands.EditCommands.Paste" />
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteSyntactik" />
@@ -152,11 +159,10 @@
       <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyAsXml" insertafter="MonoDevelop.Ide.Commands.EditCommands.Copy" />
       <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyDocAsXml" />
       <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteXml"  insertafter="MonoDevelop.Ide.Commands.EditCommands.Paste" />
-    </Condition>
-    <Condition id="FileType" fileExtensions=".s4x">
       <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteSyntactik" />
     </Condition>
     <Condition id="FileType" fileExtensions=".s4j">
+      <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyAsJson" insertafter="MonoDevelop.Ide.Commands.EditCommands.Copy" />
       <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteSyntactik" insertafter="MonoDevelop.Ide.Commands.EditCommands.Paste" />
     </Condition>
     

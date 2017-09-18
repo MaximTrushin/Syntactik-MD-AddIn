@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Gtk;
 using Mono.TextEditor;
 using MonoDevelop.Components.Commands;
 using MonoDevelop.Ide;
@@ -157,7 +158,7 @@ namespace Syntactik.MonoDevelop.Commands
 #endif
             var handler = doc.GetContent<IClipboardHandler>();
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            var clipboard = Gtk.Clipboard.Get(Gdk.Atom.Intern("CLIPBOARD", false));
+            var clipboard = Clipboard.Get(ClipboardActions.CopyOperation.CLIPBOARD_ATOM);
 #if WIN32
             if (!inWpf && handler != null && handler.EnablePaste &&
 #else
