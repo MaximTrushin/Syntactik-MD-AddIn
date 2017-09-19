@@ -14,8 +14,8 @@ namespace Syntactik.MonoDevelop.Commands
     {
         private readonly ISegment _selectionRange;
 
-        public GenerateJsonForSelectionVisitor(JsonWriter xmlTextWriter, CompilerContext context, ISegment selectionRange)
-            : base(name => xmlTextWriter, context)
+        public GenerateJsonForSelectionVisitor(JsonWriter jsonTextWriter, CompilerContext context, ISegment selectionRange)
+            : base(name => jsonTextWriter, context)
         {
             _selectionRange = selectionRange;
         }

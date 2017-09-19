@@ -100,7 +100,9 @@
     <Compile Include="CompilerOptionsWidget.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\CopyAsJsonHandler.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\CopyAsXmlHandler.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Commands\CopyDocAsJsonHandler.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\CopyDocAsXmlHandler.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Commands\GenerateJsonForDocumentStep.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\GenerateXmlForDocumentStep.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\GenerateXmlForDocumentVisitor.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\GenerateJsonForSelectionStep.cs" />

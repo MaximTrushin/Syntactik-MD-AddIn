@@ -1,26 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using System.Xml;
 using MonoDevelop.Core;
+using Newtonsoft.Json;
 using Syntactik.Compiler;
+using Syntactik.Compiler.Generator;
 using Syntactik.DOM;
 
 namespace Syntactik.MonoDevelop.Commands
 {
-    class GenerateXmlForDocumentStep : ICompilerStep
+    class GenerateJsonForDocumentStep : ICompilerStep
     {
         private readonly CompilerContext _compilerContext;
         private CompilerContext _context;
-        private readonly MemoryStream _memoryStream;
         private readonly Document _doc;
+        private readonly StringWriter _stringWriter;
 
-        public GenerateXmlForDocumentStep(CompilerContext compilerContext, Document doc)
+        public GenerateJsonForDocumentStep(CompilerContext compilerContext, Document doc)
         {
             _compilerContext = compilerContext;
             _doc = doc;
-            _memoryStream = new MemoryStream();
+            _stringWriter = new StringWriter();
         }
 
         public void Initialize(CompilerContext context)
@@ -38,18 +38,18 @@ namespace Syntactik.MonoDevelop.Commands
             try
             {
                 _context.InMemoryOutputObjects = new Dictionary<string, object>();
-                using (var xmlWriter = new XmlTextWriter(_memoryStream, Encoding.UTF8) { Formatting = System.Xml.Formatting.Indented })
+                using (var jsonWriter = new JsonTextWriter(_stringWriter) { Formatting = Newtonsoft.Json.Formatting.Indented })
                 {
-                    var visitor = new GenerateXmlForDocumentVisitor(xmlWriter, _compilerContext);
+                    var writer = jsonWriter;
+                    var visitor = new JsonGenerator(name => writer, _compilerContext);
                     visitor.Visit(_doc);
-                    xmlWriter.Flush();
-                    _memoryStream.Position = 0;
-                    _context.InMemoryOutputObjects["CLIPBOARD"] = new StreamReader(_memoryStream).ReadToEnd();
+                    _context.InMemoryOutputObjects["CLIPBOARD"] = _stringWriter.ToString();
                 }
             }
+            catch (JsonWriterException) { }
             catch (Exception ex)
             {
-                LoggingService.LogError("Unhandled exception in GenerateXmlForDocumentStep.Run.", ex);
+                LoggingService.LogError("Unhandled exception in GenerateJsonForDocumentStep.Run.", ex);
             }
         }
     }

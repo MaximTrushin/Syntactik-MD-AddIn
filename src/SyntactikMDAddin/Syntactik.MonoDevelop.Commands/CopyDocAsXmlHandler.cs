@@ -12,7 +12,6 @@ namespace Syntactik.MonoDevelop.Commands
 {
     public class CopyDocAsXmlHandler : CommandHandler //TODO: Unit tests
     {
-
         protected override void Run()
         {
             var textEditor = IdeApp.Workbench.ActiveDocument?.Editor;
@@ -29,11 +28,26 @@ namespace Syntactik.MonoDevelop.Commands
             var compilerParameters = CreateCompilerParameters(project.CompilerContext, doc);
             var compiler = new SyntactikCompiler(compilerParameters);
             var context = compiler.Run(new CompileUnit { Modules = modules });
-            var clipboard = Gtk.Clipboard.Get(Gdk.Atom.Intern("CLIPBOARD", false));
-            clipboard.Text = (string)context.InMemoryOutputObjects["CLIPBOARD"];
+            using (var monitor = IdeApp.Workbench.ProgressMonitors.GetBuildProgressMonitor())
+            {
+                object s;
+                if (context.InMemoryOutputObjects.TryGetValue("CLIPBOARD", out s))
+                {
+                    var clipboard = Gtk.Clipboard.Get(Gdk.Atom.Intern("CLIPBOARD", false));
+                    clipboard.Text = (string)context.InMemoryOutputObjects["CLIPBOARD"];
+                    monitor.ReportSuccess(SuccessMessage);
+                }
+                else
+                {
+                    monitor.ReportError(ErrorMessage);
+                }
+            }
         }
 
-        private CompilerParameters CreateCompilerParameters(CompilerContext projectCompilerContext, Document doc)
+        protected virtual string SuccessMessage => "XML document is copied to clipboard.";
+        protected virtual string ErrorMessage => "Document can't be converted to valid XML.";
+
+        protected virtual CompilerParameters CreateCompilerParameters(CompilerContext projectCompilerContext, Document doc)
         {
             var compilerParameters = new CompilerParameters { Pipeline = new CompilerPipeline() };
             compilerParameters.Pipeline.Steps.Add(new GenerateXmlForDocumentStep(projectCompilerContext, doc));
