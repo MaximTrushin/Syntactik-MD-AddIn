@@ -1,24 +1,19 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Specialized;
-using System.Linq;
 using System.Threading.Tasks;
 using MonoDevelop.Components.Commands;
 using MonoDevelop.Ide;
 using MonoDevelop.Ide.Editor;
 using MonoDevelop.Ide.Gui.Content;
-using Syntactik.Compiler;
 using Syntactik.DOM;
 using Syntactik.DOM.Mapped;
 using Syntactik.MonoDevelop.Completion;
 using Syntactik.MonoDevelop.Converter;
 using Syntactik.MonoDevelop.Projects;
 using Module = Syntactik.DOM.Module;
-using NamespaceDefinition = Syntactik.DOM.NamespaceDefinition;
 
 namespace Syntactik.MonoDevelop.Commands
 {
-    internal class PasteXmlHandler : CommandHandler //TODO: Unit tests
+    internal class PasteJsonHandler : CommandHandler //TODO: Unit tests
     {
         protected override void Run()
         {
@@ -33,8 +28,6 @@ namespace Syntactik.MonoDevelop.Commands
             var indent = 0;
             var indentChar = '\t';
             var indentMultiplicity = 1;
-            ListDictionary declaredNamespaces = null;
-
             var ext = textEditor.GetContent<SyntactikCompletionTextEditorExtension>();
             var task = ext.CompletionContextTask?.Task;
             if (task != null)
@@ -46,7 +39,6 @@ namespace Syntactik.MonoDevelop.Commands
 #endif
                 if (task.Status != TaskStatus.RanToCompletion) return;
                 CompletionContext context = task.Result;
-                declaredNamespaces = GetDeclaredNamespaces(context.Context);
                 GetIndentInfo(module, textEditor, out indentChar, out indentMultiplicity);
                 var lastPair = context.LastPair as IMappedPair;
                 if (lastPair == null) return;
@@ -74,27 +66,20 @@ namespace Syntactik.MonoDevelop.Commands
                 }
             }
             var clipboard = Gtk.Clipboard.Get(Gdk.Atom.Intern("CLIPBOARD", false));
-            var text = clipboard.WaitForText().TrimStart();
+            string text = clipboard.WaitForText().TrimStart();
             using (var monitor = IdeApp.Workbench.ProgressMonitors.GetBuildProgressMonitor())
             {
                 try
                 {
-                    string s4x;
-                    var converter = new XmlToSyntactikConverter(text);
-                    var namespaces = new ListDictionary();
-                    if (declaredNamespaces != null)
-                        foreach (var declaredNamespace in declaredNamespaces)
-                        {
-                            var entry = (DictionaryEntry) declaredNamespace;
-                            namespaces.Add(entry.Key, entry.Value);
-                        }
-                    if (converter.Convert(indent, indentChar, indentMultiplicity, insertNewLine, namespaces, out s4x))
+                    string s4j;
+                    var converter = new JsonToSyntactikConverter(text);
+
+                    if (converter.Convert(indent, indentChar, indentMultiplicity, insertNewLine, out s4j))
                     {
                         using (textEditor.OpenUndoGroup())
                         {
                             textEditor.EnsureCaretIsNotVirtual();
-                            AddMissingNamespaces(declaredNamespaces, namespaces, ext);
-                            textEditor.InsertAtCaret(s4x);
+                            textEditor.InsertAtCaret(s4j);
                         }
                     }
                     monitor.ReportSuccess(SuccessMessage);
@@ -106,58 +91,8 @@ namespace Syntactik.MonoDevelop.Commands
             }
         }
 
-        protected virtual string SuccessMessage => "Syntactik code is generated from XML in clipboard.";
-        protected virtual string ErrorMessage => "Text in clipboard is not valid XML.";
-        private void AddMissingNamespaces(ListDictionary declaredNamespaces, ListDictionary namespaces,
-            SyntactikCompletionTextEditorExtension ext)
-        {
-            foreach (var item in namespaces)
-            {
-                var entry = (DictionaryEntry) item;
-                if (!declaredNamespaces.Values.OfType<string>().Contains(entry.Value))
-                {
-                    ext.AddNewNamespaceToModule(entry.Key.ToString(), entry.Value.ToString());
-                }
-            }
-        }
-
-        internal static ListDictionary GetDeclaredNamespaces(CompilerContext context)
-        {
-            var result = new ListDictionary();
-            var module = context.CompileUnit.Modules[0];
-            foreach (var nsDef in module.NamespaceDefinitions)
-            {
-                AddNsDefToListDict(result, nsDef);
-            }
-            if (module.Members.Count <= 0) return result;
-
-            var member = module.Members[0];
-            foreach (var nsDef in member.NamespaceDefinitions)
-            {
-                AddNsDefToListDict(result, nsDef);
-            }
-
-            return result;
-        }
-
-        private static void AddNsDefToListDict(ListDictionary result, NamespaceDefinition nsDef)
-        {
-            foreach (var item in result)
-            {
-                var entry = (DictionaryEntry) item;
-                if (entry.Value.ToString() == nsDef.Value)
-                {
-                    entry.Key = nsDef.Name;
-                    return;
-                }
-                if (entry.Key.ToString() == nsDef.Name)
-                {
-                    entry.Value = nsDef.Value;
-                    return;
-                }
-            }
-            result.Add(nsDef.Name, nsDef.Value);
-        }
+        protected virtual string SuccessMessage => "Syntactik code is generated from JSON in clipboard.";
+        protected virtual string ErrorMessage => "Text in clipboard is not valid JSON.";
 
         internal static void GetIndentInfo(Module module, TextEditor textEditor, out char indentSymbol,
             out int indentMultiplicity)
@@ -183,7 +118,7 @@ namespace Syntactik.MonoDevelop.Commands
         {
             info.Enabled = false;
             var doc = IdeApp.Workbench.ActiveDocument;
-            info.Visible = doc.FileName.Extension.ToLower() == ".s4x";
+            info.Visible = doc.FileName.Extension.ToLower() == ".s4j";
 
             if (!info.Visible) return;
             bool inWpf = false;

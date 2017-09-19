@@ -110,6 +110,7 @@
     <Compile Include="Syntactik.MonoDevelop.Commands\GenerateJsonForSelectionVisitor.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\GenerateXmlForSelectionVisitor.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\PasteSyntactikHandler.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Commands\PasteJsonHandler.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\PasteXmlHandler.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\SchemaFolderCommandHandler.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\SyntactikCommandHandler.cs" />
@@ -140,6 +141,7 @@
     <Compile Include="gtk-gui\CompilerOptionsWidget.cs" />
     <Compile Include="gtk-gui\generated.cs" />
     <Compile Include="Syntactik.MonoDevelop.Converter\FakeRootStreamReader.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Converter\JsonToSyntactikConverter.cs" />
     <Compile Include="Syntactik.MonoDevelop.Converter\XmlToSyntactikConverter.cs" />
     <Compile Include="Syntactik.MonoDevelop.Formatting\SyntactikTextEditorIndentation.cs" />
     <Compile Include="Syntactik.MonoDevelop.Highlighting\HighlightUsagesExtension.cs" />

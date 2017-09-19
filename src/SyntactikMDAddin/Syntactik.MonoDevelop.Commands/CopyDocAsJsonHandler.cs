@@ -7,7 +7,6 @@ namespace Syntactik.MonoDevelop.Commands
 {
     public class CopyDocAsJsonHandler : CopyDocAsXmlHandler //TODO: Unit tests
     {
-
         protected override string SuccessMessage => "JSON document is copied to clipboard.";
         protected override string ErrorMessage => "Document can't be converted to valid JSON.";
         protected override CompilerParameters CreateCompilerParameters(CompilerContext projectCompilerContext, Document doc)

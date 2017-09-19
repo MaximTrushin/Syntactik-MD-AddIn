@@ -157,9 +157,17 @@ namespace SyntactikMDAddin.Tests
         {
             if (declaredNamespaces == null) declaredNamespaces = new ListDictionary();
             var input = PrintTestScenario(".text");
-            string xml = ConvertXml(input, declaredNamespaces, indent, indentChar, indentMultiplicity, insertNewLine);
+            string s = ConvertXml(input, declaredNamespaces, indent, indentChar, indentMultiplicity, insertNewLine);
             if (IsRecordedTest() || IsRecordTest())
-                CompareResultAndRecordedFiles(xml, IsRecordTest(), "cxml");
+                CompareResultAndRecordedFiles(s, IsRecordTest(), "cxml");
+        }
+
+        public static void DoJsonConverterTest(int indent = 0, char indentChar = '\t', int indentMultiplicity = 1, bool insertNewLine = false)
+        {
+            var input = PrintTestScenario(".json");
+            string s = ConvertJson(input, indent, indentChar, indentMultiplicity, insertNewLine);
+            if (IsRecordedTest() || IsRecordTest())
+                CompareResultAndRecordedFiles(s, IsRecordTest(), "cjson");
         }
 
         private static string ConvertXml(string text, ListDictionary declaredNamespaces, int indent = 0, char indentChar = '\t', int indentMultiplicity = 1, bool insertNewLine = false)
@@ -167,6 +175,13 @@ namespace SyntactikMDAddin.Tests
             var converter = new XmlToSyntactikConverter(text);
             string output;
             converter.Convert(indent, indentChar, indentMultiplicity, insertNewLine, declaredNamespaces, out output);
+            return output;
+        }
+        private static string ConvertJson(string text, int indent = 0, char indentChar = '\t', int indentMultiplicity = 1, bool insertNewLine = false)
+        {
+            var converter = new JsonToSyntactikConverter(text);
+            string output;
+            converter.Convert(indent, indentChar, indentMultiplicity, insertNewLine, out output);
             return output;
         }
 

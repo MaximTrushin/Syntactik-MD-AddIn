@@ -133,6 +133,11 @@
          shortcut = "Control|Shift|V"
          _label = "Paste XML"
          icon = "gtk-paste"/>
+      <Command id = "Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteJson"
+         defaultHandler = "Syntactik.MonoDevelop.Commands.PasteJsonHandler"
+         shortcut = "Control|Shift|V"
+         _label = "Paste JSON"
+         icon = "gtk-paste"/>
       <Command id = "Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteSyntactik"
          defaultHandler = "Syntactik.MonoDevelop.Commands.PasteSyntactikHandler"
          shortcut = "Control|Alt|V"
@@ -156,6 +161,7 @@
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyDocAsXml" />
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyDocAsJson" />
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteXml"  insertafter="MonoDevelop.Ide.Commands.EditCommands.Paste" />
+    <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteJson"  insertafter="MonoDevelop.Ide.Commands.EditCommands.Paste" />
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteSyntactik" />
   </Extension>
 
@@ -169,6 +175,7 @@
     <Condition id="FileType" fileExtensions=".s4j">
       <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyAsJson" insertafter="MonoDevelop.Ide.Commands.EditCommands.Copy" />
       <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyDocAsJson" />
+      <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteJson"  insertafter="MonoDevelop.Ide.Commands.EditCommands.Paste" />
       <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteSyntactik" insertafter="MonoDevelop.Ide.Commands.EditCommands.Paste" />
     </Condition>
     
