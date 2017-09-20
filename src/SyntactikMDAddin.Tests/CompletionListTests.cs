@@ -106,6 +106,11 @@ namespace SyntactikMDAddin.Tests
         {
             DoCompletionListTest();
         }
+        [Test, RecordTest]
+        public void Choice1()
+        {
+            DoCompletionListTest("2");
+        }
         [Test, RecordedTest]
         public void Document1()
         {
@@ -165,6 +170,11 @@ namespace SyntactikMDAddin.Tests
         public void Module1()
         {
             DoCompletionListTest();
+        }
+        [Test, RecordedTest]
+        public void Module2()
+        {
+            DoCompletionListTest("2");
         }
         [Test, RecordedTest]
         public void NamespaceDefinition1()

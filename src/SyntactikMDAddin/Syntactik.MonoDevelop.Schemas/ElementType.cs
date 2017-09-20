@@ -1,6 +1,6 @@
 ﻿namespace Syntactik.MonoDevelop.Schemas
 {
-    public class ElementType
+    public abstract class ElementType
     {
         public string Name { get; set; }
         public string Namespace { get; set; }

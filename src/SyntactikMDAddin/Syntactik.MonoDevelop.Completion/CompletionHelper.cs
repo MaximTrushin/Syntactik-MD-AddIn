@@ -184,7 +184,9 @@ namespace Syntactik.MonoDevelop.Completion
         internal static void DoNamespaceDefinitionCompletion(CompletionDataList completionList, CompletionContext context, CodeCompletionContext editorCompletionContext, ContextInfo schemaInfo, SchemasRepository schemasRepository)
         {
             if (schemasRepository == null) return;
-            List<NamespaceDefinition> declaredNamespaceDefinitions = GetDeclaredNamespaceDefinitions(context);
+            ModuleMember moduleMember;
+            Module module;
+            List<NamespaceDefinition> declaredNamespaceDefinitions = GetDeclaredNamespaceDefinitions(context, out module, out moduleMember);
             var undeclaredNamespaces =
                 schemasRepository.GetNamespaces()
                     .Where(ns => declaredNamespaceDefinitions.All(dns => dns.Value != ns.Namespace));
@@ -193,7 +195,10 @@ namespace Syntactik.MonoDevelop.Completion
             {
                 if (ns.Prefix == "xml")
                     continue;
-
+                if (string.IsNullOrEmpty(ns.Prefix))
+                {
+                    ns.Prefix = CreatePrefix(schemasRepository, moduleMember, module);
+                }
                 string text = $"!#{ns.Prefix} = {ns.Namespace}";
                 var completionItem = new CompletionItem
                 {
@@ -336,20 +341,22 @@ namespace Syntactik.MonoDevelop.Completion
             editorCompletionContext.TriggerWordLength += delta;
         }
 
-        private static List<NamespaceDefinition> GetDeclaredNamespaceDefinitions(CompletionContext context)
+        private static List<NamespaceDefinition> GetDeclaredNamespaceDefinitions(CompletionContext context, out Module module, out ModuleMember moduleMember)
         {
+            module = null;
+            moduleMember = null;
             var result = new List<NamespaceDefinition>();
             var completionContextLastPair = context.LastPair;
             while (completionContextLastPair != null)
             {
-                var moduleMember = completionContextLastPair as ModuleMember;
+                moduleMember = completionContextLastPair as ModuleMember;
                 if (moduleMember != null)
                 {
                     result.AddRange(moduleMember.NamespaceDefinitions);
                 }
                 else
                 {
-                    var module = completionContextLastPair as Module;
+                    module = completionContextLastPair as Module;
                     if (module != null)
                     {
                         result.AddRange(module.NamespaceDefinitions);
@@ -395,30 +402,59 @@ namespace Syntactik.MonoDevelop.Completion
         {
             NamespaceDefinition nsDef = null;
             newNs = false;
+            ModuleMember moduleMember = null;
+            Module module = null;
             while (pair != null)
             {
-                var moduleMember = pair as ModuleMember;
+                moduleMember = pair as ModuleMember;
                 if (moduleMember != null)
                 {
                     nsDef = moduleMember.NamespaceDefinitions.FirstOrDefault(n => n.Value == @namespace);
                 }
                 else
                 {
-                    var module = pair as Module;
+                    module = pair as Module;
                     if (module != null)
                     {
                         nsDef = module.NamespaceDefinitions.FirstOrDefault(n => n.Value == @namespace);
                     }
                 }
 
-                if (pair.Parent is CompileUnit) break;
+                if (nsDef != null || pair.Parent is CompileUnit) break;
                 pair = pair.Parent;
             }
             if (nsDef != null) return nsDef.Name;
 
             //If namespace prefix is not found in the module then getting prefix from schema.
             newNs = true;
-            return schemasRepository.GetNamespaces().FirstOrDefault(n => n.Namespace == @namespace)?.Prefix;
+            var ns = schemasRepository.GetNamespaces().FirstOrDefault(n => n.Namespace == @namespace);
+            if (ns == null) return "";
+            var prefix = ns.Prefix;
+            //if schema doesn't define default prefix for the namespace:
+            if (string.IsNullOrEmpty(prefix))
+            {
+                prefix = CreatePrefix(schemasRepository, moduleMember, module);
+            }
+            ns.Prefix = prefix;
+            return prefix;
+        }
+
+        private static string CreatePrefix(SchemasRepository schemasRepository, ModuleMember moduleMember, Module module)
+        {
+            string prefix;
+            var i = 1;
+            while (true)
+            {
+                prefix = "n" + i++;
+                //Checking if this prefix already defined in module
+                if (moduleMember?.NamespaceDefinitions.FirstOrDefault(n => n.Name == prefix) != null) continue;
+                if (module?.NamespaceDefinitions.FirstOrDefault(n => n.Name == prefix) != null) continue;
+                //Checking if this prefix is already used in schema repository
+                if (schemasRepository.GetNamespaces().FirstOrDefault(n => n.Prefix == prefix) != null) continue;
+
+                break;
+            }
+            return prefix;
         }
 
         internal static string GetNamespace( Pair pair)

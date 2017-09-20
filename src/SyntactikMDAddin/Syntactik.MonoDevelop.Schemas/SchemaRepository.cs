@@ -23,6 +23,11 @@ namespace Syntactik.MonoDevelop.Schemas
             return _namespaces = _providers.SelectMany(p => p.GetNamespaces());
         }
 
+        public void ResetNamespaces()
+        {
+            _namespaces = null;
+        }
+
         public void Validate(XmlDocument doc, Action<XmlNode, string> onErrorAction)
         {
             _providers.ForEach(p => p.Validate(doc, onErrorAction));

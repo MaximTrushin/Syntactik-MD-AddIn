@@ -239,6 +239,9 @@ namespace Syntactik.MonoDevelop.Completion
                 }
             }
             completionList.Sort(new DataItemComparer());
+
+            schemasRepository?.ResetNamespaces(); //Need to call it for logic which assigns undefined prefix to the namespace info
+
             return completionList;
         }
 
