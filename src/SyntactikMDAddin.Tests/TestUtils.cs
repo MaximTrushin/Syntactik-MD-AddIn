@@ -101,10 +101,10 @@ namespace SyntactikMDAddin.Tests
                 CompareResultAndRecordedFiles(expectation, IsRecordTest(), "list");
         }
 
-        public static void DoCompletionListTest()
+        public static void DoCompletionListTest(string schemaSet = "1")
         {
             var input = PrintTestScenario();
-            string completionList = GetCompletionList(GetTestCaseName(), input, new FileProvider());
+            string completionList = GetCompletionList(GetTestCaseName(), input, new FileProvider(schemaSet));
             if (IsRecordedTest() || IsRecordTest())
                 CompareResultAndRecordedFiles(completionList, IsRecordTest(), "list");
         }
@@ -330,10 +330,17 @@ namespace SyntactikMDAddin.Tests
 
         public class FileProvider : IProjectFilesProvider
         {
+            private string _schemaSet;
+
+            public FileProvider(string schemaSet = "1")
+            {
+                _schemaSet = schemaSet;
+            }
+
             public IEnumerable<string> GetSchemaProjectFiles()
             {
                 var files = new List<string>();
-                var path = AssemblyDirectory + @"\Schemas";
+                var path = AssemblyDirectory + $"\\Schemas\\{_schemaSet}";
                 foreach (var file in Directory.GetFiles(path))
                 {
                     files.Add(file);
