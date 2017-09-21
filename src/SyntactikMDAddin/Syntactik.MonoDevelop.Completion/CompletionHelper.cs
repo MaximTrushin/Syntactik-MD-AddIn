@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web;
+using System.Xml.Schema;
 using MonoDevelop.Ide.CodeCompletion;
 using Syntactik.DOM;
 using Syntactik.DOM.Mapped;
@@ -82,7 +83,7 @@ namespace Syntactik.MonoDevelop.Completion
             CodeCompletionContext editorCompletionContext, ContextInfo schemaInfo, SchemasRepository schemasRepository)
         {
             if (schemasRepository == null) return;
-            if (schemaInfo.CurrentType is SimpleType)
+            if (schemaInfo.CurrentType is XmlSchemaSimpleType)
                 return;
 
             var items = new List<CompletionData>();
@@ -94,24 +95,38 @@ namespace Syntactik.MonoDevelop.Completion
             foreach (var attribute in attributes)
             {
                 var newNs = false;
-                string prefix = string.IsNullOrEmpty(attribute.Namespace) ? "" : GetNamespacePrefix(attribute.Namespace, completionContext.LastPair, schemasRepository, out newNs);
+                string prefix;
+                var name = attribute.Name;
+                if (!name.Contains(':'))
+                {
+                    prefix = string.IsNullOrEmpty(attribute.QualifiedName.Namespace)
+                        ? ""
+                        : GetNamespacePrefix(attribute.QualifiedName.Namespace,
+                            completionContext.LastPair, schemasRepository, out newNs);
+                }
+                else
+                {
+                    var names = name.Split(new[] {':'}, 2);
+                    prefix = names[0];
+                    name = names[1];
+                }
                 //Attribute has max quantity = 1. Checking if this attribute is already added to the element
                 if (contextElement != null && contextElement.Entities.Any(e => e is Attribute && 
-                    e.Name == attribute.Name && (((INsNode) e).NsPrefix??"") == (prefix??""))) continue;
+                    e.Name == name && (((INsNode) e).NsPrefix??"") == (prefix??""))) continue;
 
-                var displayText = (string.IsNullOrEmpty(prefix) ? "" : (prefix + ".")) + attribute.Name;
+                var displayText = (string.IsNullOrEmpty(prefix) ? "" : (prefix + ".")) + name;
                 
                 var data = new CompletionItem {
                     ItemType = ItemType.Attribute,
-                    Namespace = attribute.Namespace,
+                    Namespace = attribute.QualifiedName.Namespace,
                     NsPrefix = prefix,
-                    Priority = attribute.Builtin?AttributePriority: (AttributePriority + 1) //Low priority for xsi attributes
+                    Priority = attribute.QualifiedName.Namespace == XmlSchemaInstanceNamespace.Url? AttributePriority: (AttributePriority + 1) //Low priority for xsi attributes
                 };
                 items.Add(data);
                 data.DisplayText = $"@{displayText} = ";
                 data.CompletionText = $"@{displayText} =";
                 data.CompletionCategory = completionCategory;
-                data.Icon = attribute.Optional ? SyntactikIcons.OptAttribute : SyntactikIcons.Attribute;
+                data.Icon = attribute.Use != XmlSchemaUse.Required ? SyntactikIcons.OptAttribute : SyntactikIcons.Attribute;
                 data.UndeclaredNamespaceUsed = newNs;
             }
             completionList.AddRange(items.OrderBy(i => i.DisplayText));
@@ -136,18 +151,18 @@ namespace Syntactik.MonoDevelop.Completion
             foreach (var element in schemaInfo.Elements)
             {
                 bool newNs = false;
-                string prefix = string.IsNullOrEmpty(element.Namespace) ? "" : GetNamespacePrefix(element.Namespace, completionContext.LastPair, schemasRepository, out newNs);
-                var displayText = (string.IsNullOrEmpty(prefix) ? "" : (prefix + ".")) + element.Name;
+                string prefix = string.IsNullOrEmpty(element.QualifiedName.Namespace) ? "" : GetNamespacePrefix(element.QualifiedName.Namespace, completionContext.LastPair, schemasRepository, out newNs);
+                var displayText = (string.IsNullOrEmpty(prefix) ? "" : (prefix + ".")) + element.QualifiedName.Name;
 
-                var elementType = element.GetElementType();
+                var elementType = element.ElementSchemaType;// GetElementType(element);
                 bool haveExtensions;
-                var types = GetElementTypes(elementType, out haveExtensions);
+                var types = GetElementTypes(elementType, schemaInfo, out haveExtensions);
                 foreach (var type in types)
                 {
                     var data = new CompletionItem
                     {
                         ItemType = ItemType.Entity,
-                        Namespace = element.Namespace,
+                        Namespace = element.QualifiedName.Namespace,
                         NsPrefix = prefix,
                         ElementType = type,
                         Priority = priority,
@@ -160,7 +175,7 @@ namespace Syntactik.MonoDevelop.Completion
                         postfix = $" ({type.Name})";
                     }
 
-                    if (type.IsComplex)
+                    if (type is XmlSchemaComplexType)
                     {
                         data.DisplayText = $"{displayText}:{postfix} ";
                         data.CompletionText = $"{displayText}: ";
@@ -172,11 +187,11 @@ namespace Syntactik.MonoDevelop.Completion
                     }
 
                     data.CompletionCategory = completionCategory;
-                    data.Icon = element.Optional ? SyntactikIcons.OptElement : SyntactikIcons.Element;
+                    data.Icon = element.MinOccurs == 0?SyntactikIcons.OptElement : SyntactikIcons.Element;
                     data.UndeclaredNamespaceUsed = newNs;
                     data.XsiUndeclared = xsiUndeclared;
                 }
-                if (element.InSequence) priority--;
+                if (schemaInfo.InSequence) priority--;
             }
             completionList.AddRange(items);
         }
@@ -243,20 +258,25 @@ namespace Syntactik.MonoDevelop.Completion
             CodeCompletionContext editorCompletionContext, ContextInfo schemaInfo, SchemasRepository schemasRepository)
         {
             if (schemasRepository == null) return;
-            var simpleType = schemaInfo.CurrentType as SimpleType;
+            var simpleType = schemaInfo.CurrentType as XmlSchemaSimpleType;
             if (simpleType == null) return;
             var category = new SyntactikCompletionCategory { DisplayText = "Values", Order = 0 };
-            foreach (var value in simpleType.EnumValues)
+            var restrition = simpleType.Content as XmlSchemaSimpleTypeRestriction;
+            if (restrition != null)
             {
-                var completionItem = new CompletionItem
+                foreach (var f in restrition.Facets.OfType<XmlSchemaEnumerationFacet>())
                 {
-                    ItemType = ItemType.Attribute,
-                    Icon = SyntactikIcons.Enum,
-                    DisplayText = value,
-                    CompletionText = context.LastPair.Delimiter == DelimiterEnum.E ? value : EncodeSQString(value, true),
-                    CompletionCategory = category
-                };
-                completionList.Add(completionItem);
+                    var completionItem = new CompletionItem
+                    {
+                        ItemType = ItemType.Attribute,
+                        Icon = SyntactikIcons.Enum,
+                        DisplayText = f.Value,
+                        CompletionText =
+                            context.LastPair.Delimiter == DelimiterEnum.E ? f.Value : EncodeSQString(f.Value, true),
+                        CompletionCategory = category
+                    };
+                    completionList.Add(completionItem);
+                }
             }
         }
 
@@ -272,28 +292,14 @@ namespace Syntactik.MonoDevelop.Completion
             {
                 var nsPrefix = "";
                 bool newNs;
-                var ns = GetNamespacePrefix(schemaInfo.Scope.Namespace, context.LastPair, schemasRepository, out newNs);
+                var ns = GetNamespacePrefix(schemaInfo.Scope.QualifiedName.Namespace, context.LastPair, schemasRepository, out newNs);
                 if (ns != null)
                     nsPrefix = ns + ":";
-                
-                foreach (var d in schemaInfo.Scope.Descendants)
+                var typeInfo = XsdSchemaProvider.GetTypeInfo(schemaInfo.AllTypes, schemaInfo.Scope);
+                if (typeInfo == null) return;
+                foreach (var d in typeInfo.Descendants)
                 {
-                    string text = $"{nsPrefix}{d.Name}";
-                    var completionItem = new CompletionItem
-                    {
-                        ItemType = ItemType.Attribute,
-                        Icon = SyntactikIcons.Enum,
-                        DisplayText = text,
-                        CompletionText = attribute.Delimiter == DelimiterEnum.E ? text : EncodeSQString(text, true),
-                        CompletionCategory = category
-                    };
-                    if (newNs)
-                    {
-                        completionItem.UndeclaredNamespaceUsed = true;
-                        completionItem.NsPrefix = ns;
-                        completionItem.Namespace = schemaInfo.Scope.Namespace;
-                    }
-                    completionList.Add(completionItem);
+                    completionList.Add(CreateAttributeValueCompletionItem(schemaInfo, nsPrefix, d, attribute, category, newNs, ns));
                 }
                 return;
             }
@@ -302,11 +308,11 @@ namespace Syntactik.MonoDevelop.Completion
             {
                 var nsPrefix = "";
                 bool newNs;
-                var ns = GetNamespacePrefix(desc.Namespace, context.LastPair, schemasRepository, out newNs);
+                var ns = GetNamespacePrefix(desc.SchemaType.QualifiedName.Namespace, context.LastPair, schemasRepository, out newNs);
                 if (ns != null)
                     nsPrefix = ns + ":";
 
-                string text = $"{nsPrefix}{desc.Name}";
+                string text = $"{nsPrefix}{desc.SchemaType.Name}";
                 var completionItem = new CompletionItem
                 {
                     ItemType = ItemType.Attribute,
@@ -319,10 +325,33 @@ namespace Syntactik.MonoDevelop.Completion
                 {
                     completionItem.UndeclaredNamespaceUsed = true;
                     completionItem.NsPrefix = ns;
-                    completionItem.Namespace = desc.Namespace;
+                    completionItem.Namespace = desc.SchemaType.QualifiedName.Namespace;
                 }
                 completionList.Add(completionItem);
             }
+        }
+
+        private static CompletionItem CreateAttributeValueCompletionItem(ContextInfo schemaInfo, string nsPrefix, TypeInfo d, DOM.Attribute attribute,
+            SyntactikCompletionCategory category, bool newNs, string ns)
+        {
+
+            string text = $"{nsPrefix}{d.SchemaType.Name}";
+            var completionItem = new CompletionItem
+            {
+                ItemType = ItemType.Attribute,
+                Icon = SyntactikIcons.Enum,
+                DisplayText = text,
+                CompletionText = attribute.Delimiter == DelimiterEnum.E ? text : EncodeSQString(text, true),
+                CompletionCategory = category
+            };
+            if (newNs)
+            {
+                completionItem.UndeclaredNamespaceUsed = true;
+                completionItem.NsPrefix = ns;
+                completionItem.Namespace = schemaInfo.Scope.QualifiedName.Namespace;
+            }
+            
+            return completionItem;
         }
 
         private static string EncodeSQString(string text, bool addSingleBrackets)
@@ -331,14 +360,6 @@ namespace Syntactik.MonoDevelop.Completion
             sb.Append(HttpUtility.JavaScriptStringEncode(text));
             if (addSingleBrackets) sb.Append("'");
             return sb.ToString();
-        }
-
-        private static void AdjustEditorCompletionContext(CodeCompletionContext editorCompletionContext, Interval valueInterval)
-        {
-            var delta = editorCompletionContext.TriggerOffset - valueInterval.Begin.Index;
-            editorCompletionContext.TriggerOffset = valueInterval.Begin.Index;
-            editorCompletionContext.TriggerLineOffset -= delta;
-            editorCompletionContext.TriggerWordLength += delta;
         }
 
         private static List<NamespaceDefinition> GetDeclaredNamespaceDefinitions(CompletionContext context, out Module module, out ModuleMember moduleMember)
@@ -515,23 +536,23 @@ namespace Syntactik.MonoDevelop.Completion
             var mappedPair = (IMappedPair)contextPair;
             var nsPair = contextPair as INsNode;
             string ns = "";
-            if (!String.IsNullOrEmpty(nsPair?.NsPrefix)) ns = nsPair.NsPrefix + ".";
+            if (!string.IsNullOrEmpty(nsPair?.NsPrefix)) ns = nsPair.NsPrefix + ".";
             if (mappedPair.NameInterval.End.Column < editorCompletionContext.TriggerLineOffset) return null;
             var prefix = ns + contextPair.Name;
-            if (String.IsNullOrEmpty(prefix)) return prefix;
+            if (string.IsNullOrEmpty(prefix)) return prefix;
 
             return prefix.Substring(0, prefix.Length - (mappedPair.NameInterval.End.Index - context.Offset));
         }
 
-        private static List<ElementType> GetElementTypes(ElementType elementType, out bool haveExtensions)
+        private static List<XmlSchemaType> GetElementTypes(XmlSchemaType elementType, ContextInfo schemaInfo, out bool haveExtensions)
         {
             haveExtensions = false;
-            var types = new List<ElementType> { elementType };
-            var type = elementType as ComplexType;
-            if (type != null && type.Descendants.Count > 0)
+            var types = new List<XmlSchemaType> { elementType };
+            var typeInfo = XsdSchemaProvider.GetTypeInfo(schemaInfo.AllTypes, elementType);
+            if (typeInfo != null && typeInfo.Descendants.Count > 0)
             {
-                types.AddRange(type.Descendants);
                 haveExtensions = true;
+                types.AddRange(typeInfo.Descendants.Select(t => t.SchemaType));
             }
             return types;
         }

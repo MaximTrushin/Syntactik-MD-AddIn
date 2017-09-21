@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,21 +17,20 @@ namespace Syntactik.MonoDevelop.Schemas
         readonly Dictionary<string, XmlSchema> _includes = new Dictionary<string, XmlSchema>();
 
         private readonly IProjectFilesProvider _provider;
-        private List<ElementInfo> _fullListOfElements;
-        private List<AttributeInfo> _fullListOfAttributes;
-        private List<ComplexType> _allTypes;
+        private List<XmlSchemaElement> _fullListOfElements;
+        private List<XmlSchemaAttribute> _fullListOfAttributes;
 
-        public List<ElementType> Types { get; }
-        public List<ElementInfo> GlobalElements { get; private set; }
-        public List<AttributeInfo> GlobalAttributes { get; }
-        public List<ElementTypeRef> TypeRefs { get; }
+        public List<TypeInfo> Types { get; }
+        public List<XmlSchemaElement> GlobalElements { get; private set; }
+        public List<XmlSchemaAttribute> GlobalAttributes { get; }
+        public List<XmlSchemaType> TypeRefs { get; }
 
         public XsdSchemaProvider(IProjectFilesProvider provider)
         {
             _provider = provider;
-            Types = new List<ElementType>();
-            GlobalAttributes = new List<AttributeInfo>();
-            TypeRefs = new List<ElementTypeRef>();
+            Types = new List<TypeInfo>();
+            GlobalAttributes = new List<XmlSchemaAttribute>();
+            TypeRefs = new List<XmlSchemaType>();
         }
 
         public IEnumerable<NamespaceInfo> GetNamespaces()
@@ -77,33 +75,33 @@ namespace Syntactik.MonoDevelop.Schemas
         public void PopulateContextInfo(Context context, ContextInfo contextInfo)
         {
             UpdateSchemaInfo();
-            contextInfo.AllTypes = AllTypes;
+            contextInfo.AllTypes = Types;
             var contextElement = context.CompletionInfo.InTag == CompletionExpectation.NoExpectation
                 ? context.CompletionInfo.LastPair
                 : context.CompletionInfo.LastPair.Parent; //if we are inside pair which is not finished then context is the node's parent
 
 
             var path = GetCompletionPath(context);
-            var elements = new List<ElementInfo>(GlobalElements);
-            var attributes = new List<AttributeInfo>(GlobalAttributes);
+            var elements = new List<XmlSchemaElement>(GlobalElements);
+            var attributes = new List<XmlSchemaAttribute>(GlobalAttributes);
             foreach (var pair in path)
             {
                 if (pair is Document || pair is Module)
                 {
-                    elements = new List<ElementInfo>(GlobalElements);
-                    attributes = new List<AttributeInfo>(GlobalAttributes);
+                    elements = new List<XmlSchemaElement>(GlobalElements);
+                    attributes = new List<XmlSchemaAttribute>(GlobalAttributes);
                     continue;
                 }
 
-                ComplexType complexType;
+                XmlSchemaComplexType complexType;
                 if (pair is AliasDefinition || pair is Alias || pair is Argument || pair is Parameter)
                 {
-                    complexType = GetSchemaType(pair, contextInfo, elements) as ComplexType;
+                    complexType = GetSchemaType(pair, contextInfo, elements) as XmlSchemaComplexType;
 
                     if (complexType == null)
                     {
-                        attributes = new List<AttributeInfo>(FullListOfAttributes);
-                        elements = new List<ElementInfo>(FullListOfElements);
+                        attributes = new List<XmlSchemaAttribute>(FullListOfAttributes);
+                        elements = new List<XmlSchemaElement>(FullListOfElements);
                         continue;
                     }
                 }
@@ -112,34 +110,26 @@ namespace Syntactik.MonoDevelop.Schemas
                     var element = pair as Element;
                     if (element == null) //TODO: Create logic for scope
                     {
-                        elements = new List<ElementInfo>(GlobalElements);
-                        attributes = new List<AttributeInfo>(GlobalAttributes);
+                        elements = new List<XmlSchemaElement>(GlobalElements);
+                        attributes = new List<XmlSchemaAttribute>(GlobalAttributes);
                         continue;
                     }
 
                     contextInfo.CurrentType = GetSchemaType(pair, contextInfo, elements);
 
-                    complexType = contextInfo.CurrentType as ComplexType;
-                    contextInfo.Scope = string.IsNullOrEmpty(complexType?.Name)?null:complexType;
+                    complexType = contextInfo.CurrentType as XmlSchemaComplexType;
+                    contextInfo.Scope = string.IsNullOrEmpty(complexType?.QualifiedName.Name)?null:complexType;
 
                     if (complexType == null)
                     {
-                        elements = new List<ElementInfo>(GlobalElements);
-                        attributes = new List<AttributeInfo>(GlobalAttributes);
+                        elements = new List<XmlSchemaElement>(GlobalElements);
+                        attributes = new List<XmlSchemaAttribute>(GlobalAttributes);
                         continue;
                     }
                 }
-
                 GetEntitiesOfSchemaType(complexType, out attributes, out elements);
 
-                elements = new List<ElementInfo>(elements.Select(
-                        e =>
-                        {
-                            var clone = (ElementInfo) e.Clone();
-                            clone.InSequence = true;
-                            return clone;
-                        }
-                    ));
+                contextInfo.InSequence = true;
             }
             
             var container = contextElement as IContainer;
@@ -158,7 +148,7 @@ namespace Syntactik.MonoDevelop.Schemas
                 foreach (var existingElement in existingElements)
                 {
                     if (existingElement.Name == elementFromSchema.Name
-                            && CompletionHelper.GetNamespace(existingElement) == elementFromSchema.Namespace)
+                            && CompletionHelper.GetNamespace(existingElement) == elementFromSchema.QualifiedName.Namespace)
                     {
                         existingElementsToRemove.Add(existingElement);
                         maxCount--;
@@ -175,39 +165,130 @@ namespace Syntactik.MonoDevelop.Schemas
             }
         }
 
-        private void GetEntitiesOfSchemaType(ComplexType complexType, out List<AttributeInfo> attributes, out List<ElementInfo> elements)
+        private void GetEntitiesOfSchemaType(XmlSchemaComplexType complexType, out List<XmlSchemaAttribute> attributes, out List<XmlSchemaElement> elements)
         {
-            var resultAttributes = new List<AttributeInfo>();
-            var resultElements = new List<ElementInfo>();
+            var resultAttributes = new List<XmlSchemaAttribute>();
+            var resultElements = new List<XmlSchemaElement>();
 
-            foreach (var descendant in GetDescendancyPath(complexType))
-            {
-                resultElements.AddRange(
-                    descendant.Elements.Where(
-                        e => resultElements.All(ce => ce.Name != e.Name || ce.Namespace != e.Namespace)));
-                resultAttributes.AddRange(
-                    descendant.Attributes.Where(
-                        a => resultAttributes.All(ca => ca.Name != a.Name || ca.Namespace != a.Namespace)));
-            }
+            resultElements.AddRange(
+                GetElements(complexType).Where(
+                    e => resultElements.All(ce => ce.Name != e.Name || ce.QualifiedName.Namespace != e.QualifiedName.Namespace)));
+            resultAttributes.AddRange(
+                complexType.AttributeUses.Values.OfType<XmlSchemaAttribute>().Where(
+                    a => resultAttributes.All(ca => ca.Name != a.Name || ca.QualifiedName.Namespace != a.QualifiedName.Namespace)));
+
             attributes = resultAttributes;
             elements = resultElements;
         }
 
-        internal static IEnumerable<ComplexType> GetDescendancyPath(ComplexType complexType)
+        private IEnumerable<XmlSchemaElement> GetElements(XmlSchemaComplexType type)
         {
-            return GetDescendancyReversedPath(complexType).Reverse();
-        }
-
-        internal static IEnumerable<ComplexType> GetDescendancyReversedPath(ComplexType complexType)
-        {
-            while (complexType != null && complexType.Name != "anyType")
+            var sequence = type.ContentTypeParticle as XmlSchemaSequence;
+            if (sequence == null) yield break;
+            foreach (var item in sequence.Items)
             {
-                yield return complexType;
-                complexType = complexType.BaseType;
+                var element = item as XmlSchemaElement;
+                if (element != null)
+                {
+                    yield return element;
+                }
+                var choice = item as XmlSchemaChoice;
+                if (choice != null)
+                {
+                    foreach (var xmlSchemaElement in GetElements(choice))
+                    {
+                        yield return xmlSchemaElement;
+                    }
+                    continue;
+                }
+                var seq = item as XmlSchemaSequence;
+                if (seq != null)
+                {
+                    foreach (var xmlSchemaElement in GetElements(seq))
+                    {
+                        yield return xmlSchemaElement;
+                    }
+                    continue;
+                }
             }
         }
 
-        private ElementType GetSchemaType(Pair pair, ContextInfo contextInfo, List<ElementInfo> elements)
+        private IEnumerable<XmlSchemaElement> GetElements(XmlSchemaChoice choice)
+        {
+            foreach (var item in choice.Items)
+            {
+                var element = item as XmlSchemaElement;
+                if (element != null)
+                {
+                    yield return element;
+                    continue;
+                }
+
+                var sequence = item as XmlSchemaSequence;
+                if (sequence != null)
+                {
+                    foreach (var xmlSchemaElement in GetElements(sequence))
+                    {
+                        yield return xmlSchemaElement;
+                    }
+                    continue;
+                }
+                var ch = item as XmlSchemaChoice;
+                if (ch != null)
+                {
+                    foreach (var xmlSchemaElement in GetElements(ch))
+                    {
+                        yield return xmlSchemaElement;
+                    }
+                    continue;
+                }
+            }
+        }
+
+        private IEnumerable<XmlSchemaElement> GetElements(XmlSchemaSequence sequence)
+        {
+            foreach (var item in sequence.Items)
+            {
+                var element = item as XmlSchemaElement;
+                if (element != null)
+                {
+                    yield return element;
+                }
+
+                var choice = item as XmlSchemaChoice;
+                if (choice != null)
+                {
+                    foreach (var xmlSchemaElement in GetElements(choice))
+                    {
+                        yield return xmlSchemaElement;
+                    }
+                }
+
+                var seq = item as XmlSchemaSequence;
+                if (seq != null)
+                {
+                    foreach (var xmlSchemaElement in GetElements(seq))
+                    {
+                        yield return xmlSchemaElement;
+                    }
+                    continue;
+                }
+
+            }
+        }
+
+        internal IEnumerable<XmlSchemaComplexType> GetDescendancyPath(XmlSchemaComplexType complexType)
+        {
+            yield return complexType;
+            var typeInfo = GetTypeInfo(complexType);
+            if (typeInfo == null) yield break;
+            foreach (var d in typeInfo.Descendants)
+            {
+                yield return (XmlSchemaComplexType)d.SchemaType;
+            }
+        }
+
+        private XmlSchemaType GetSchemaType(Pair pair, ContextInfo contextInfo, List<XmlSchemaElement> elements)
         {
             var container = pair as IContainer;
             if (container != null)
@@ -218,18 +299,18 @@ namespace Syntactik.MonoDevelop.Schemas
                 {
                     var typeName = typeInfo[1];
                     var typeNamespace = CompletionHelper.GetNamespace(pair, typeInfo[0]);
-                    var complexType = contextInfo.AllTypes.FirstOrDefault(t => t.Name == typeName && t.Namespace == typeNamespace);
-                    if (complexType != null) return complexType;
+                    var complexType = contextInfo.AllTypes.FirstOrDefault(t => t.SchemaType.Name == typeName && t.SchemaType.QualifiedName.Namespace == typeNamespace);
+                    if (complexType != null) return complexType.SchemaType;
                 }
                 if (!(pair is Element)) return null;
 
                 var element = pair as Element;
                 string @namespace = CompletionHelper.GetNamespace(element);
                 var contextElementSchemaInfo =
-                    elements.FirstOrDefault(e => e.Name == element.Name && (e.Namespace ?? "") == @namespace);
-                return contextElementSchemaInfo?.GetElementType();
-            }
+                    elements.FirstOrDefault(e => e.Name == element.Name && (e.QualifiedName.Namespace ?? "") == @namespace);
 
+                return contextElementSchemaInfo?.ElementSchemaType;
+            }
             return null;
         }
 
@@ -238,9 +319,9 @@ namespace Syntactik.MonoDevelop.Schemas
         /// </summary>
         /// <param name="existingElements"></param>
         /// <param name="elements"></param>
-        private void DeleteLeadingNonSchemaElements(List<Element> existingElements, List<ElementInfo> elements)
+        private void DeleteLeadingNonSchemaElements(List<Element> existingElements, List<XmlSchemaElement> elements)
         {
-            var existingElementsToRemove = existingElements.Where(existingElement => !elements.Any(e => existingElement.Name == e.Name && CompletionHelper.GetNamespace(existingElement) == e.Namespace)).ToList();
+            var existingElementsToRemove = existingElements.Where(existingElement => !elements.Any(e => existingElement.Name == e.Name && CompletionHelper.GetNamespace(existingElement) == e.QualifiedName.Namespace)).ToList();
             existingElementsToRemove.ForEach(e => existingElements.Remove(e));
         }
 
@@ -270,33 +351,24 @@ namespace Syntactik.MonoDevelop.Schemas
             }
         }
 
-        private List<ElementInfo> FullListOfElements => _fullListOfElements?? (_fullListOfElements = CalculateFullListOfElements());
-        private List<AttributeInfo> FullListOfAttributes => _fullListOfAttributes ?? (_fullListOfAttributes = CalculateFullListOfAttributes());
-        private List<ComplexType> AllTypes => _allTypes?? (_allTypes = CalculateListOfAllTypes());
+        private List<XmlSchemaElement> FullListOfElements => _fullListOfElements?? (_fullListOfElements = CalculateFullListOfElements());
+        private List<XmlSchemaAttribute> FullListOfAttributes => _fullListOfAttributes ?? (_fullListOfAttributes = CalculateFullListOfAttributes());
 
-        private List<ComplexType> CalculateListOfAllTypes()
-        {
-            CalculateFullListOfElements();
-            return _allTypes;
-        }
-
-        private List<AttributeInfo> CalculateFullListOfAttributes()
+        private List<XmlSchemaAttribute> CalculateFullListOfAttributes()
         {
             CalculateFullListOfElements();
             return _fullListOfAttributes;
         }
 
-        private List<ElementInfo> CalculateFullListOfElements()
+        private List<XmlSchemaElement> CalculateFullListOfElements()
         {
             if (_fullListOfElements != null) return _fullListOfElements;
 
-            _fullListOfElements = new List<ElementInfo>(GlobalElements);
-            _fullListOfAttributes = new List<AttributeInfo>(GlobalAttributes);
-            _allTypes = new List<ComplexType>();
-            foreach (var elementInfo in GlobalElements)
-            {
-                EnumerateSubElementsAndAttributes(_fullListOfElements, _fullListOfAttributes, _allTypes, elementInfo);
-            }
+            _fullListOfElements = new List<XmlSchemaElement>(GlobalElements);
+            _fullListOfAttributes = new List<XmlSchemaAttribute>(GlobalAttributes);
+            GlobalElements.ForEach(
+                e => EnumerateSubElementsAndAttributes(_fullListOfElements, _fullListOfAttributes, e.ElementSchemaType));
+            Types.ForEach(t => EnumerateSubElementsAndAttributes(_fullListOfElements, _fullListOfAttributes, t.SchemaType));
             return _fullListOfElements;
         }
 
@@ -305,51 +377,72 @@ namespace Syntactik.MonoDevelop.Schemas
             return _provider.GetSchemaProjectFiles();
         }
 
-        private void UpdateSchemaInfo() //TODO: Call update when project schema set changed.
+        private void UpdateSchemaInfo()
         {
             if (GlobalElements != null) return;
-            GlobalElements = new List<ElementInfo>();
+            GlobalElements = new List<XmlSchemaElement>();
             TypeRefs.Clear();
             Types.Clear();
-            GlobalElements.Clear();
             GlobalAttributes.Clear();
 
             var schemaSet = GetSchemaSet();
-            foreach (XmlSchemaType sType in schemaSet.GlobalTypes.Values)
+            foreach (XmlSchemaType schemaType in schemaSet.GlobalTypes.Values)
             {
-                var elementType = GetElementType(sType);
-                elementType.IsGlobal = true;
-                Types.Add(elementType);
+                if (!(schemaType is XmlSchemaComplexType) || schemaType.Name == null) continue;
+                var typeInfo = new TypeInfo(schemaType);
+                
+                //Processing descendants
+                Types.ForEach(t =>
+                {
+                    if (t.BaseSchemaType != schemaType) return;
+                    t.BaseTypeInfo = typeInfo;
+
+                    //Adding descendants to the new typeInfo object
+                    if (typeInfo.Descendants.FirstOrDefault(i => i.SchemaType == t.SchemaType) == null)
+                        typeInfo.Descendants.Add(t);
+                    t.Descendants.ForEach(t2 =>
+                    {
+                        if (typeInfo.Descendants.FirstOrDefault(i => i.SchemaType == t2.SchemaType) == null)
+                            typeInfo.Descendants.Add(t2);
+                    });
+                });
+
+                //Processing ancestors
+                if (schemaType.BaseXmlSchemaType?.Name != null)
+                {
+                    typeInfo.BaseSchemaType = schemaType.BaseXmlSchemaType;
+                    typeInfo.BaseTypeInfo = GetTypeInfo(Types, schemaType.BaseXmlSchemaType);
+
+                    var ancestor = typeInfo.BaseTypeInfo;
+                    while (ancestor != null)
+                    {
+                        if (ancestor.Descendants.FirstOrDefault(i => i.SchemaType == typeInfo.SchemaType) == null)
+                            ancestor.Descendants.Add(typeInfo);
+                        typeInfo.Descendants.ForEach(t =>
+                        {
+                            if (ancestor.Descendants.FirstOrDefault(i => i.SchemaType == t.SchemaType) == null)
+                                ancestor.Descendants.Add(t);
+                        });
+                        ancestor = ancestor.BaseTypeInfo;
+                    }
+                }
+                Types.Add(typeInfo);
             }
             foreach (XmlSchemaElement sElement in schemaSet.GlobalElements.Values)
             {
-                var elementInfo = GetElementInfo(sElement, null);
-                elementInfo.IsGlobal = true;
-                GlobalElements.Add(elementInfo);
+                GlobalElements.Add(sElement);
             }
             foreach (XmlSchemaAttribute sAttrib in schemaSet.GlobalAttributes.Values)
             {
-                var attributeInfo = GetAttributeInfo(sAttrib, null);
-                attributeInfo.IsGlobal = true;
-                GlobalAttributes.Add(attributeInfo);
-            }
-
-            foreach (var tRef in TypeRefs)
-            {
-                var type = Types.FirstOrDefault(t => t.Name == tRef.Name && t.Namespace == tRef.Namespace);
-                tRef.ResolvedType = type;
-            }
-
-            foreach (var type in Types.OfType<ComplexType>())
-            {
-                var baseType = type.BaseType;
-                while (baseType != null)
-                {
-                    baseType.Descendants.Add(type);
-                    baseType = baseType.BaseType;
-                }
+                GlobalAttributes.Add(sAttrib);
             }
         }
+
+        internal static TypeInfo GetTypeInfo(List<TypeInfo> types, XmlSchemaType schemaType)
+        {
+            return types.FirstOrDefault(t => t.SchemaType == schemaType);
+        }
+
         private void UpdateSchemaSet()
         {
             _schemaset = new XmlSchemaSet {XmlResolver = null};
@@ -395,7 +488,6 @@ namespace Syntactik.MonoDevelop.Schemas
                             LoadIncludes(dir, schemaSet, iSchema);
                             import.Schema = iSchema;
                         }
-
                     }
                 }
                 if (i is XmlSchemaInclude)
@@ -431,166 +523,43 @@ namespace Syntactik.MonoDevelop.Schemas
             return _schemaset;
         }
 
-        private void EnumerateSubElementsAndAttributes(List<ElementInfo> elementList, List<AttributeInfo> attributeList, List<ComplexType> allDescendants, ElementInfo element)
+        private void EnumerateSubElementsAndAttributes(List<XmlSchemaElement> elementList, List<XmlSchemaAttribute> attributeList, 
+                        XmlSchemaType schemaType)
         {
-            var type = element.GetElementType() as ComplexType;
-            if (type == null) return;
+            var schemaComplexType = schemaType as XmlSchemaComplexType;
+            if (schemaComplexType == null) return;
 
-            if (!string.IsNullOrEmpty(type.Name) && !allDescendants.Any(a => a.Name == type.Name && a.Namespace == type.Namespace))
-                allDescendants.Add(type);
-
-            allDescendants.AddRange(
-                type.Descendants.Where(d => !string.IsNullOrEmpty(d.Name) && !allDescendants.Any(a => a.Name == d.Name && a.Namespace == d.Namespace)));
-
-            var attributes = new List<AttributeInfo>();
-            attributes.AddRange(type.Attributes);
-            attributes.AddRange(type.Descendants.SelectMany(d => d.Attributes));
-            attributeList.AddRange(attributes);
+            var attributes = new List<XmlSchemaAttribute>();
+            attributes.AddRange(schemaComplexType.AttributeUses.Values.OfType<XmlSchemaAttribute>());
+            if (schemaComplexType.Name != null)
+                attributes.AddRange(GetTypeInfo(schemaComplexType).Descendants.Where(t => t.SchemaType is XmlSchemaComplexType).
+                    SelectMany(d => ((XmlSchemaComplexType) d.SchemaType).AttributeUses.Values.OfType<XmlSchemaAttribute>()));
             
-            var elements = new List<ElementInfo>();
-            elements.AddRange(type.Elements);
-            elements.AddRange(type.Descendants.SelectMany(d => d.Elements));
+            attributes.ForEach(e =>
+            {
+                if (!attributeList.Any(a => a.Name == e.Name && a.QualifiedName?.Namespace == e.QualifiedName?.Namespace))
+                    attributeList.Add(e);
+            });
+            
+            var elements = new List<XmlSchemaElement>();
+            elements.AddRange(GetElements(schemaComplexType));
+            if (schemaComplexType.Name != null)
+                elements.AddRange(GetTypeInfo(schemaComplexType).Descendants.Where(t => t.SchemaType is XmlSchemaComplexType).
+                SelectMany(t => GetElements((XmlSchemaComplexType) t.SchemaType)));
+                
             foreach (var subElement in elements)
             {
-                if (elementList.Any(e => e.Name == subElement.Name && e.Namespace == subElement.Namespace))
+                if (elementList.Any(e => e.QualifiedName.Name == subElement.QualifiedName.Name && e.QualifiedName.Namespace == subElement.QualifiedName.Namespace))
                     continue;
 
                 elementList.Add(subElement);
-                EnumerateSubElementsAndAttributes(elementList, attributeList, allDescendants, subElement);
+                EnumerateSubElementsAndAttributes(elementList, attributeList, subElement.ElementSchemaType);
             }
         }
 
-        private ElementType GetElementType(XmlSchemaType sType)
+        private TypeInfo GetTypeInfo(XmlSchemaComplexType type)
         {
-            var sComplexType = sType as XmlSchemaComplexType;
-            if (sComplexType != null)
-            {
-                var type = new ComplexType
-                {
-                    Name = sComplexType.QualifiedName.Name,
-                    Namespace = sComplexType.QualifiedName.Namespace
-                };
-
-                var baseComplexType = sComplexType.BaseXmlSchemaType as XmlSchemaComplexType;
-                if (baseComplexType != null)
-                {
-                    var typeRef = new ElementTypeRef
-                    {
-                        Name = baseComplexType.QualifiedName.Name,
-                        Namespace = baseComplexType.QualifiedName.Namespace
-                    };
-                    type.BaseTypeRef = typeRef;
-                    TypeRefs.Add(typeRef);
-                }
-
-                foreach (var sAttr in sComplexType.AttributeUses.Values.OfType<XmlSchemaAttribute>())
-                {
-                    var attr = GetAttributeInfo(sAttr, type);
-                    type.Attributes.Add(attr);
-                }
-
-                var sequence = sComplexType.ContentTypeParticle as XmlSchemaSequence;
-                if (sequence != null)
-                    foreach (var item in sequence.Items.OfType<XmlSchemaElement>())
-                    {
-                        var elementInfo = GetElementInfo(item, type);
-                        type.Elements.Add(elementInfo);
-                    }
-                return type;
-            }
-            var sSimpleType = sType as XmlSchemaSimpleType;
-            if (sSimpleType != null)
-            {
-                var simpleType = new SimpleType
-                {
-                    Name = sSimpleType.QualifiedName.Name,
-                    Namespace = sSimpleType.QualifiedName.Namespace
-                };
-                var restrition = sSimpleType.Content as XmlSchemaSimpleTypeRestriction;
-                if (restrition != null)
-                {
-                    foreach (var f in restrition.Facets.OfType<XmlSchemaEnumerationFacet>())
-                    {
-                        simpleType.EnumValues.Add(f.Value);
-                    }
-                }
-                return simpleType;
-            }
-            return null;
+            return GetTypeInfo(Types, type);
         }
-
-        private AttributeInfo GetAttributeInfo(XmlSchemaAttribute sAttr, ComplexType parent)
-        {
-            AttributeInfo attributeInfo = new AttributeInfo(parent)
-            {
-                Name = sAttr.QualifiedName.Name,
-                Namespace = sAttr.QualifiedName.Namespace,
-                Optional = sAttr.Use != XmlSchemaUse.Required
-            };
-            var schema = GetSchemaFromElement(sAttr);
-            attributeInfo.Qualified = schema.ElementFormDefault == XmlSchemaForm.Qualified;
-
-            return attributeInfo;
-        }
-
-        private ElementInfo GetElementInfo(XmlSchemaElement sElement, ComplexType parent)
-        {
-            ElementInfo elementInfo = new ElementInfo(parent)
-            {
-                Name = sElement.QualifiedName.Name,
-                Namespace = sElement.QualifiedName.Namespace,
-                Optional = sElement.MinOccurs == 0,
-                MaxOccurs = sElement.MaxOccurs
-            };
-
-            var schema = GetSchemaFromElement(sElement);
-            elementInfo.Qualified = schema.ElementFormDefault == XmlSchemaForm.Qualified || !string.IsNullOrEmpty(sElement.RefName.Name);
-
-
-            if (string.IsNullOrEmpty(sElement.ElementSchemaType.QualifiedName.Name))
-            {
-                var elementType = GetElementType(sElement.ElementSchemaType);
-                elementInfo.Type = elementType;
-
-            }
-            else
-            {
-                if (sElement.ElementSchemaType is XmlSchemaSimpleType)
-                {
-                    var typeRef = new ElementTypeRef
-                    {
-                        Name = sElement.ElementSchemaType.QualifiedName.Name,
-                        Namespace = sElement.ElementSchemaType.QualifiedName.Namespace
-                    };
-                    elementInfo.Type = typeRef;
-                    TypeRefs.Add(typeRef);
-                }
-                else
-                {
-                    var typeRef = new ElementTypeRef
-                    {
-                        Name = sElement.ElementSchemaType.QualifiedName.Name,
-                        Namespace = sElement.ElementSchemaType.QualifiedName.Namespace
-                    };
-                    elementInfo.Type = typeRef;
-                    TypeRefs.Add(typeRef);
-                }
-            }
-            return elementInfo;
-        }
-
-        private XmlSchema GetSchemaFromElement(XmlSchemaObject obj)
-        {
-            var el = obj;
-            while (el != null)
-            {
-                var schema = el as XmlSchema;
-                if (schema != null)
-                    return schema;
-                el = el.Parent;
-            }
-            return null;
-        }
-
     }
 }

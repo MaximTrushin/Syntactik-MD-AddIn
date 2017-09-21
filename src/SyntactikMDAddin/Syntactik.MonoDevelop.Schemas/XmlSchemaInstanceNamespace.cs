@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using System.Xml.Schema;
 using Syntactik.DOM;
 using Syntactik.MonoDevelop.Completion;
 
@@ -33,12 +34,11 @@ namespace Syntactik.MonoDevelop.Schemas
             {
                 if (contextElement.Entities.Any(e => e is DOM.Attribute && ((DOM.Attribute)e).NsPrefix != "xsi")) return;
             }
-            
+            //xsi - attribute can be added only if there are no other attribute present
             if (contextElement.Entities.Any(e => !(e is DOM.Attribute))) return;
 
-            //xsi - attribute can be added only if there are no other attribute present
-            contextInfo.Attributes.Add(new AttributeInfo { Name = "type", Namespace = Url, Builtin = true, Optional = true });
-            contextInfo.Attributes.Add(new AttributeInfo { Name = "nil", Namespace = Url, Builtin = true, Optional = true });
+            contextInfo.Attributes.Add(new XmlSchemaAttribute {Use = XmlSchemaUse.Optional, Name = "xsi:type", });
+            contextInfo.Attributes.Add(new XmlSchemaAttribute { Use = XmlSchemaUse.Optional, Name = "xsi:nil"});
         }
     }
 }

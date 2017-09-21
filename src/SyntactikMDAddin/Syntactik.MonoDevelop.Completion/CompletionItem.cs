@@ -1,4 +1,5 @@
-﻿using MonoDevelop.Ide.CodeCompletion;
+﻿using System.Xml.Schema;
+using MonoDevelop.Ide.CodeCompletion;
 using MonoDevelop.Ide.Editor.Extension;
 using Syntactik.DOM;
 using Syntactik.MonoDevelop.Schemas;
@@ -23,7 +24,7 @@ namespace Syntactik.MonoDevelop.Completion
         public bool XsiUndeclared { get; set; }
         public string Namespace { get; set; }
         public string NsPrefix { get; set; }
-        public ElementType ElementType { get; set; } //xsd schema element type
+        public XmlSchemaType ElementType { get; set; } //xsd schema element type
         public override int PriorityGroup => _priorityGroup;
         public Pair CompletionContextPair { get; set; }
 

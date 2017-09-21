@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Schema;
 using Gtk;
 using ICSharpCode.NRefactory.Editor;
 using Mono.TextEditor;
@@ -294,7 +295,7 @@ namespace Syntactik.MonoDevelop.Completion
                          new string(module.IndentSymbol == 0 ? '\t' : module.IndentSymbol,
                              module.IndentMultiplicity == 0 ? 1 : module.IndentMultiplicity);
             bool newTypePrefix;
-            var typePrefix = CompletionHelper.GetNamespacePrefix(SelectedCompletionItem.ElementType.Namespace,
+            var typePrefix = CompletionHelper.GetNamespacePrefix(SelectedCompletionItem.ElementType.QualifiedName.Namespace,
                 SelectedCompletionItem.CompletionContextPair,
                 ((SyntactikXmlProject) DocumentContext.Project).SchemasRepository, out newTypePrefix);
             if (!string.IsNullOrEmpty(typePrefix)) typePrefix += ":"; 
@@ -307,7 +308,7 @@ namespace Syntactik.MonoDevelop.Completion
                 if (SelectedCompletionItem.XsiUndeclared)
                     AddNewNamespaceToModule("xsi", XmlSchemaInstanceNamespace.Url);
                 if (newTypePrefix && typePrefix != "xsi")
-                    AddNewNamespaceToModule(typePrefix, SelectedCompletionItem.ElementType.Namespace);
+                    AddNewNamespaceToModule(typePrefix, SelectedCompletionItem.ElementType.QualifiedName.Namespace);
             }
         }
 
@@ -316,12 +317,12 @@ namespace Syntactik.MonoDevelop.Completion
         /// </summary>
         /// <param name="elementType"></param>
         /// <returns></returns>
-        private static bool IsRootType(ElementType elementType)
+        private static bool IsRootType(XmlSchemaType elementType)
         {
-            var complexType = elementType as ComplexType;
-            if (complexType?.BaseType == null) return true;
-            if (complexType.BaseType.Name == "anyType" &&
-                complexType.BaseType.Namespace == "http://www.w3.org/2001/XMLSchema") return true;
+            var complexType = elementType as XmlSchemaComplexType;
+            if (complexType?.BaseXmlSchemaType == null) return true;
+            if (complexType.BaseXmlSchemaType.Name == "anyType" &&
+                complexType.BaseXmlSchemaType.QualifiedName.Namespace == "http://www.w3.org/2001/XMLSchema") return true;
             return false;
         }
 

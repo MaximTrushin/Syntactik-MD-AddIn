@@ -169,17 +169,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Syntactik.MonoDevelop.Schemas\AttributeInfo.cs" />
-    <Compile Include="Syntactik.MonoDevelop.Schemas\ComplexType.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Schemas\TypeInfo.cs" />
     <Compile Include="Syntactik.MonoDevelop.Schemas\Context.cs" />
-    <Compile Include="Syntactik.MonoDevelop.Schemas\ElementInfo.cs" />
-    <Compile Include="Syntactik.MonoDevelop.Schemas\ElementType.cs" />
-    <Compile Include="Syntactik.MonoDevelop.Schemas\ElementTypeRef.cs" />
     <Compile Include="Syntactik.MonoDevelop.Schemas\ISchemaProvider.cs" />
     <Compile Include="Syntactik.MonoDevelop.Schemas\NamespaceInfo.cs" />
     <Compile Include="Syntactik.MonoDevelop.Schemas\ContextInfo.cs" />
     <Compile Include="Syntactik.MonoDevelop.Schemas\SchemaRepository.cs" />
-    <Compile Include="Syntactik.MonoDevelop.Schemas\SimpleType.cs" />
     <Compile Include="Syntactik.MonoDevelop.Schemas\XmlSchemaInstanceNamespace.cs" />
     <Compile Include="Syntactik.MonoDevelop.Schemas\XsdSchemaProvider.cs" />
     <Compile Include="SyntactikIcons.cs" />
