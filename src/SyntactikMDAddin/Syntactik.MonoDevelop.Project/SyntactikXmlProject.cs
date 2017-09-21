@@ -62,6 +62,20 @@ namespace Syntactik.MonoDevelop.Projects
                 SchemasRepository = new SchemasRepository(this);
         }
 
+        protected override void OnFileRemovedFromProject(ProjectFileEventArgs e)
+        {
+            base.OnFileAddedToProject(e);
+            var schemaRemoved = false;
+            foreach (var file in e)
+            {
+                if (file.ProjectFile.ProjectVirtualPath.ParentDirectory.FileName == "Schemas")
+                    schemaRemoved = true;
+
+            }
+            if (schemaRemoved)
+                SchemasRepository = new SchemasRepository(this);
+        }
+
         public IEnumerable<string> GetSchemaProjectFiles()
         {
             var services = Items.OfType<ProjectFile>()
