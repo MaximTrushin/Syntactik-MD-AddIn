@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Schema;
+using MonoDevelop.Ide.Projects;
 using Syntactik.DOM;
 using Syntactik.MonoDevelop.Completion;
 using Syntactik.MonoDevelop.Projects;
@@ -82,13 +83,16 @@ namespace Syntactik.MonoDevelop.Schemas
 
 
             var path = GetCompletionPath(context);
-            var elements = new List<XmlSchemaElement>(GlobalElements);
+            var schemaParticles = new List<XmlSchemaParticle>(GlobalElements);
             var attributes = new List<XmlSchemaAttribute>(GlobalAttributes);
+            bool isChoice = false;
+            
             foreach (var pair in path)
             {
+                isChoice = false;
                 if (pair is Document || pair is Module)
                 {
-                    elements = new List<XmlSchemaElement>(GlobalElements);
+                    schemaParticles = new List<XmlSchemaParticle>(GlobalElements);
                     attributes = new List<XmlSchemaAttribute>(GlobalAttributes);
                     continue;
                 }
@@ -96,12 +100,12 @@ namespace Syntactik.MonoDevelop.Schemas
                 XmlSchemaComplexType complexType;
                 if (pair is AliasDefinition || pair is Alias || pair is Argument || pair is Parameter)
                 {
-                    complexType = GetSchemaType(pair, contextInfo, elements) as XmlSchemaComplexType;
+                    complexType = GetSchemaType(pair, contextInfo, schemaParticles) as XmlSchemaComplexType;
 
                     if (complexType == null)
                     {
                         attributes = new List<XmlSchemaAttribute>(FullListOfAttributes);
-                        elements = new List<XmlSchemaElement>(FullListOfElements);
+                        schemaParticles = new List<XmlSchemaParticle>(FullListOfElements);
                         continue;
                     }
                 }
@@ -110,24 +114,24 @@ namespace Syntactik.MonoDevelop.Schemas
                     var element = pair as Element;
                     if (element == null) //TODO: Create logic for scope
                     {
-                        elements = new List<XmlSchemaElement>(GlobalElements);
+                        schemaParticles = new List<XmlSchemaParticle>(GlobalElements);
                         attributes = new List<XmlSchemaAttribute>(GlobalAttributes);
                         continue;
                     }
 
-                    contextInfo.CurrentType = GetSchemaType(pair, contextInfo, elements);
+                    contextInfo.CurrentType = GetSchemaType(pair, contextInfo, schemaParticles);
 
                     complexType = contextInfo.CurrentType as XmlSchemaComplexType;
                     contextInfo.Scope = complexType;
 
                     if (complexType == null)
                     {
-                        elements = new List<XmlSchemaElement>(GlobalElements);
+                        schemaParticles = new List<XmlSchemaParticle>(GlobalElements);
                         attributes = new List<XmlSchemaAttribute>(GlobalAttributes);
                         continue;
                     }
                 }
-                GetEntitiesOfSchemaType(complexType, out attributes, out elements);
+                GetEntitiesOfSchemaType(complexType, out attributes, out schemaParticles, out isChoice);
 
                 contextInfo.InSequence = true;
             }
@@ -137,18 +141,76 @@ namespace Syntactik.MonoDevelop.Schemas
             if (container == null || container.Entities.Count == 0 || container.Entities.All(e => e is Attribute))
                 contextInfo.Attributes.AddRange(attributes.Distinct());
 
-            foreach (var elementFromSchema in elements)
-            {
-                var existingElementsToRemove = new List<Element>();
-                var found = false;
-                var maxCount = elementFromSchema.MaxOccurs;
+            //1. Delete leading existing elements that are not part of schema
+            CleanupExistingElements(existingElements, schemaParticles);
+            ProcessSchemaSequence(contextInfo, schemaParticles, existingElements, isChoice);
+        }
 
-                //1. Delete leading existing elements that are not part of schema
-                DeleteLeadingNonSchemaElements(existingElements, elements);
+        private static void ProcessSchemaSequence(ContextInfo contextInfo, List<XmlSchemaParticle> schemaParticles, List<Element> existingElements, bool isChoice)
+        {
+            foreach (var schemaParticle in schemaParticles)
+            {
+                var schemaElement = schemaParticle as XmlSchemaElement;
+                if (schemaElement != null)
+                {
+                    ProcessSchemaElement(contextInfo, schemaElement, existingElements, isChoice);
+                    continue;
+                }
+
+                var choice = schemaParticle as XmlSchemaChoice;
+                if (choice != null)
+                {
+                    ProcessSchemaChoice(contextInfo, choice.Items.OfType<XmlSchemaParticle>().ToList(), existingElements, false);
+                    continue;
+                }
+                var seq = schemaParticle as XmlSchemaSequence;
+                if (seq != null)
+                {
+                    ProcessSchemaSequence(contextInfo, seq.Items.OfType<XmlSchemaParticle>().ToList(), existingElements, false);
+                    continue;
+                }
+            }
+        }
+
+        private static void ProcessSchemaChoice(ContextInfo contextInfo, List<XmlSchemaParticle> schemaParticles, List<Element> existingElements, bool isChoice)
+        {
+            foreach (var schemaParticle in schemaParticles)
+            {
+                var schemaElement = schemaParticle as XmlSchemaElement;
+                if (schemaElement != null)
+                {
+                    ProcessSchemaElement(contextInfo, schemaElement, existingElements, isChoice);
+                    continue;
+                }
+
+                var choice = schemaParticle as XmlSchemaChoice;
+                if (choice != null)
+                {
+                    ProcessSchemaChoice(contextInfo, choice.Items.OfType<XmlSchemaParticle>().ToList(), existingElements, false);
+                    continue;
+                }
+                var seq = schemaParticle as XmlSchemaSequence;
+                if (seq != null)
+                {
+                    ProcessSchemaSequence(contextInfo, seq.Items.OfType<XmlSchemaParticle>().ToList(), existingElements ,false);
+                    continue;
+                }
+            }
+        }
+
+
+        private static void ProcessSchemaElement(ContextInfo contextInfo, XmlSchemaElement schemaElement, List<Element> existingElements, bool isChoice)
+        {
+            var existingElementsToRemove = new List<Element>();
+            var found = false;
+            var maxCount = schemaElement.MaxOccurs;
+            if (!isChoice)
                 foreach (var existingElement in existingElements)
                 {
-                    if (existingElement.Name == elementFromSchema.Name
-                            && CompletionHelper.GetNamespace(existingElement) == elementFromSchema.QualifiedName.Namespace)
+                    if (existingElement.Name == schemaElement.Name
+                        &&
+                        CompletionHelper.GetNamespace(existingElement) ==
+                        schemaElement.QualifiedName.Namespace)
                     {
                         existingElementsToRemove.Add(existingElement);
                         maxCount--;
@@ -157,28 +219,26 @@ namespace Syntactik.MonoDevelop.Schemas
                     }
                     break;
                 }
-                existingElementsToRemove.ForEach(e => existingElements.Remove(e));
-                if (!found && existingElements.Count == 0)
-                {
-                    contextInfo.Elements.Add(elementFromSchema);
-                }
+            existingElementsToRemove.ForEach(e => existingElements.Remove(e));
+            if (!found && existingElements.Count == 0)
+            {
+                contextInfo.Elements.Add(schemaElement);
             }
         }
 
-        private void GetEntitiesOfSchemaType(XmlSchemaComplexType complexType, out List<XmlSchemaAttribute> attributes, out List<XmlSchemaElement> elements)
+        private void GetEntitiesOfSchemaType(XmlSchemaComplexType complexType, out List<XmlSchemaAttribute> attributes, 
+            out List<XmlSchemaParticle> schemaParticles, out bool isChoice)
         {
             var resultAttributes = new List<XmlSchemaAttribute>();
-            var resultElements = new List<XmlSchemaElement>();
+            schemaParticles = new List<XmlSchemaParticle>();
 
-            resultElements.AddRange(
-                GetElements(complexType).Where(
-                    e => resultElements.All(ce => ce.Name != e.Name || ce.QualifiedName.Namespace != e.QualifiedName.Namespace)));
+            schemaParticles.AddRange(
+                GetTopLevelElements(complexType, out isChoice));
             resultAttributes.AddRange(
                 complexType.AttributeUses.Values.OfType<XmlSchemaAttribute>().Where(
                     a => resultAttributes.All(ca => ca.Name != a.Name || ca.QualifiedName.Namespace != a.QualifiedName.Namespace)));
 
             attributes = resultAttributes;
-            elements = resultElements;
         }
 
         private IEnumerable<XmlSchemaElement> GetElements(XmlSchemaComplexType type)
@@ -207,6 +267,113 @@ namespace Syntactik.MonoDevelop.Schemas
                     foreach (var xmlSchemaElement in GetElements(seq))
                     {
                         yield return xmlSchemaElement;
+                    }
+                    continue;
+                }
+            }
+        }
+
+        private IEnumerable<XmlSchemaElement> GetTopLevelElements(XmlSchemaComplexType type, out bool isChoice)
+        {
+            var result = new List<XmlSchemaElement>();
+            isChoice = false;
+            var sequence = type.ContentTypeParticle as XmlSchemaSequence;
+            if (sequence != null)
+            {
+                foreach (var e in GetTopLevelElements(sequence))
+                {
+                    result.Add(e);
+                }
+                return result;
+            }
+            var choice = type.ContentTypeParticle as XmlSchemaChoice;
+            if (choice != null)
+            {
+                isChoice = true;
+                foreach (var e in GetTopLevelElements(choice))
+                {
+                    result.Add(e);
+                }
+                return result;
+            }
+            var all = type.ContentTypeParticle as XmlSchemaAll;
+            if (all != null)
+            {
+                isChoice = true;
+                foreach (var e in GetTopLevelElements(all))
+                {
+                    result.Add(e);
+                }
+            }
+            return result;
+        }
+
+        private IEnumerable<XmlSchemaElement> GetTopLevelElements(XmlSchemaAll all)
+        {
+            foreach (var item in all.Items)
+            {
+                var element = item as XmlSchemaElement;
+                if (element == null) continue;
+                yield return element;
+            }
+        }
+
+        private IEnumerable<XmlSchemaElement> GetTopLevelElements(XmlSchemaSequence sequence)
+        {
+            foreach (var item in sequence.Items)
+            {
+                var element = item as XmlSchemaElement;
+                if (element != null)
+                {
+                    yield return element;
+                    continue;
+                }
+                var choice = item as XmlSchemaChoice;
+                if (choice != null)
+                {
+                    foreach (var e in GetTopLevelElements(choice))
+                    {
+                        yield return e;
+                    }
+                    continue;
+                }
+                var seq = item as XmlSchemaSequence;
+                if (seq != null)
+                {
+                    foreach (var e in GetTopLevelElements(seq))
+                    {
+                        yield return e;
+                    }
+                    continue;
+                }
+            }
+        }
+
+        private IEnumerable<XmlSchemaElement> GetTopLevelElements(XmlSchemaChoice choice)
+        {
+            foreach (var item in choice.Items)
+            {
+                var element = item as XmlSchemaElement;
+                if (element != null)
+                {
+                    yield return element;
+                    continue;
+                }
+                var ch = item as XmlSchemaChoice;
+                if (ch != null)
+                {
+                    foreach (var e in GetTopLevelElements(ch))
+                    {
+                        yield return e;
+                    }
+                    continue;
+                }
+                var seq = item as XmlSchemaSequence;
+                if (seq != null)
+                {
+                    foreach (var e in GetTopLevelElements(seq))
+                    {
+                        yield return e;
                     }
                     continue;
                 }
@@ -288,7 +455,7 @@ namespace Syntactik.MonoDevelop.Schemas
             }
         }
 
-        private XmlSchemaType GetSchemaType(Pair pair, ContextInfo contextInfo, List<XmlSchemaElement> elements)
+        private XmlSchemaType GetSchemaType(Pair pair, ContextInfo contextInfo, List<XmlSchemaParticle> elements)
         {
             var container = pair as IContainer;
             if (container != null)
@@ -307,7 +474,7 @@ namespace Syntactik.MonoDevelop.Schemas
                 var element = pair as Element;
                 string @namespace = CompletionHelper.GetNamespace(element);
                 var contextElementSchemaInfo =
-                    elements.FirstOrDefault(e => e.Name == element.Name && (e.QualifiedName.Namespace ?? "") == @namespace);
+                    elements.OfType<XmlSchemaElement>().FirstOrDefault(e => e.Name == element.Name && (e.QualifiedName.Namespace ?? "") == @namespace);
 
                 return contextElementSchemaInfo?.ElementSchemaType;
             }
@@ -315,13 +482,14 @@ namespace Syntactik.MonoDevelop.Schemas
         }
 
         /// <summary>
-        /// Deletes all leading existing elements from the list which are not found in the schema info.
+        /// Deletes all existing elements from the list which are not found in the schema info.
         /// </summary>
         /// <param name="existingElements"></param>
         /// <param name="elements"></param>
-        private void DeleteLeadingNonSchemaElements(List<Element> existingElements, List<XmlSchemaElement> elements)
+        private void CleanupExistingElements(List<Element> existingElements, List<XmlSchemaParticle> elements)
         {
-            var existingElementsToRemove = existingElements.Where(existingElement => !elements.Any(e => existingElement.Name == e.Name && CompletionHelper.GetNamespace(existingElement) == e.QualifiedName.Namespace)).ToList();
+            var existingElementsToRemove = existingElements.Where(existingElement => !elements.OfType<XmlSchemaElement>().
+                Any(e => existingElement.Name == e.Name && CompletionHelper.GetNamespace(existingElement) == e.QualifiedName.Namespace)).ToList();
             existingElementsToRemove.ForEach(e => existingElements.Remove(e));
         }
 
