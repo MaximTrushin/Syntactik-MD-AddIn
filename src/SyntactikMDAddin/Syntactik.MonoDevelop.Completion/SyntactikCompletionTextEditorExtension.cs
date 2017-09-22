@@ -321,7 +321,7 @@ namespace Syntactik.MonoDevelop.Completion
         {
             var complexType = elementType as XmlSchemaComplexType;
             if (complexType?.BaseXmlSchemaType == null) return true;
-            if (complexType.BaseXmlSchemaType.Name == "anyType" &&
+            if (complexType.BaseXmlSchemaType.QualifiedName.Name == "anyType" &&
                 complexType.BaseXmlSchemaType.QualifiedName.Namespace == "http://www.w3.org/2001/XMLSchema") return true;
             return false;
         }

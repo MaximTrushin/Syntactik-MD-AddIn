@@ -118,7 +118,7 @@ namespace Syntactik.MonoDevelop.Schemas
                     contextInfo.CurrentType = GetSchemaType(pair, contextInfo, elements);
 
                     complexType = contextInfo.CurrentType as XmlSchemaComplexType;
-                    contextInfo.Scope = string.IsNullOrEmpty(complexType?.QualifiedName.Name)?null:complexType;
+                    contextInfo.Scope = complexType;
 
                     if (complexType == null)
                     {

@@ -97,17 +97,21 @@ namespace Syntactik.MonoDevelop.Completion
                 var newNs = false;
                 string prefix;
                 var name = attribute.Name;
+                string @namespace;
                 if (!name.Contains(':'))
                 {
-                    prefix = string.IsNullOrEmpty(attribute.QualifiedName.Namespace)
+                    @namespace = attribute.QualifiedName.Namespace;
+                    prefix = string.IsNullOrEmpty(@namespace)
                         ? ""
-                        : GetNamespacePrefix(attribute.QualifiedName.Namespace,
+                        : GetNamespacePrefix(@namespace,
                             completionContext.LastPair, schemasRepository, out newNs);
                 }
                 else
                 {
+                    @namespace = XmlSchemaInstanceNamespace.Url;
                     var names = name.Split(new[] {':'}, 2);
-                    prefix = names[0];
+                    prefix = GetNamespacePrefix(@namespace,
+                            completionContext.LastPair, schemasRepository, out newNs);
                     name = names[1];
                 }
                 //Attribute has max quantity = 1. Checking if this attribute is already added to the element
@@ -118,9 +122,9 @@ namespace Syntactik.MonoDevelop.Completion
                 
                 var data = new CompletionItem {
                     ItemType = ItemType.Attribute,
-                    Namespace = attribute.QualifiedName.Namespace,
+                    Namespace = @namespace,
                     NsPrefix = prefix,
-                    Priority = attribute.QualifiedName.Namespace == XmlSchemaInstanceNamespace.Url? AttributePriority: (AttributePriority + 1) //Low priority for xsi attributes
+                    Priority = @namespace == XmlSchemaInstanceNamespace.Url? AttributePriority: (AttributePriority + 1) //Low priority for xsi attributes
                 };
                 items.Add(data);
                 data.DisplayText = $"@{displayText} = ";
@@ -128,6 +132,11 @@ namespace Syntactik.MonoDevelop.Completion
                 data.CompletionCategory = completionCategory;
                 data.Icon = attribute.Use != XmlSchemaUse.Required ? SyntactikIcons.OptAttribute : SyntactikIcons.Attribute;
                 data.UndeclaredNamespaceUsed = newNs;
+                if (newNs)
+                {
+                    data.NsPrefix = prefix;
+                    data.Namespace = @namespace;
+                }
             }
             completionList.AddRange(items.OrderBy(i => i.DisplayText));
         }
@@ -288,7 +297,7 @@ namespace Syntactik.MonoDevelop.Completion
             if (attribute.ValueInterval != null && attribute.ValueInterval != Interval.Empty)
                 editorCompletionContext.TriggerWordLength = attribute.ValueInterval.End.Index - attribute.ValueInterval.Begin.Index + 1 - (attribute.ValueQuotesType == 0?0:1);
             var category = new SyntactikCompletionCategory { DisplayText = "Values", Icon = SyntactikIcons.Enum };
-            if (schemaInfo.Scope != null)
+            if (schemaInfo.Scope?.Name != null)
             {
                 var nsPrefix = "";
                 bool newNs;
