@@ -106,7 +106,7 @@ namespace SyntactikMDAddin.Tests
         {
             DoCompletionListTest();
         }
-        [Test, RecordTest]
+        [Test, RecordedTest]
         public void Choice1()
         {
             DoCompletionListTest("2");
