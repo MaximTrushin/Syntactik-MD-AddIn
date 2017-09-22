@@ -109,7 +109,12 @@ namespace SyntactikMDAddin.Tests
         [Test, RecordedTest]
         public void Choice1()
         {
-            DoCompletionListTest("2");
+            DoCompletionListTest("addinschema");
+        }
+        [Test, RecordTest]
+        public void Choice2()
+        {
+            DoCompletionListTest("addinschema");
         }
         [Test, RecordedTest]
         public void Document1()
@@ -174,7 +179,7 @@ namespace SyntactikMDAddin.Tests
         [Test, RecordedTest]
         public void Module2()
         {
-            DoCompletionListTest("2");
+            DoCompletionListTest("addinschema");
         }
         [Test, RecordedTest]
         public void NamespaceDefinition1()

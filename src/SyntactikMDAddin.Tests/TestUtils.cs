@@ -101,7 +101,7 @@ namespace SyntactikMDAddin.Tests
                 CompareResultAndRecordedFiles(expectation, IsRecordTest(), "list");
         }
 
-        public static void DoCompletionListTest(string schemaSet = "1")
+        public static void DoCompletionListTest(string schemaSet = "ipo")
         {
             var input = PrintTestScenario();
             string completionList = GetCompletionList(GetTestCaseName(), input, new FileProvider(schemaSet));
