@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Schema;
-using MonoDevelop.Ide.Projects;
 using Syntactik.DOM;
 using Syntactik.MonoDevelop.Completion;
 using Syntactik.MonoDevelop.Projects;
@@ -77,22 +76,20 @@ namespace Syntactik.MonoDevelop.Schemas
         {
             UpdateSchemaInfo();
             contextInfo.AllTypes = Types;
-            var contextElement = context.CompletionInfo.InTag == CompletionExpectation.NoExpectation
-                ? context.CompletionInfo.LastPair
-                : context.CompletionInfo.LastPair.Parent; //if we are inside pair which is not finished then context is the node's parent
 
 
             var path = GetCompletionPath(context);
-            var schemaParticles = new List<XmlSchemaParticle>(GlobalElements);
+            var elements = new List<XmlSchemaElement>(GlobalElements);
             var attributes = new List<XmlSchemaAttribute>(GlobalAttributes);
-            bool isChoice = false;
-            
+            List<XmlSchemaElementInfo> elementInfo = null;
             foreach (var pair in path)
             {
-                isChoice = false;
+                elementInfo = null;
+                contextInfo.InSequence = false;
+
                 if (pair is Document || pair is Module)
                 {
-                    schemaParticles = new List<XmlSchemaParticle>(GlobalElements);
+                    elements = new List<XmlSchemaElement>(GlobalElements);
                     attributes = new List<XmlSchemaAttribute>(GlobalAttributes);
                     continue;
                 }
@@ -100,12 +97,12 @@ namespace Syntactik.MonoDevelop.Schemas
                 XmlSchemaComplexType complexType;
                 if (pair is AliasDefinition || pair is Alias || pair is Argument || pair is Parameter)
                 {
-                    complexType = GetSchemaType(pair, contextInfo, schemaParticles) as XmlSchemaComplexType;
+                    complexType = GetSchemaType(pair, contextInfo, elements) as XmlSchemaComplexType;
 
                     if (complexType == null)
                     {
                         attributes = new List<XmlSchemaAttribute>(FullListOfAttributes);
-                        schemaParticles = new List<XmlSchemaParticle>(FullListOfElements);
+                        elements = new List<XmlSchemaElement>(FullListOfElements);
                         continue;
                     }
                 }
@@ -114,131 +111,309 @@ namespace Syntactik.MonoDevelop.Schemas
                     var element = pair as Element;
                     if (element == null) //TODO: Create logic for scope
                     {
-                        schemaParticles = new List<XmlSchemaParticle>(GlobalElements);
+                        elements = new List<XmlSchemaElement>(GlobalElements);
                         attributes = new List<XmlSchemaAttribute>(GlobalAttributes);
                         continue;
                     }
 
-                    contextInfo.CurrentType = GetSchemaType(pair, contextInfo, schemaParticles);
+                    contextInfo.CurrentType = GetSchemaType(pair, contextInfo, elements);
 
                     complexType = contextInfo.CurrentType as XmlSchemaComplexType;
                     contextInfo.Scope = complexType;
 
                     if (complexType == null)
                     {
-                        schemaParticles = new List<XmlSchemaParticle>(GlobalElements);
+                        elements = new List<XmlSchemaElement>(GlobalElements);
                         attributes = new List<XmlSchemaAttribute>(GlobalAttributes);
                         continue;
                     }
                 }
-                GetEntitiesOfSchemaType(complexType, out attributes, out schemaParticles, out isChoice);
-
-                contextInfo.InSequence = true;
+                GetAttributesOfSchemaType(complexType, out attributes);
+                var existingElements = new List<Element>((pair as IContainer).Entities.OfType<Element>());
+                elementInfo = new List<XmlSchemaElementInfo>();
+                ProcessSchemaSequence(elementInfo, 
+                    new List<XmlSchemaParticle> { complexType.ContentTypeParticle }, 
+                    existingElements,
+                    complexType.ContentTypeParticle.MinOccurs,
+                    complexType.ContentTypeParticle.MaxOccurs);
+                elements = new List<XmlSchemaElement>(elementInfo.Select(e => e.Element));
             }
-            
+            if (elementInfo != null) elements = RemoveExistingElements(elementInfo);
+            var contextElement = context.CompletionInfo.InTag == CompletionExpectation.NoExpectation
+                ? context.CompletionInfo.LastPair
+                : context.CompletionInfo.LastPair.Parent; //if we are inside pair which is not finished then context is the node's parent
+
             var container = contextElement as IContainer;
-            var existingElements = container != null ? new List<Element>(container.Entities.OfType<Element>()) : new List<Element>();
             if (container == null || container.Entities.Count == 0 || container.Entities.All(e => e is Attribute))
                 contextInfo.Attributes.AddRange(attributes.Distinct());
-
-            //1. Delete leading existing elements that are not part of schema
-            CleanupExistingElements(existingElements, schemaParticles);
-            ProcessSchemaSequence(contextInfo, schemaParticles, existingElements, isChoice);
+            contextInfo.Elements.AddRange(elements);
         }
 
-        private static void ProcessSchemaSequence(ContextInfo contextInfo, List<XmlSchemaParticle> schemaParticles, List<Element> existingElements, bool isChoice)
-        {
-            foreach (var schemaParticle in schemaParticles)
-            {
-                var schemaElement = schemaParticle as XmlSchemaElement;
-                if (schemaElement != null)
-                {
-                    ProcessSchemaElement(contextInfo, schemaElement, existingElements, isChoice);
-                    continue;
-                }
-
-                var choice = schemaParticle as XmlSchemaChoice;
-                if (choice != null)
-                {
-                    ProcessSchemaChoice(contextInfo, choice.Items.OfType<XmlSchemaParticle>().ToList(), existingElements, false);
-                    continue;
-                }
-                var seq = schemaParticle as XmlSchemaSequence;
-                if (seq != null)
-                {
-                    ProcessSchemaSequence(contextInfo, seq.Items.OfType<XmlSchemaParticle>().ToList(), existingElements, false);
-                    continue;
-                }
-            }
-        }
-
-        private static void ProcessSchemaChoice(ContextInfo contextInfo, List<XmlSchemaParticle> schemaParticles, List<Element> existingElements, bool isChoice)
-        {
-            foreach (var schemaParticle in schemaParticles)
-            {
-                var schemaElement = schemaParticle as XmlSchemaElement;
-                if (schemaElement != null)
-                {
-                    ProcessSchemaElement(contextInfo, schemaElement, existingElements, isChoice);
-                    continue;
-                }
-
-                var choice = schemaParticle as XmlSchemaChoice;
-                if (choice != null)
-                {
-                    ProcessSchemaChoice(contextInfo, choice.Items.OfType<XmlSchemaParticle>().ToList(), existingElements, false);
-                    continue;
-                }
-                var seq = schemaParticle as XmlSchemaSequence;
-                if (seq != null)
-                {
-                    ProcessSchemaSequence(contextInfo, seq.Items.OfType<XmlSchemaParticle>().ToList(), existingElements ,false);
-                    continue;
-                }
-            }
-        }
-
-
-        private static void ProcessSchemaElement(ContextInfo contextInfo, XmlSchemaElement schemaElement, List<Element> existingElements, bool isChoice)
-        {
-            var existingElementsToRemove = new List<Element>();
-            var found = false;
-            var maxCount = schemaElement.MaxOccurs;
-            if (!isChoice)
-                foreach (var existingElement in existingElements)
-                {
-                    if (existingElement.Name == schemaElement.Name
-                        &&
-                        CompletionHelper.GetNamespace(existingElement) ==
-                        schemaElement.QualifiedName.Namespace)
-                    {
-                        existingElementsToRemove.Add(existingElement);
-                        maxCount--;
-                        if (maxCount != 0) continue;
-                        found = true;
-                    }
-                    break;
-                }
-            existingElementsToRemove.ForEach(e => existingElements.Remove(e));
-            if (!found && existingElements.Count == 0)
-            {
-                contextInfo.Elements.Add(schemaElement);
-            }
-        }
-
-        private void GetEntitiesOfSchemaType(XmlSchemaComplexType complexType, out List<XmlSchemaAttribute> attributes, 
-            out List<XmlSchemaParticle> schemaParticles, out bool isChoice)
+        private void GetAttributesOfSchemaType(XmlSchemaComplexType complexType, out List<XmlSchemaAttribute> attributes)
         {
             var resultAttributes = new List<XmlSchemaAttribute>();
-            schemaParticles = new List<XmlSchemaParticle>();
-
-            schemaParticles.AddRange(
-                GetTopLevelElements(complexType, out isChoice));
             resultAttributes.AddRange(
                 complexType.AttributeUses.Values.OfType<XmlSchemaAttribute>().Where(
                     a => resultAttributes.All(ca => ca.Name != a.Name || ca.QualifiedName.Namespace != a.QualifiedName.Namespace)));
-
             attributes = resultAttributes;
+        }
+
+        private List<XmlSchemaElement> RemoveExistingElements(List<XmlSchemaElementInfo> elements)
+        {
+            var result = new List<XmlSchemaElement>();
+            foreach (var element in elements)
+            {
+                if (!element.Existing)
+                {
+                   result.Add(element.Element);
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Adding elements to contextInfo based on schema sequence.
+        /// </summary>
+        /// <param name="elements"></param>
+        /// <param name="schemaParticles"></param>
+        /// <param name="existingElements"></param>
+        /// <param name="minOccurs"></param>
+        /// <param name="maxOccurs"></param>
+        /// <returns>returns false if processing of schema has to stop </returns>
+        private static bool ProcessSchemaSequence(List<XmlSchemaElementInfo> elements, List<XmlSchemaParticle> schemaParticles, 
+            List<Element> existingElements, decimal minOccurs, decimal maxOccurs)
+        {
+            var elementAdded = false;
+            for (int occurs = 0; occurs < maxOccurs; occurs++)
+            {
+                foreach (var schemaParticle in schemaParticles)
+                {
+                    var schemaElement = schemaParticle as XmlSchemaElement;
+                    if (schemaElement != null)
+                    {
+                        for (int i = 0; i < Math.Max(schemaElement.MinOccurs, 1); i++)
+                        {
+                            if (existingElements.Count > 0)
+                            {
+                                if (!ProcessSchemaElement(schemaElement, existingElements))
+                                {
+                                    if (schemaElement.MinOccurs > 0)
+                                    {
+                                        return false;
+                                    }
+                                }
+                                else
+                                {
+                                    elements.Add(new XmlSchemaElementInfo {Element = schemaElement, Existing = true});
+                                }
+                            }
+                            else
+                            {
+                                elements.Add(new XmlSchemaElementInfo { Element = schemaElement, Existing = false });
+                                //Element is missing. Adding it to the completion list.
+                                if (schemaElement.MinOccurs != 0)
+                                    return true;
+                                //if element is optional then try to add another element to the list
+                            }
+                        }
+                        continue;
+                    }
+
+                    var choice = schemaParticle as XmlSchemaChoice;
+                    if (choice != null)
+                    {
+                        if (existingElements.Count > 0)
+                        {
+                            if (!ProcessSchemaChoice(elements, choice.Items.OfType<XmlSchemaParticle>().ToList(),
+                                existingElements, choice.MinOccurs, choice.MaxOccurs)) return false;
+                        }
+                        else
+                        {
+                            ProcessSchemaChoice(elements, choice.Items.OfType<XmlSchemaParticle>().ToList(),
+                                existingElements, choice.MinOccurs, choice.MaxOccurs);
+                            elementAdded = true;
+                        }
+                        continue;
+                    }
+                    var seq = schemaParticle as XmlSchemaSequence;
+                    if (seq != null)
+                    {
+                        if (
+                            !ProcessSchemaSequence(elements, seq.Items.OfType<XmlSchemaParticle>().ToList(),
+                                existingElements, seq.MinOccurs, seq.MaxOccurs)) return false;
+                    }
+                    
+                    var all = schemaParticle as XmlSchemaAll;
+                    if (all != null)
+                    {
+                        if (
+                            !ProcessSchemaAll(elements, all.Items.OfType<XmlSchemaParticle>().ToList(),
+                                existingElements, all.MinOccurs, all.MaxOccurs)) return false;
+                    }
+                    return false;
+
+                }
+                if (elementAdded) return false;
+                if (existingElements.Count == 0 && occurs + 1 < minOccurs) return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Adding elements to contextInfo based on schema "all" sequence.
+        /// </summary>
+        /// <param name="elements"></param>
+        /// <param name="schemaParticles"></param>
+        /// <param name="existingElements"></param>
+        /// <param name="minOccurs"></param>
+        /// <param name="maxOccurs"></param>
+        /// <returns>returns false if processing of schema has to stop </returns>
+        private static bool ProcessSchemaAll(List<XmlSchemaElementInfo> elements, List<XmlSchemaParticle> schemaParticles,
+            List<Element> existingElements, decimal minOccurs, decimal maxOccurs)
+        {
+            for (int occurs = 0; occurs < maxOccurs; occurs++)
+            {
+                foreach (var schemaParticle in schemaParticles)
+                {
+                    var schemaElement = schemaParticle as XmlSchemaElement;
+                    if (schemaElement != null)
+                    {
+                        for (int i = 0; i < Math.Max(schemaElement.MinOccurs, 1); i++)
+                        {
+                            if (existingElements.Count > 0)
+                            {
+                                if (!ProcessSchemaElement(schemaElement, existingElements))
+                                {
+                                    if (schemaElement.MinOccurs > 0)
+                                    {
+                                        return false;
+                                    }
+                                }
+                                else
+                                {
+                                    elements.Add(new XmlSchemaElementInfo { Element = schemaElement, Existing = true });
+                                }
+                            }
+                            else
+                            {
+                                elements.Add(new XmlSchemaElementInfo { Element = schemaElement, Existing = false });
+                                //Element is missing. Adding it to the completion list.
+                                if (schemaElement.MinOccurs != 0)
+                                    return true;
+                                //if element is optional then try to add another element to the list
+                            }
+                        }
+                        continue;
+                    }
+
+                }
+                if (existingElements.Count == 0 && occurs + 1 < minOccurs) return false;
+            }
+            return true;
+        }
+
+
+        /// <summary>
+        /// Adding elements to contextInfo based on schema choice.
+        /// </summary>
+        /// <param name="elements"></param>
+        /// <param name="schemaParticles"></param>
+        /// <param name="existingElements"></param>
+        /// <param name="minOccurs"></param>
+        /// <param name="maxOccurs"></param>
+        /// <returns>returns false if processing of schema has to stop </returns>
+        private static bool ProcessSchemaChoice(List<XmlSchemaElementInfo> elements, List<XmlSchemaParticle> schemaParticles, 
+            List<Element> existingElements, decimal minOccurs, decimal maxOccurs)
+        {
+            var elementAdded = false;
+            for (int occurs = 0; occurs < maxOccurs; occurs++)
+            {
+                foreach (var schemaParticle in schemaParticles)
+                {
+                    var schemaElement = schemaParticle as XmlSchemaElement;
+                    if (schemaElement != null)
+                    {
+                        if (existingElements.Count > 0)
+                        {
+                            if (ProcessSchemaElement(schemaElement, existingElements))
+                            {
+                                break;
+                            }
+                            elements.Add(new XmlSchemaElementInfo { Element = schemaElement, Existing = true });
+                        }
+                        else
+                        {
+                            elements.Add(new XmlSchemaElementInfo { Element = schemaElement, Existing = false });
+                            elementAdded = true;
+                        }
+                        continue;
+                    }
+
+                    var choice = schemaParticle as XmlSchemaChoice;
+                    if (choice != null)
+                    {
+                        if (existingElements.Count > 0)
+                        {
+                            if (!ProcessSchemaChoice(elements, choice.Items.OfType<XmlSchemaParticle>().ToList(),
+                                existingElements, choice.MinOccurs, choice.MaxOccurs)) return false;
+                        }
+                        else
+                        {
+                            ProcessSchemaChoice(elements, choice.Items.OfType<XmlSchemaParticle>().ToList(),
+                                existingElements, choice.MinOccurs, choice.MaxOccurs);
+                            elementAdded = true;
+                        }
+                        continue;
+                    }
+                    var seq = schemaParticle as XmlSchemaSequence;
+                    if (seq != null)
+                    {
+                        if (existingElements.Count > 0)
+                        {
+                            if (!ProcessSchemaSequence(elements, seq.Items.OfType<XmlSchemaParticle>().ToList(),
+                                existingElements, seq.MinOccurs, seq.MaxOccurs)) return false;
+                        }
+                        else
+                        {
+                            ProcessSchemaChoice(elements, seq.Items.OfType<XmlSchemaParticle>().ToList(),
+                                existingElements, seq.MinOccurs, seq.MaxOccurs);
+                            elementAdded = true;
+                        }
+                        continue;
+                    }
+                    var all = schemaParticle as XmlSchemaAll;
+                    if (all != null)
+                    {
+                        if (
+                            !ProcessSchemaAll(elements, all.Items.OfType<XmlSchemaParticle>().ToList(),
+                                existingElements, all.MinOccurs, all.MaxOccurs)) return false;
+                    }
+                    return false;
+                }
+                if (elementAdded) return false;
+                if (existingElements.Count == 0 && occurs + 1 < minOccurs) return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Try to match schema element with the top element in the existingElements.
+        /// </summary>
+        /// <param name="schemaElement"></param>
+        /// <param name="existingElements"></param>
+        /// <returns>Returns true if match is found.</returns>
+        private static bool ProcessSchemaElement(XmlSchemaElement schemaElement, List<Element> existingElements)
+        {
+            if (existingElements.Count == 0) return false;
+            if (existingElements[0].Name == schemaElement.Name
+                &&
+                CompletionHelper.GetNamespace(existingElements[0]) ==
+                schemaElement.QualifiedName.Namespace)
+            {
+                existingElements.RemoveAt(0);
+                return true;
+            }
+            return false;
         }
 
         private IEnumerable<XmlSchemaElement> GetElements(XmlSchemaComplexType type)
@@ -267,113 +442,6 @@ namespace Syntactik.MonoDevelop.Schemas
                     foreach (var xmlSchemaElement in GetElements(seq))
                     {
                         yield return xmlSchemaElement;
-                    }
-                    continue;
-                }
-            }
-        }
-
-        private IEnumerable<XmlSchemaElement> GetTopLevelElements(XmlSchemaComplexType type, out bool isChoice)
-        {
-            var result = new List<XmlSchemaElement>();
-            isChoice = false;
-            var sequence = type.ContentTypeParticle as XmlSchemaSequence;
-            if (sequence != null)
-            {
-                foreach (var e in GetTopLevelElements(sequence))
-                {
-                    result.Add(e);
-                }
-                return result;
-            }
-            var choice = type.ContentTypeParticle as XmlSchemaChoice;
-            if (choice != null)
-            {
-                isChoice = true;
-                foreach (var e in GetTopLevelElements(choice))
-                {
-                    result.Add(e);
-                }
-                return result;
-            }
-            var all = type.ContentTypeParticle as XmlSchemaAll;
-            if (all != null)
-            {
-                isChoice = true;
-                foreach (var e in GetTopLevelElements(all))
-                {
-                    result.Add(e);
-                }
-            }
-            return result;
-        }
-
-        private IEnumerable<XmlSchemaElement> GetTopLevelElements(XmlSchemaAll all)
-        {
-            foreach (var item in all.Items)
-            {
-                var element = item as XmlSchemaElement;
-                if (element == null) continue;
-                yield return element;
-            }
-        }
-
-        private IEnumerable<XmlSchemaElement> GetTopLevelElements(XmlSchemaSequence sequence)
-        {
-            foreach (var item in sequence.Items)
-            {
-                var element = item as XmlSchemaElement;
-                if (element != null)
-                {
-                    yield return element;
-                    continue;
-                }
-                var choice = item as XmlSchemaChoice;
-                if (choice != null)
-                {
-                    foreach (var e in GetTopLevelElements(choice))
-                    {
-                        yield return e;
-                    }
-                    continue;
-                }
-                var seq = item as XmlSchemaSequence;
-                if (seq != null)
-                {
-                    foreach (var e in GetTopLevelElements(seq))
-                    {
-                        yield return e;
-                    }
-                    continue;
-                }
-            }
-        }
-
-        private IEnumerable<XmlSchemaElement> GetTopLevelElements(XmlSchemaChoice choice)
-        {
-            foreach (var item in choice.Items)
-            {
-                var element = item as XmlSchemaElement;
-                if (element != null)
-                {
-                    yield return element;
-                    continue;
-                }
-                var ch = item as XmlSchemaChoice;
-                if (ch != null)
-                {
-                    foreach (var e in GetTopLevelElements(ch))
-                    {
-                        yield return e;
-                    }
-                    continue;
-                }
-                var seq = item as XmlSchemaSequence;
-                if (seq != null)
-                {
-                    foreach (var e in GetTopLevelElements(seq))
-                    {
-                        yield return e;
                     }
                     continue;
                 }
@@ -455,7 +523,7 @@ namespace Syntactik.MonoDevelop.Schemas
             }
         }
 
-        private XmlSchemaType GetSchemaType(Pair pair, ContextInfo contextInfo, List<XmlSchemaParticle> elements)
+        private XmlSchemaType GetSchemaType(Pair pair, ContextInfo contextInfo, List<XmlSchemaElement> elements)
         {
             var container = pair as IContainer;
             if (container != null)
@@ -474,23 +542,11 @@ namespace Syntactik.MonoDevelop.Schemas
                 var element = pair as Element;
                 string @namespace = CompletionHelper.GetNamespace(element);
                 var contextElementSchemaInfo =
-                    elements.OfType<XmlSchemaElement>().FirstOrDefault(e => e.Name == element.Name && (e.QualifiedName.Namespace ?? "") == @namespace);
+                    elements.FirstOrDefault(e => e.Name == element.Name && (e.QualifiedName.Namespace ?? "") == @namespace);
 
                 return contextElementSchemaInfo?.ElementSchemaType;
             }
             return null;
-        }
-
-        /// <summary>
-        /// Deletes all existing elements from the list which are not found in the schema info.
-        /// </summary>
-        /// <param name="existingElements"></param>
-        /// <param name="elements"></param>
-        private void CleanupExistingElements(List<Element> existingElements, List<XmlSchemaParticle> elements)
-        {
-            var existingElementsToRemove = existingElements.Where(existingElement => !elements.OfType<XmlSchemaElement>().
-                Any(e => existingElement.Name == e.Name && CompletionHelper.GetNamespace(existingElement) == e.QualifiedName.Namespace)).ToList();
-            existingElementsToRemove.ForEach(e => existingElements.Remove(e));
         }
 
         private static IEnumerable<Pair> GetCompletionPath(Context context)
