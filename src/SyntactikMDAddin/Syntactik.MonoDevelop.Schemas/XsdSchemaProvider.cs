@@ -123,8 +123,8 @@ namespace Syntactik.MonoDevelop.Schemas
 
                     if (complexType == null)
                     {
-                        elements = new List<XmlSchemaElement>(GlobalElements);
-                        attributes = new List<XmlSchemaAttribute>(GlobalAttributes);
+                        elements = new List<XmlSchemaElement>();
+                        attributes = new List<XmlSchemaAttribute>();
                         continue;
                     }
                 }

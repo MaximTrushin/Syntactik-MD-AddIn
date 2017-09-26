@@ -181,7 +181,7 @@ namespace SyntactikMDAddin.Tests
         {
             DoCompletionListTest();
         }
-        [Test, RecordTest]
+        [Test, RecordedTest]
         public void ElementWithoutSubElements()
         {
             DoCompletionListTest("addinschema");
