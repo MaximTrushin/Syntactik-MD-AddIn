@@ -236,5 +236,10 @@ namespace SyntactikMDAddin.Tests
         {
             DoCompletionListTest();
         }
+        [Test, RecordedTest]
+        public void TypeAttribute5()
+        {
+            DoCompletionListTest();
+        }
     }
 }

@@ -36,10 +36,22 @@ namespace Syntactik.MonoDevelop.Schemas
             }
             //xsi - attribute can be added only if there are no other attribute present
             if (contextElement.Entities.Any(e => !(e is DOM.Attribute))) return;
-
-            contextInfo.Attributes.Add(new XmlSchemaAttribute {Use = XmlSchemaUse.Optional, Name = "xsi:type", });
-
             XmlSchemaElement element = contextInfo.Scope?.Parent as XmlSchemaElement;
+
+            if (!(lastNode is Element))
+            {
+                contextInfo.Attributes.Add(new XmlSchemaAttribute {Use = XmlSchemaUse.Optional, Name = "xsi:type",});
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(contextInfo.Scope?.QualifiedName.Name))
+                {
+                    var type = contextInfo.AllTypes.FirstOrDefault(t => t.SchemaType.QualifiedName.Name == contextInfo.Scope?.QualifiedName.Name 
+                                    && t.SchemaType.QualifiedName.Namespace == contextInfo.Scope?.QualifiedName.Namespace);
+                    if (type != null && type.Descendants.Count > 0)
+                        contextInfo.Attributes.Add(new XmlSchemaAttribute { Use = XmlSchemaUse.Optional, Name = "xsi:type"});
+                } 
+            }
             if (lastNode is AliasDefinition || lastNode is Alias || lastNode is Parameter || lastNode is Argument || element !=  null && element.IsNillable)
                 contextInfo.Attributes.Add(new XmlSchemaAttribute { Use = XmlSchemaUse.Optional, Name = "xsi:nil"});
         }

@@ -532,7 +532,7 @@ namespace Syntactik.MonoDevelop.Schemas
                 {
                     var typeName = typeInfo[1];
                     var typeNamespace = CompletionHelper.GetNamespace(pair, typeInfo[0]);
-                    var complexType = contextInfo.AllTypes.FirstOrDefault(t => t.SchemaType.Name == typeName && t.SchemaType.QualifiedName.Namespace == typeNamespace);
+                    var complexType = contextInfo.AllTypes.FirstOrDefault(t => t.SchemaType.QualifiedName.Name == typeName && t.SchemaType.QualifiedName.Namespace == typeNamespace);
                     if (complexType != null) return complexType.SchemaType;
                 }
                 if (!(pair is Element)) return null;
@@ -540,7 +540,7 @@ namespace Syntactik.MonoDevelop.Schemas
                 var element = pair as Element;
                 string @namespace = CompletionHelper.GetNamespace(element);
                 var contextElementSchemaInfo =
-                    elements.FirstOrDefault(e => e.Name == element.Name && (e.QualifiedName.Namespace ?? "") == @namespace);
+                    elements.FirstOrDefault(e => e.QualifiedName.Name == element.Name && (e.QualifiedName.Namespace ?? "") == @namespace);
 
                 return contextElementSchemaInfo?.ElementSchemaType;
             }
