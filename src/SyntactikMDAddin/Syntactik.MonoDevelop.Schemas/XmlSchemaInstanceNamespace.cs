@@ -40,7 +40,7 @@ namespace Syntactik.MonoDevelop.Schemas
             contextInfo.Attributes.Add(new XmlSchemaAttribute {Use = XmlSchemaUse.Optional, Name = "xsi:type", });
 
             XmlSchemaElement element = contextInfo.Scope?.Parent as XmlSchemaElement;
-            if (element !=  null && element.IsNillable)
+            if (lastNode is AliasDefinition || lastNode is Alias || lastNode is Parameter || lastNode is Argument || element !=  null && element.IsNillable)
                 contextInfo.Attributes.Add(new XmlSchemaAttribute { Use = XmlSchemaUse.Optional, Name = "xsi:nil"});
         }
     }

@@ -1,6 +1,7 @@
 @export-code =  (@export-code =)
 @orderDate =  (@orderDate =)
 @partNum =  (@partNum =)
+@xsi.nil =  (@xsi.nil =)
 @xsi.type =  (@xsi.type =)
 billTo: (Address)  (billTo: )
 billTo: (EU-Address)  (billTo: )
