@@ -122,6 +122,11 @@ namespace SyntactikMDAddin.Tests
             DoCompletionListTest("addinschema");
         }
         [Test, RecordedTest]
+        public void Choice4()
+        {
+            DoCompletionListTest("addinschema");
+        }
+        [Test, RecordedTest]
         public void Document1()
         {
             DoCompletionListTest();

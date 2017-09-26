@@ -1,4 +1,8 @@
 ﻿!#n1 = http://schemas.microsoft.com/AutomationExtensibility
 n1.Extensibility:
 	n1.HostApplication:
+		n1.Name
+		n1.Version =
+	n1.Addin:
+		n1.Assembly =
 		~
