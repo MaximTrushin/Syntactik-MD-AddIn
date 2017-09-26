@@ -167,6 +167,26 @@ namespace SyntactikMDAddin.Tests
             DoCompletionListTest();
         }
         [Test, RecordedTest]
+        public void Element9()
+        {
+            DoCompletionListTest();
+        }
+        [Test, RecordedTest]
+        public void ElementAfterOptional()
+        {
+            DoCompletionListTest();
+        }
+        [Test, RecordedTest]
+        public void ElementMaxOccur1()
+        {
+            DoCompletionListTest();
+        }
+        [Test, RecordTest]
+        public void ElementWithoutSubElements()
+        {
+            DoCompletionListTest("addinschema");
+        }
+        [Test, RecordedTest]
         public void Enum1()
         {
             DoCompletionListTest();

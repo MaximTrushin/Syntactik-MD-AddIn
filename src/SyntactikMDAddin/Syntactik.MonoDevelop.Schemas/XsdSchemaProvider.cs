@@ -191,29 +191,28 @@ namespace Syntactik.MonoDevelop.Schemas
                     var schemaElement = schemaParticle as XmlSchemaElement;
                     if (schemaElement != null)
                     {
-                        for (int i = 0; i < Math.Max(schemaElement.MinOccurs, 1); i++)
+                        for (int i = 0; i < Math.Max(schemaElement.MaxOccurs, 1); i++)
                         {
                             if (existingElements.Count > 0)
                             {
                                 if (!ProcessSchemaElement(schemaElement, existingElements))
                                 {
-                                    if (schemaElement.MinOccurs > 0)
+                                    if (schemaElement.MinOccurs > i)
                                     {
                                         return false;
                                     }
+                                    if (schemaElement.MinOccurs == 0) break;
                                 }
-                                else
-                                {
-                                    elements.Add(new XmlSchemaElementInfo {Element = schemaElement, Existing = true});
-                                }
+                                elements.Add(new XmlSchemaElementInfo {Element = schemaElement, Existing = true});
                             }
                             else
                             {
-                                elements.Add(new XmlSchemaElementInfo { Element = schemaElement, Existing = false });
                                 //Element is missing. Adding it to the completion list.
-                                if (schemaElement.MinOccurs != 0)
-                                    return true;
-                                //if element is optional then try to add another element to the list
+                                elements.Add(new XmlSchemaElementInfo { Element = schemaElement, Existing = false });
+                                
+                                if (schemaElement.MinOccurs == 0 && i == 0)
+                                    break; //if element is optional then try to add another element to the list (return true)
+                                return false;
                             }
                         }
                         continue;
@@ -278,29 +277,28 @@ namespace Syntactik.MonoDevelop.Schemas
                     var schemaElement = schemaParticle as XmlSchemaElement;
                     if (schemaElement != null)
                     {
-                        for (int i = 0; i < Math.Max(schemaElement.MinOccurs, 1); i++)
+                        for (int i = 0; i < Math.Max(schemaElement.MaxOccurs, 1); i++)
                         {
                             if (existingElements.Count > 0)
                             {
                                 if (!ProcessSchemaElement(schemaElement, existingElements))
                                 {
-                                    if (schemaElement.MinOccurs > 0)
+                                    if (schemaElement.MinOccurs > i)
                                     {
                                         return false;
                                     }
+                                    if (schemaElement.MinOccurs == 0) break;
                                 }
-                                else
-                                {
-                                    elements.Add(new XmlSchemaElementInfo { Element = schemaElement, Existing = true });
-                                }
+                                elements.Add(new XmlSchemaElementInfo { Element = schemaElement, Existing = true });
                             }
                             else
                             {
-                                elements.Add(new XmlSchemaElementInfo { Element = schemaElement, Existing = false });
                                 //Element is missing. Adding it to the completion list.
-                                if (schemaElement.MinOccurs != 0)
-                                    return true;
-                                //if element is optional then try to add another element to the list
+                                elements.Add(new XmlSchemaElementInfo { Element = schemaElement, Existing = false });
+
+                                if (schemaElement.MinOccurs == 0 && i == 0)
+                                    break; //if element is optional then try to add another element to the list (return true)
+                                return false;
                             }
                         }
                         continue;
@@ -405,7 +403,7 @@ namespace Syntactik.MonoDevelop.Schemas
         private static bool ProcessSchemaElement(XmlSchemaElement schemaElement, List<Element> existingElements)
         {
             if (existingElements.Count == 0) return false;
-            if (existingElements[0].Name == schemaElement.Name
+            if (existingElements[0].Name == schemaElement.QualifiedName.Name
                 &&
                 CompletionHelper.GetNamespace(existingElements[0]) ==
                 schemaElement.QualifiedName.Namespace)
@@ -555,6 +553,8 @@ namespace Syntactik.MonoDevelop.Schemas
             contextElement = context.CompletionInfo.InTag == CompletionExpectation.NoExpectation
                 ? contextElement
                 : contextElement.Parent; //if we are inside pair which is not finished then context is the node's parent
+            if (contextElement != context.CompletionInfo.LastPair)
+                (contextElement as IContainer)?.Entities.Remove((Entity) context.CompletionInfo.LastPair);
             return GetReversedCompletionPath(contextElement).Reverse();
         }
 
