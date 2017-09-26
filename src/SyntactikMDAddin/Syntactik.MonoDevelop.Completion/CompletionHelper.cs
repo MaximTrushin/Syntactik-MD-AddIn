@@ -318,7 +318,7 @@ namespace Syntactik.MonoDevelop.Completion
                 var nsPrefix = "";
                 bool newNs;
                 var ns = GetNamespacePrefix(desc.SchemaType.QualifiedName.Namespace, context.LastPair, schemasRepository, out newNs);
-                if (ns != null)
+                if (!string.IsNullOrEmpty(ns))
                     nsPrefix = ns + ":";
 
                 string text = $"{nsPrefix}{desc.SchemaType.Name}";
@@ -430,8 +430,9 @@ namespace Syntactik.MonoDevelop.Completion
 
         internal static string GetNamespacePrefix(string @namespace, Pair pair, SchemasRepository schemasRepository, out bool newNs)
         {
-            NamespaceDefinition nsDef = null;
             newNs = false;
+            if (string.IsNullOrEmpty(@namespace)) return null;
+            NamespaceDefinition nsDef = null;
             ModuleMember moduleMember = null;
             Module module = null;
             while (pair != null)

@@ -241,5 +241,10 @@ namespace SyntactikMDAddin.Tests
         {
             DoCompletionListTest();
         }
+        [Test, RecordedTest]
+        public void TypeAttribute6()
+        {
+            DoCompletionListTest("dotnetconfig");
+        }
     }
 }

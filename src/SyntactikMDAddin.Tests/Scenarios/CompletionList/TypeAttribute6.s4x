@@ -1,0 +1,4 @@
+﻿!#xsi = http://www.w3.org/2001/XMLSchema-instance
+appSettings:
+	add:
+		@xsi.type = ~
