@@ -38,7 +38,10 @@ namespace Syntactik.MonoDevelop.Schemas
             if (contextElement.Entities.Any(e => !(e is DOM.Attribute))) return;
 
             contextInfo.Attributes.Add(new XmlSchemaAttribute {Use = XmlSchemaUse.Optional, Name = "xsi:type", });
-            contextInfo.Attributes.Add(new XmlSchemaAttribute { Use = XmlSchemaUse.Optional, Name = "xsi:nil"});
+
+            XmlSchemaElement element = contextInfo.Scope?.Parent as XmlSchemaElement;
+            if (element !=  null && element.IsNillable)
+                contextInfo.Attributes.Add(new XmlSchemaAttribute { Use = XmlSchemaUse.Optional, Name = "xsi:nil"});
         }
     }
 }
