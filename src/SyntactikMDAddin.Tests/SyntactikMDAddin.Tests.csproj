@@ -379,10 +379,10 @@
     <None Include="Scenarios\SyntaxHighlighting\OpenStringJson.s4j">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Scenarios\SyntaxHighlighting\SQEscapesJson.s4j">
+    <None Include="Scenarios\SyntaxHighlighting\DQEscapesJson.s4j">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Scenarios\SyntaxHighlighting\SQEscapes.s4x">
+    <None Include="Scenarios\SyntaxHighlighting\DQEscapes.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Scenarios\SyntaxHighlighting\SQNameJson.s4j">

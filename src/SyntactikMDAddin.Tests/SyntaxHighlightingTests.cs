@@ -182,12 +182,12 @@ namespace SyntactikMDAddin.Tests
             DoJsonHighlightingTest();
         }
         [Test, RecordedTest]
-        public void SQEscapes()
+        public void DQEscapes()
         {
             DoHighlightingTest();
         }
         [Test, RecordedTest]
-        public void SQEscapesJson()
+        public void DQEscapesJson()
         {
             DoJsonHighlightingTest();
         }

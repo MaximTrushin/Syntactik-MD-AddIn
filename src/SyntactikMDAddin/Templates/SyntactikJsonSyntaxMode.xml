@@ -43,16 +43,16 @@
   <Rule name = "open_string_sl">
   </Rule>
 
-  <Rule name = "dq_string">
-  </Rule>
-
-  <Rule name = "dq_string_sl">
-  </Rule>
-
   <Rule name = "sq_string">
+  </Rule>
+
+  <Rule name = "sq_string_sl">
+  </Rule>
+
+  <Rule name = "dq_string">
     <!--rule is activated by method ScanSpan-->
     <!--valid escape-->
-    <Match color = "Diff Header">\\["'\\\/bfnrt]</Match>
+    <Match color = "Diff Header">\\["\\\/bfnrt]</Match>
     <!-- utf encode-->
     <Match color = "Diff Header">\\u[a-fA-F0-9]{0,4}</Match>
     <!--Alias or parameter with brackets-->
@@ -64,10 +64,10 @@
   </Rule>
 
 
-  <Rule name = "sq_string_sl">
-    <!-- COPY OF sq_string-->
+  <Rule name = "dq_string_sl">
+    <!-- COPY OF dq_string-->
     <!--valid escape-->
-    <Match color = "Diff Header">\\["'\\\/bfnrt]</Match>
+    <Match color = "Diff Header">\\["\\\/bfnrt]</Match>
     <!-- utf encode-->
     <Match color = "Diff Header">\\u[a-fA-F0-9]{0,4}</Match>
     <!--Alias or parameter with brackets-->
