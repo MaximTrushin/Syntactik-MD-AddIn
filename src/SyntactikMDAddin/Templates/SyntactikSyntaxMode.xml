@@ -14,7 +14,7 @@
     <End>)</End>
   </Span>
 
-  <Match color = "Punctuation">[ \t]+</Match>
+  
   <Match color = "Punctuation">,</Match>
   <Match color = "Punctuation">:=</Match>
   <Match color = "Punctuation">::</Match>
@@ -158,27 +158,27 @@
   </Rule>
 
   <!-- sq name -->
-  <Match color = "Keyword(Type)">'(?:\\.|.)*?(?:'|$)</Match>
+  <Match color = "Keyword(Type)">'.*?(?:'|$)</Match>
   <!-- dq name -->
-  <Match color = "Keyword(Type)">".*?(?:"|$)</Match>
+  <Match color = "Keyword(Type)">"(?:\\.|.)*?(?:"|$)</Match>
 
   <!-- scope  -->
-  <Match color = "Keyword(Declaration)">\s*#[^=:()'",.]*\.?</Match>
+  <Match color = "Keyword(Declaration)">#[^=:()'",.]*\.?</Match>
 
   <!-- parameter -->
-  <Match color = "Keyword(Exception)">\s*!%[^=:()'",]*</Match>
+  <Match color = "Keyword(Exception)">!%[^=:()'",]*</Match>
 
   <!-- argument -->
-  <Match color = "Keyword(Exception)">\s*%[^=:()'",]*</Match>
+  <Match color = "Keyword(Exception)">%[^=:()'",]*</Match>
 
   <!-- document & alias def-->
-  <Match color = "User Types">\s*![^=:()'",]*</Match>
+  <Match color = "User Types">![^=:()'",]*</Match>
 
   <!-- alias -->
-  <Match color = "Diff Header">\s*\$[^=:()'",]*</Match>
+  <Match color = "Diff Header">\$[^=:()'",]*</Match>
 
   <!-- open name -->
-  <Match color = "Keyword(Type)">\s*[^=:()'",][^=:()'",]*</Match>
+  <Match color = "Keyword(Type)">[^=:()'",\s][^=:()'",]*</Match>
 
   <Rule name = "wsa">
 
@@ -194,8 +194,7 @@
       <Begin>(</Begin>
       <End>)</End>
     </Span>
-
-    <Match color = "Punctuation">[ \t]+</Match>
+    
     <Match color = "Punctuation">,</Match>
     <Match color = "Punctuation">:=</Match>
     <Match color = "Punctuation">::</Match>
@@ -224,34 +223,34 @@
     </Span>
 
     <!-- namespace definition -->
-    <Match color = "Keyword(Declaration)">\s*!#[^=:()'",]*</Match>
+    <Match color = "Keyword(Declaration)">!#[^=:()'",]*</Match>
 
     <!-- scope  -->
-    <Match color = "Keyword(Declaration)">\s*#[^=:()'",.]*\.?</Match>
+    <Match color = "Keyword(Declaration)">#[^=:()'",.]*\.?</Match>
 
     <!-- parameter -->
-    <Match color = "Keyword(Exception)">\s*!%[^=:()'",]*</Match>
+    <Match color = "Keyword(Exception)">!%[^=:()'",]*</Match>
 
     <!-- argument -->
-    <Match color = "Keyword(Exception)">\s*%[^=:()'",]*</Match>
+    <Match color = "Keyword(Exception)">%[^=:()'",]*</Match>
 
     <!-- attribute -->
-    <Match color = "String(Escape)">\s*@[^=:()'",]*</Match>
+    <Match color = "String(Escape)">@[^=:()'",]*</Match>
 
     <!-- document & alias def-->
-    <Match color = "User Types">\s*![^=:()'",]*</Match>
+    <Match color = "User Types">![^=:()'",]*</Match>
 
     <!-- alias -->
-    <Match color = "Diff Header">\s*\$[^=:()'",]*</Match>
+    <Match color = "Diff Header">\$[^=:()'",]*</Match>
 
     <!-- sq name -->
-    <Match color = "Keyword(Type)">'(?:\\.|.)*?(?:'|$)</Match>
-
+    <Match color = "Keyword(Type)">'.*?(?:'|$)</Match>
+    
     <!-- dq name -->
-    <Match color = "Keyword(Type)">".*?(?:"|$)</Match>
-
+    <Match color = "Keyword(Type)">"(?:\\.|.)*?(?:"|$)</Match>    
+    
     <!-- open name -->
-    <Match color = "Keyword(Type)">\s?[^=:()'",]+</Match>
+    <Match color = "Keyword(Type)">[^=:()'",\s][^=:()'",]*</Match>
 
   </Rule>
 

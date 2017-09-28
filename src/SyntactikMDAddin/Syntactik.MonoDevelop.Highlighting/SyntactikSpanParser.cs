@@ -23,7 +23,7 @@ namespace Syntactik.MonoDevelop.Highlighting
                 char quote = (char) 0;
                 var indent = CurText.TakeWhile(c => c == ' ' || c == '\t').Count(); //calculating indent span for multiline strings
                 var textStyle = "Xml Text";
-                if (CurRule.Name.StartsWith("o")) //"open_string"
+                if (CurRule.Name.StartsWith("open_string")) //"open_string"
                 {
                     var r = new System.Text.RegularExpressions.Regex(@"\s*('|"")").Match(CurText, i - StartOffset);
                     if (r.Success && r.Index == i - StartOffset) //quoted string processing
