@@ -8,6 +8,9 @@
     <End>"""</End>
   </Span>
 
+  <Rule name = "comment">
+  </Rule>
+  
   <!-- wsa -->
   <Span color = "Punctuation" rule ="wsa" tagColor = "Punctuation">
     <Begin>(</Begin>
@@ -220,23 +223,4 @@
     <Match color = "Xml Text">[^=:()'",\s][^=:()'",]*\s*(?=[()'"",]|$)</Match>
 
   </Rule>
-
-  <Rule name = "string_sl">
-
-    <!-- sq string value -->
-    <Match color = "Xml Text">'.*?(?:'|$)</Match>
-
-    <!-- dq string value -->
-    <Match color = "Xml Text">".*?(?:"|$)</Match>
-
-    <!-- open string value -->
-    <Match color = "Xml Text">[^=:()'",]*</Match>
-
-  </Rule>
-
-  <Rule name = "comment">
-  </Rule>
-  <Rule name = "delimiter">
-  </Rule>
-
 </SyntaxMode>
