@@ -82,6 +82,12 @@ namespace Syntactik.MonoDevelop.Highlighting
         {
             if (CurSpan == null) return base.ScanSpanEnd(cur, ref i);
 
+            if (CurRule.Name.StartsWith("punctuation"))
+            {
+                FoundSpanEnd(CurSpan, i, 0);
+                return false;
+            }
+
             if (CurRule.Name.StartsWith("string_high") 
                 && IsEndOfHighString(CurText[i - StartOffset]))
             {

@@ -14,12 +14,32 @@
     <End>)</End>
   </Span>
 
-  <Match color = "Punctuation">,</Match>
-  <Match color = "Punctuation">:=</Match>
-  <Match color = "Punctuation">::</Match>
-  <Match color = "Punctuation">:</Match>
-  <Match color = "Punctuation">=::</Match>
-  <Match color = "Punctuation">=:</Match>
+  <Span color = "Punctuation" rule ="punctuation" tagColor = "Punctuation">
+    <Begin>,</Begin>
+  </Span>
+
+  <Span color = "Punctuation" rule ="punctuation" tagColor = "Punctuation">
+    <Begin>:=</Begin>
+  </Span>
+
+  <Span color = "Punctuation" rule ="punctuation" tagColor = "Punctuation">
+    <Begin>::</Begin>
+  </Span>
+  
+  <Span color = "Punctuation" rule ="punctuation" tagColor = "Punctuation">
+    <Begin>:</Begin>
+  </Span>
+
+  <Span color = "Punctuation" rule ="punctuation" tagColor = "Punctuation">
+    <Begin>=::</Begin>
+  </Span>
+
+  <Span color = "Punctuation" rule ="punctuation" tagColor = "Punctuation">
+    <Begin>=:</Begin>
+  </Span>
+
+  <Rule name = "punctuation">
+  </Rule>
 
   <!-- open string -->
   <Span color = "Xml Text" rule ="open_string" tagColor="Punctuation">
@@ -130,13 +150,29 @@
       <End>)</End>
     </Span>
 
-    <Match color = "Punctuation">,</Match>
-    <Match color = "Punctuation">:=</Match>
-    <Match color = "Punctuation">::</Match>
-    <Match color = "Punctuation">:</Match>
-    <Match color = "Punctuation">=::</Match>
-    <Match color = "Punctuation">=:</Match>
+    <Span color = "Punctuation" rule ="punctuation" tagColor = "Punctuation">
+      <Begin>,</Begin>
+    </Span>
 
+    <Span color = "Punctuation" rule ="punctuation" tagColor = "Punctuation">
+      <Begin>:=</Begin>
+    </Span>
+
+    <Span color = "Punctuation" rule ="punctuation" tagColor = "Punctuation">
+      <Begin>::</Begin>
+    </Span>
+
+    <Span color = "Punctuation" rule ="punctuation" tagColor = "Punctuation">
+      <Begin>:</Begin>
+    </Span>
+
+    <Span color = "Punctuation" rule ="punctuation" tagColor = "Punctuation">
+      <Begin>=::</Begin>
+    </Span>
+
+    <Span color = "Punctuation" rule ="punctuation" tagColor = "Punctuation">
+      <Begin>=:</Begin>
+    </Span>
 
     <!-- single line string -->
     <Span color = "Xml Text" rule ="open_string_sl" tagColor="Punctuation">
