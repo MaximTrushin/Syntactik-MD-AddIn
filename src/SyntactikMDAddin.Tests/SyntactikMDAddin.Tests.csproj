@@ -337,6 +337,9 @@
     <None Include="Scenarios\SyntaxHighlighting\DocumentJson.s4j">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Scenarios\SyntaxHighlighting\PairValueWithParameters.s4j">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Scenarios\SyntaxHighlighting\SQValueJson.s4j">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

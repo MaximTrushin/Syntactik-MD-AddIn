@@ -182,6 +182,11 @@ namespace SyntactikMDAddin.Tests
             DoJsonHighlightingTest();
         }
         [Test, RecordedTest]
+        public void PairValueWithParameters()
+        {
+            DoJsonHighlightingTest();
+        }
+        [Test, RecordedTest]
         public void DQEscapes()
         {
             DoHighlightingTest();

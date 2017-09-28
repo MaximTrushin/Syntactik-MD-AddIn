@@ -1,0 +1,12 @@
+﻿!doc1:
+	root:
+		url1 := $url: 
+			%domain = google.com
+			%path = search
+			%params = q = foo
+		url2 := $url: 
+			%domain = google.com
+			%path = search
+		url3 := $url: 
+			%domain = google.com
+		url4 := $url
