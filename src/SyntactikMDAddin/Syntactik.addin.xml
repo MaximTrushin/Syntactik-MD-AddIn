@@ -144,9 +144,17 @@
          macShortcut = "Shift|Meta|V"
          _label = "Paste Syntactik Fragment"
          icon = "gtk-paste"/>
+      <Command id = "Syntactik.MonoDevelop.Commands.SyntactikCommands.LicenseInfo"
+						 defaultHandler = "Syntactik.MonoDevelop.Commands.LicenseInfoHandler"
+						 _label = "Syntactik License Info"
+						 icon = "gtk-dialog-info"/>
     </Category>
   </Extension>
 
+  <Extension path="/MonoDevelop/Ide/MainMenu/Help">
+    <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.LicenseInfo" insertafter="MonoDevelop.Ide.Commands.HelpCommands.SendFeedback" />
+  </Extension>
+  
   <ExtensionPoint path = "/MonoDevelop/Syntactik/ContextMenu/ProjectPad/SchemaFolder">
     <ExtensionNodeSet id="MonoDevelop.Components.Commands.ItemSet"/>
   </ExtensionPoint>
