@@ -9,3 +9,5 @@
 /src/SyntactikMDAddin.Tests/bin
 /src/SyntactikMDAddin.Tests/obj
 SyntactikMDAddin.sln.DotSettings.user
+*.userprefs
+*.user
