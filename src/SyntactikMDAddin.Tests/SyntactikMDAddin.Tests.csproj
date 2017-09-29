@@ -391,6 +391,9 @@
     <None Include="Scenarios\SyntaxHighlighting\SQNameJson.s4j">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Scenarios\SyntaxHighlighting\ValueChoice.s4x">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Scenarios\SyntaxHighlighting\WsaJson.s4j">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

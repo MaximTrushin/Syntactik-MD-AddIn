@@ -217,6 +217,11 @@ namespace SyntactikMDAddin.Tests
             DoJsonHighlightingTest();
         }
         [Test, RecordedTest]
+        public void ValueChoice()
+        {
+            DoHighlightingTest();
+        }
+        [Test, RecordedTest]
         public void Wsa()
         {
             DoHighlightingTest();

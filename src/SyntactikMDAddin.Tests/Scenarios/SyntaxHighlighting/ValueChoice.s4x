@@ -1,0 +1,7 @@
+﻿!$url =::
+	==	"www.\!%(domain)/\!%(path)?\!%params"
+	==	"www.\!%(domain)/\!%(path)"
+	=:	
+		= www.
+		:= !%domain = example.com
+	=	localhost
