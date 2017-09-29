@@ -27,8 +27,8 @@
       <Files>
         <Directory name="Schemas" />
         <File name="main.s4x" AddStandardHeader="True">
-          <![CDATA[!Document:
-	Element
+          <![CDATA[!document:
+	element
 ]]>
         </File>
 

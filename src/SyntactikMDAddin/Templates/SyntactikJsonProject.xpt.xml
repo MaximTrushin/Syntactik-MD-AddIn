@@ -26,8 +26,8 @@
       <Options/>
       <Files>
         <File name="main.s4j" AddStandardHeader="True">
-          <![CDATA[!Document:
-	Element
+          <![CDATA[!document:
+	name = value
 ]]>
         </File>
 
