@@ -9,7 +9,7 @@
     <widget-library name="../../../monodevelop/main/build/AddIns/DisplayBindings/SourceEditor/MonoDevelop.SourceEditor2.dll" />
     <widget-library name="../../../monodevelop/main/build/AddIns/SyntactikMDAddin.dll" internal="true" />
   </import>
-  <widget class="Gtk.Bin" id="SyntactikBinding.CompilerOptionsWidget" design-size="600 300">
+  <widget class="Gtk.Bin" id="Syntactik.MonoDevelop.CompilerOptionsWidget" design-size="600 300">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>

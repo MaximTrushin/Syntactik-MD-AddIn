@@ -242,6 +242,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Templates\EmptyS4JFile.xft.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SyntactikGtk\SyntactikGtk.csproj">
+      <Project>{ef6392c3-788c-454b-b8dd-acb343a54745}</Project>
+      <Name>SyntactikGtk</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
