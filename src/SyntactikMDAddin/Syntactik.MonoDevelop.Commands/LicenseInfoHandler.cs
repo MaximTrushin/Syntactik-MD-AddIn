@@ -1,5 +1,6 @@
 ﻿using Gtk;
 using MonoDevelop.Components.Commands;
+using MonoDevelop.Ide;
 using Syntactik.MonoDevelop.License;
 
 namespace Syntactik.MonoDevelop.Commands
@@ -9,10 +10,11 @@ namespace Syntactik.MonoDevelop.Commands
         protected override void Run()
         {
             base.Run();
-            var dlg = new LicenseInfo();
-            dlg.SetPosition(WindowPosition.CenterAlways);
-            var res = (ResponseType)dlg.Run();
-            dlg.Hide();
+            using (var dlg = new LicenseInfo())
+            {
+                dlg.SetPosition(WindowPosition.CenterAlways);
+                var res = (ResponseType) MessageService.ShowCustomDialog(dlg);
+            }
         }
 
     }

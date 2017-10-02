@@ -7,13 +7,17 @@
   <import>
     <widget-library name="../bin/Debug/SyntactikGtk.dll" internal="true" />
   </import>
-  <widget class="Gtk.Dialog" id="Syntactik.MonoDevelop.License.LicenseInfo" design-size="569 489">
+  <widget class="Gtk.Dialog" id="Syntactik.MonoDevelop.License.LicenseInfo" design-size="579 484">
     <property name="MemberName" />
+    <property name="Visible">False</property>
     <property name="Title" translatable="yes">Syntactik Software Activation</property>
+    <property name="TypeHint">Dialog</property>
     <property name="WindowPosition">CenterOnParent</property>
     <property name="Modal">True</property>
     <property name="Resizable">False</property>
     <property name="AllowGrow">False</property>
+    <property name="SkipPagerHint">True</property>
+    <property name="SkipTaskbarHint">True</property>
     <property name="Buttons">2</property>
     <property name="HelpButton">False</property>
     <child internal-child="VBox">
@@ -73,7 +77,7 @@ Please visit the web site www.syntactik.com to get more information about Syntac
                         <property name="MemberName" />
                         <property name="CanFocus">True</property>
                         <property name="Type">TextOnly</property>
-                        <property name="Label" translatable="yes">Request Early Access2</property>
+                        <property name="Label" translatable="yes">Request Early Access</property>
                         <property name="UseUnderline">True</property>
                         <property name="BorderWidth">10</property>
                       </widget>

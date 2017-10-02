@@ -66,10 +66,13 @@ namespace Syntactik.MonoDevelop.License
 			// Widget Syntactik.MonoDevelop.License.LicenseInfo
 			this.Name = "Syntactik.MonoDevelop.License.LicenseInfo";
 			this.Title = global::Mono.Unix.Catalog.GetString("Syntactik Software Activation");
+			this.TypeHint = ((global::Gdk.WindowTypeHint)(1));
 			this.WindowPosition = ((global::Gtk.WindowPosition)(4));
 			this.Modal = true;
 			this.Resizable = false;
 			this.AllowGrow = false;
+			this.SkipPagerHint = true;
+			this.SkipTaskbarHint = true;
 			// Internal child Syntactik.MonoDevelop.License.LicenseInfo.VBox
 			global::Gtk.VBox w1 = this.VBox;
 			w1.Name = "dialog1_VBox";
@@ -120,7 +123,7 @@ Please visit the web site www.syntactik.com to get more information about Syntac
 			this.button17.Name = "button17";
 			this.button17.UseUnderline = true;
 			this.button17.BorderWidth = ((uint)(10));
-			this.button17.Label = global::Mono.Unix.Catalog.GetString("Request Early Access2");
+			this.button17.Label = global::Mono.Unix.Catalog.GetString("Request Early Access");
 			this.vbuttonbox1.Add(this.button17);
 			global::Gtk.ButtonBox.ButtonBoxChild w4 = ((global::Gtk.ButtonBox.ButtonBoxChild)(this.vbuttonbox1[this.button17]));
 			w4.Expand = false;
@@ -382,10 +385,10 @@ Please visit the web site www.syntactik.com to get more information about Syntac
 			{
 				this.Child.ShowAll();
 			}
-			this.DefaultWidth = 569;
-			this.DefaultHeight = 489;
+			this.DefaultWidth = 579;
+			this.DefaultHeight = 484;
 			this.label4.MnemonicWidget = this.vbox3;
-			this.Show();
+			this.Hide();
 		}
 	}
 }
