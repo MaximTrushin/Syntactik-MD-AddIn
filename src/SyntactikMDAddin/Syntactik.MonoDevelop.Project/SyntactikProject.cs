@@ -5,17 +5,21 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
+using Gtk;
 using Mono.Debugging.Client;
 using MonoDevelop.Core;
 using MonoDevelop.Core.Text;
 using MonoDevelop.Ide.TypeSystem;
 using MonoDevelop.Projects;
 using MonoDevelop.Debugger;
+using MonoDevelop.Ide;
+using Rhino.Licensing;
 using Syntactik.Compiler;
 using Syntactik.Compiler.IO;
 using Syntactik.Compiler.Pipelines;
 using Syntactik.Compiler.Steps;
 using Syntactik.DOM;
+using Syntactik.MonoDevelop.License;
 using Syntactik.MonoDevelop.Parser;
 
 namespace Syntactik.MonoDevelop.Projects
@@ -28,9 +32,13 @@ namespace Syntactik.MonoDevelop.Projects
             public SyntactikParsedDocument Document;
         }
 
+        private readonly object _rootSync = new object();
+
         public CompilerContext CompilerContext { get; protected set; }
 
         readonly object _syncRoot = new object();
+        private bool _validate_pending;
+        private Licensing.License _license;
         internal Dictionary<string, ParseInfo> CompileInfo { get; } = new Dictionary<string, ParseInfo>();
 
         protected SyntactikProject()
@@ -95,12 +103,68 @@ namespace Syntactik.MonoDevelop.Projects
             {
                 base.OnEndLoad();
                 ParseProjectFiles();
+
+                Gtk.Application.Invoke(delegate
+                {
+                    lock (_rootSync)
+                    {
+                        if (_validate_pending)
+                            return;
+                        _validate_pending = true;
+                        ValidateLicense();
+                        _validate_pending = false;
+                    }
+                });
             }
             catch (Exception ex)
             {
                 LoggingService.LogError("Unhandled exception in SyntactikProject.OnEndLoad.", ex);
             }
         }
+
+        private Licensing.License License => _license ?? (_license = new Licensing.License(GetLicenseFileName()));
+
+        private void ValidateLicense()
+        {
+
+            var requireLicense = false;
+
+            try
+            {
+                License.ValidateLicense();
+            }
+            catch (LicenseExpiredException)
+            {
+                MessageService.ShowError("Trial period expired. Please upgrade your license.");
+                requireLicense = true;
+            }
+            catch (LicenseFileNotFoundException)
+            {
+                MessageService.ShowError("Syntactik License not found.");
+                requireLicense = true;
+            }
+            catch (RhinoLicensingException)
+            {
+                MessageService.ShowError("Syntactik License not found.");
+                requireLicense = true;
+            }
+            if (!requireLicense) return;
+            var dlg = new LicenseInfoDialog();
+            dlg.SetPosition(WindowPosition.CenterAlways);
+            dlg.Run();
+            dlg.Hide();
+            _license = null;
+            try
+            {
+                License.ValidateLicense();
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+
+
 
         protected abstract void ParseProjectFiles();
 
