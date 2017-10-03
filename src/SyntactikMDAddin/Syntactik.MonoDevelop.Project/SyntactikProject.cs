@@ -348,5 +348,14 @@ namespace Syntactik.MonoDevelop.Projects
             }
             return aliasDefs;
         }
+
+        public static string GetLicenseFileName()
+        {
+            var licenseFolder = UserProfile.Current.UserDataRoot.Combine("License", "Syntactik");
+            if (!Directory.Exists(licenseFolder))
+                Directory.CreateDirectory(licenseFolder);
+            var fileName = Path.Combine(licenseFolder, "license.lic");
+            return fileName;
+        }
     }
 }

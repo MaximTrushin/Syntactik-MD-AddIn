@@ -1,6 +1,8 @@
 ﻿using System.IO;
 using System.Reflection;
+using Mono.TextEditor.Highlighting;
 using Rhino.Licensing;
+using Syntactik.MonoDevelop.Highlighting;
 
 namespace Syntactik.MonoDevelop.Licensing
 {
@@ -19,7 +21,7 @@ namespace Syntactik.MonoDevelop.Licensing
         {
             var assembly = Assembly.GetExecutingAssembly();
             string key;
-            using (var stream = assembly.GetManifestResourceStream("Malina.Licensing.publicKey.xml"))
+            using (var stream = assembly.GetManifestResourceStream("Syntactik.MonoDevelop.publicKey.xml"))
             using (var reader = new StreamReader(stream))
                 key = reader.ReadToEnd();
 
