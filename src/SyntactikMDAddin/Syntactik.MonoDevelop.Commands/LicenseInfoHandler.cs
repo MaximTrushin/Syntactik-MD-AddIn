@@ -10,7 +10,7 @@ namespace Syntactik.MonoDevelop.Commands
         protected override void Run()
         {
             base.Run();
-            using (var dlg = new LicenseInfo())
+            using (var dlg = new LicenseInfoDialog())
             {
                 dlg.SetPosition(WindowPosition.CenterAlways);
                 var res = (ResponseType) MessageService.ShowCustomDialog(dlg);

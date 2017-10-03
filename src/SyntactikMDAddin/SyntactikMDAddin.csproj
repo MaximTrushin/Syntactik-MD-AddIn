@@ -54,6 +54,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\external\monodevelop\main\build\bin\ICSharpCode.NRefactory.dll</HintPath>
     </Reference>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Mono.Addins, Version=0.6.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\external\monodevelop\main\build\bin\Mono.Addins.dll</HintPath>
@@ -61,6 +65,7 @@
     <Reference Include="Mono.Debugging">
       <HintPath>..\..\external\monodevelop\main\build\bin\Mono.Debugging.dll</HintPath>
     </Reference>
+    <Reference Include="Mono.Posix, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL" />
     <Reference Include="Mono.TextEditor, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\external\monodevelop\main\build\bin\Mono.TextEditor.dll</HintPath>
@@ -78,11 +83,20 @@
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.105.2.3\lib\net46\RestSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Syntactik">
       <HintPath>..\..\external\syntactik\Syntactik\bin\Debug\Syntactik.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -96,8 +110,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SyntactikGtk\gtk-gui\Syntactik.MonoDevelop.License.LicenseInfoDialog.cs">
+      <Link>Syntactik.MonoDevelop.Licensing\Syntactik.MonoDevelop.License.LicenseInfoDialog.cs</Link>
+    </Compile>
     <Compile Include="AddinInfo.cs" />
     <Compile Include="CompilerOptionsWidget.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\Swagger\Api\DefaultApi.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\Swagger\Client\ApiClient.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\Swagger\Client\ApiClientConstants.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\Swagger\Client\ApiException.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\Swagger\Client\ApiResponse.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\Swagger\Client\Configuration.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\Swagger\Client\ExceptionFactory.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\Swagger\Client\IApiAccessor.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\Swagger\Model\ErrorModel.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\Swagger\Model\LicenseInfo.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\CopyAsJsonHandler.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\CopyAsXmlHandler.cs" />
     <Compile Include="Syntactik.MonoDevelop.Commands\CopyDocAsJsonHandler.cs" />
@@ -148,6 +175,23 @@
     <Compile Include="Syntactik.MonoDevelop.Highlighting\HighlightUsagesExtension.cs" />
     <Compile Include="Syntactik.MonoDevelop.Highlighting\SyntactikSpanParser.cs" />
     <Compile Include="Syntactik.MonoDevelop.Highlighting\SyntactikSyntaxMode.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\License.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\LicenseInfoDialog.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\Rhino\AbstractLicenseValidator.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\Rhino\FloatingLicenseNotAvialableException.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\Rhino\ILicensingService.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\Rhino\InvalidationType.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\Rhino\ISubscriptionLicensingService.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\Rhino\LicenseExpiredException.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\Rhino\LicenseFileNotFoundException.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\Rhino\LicenseGenerator.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\Rhino\LicenseNotFoundException.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\Rhino\LicenseType.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\Rhino\LicenseValidator.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\Rhino\LicensingService.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\Rhino\RhinoLicensingException.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\Rhino\SntpClient.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\Rhino\StringLicenseValidator.cs" />
     <Compile Include="Syntactik.MonoDevelop.NodeBuilders\ProjectNodeBuilder.cs" />
     <Compile Include="Syntactik.MonoDevelop.NodeBuilders\SchemaFolder.cs" />
     <Compile Include="Syntactik.MonoDevelop.NodeBuilders\SchemaFolderNodeBuilder.cs" />
@@ -242,12 +286,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Templates\EmptyS4JFile.xft.xml" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SyntactikGtk\SyntactikGtk.csproj">
-      <Project>{ef6392c3-788c-454b-b8dd-acb343a54745}</Project>
-      <Name>SyntactikGtk</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
