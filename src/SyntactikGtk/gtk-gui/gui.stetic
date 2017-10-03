@@ -7,7 +7,7 @@
   <import>
     <widget-library name="../bin/Debug/SyntactikGtk.dll" internal="true" />
   </import>
-  <widget class="Gtk.Dialog" id="Syntactik.MonoDevelop.License.LicenseInfo" design-size="579 484">
+  <widget class="Gtk.Dialog" id="Syntactik.MonoDevelop.License.LicenseInfoDialog" design-size="583 498">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <property name="Title" translatable="yes">Syntactik Software Activation</property>
@@ -18,7 +18,7 @@
     <property name="AllowGrow">False</property>
     <property name="SkipPagerHint">True</property>
     <property name="SkipTaskbarHint">True</property>
-    <property name="Buttons">2</property>
+    <property name="Buttons">1</property>
     <property name="HelpButton">False</property>
     <child internal-child="VBox">
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -34,19 +34,21 @@
                 <child>
                   <widget class="Gtk.Label" id="label4">
                     <property name="MemberName" />
-                    <property name="Tooltip" translatable="yes">Thank you for your interest in Syntactik. Syntactik editor is available only in the Early Access mode. Please register using the button "Request Early Access". Please visit the web site &lt;a href="www.syntactik.com"&gt;www.syntactik.com&lt;a/&gt; to get more information about Syntactik language and editor.</property>
+                    <property name="Tooltip" translatable="yes" />
                     <property name="Xalign">0</property>
                     <property name="LabelProp" translatable="yes">
-Thank you for your interest in Syntactik. 
+Thank you for your interest in Syntactik editor. 
 
-Syntactik editor is available only in the Early Access mode. Please register using the button "Request Early Access". 
+Syntactik editor is available only in the Early Access mode. Please register and get access to all editor's features by clicking the "Request Early Access" button. 
 
-Please visit the web site www.syntactik.com to get more information about Syntactik language and editor.
+Please visit the website www.syntactik.com to get more information about Syntactik language and editor.
 </property>
                     <property name="UseMarkup">True</property>
+                    <property name="UseUnderline">True</property>
                     <property name="Wrap">True</property>
                     <property name="MnemonicWidget">vbox3</property>
-                    <property name="WidthChars">65</property>
+                    <property name="Selectable">True</property>
+                    <property name="WidthChars">67</property>
                   </widget>
                   <packing>
                     <property name="Position">0</property>
@@ -131,32 +133,10 @@ Please visit the web site www.syntactik.com to get more information about Syntac
                         <property name="RowSpacing">6</property>
                         <property name="ColumnSpacing">6</property>
                         <child>
-                          <widget class="Gtk.Entry" id="entry8">
-                            <property name="MemberName" />
-                            <property name="CanFocus">True</property>
-                            <property name="IsEditable">True</property>
-                            <property name="InvisibleChar">●</property>
-                          </widget>
-                          <packing>
-                            <property name="TopAttach">7</property>
-                            <property name="BottomAttach">8</property>
-                            <property name="LeftAttach">1</property>
-                            <property name="RightAttach">2</property>
-                            <property name="AutoSize">True</property>
-                            <property name="YOptions">Fill</property>
-                            <property name="XExpand">True</property>
-                            <property name="XFill">True</property>
-                            <property name="XShrink">False</property>
-                            <property name="YExpand">False</property>
-                            <property name="YFill">True</property>
-                            <property name="YShrink">False</property>
-                          </packing>
-                        </child>
-                        <child>
                           <widget class="Gtk.Entry" id="entryCompany">
                             <property name="MemberName" />
                             <property name="CanFocus">True</property>
-                            <property name="IsEditable">True</property>
+                            <property name="IsEditable">False</property>
                             <property name="InvisibleChar">●</property>
                           </widget>
                           <packing>
@@ -178,7 +158,7 @@ Please visit the web site www.syntactik.com to get more information about Syntac
                           <widget class="Gtk.Entry" id="entryEmail">
                             <property name="MemberName" />
                             <property name="CanFocus">True</property>
-                            <property name="IsEditable">True</property>
+                            <property name="IsEditable">False</property>
                             <property name="InvisibleChar">●</property>
                           </widget>
                           <packing>
@@ -195,10 +175,32 @@ Please visit the web site www.syntactik.com to get more information about Syntac
                           </packing>
                         </child>
                         <child>
+                          <widget class="Gtk.Entry" id="entryExpires">
+                            <property name="MemberName" />
+                            <property name="CanFocus">True</property>
+                            <property name="IsEditable">False</property>
+                            <property name="InvisibleChar">●</property>
+                          </widget>
+                          <packing>
+                            <property name="TopAttach">7</property>
+                            <property name="BottomAttach">8</property>
+                            <property name="LeftAttach">1</property>
+                            <property name="RightAttach">2</property>
+                            <property name="AutoSize">True</property>
+                            <property name="YOptions">Fill</property>
+                            <property name="XExpand">True</property>
+                            <property name="XFill">True</property>
+                            <property name="XShrink">False</property>
+                            <property name="YExpand">False</property>
+                            <property name="YFill">True</property>
+                            <property name="YShrink">False</property>
+                          </packing>
+                        </child>
+                        <child>
                           <widget class="Gtk.Entry" id="entryLicenseId">
                             <property name="MemberName" />
                             <property name="CanFocus">True</property>
-                            <property name="IsEditable">True</property>
+                            <property name="IsEditable">False</property>
                             <property name="InvisibleChar">●</property>
                           </widget>
                           <packing>
@@ -220,7 +222,7 @@ Please visit the web site www.syntactik.com to get more information about Syntac
                           <widget class="Gtk.Entry" id="entryLicenseType">
                             <property name="MemberName" />
                             <property name="CanFocus">True</property>
-                            <property name="IsEditable">True</property>
+                            <property name="IsEditable">False</property>
                             <property name="InvisibleChar">●</property>
                           </widget>
                           <packing>
@@ -242,7 +244,7 @@ Please visit the web site www.syntactik.com to get more information about Syntac
                           <widget class="Gtk.Entry" id="entryName">
                             <property name="MemberName" />
                             <property name="CanFocus">True</property>
-                            <property name="IsEditable">True</property>
+                            <property name="IsEditable">False</property>
                             <property name="InvisibleChar">●</property>
                           </widget>
                           <packing>
@@ -264,7 +266,7 @@ Please visit the web site www.syntactik.com to get more information about Syntac
                           <widget class="Gtk.Entry" id="entryPosition">
                             <property name="MemberName" />
                             <property name="CanFocus">True</property>
-                            <property name="IsEditable">True</property>
+                            <property name="IsEditable">False</property>
                             <property name="InvisibleChar">●</property>
                           </widget>
                           <packing>
@@ -476,37 +478,19 @@ Please visit the web site www.syntactik.com to get more information about Syntac
         <property name="MemberName" />
         <property name="Spacing">10</property>
         <property name="BorderWidth">5</property>
-        <property name="Size">2</property>
+        <property name="Size">1</property>
         <property name="LayoutStyle">End</property>
         <child>
-          <widget class="Gtk.Button" id="buttonCancel">
+          <widget class="Gtk.Button" id="btnClose">
             <property name="MemberName" />
             <property name="CanDefault">True</property>
             <property name="CanFocus">True</property>
-            <property name="UseStock">True</property>
-            <property name="Type">StockItem</property>
-            <property name="StockId">gtk-cancel</property>
-            <property name="ResponseId">-6</property>
-            <property name="label">gtk-cancel</property>
+            <property name="Type">TextOnly</property>
+            <property name="Label" translatable="yes">Demo Mode</property>
+            <property name="UseUnderline">True</property>
+            <property name="ResponseId">0</property>
           </widget>
           <packing>
-            <property name="Expand">False</property>
-            <property name="Fill">False</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gtk.Button" id="buttonOk">
-            <property name="MemberName" />
-            <property name="CanDefault">True</property>
-            <property name="CanFocus">True</property>
-            <property name="UseStock">True</property>
-            <property name="Type">StockItem</property>
-            <property name="StockId">gtk-ok</property>
-            <property name="ResponseId">-5</property>
-            <property name="label">gtk-ok</property>
-          </widget>
-          <packing>
-            <property name="Position">1</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
           </packing>
