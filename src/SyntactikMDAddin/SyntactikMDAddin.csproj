@@ -113,8 +113,12 @@
     <Compile Include="..\SyntactikGtk\gtk-gui\Syntactik.MonoDevelop.License.LicenseInfoDialog.cs">
       <Link>Syntactik.MonoDevelop.Licensing\Syntactik.MonoDevelop.License.LicenseInfoDialog.cs</Link>
     </Compile>
+    <Compile Include="..\SyntactikGtk\gtk-gui\Syntactik.MonoDevelop.License.LicenseRequestDialog.cs">
+      <Link>Syntactik.MonoDevelop.Licensing\Syntactik.MonoDevelop.License.LicenseRequestDialog.cs</Link>
+    </Compile>
     <Compile Include="AddinInfo.cs" />
     <Compile Include="CompilerOptionsWidget.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\LicenseRequestDialog.cs" />
     <Compile Include="Syntactik.MonoDevelop.Licensing\Swagger\Api\DefaultApi.cs" />
     <Compile Include="Syntactik.MonoDevelop.Licensing\Swagger\Client\ApiClient.cs" />
     <Compile Include="Syntactik.MonoDevelop.Licensing\Swagger\Client\ApiClientConstants.cs" />

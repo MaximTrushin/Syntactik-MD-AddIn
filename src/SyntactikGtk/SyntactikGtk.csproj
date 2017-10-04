@@ -42,6 +42,8 @@
     <Compile Include="gtk-gui\generated.cs" />
     <Compile Include="LicenseInfoDialog.cs" />
     <Compile Include="gtk-gui\Syntactik.MonoDevelop.License.LicenseInfoDialog.cs" />
+    <Compile Include="LicenseRequestDialog.cs" />
+    <Compile Include="gtk-gui\Syntactik.MonoDevelop.License.LicenseRequestDialog.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
