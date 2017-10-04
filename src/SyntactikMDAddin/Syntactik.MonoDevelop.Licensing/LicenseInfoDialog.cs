@@ -19,7 +19,7 @@ namespace Syntactik.MonoDevelop.License
         public LicenseInfoDialog()
         {
             Build();
-            btnRequest.Clicked += btnRequestClick;
+            btnRequest.Clicked += OnBtnRequestClick;
             var col = new Gdk.Color(240, 240, 240);
             entryEmail.ModifyBase(StateType.Normal, col);
             entryName.ModifyBase(StateType.Normal, col);
@@ -91,34 +91,33 @@ namespace Syntactik.MonoDevelop.License
             base.OnClose();
         }
 
-        private void btnRequestClick(object sender, EventArgs e)
+        private void OnBtnRequestClick(object sender, EventArgs e)
         {
-            
-            var dlg = new LicenseRequestDialog();
-            var res = (ResponseType)MessageService.ShowCustomDialog(dlg);
-            //dlg.SetPosition(WindowPosition.CenterAlways);
-            //dlg.KeepAbove = true;
-            //var res = (ResponseType)dlg.Run();
-            //dlg.Hide();
-            if (res == ResponseType.Ok)
+
+            using (var dlg = new LicenseRequestDialog())
             {
-                entryEmail.Text = dlg.Info.Email;
-                entryName.Text = dlg.Info.FullName;
-                entryCompany.Text = dlg.Info.Company;
-                entryPosition.Text = dlg.Info.Position;
-                //_needConfirm = dlg.EmailConfirmed == false || dlg.LicenseInfo.Confirmed == false;
-                btnRequest.Sensitive = false;
-
-                if (dlg.LicenseInfo != null && dlg.LicenseInfo.Confirmed != null && (bool)dlg.LicenseInfo.Confirmed)
+                var res = (ResponseType) MessageService.ShowCustomDialog(dlg);
+                if (res == ResponseType.Ok)
                 {
-                    //License = dlg.LicenseInfo;
-                    DisplayInfo(dlg.LicenseInfo);
+                    entryEmail.Text = dlg.Info.Email;
+                    entryName.Text = dlg.Info.FullName;
+                    entryCompany.Text = dlg.Info.Company;
+                    entryPosition.Text = dlg.Info.Position;
+                    //_needConfirm = dlg.EmailConfirmed == false || dlg.LicenseInfo.Confirmed == false;
+                    btnRequest.Sensitive = false;
+
+                    if (dlg.LicenseInfo != null && dlg.LicenseInfo.Confirmed != null && (bool) dlg.LicenseInfo.Confirmed)
+                    {
+                        //License = dlg.LicenseInfo;
+                        DisplayInfo(dlg.LicenseInfo);
+                    }
+
+                    _confirmMessage = "Email confirmed!";
+                    if (dlg.LicenseInfo != null && dlg.LicenseInfo.Confirmed != null &&
+                        (bool) !dlg.LicenseInfo.Confirmed)
+                        _confirmMessage = "License confirmed!";
+
                 }
-
-                _confirmMessage = "Email confirmed!";
-                if (dlg.LicenseInfo != null && dlg.LicenseInfo.Confirmed != null && (bool)!dlg.LicenseInfo.Confirmed)
-                    _confirmMessage = "License confirmed!";
-
             }
         }
 
@@ -132,6 +131,5 @@ namespace Syntactik.MonoDevelop.License
                 btnClose.Label = "Ok";
             }
         }
-
     }
 }

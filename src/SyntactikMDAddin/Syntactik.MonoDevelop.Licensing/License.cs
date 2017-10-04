@@ -1,8 +1,6 @@
 ﻿using System.IO;
 using System.Reflection;
-using Mono.TextEditor.Highlighting;
 using Rhino.Licensing;
-using Syntactik.MonoDevelop.Highlighting;
 
 namespace Syntactik.MonoDevelop.Licensing
 {
@@ -15,7 +13,7 @@ namespace Syntactik.MonoDevelop.Licensing
     public class License
     {
         public Mode RuntimeMode { get; private set; }
-        public LicenseValidator Validator { get; private set; }
+        public LicenseValidator Validator { get; }
 
         public License(string licenseFileName)
         {

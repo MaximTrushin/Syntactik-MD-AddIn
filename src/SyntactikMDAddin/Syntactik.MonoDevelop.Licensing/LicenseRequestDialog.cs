@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net.Mail;
 using System.Text;
-using System.Threading.Tasks;
 using Gtk;
 using IO.Swagger.Api;
 using IO.Swagger.Client;
@@ -21,7 +20,7 @@ namespace Syntactik.MonoDevelop.License
         public string Position;
     }
 
-    public partial class LicenseRequestDialog : Gtk.Dialog
+    public sealed partial class LicenseRequestDialog : Dialog
     {
         internal Info Info { get; } = new Info();
         internal bool EmailConfirmed { get; private set; }
@@ -32,14 +31,13 @@ namespace Syntactik.MonoDevelop.License
         {
             Build();
             SetLoadingState(false);
-            entryEmail.FocusOutEvent += this.OnEmailEntered;
-            buttonCancel.Clicked += this.BtnCancelClicked;
-            buttonRequest.Clicked += this.BtnRequestOnClicked;
+            entryEmail.FocusOutEvent += OnEmailEntered;
+            buttonCancel.Clicked += BtnCancelClicked;
+            buttonRequest.Clicked += BtnRequestOnClicked;
         }
 
         private void SetLoadingState(bool loading)
         {
-            var m = typeof(SyntactikSyntaxMode).Assembly.GetManifestResourceNames();
             loaderImage.PixbufAnimation = loading ? new Gdk.PixbufAnimation(this.GetType().Assembly, "Syntactik.MonoDevelop.icons.24.gif") : null;
             entryEmail.Sensitive = loading == false;
             entryName.Sensitive = loading == false;
@@ -51,13 +49,12 @@ namespace Syntactik.MonoDevelop.License
 
         private string _email;
 
-        protected void OnEmailEntered(object o, FocusOutEventArgs args)
+        private void OnEmailEntered(object o, FocusOutEventArgs args)
         {
             if (_email == entryEmail.Text || !IsValid(entryEmail.Text))
                 return;
 
-            var task = new Task(DoCompletions);
-            task.Start();
+            Application.Invoke((sender, eventArgs) => DoCompletions());
         }
 
         private bool IsValid(string email)
@@ -104,7 +101,6 @@ namespace Syntactik.MonoDevelop.License
             catch (Exception ex)
             {
                 MessageService.ShowError("Error requesting license: " + ex.Message, "Error");
-                KeepAbove = true;
             }
             finally
             {
@@ -135,14 +131,12 @@ namespace Syntactik.MonoDevelop.License
             if (!IsValid(mail))
             {
                 MessageService.ShowError("Invalid email address.");
-                this.KeepAbove = true;
                 return;
             }
             string fullName = entryName.Text;
             if (string.IsNullOrEmpty(fullName) && !EmailConfirmed)
             {
                 MessageService.ShowError("Full Name required");
-                this.KeepAbove = true;
                 return;
             }
 
@@ -163,8 +157,7 @@ namespace Syntactik.MonoDevelop.License
                 if (LeadState == 1)
                 {
                     MessageService.ShowMessage("Confirmation email has been sent to " + mail);
-                    this.DefaultResponse = ResponseType.Ok;
-                    this.Destroy();
+                    Respond(ResponseType.Ok);
                     return;
                 }
 
@@ -175,15 +168,13 @@ namespace Syntactik.MonoDevelop.License
                 if (licenseInfo.Uid != null && licenseInfo.Confirmed == false)
                 {
                     MessageService.ShowMessage("License Confirmation email has been sent to " + mail);
-                    this.DefaultResponse = ResponseType.Ok;
-                    this.Destroy();
+                    Respond(ResponseType.Ok);
                     return;
                 }
 
                 if (valid)
                 {
-                    this.DefaultResponse = ResponseType.Ok;
-                    this.Destroy();
+                    Respond(ResponseType.Ok);
                 }
             }
             catch (Exception ex)
@@ -232,7 +223,7 @@ namespace Syntactik.MonoDevelop.License
             if (valid)
             {
                 StringBuilder message = new StringBuilder();
-                message.AppendLine("License Valid.");
+                message.AppendLine("License is Valid.");
                 message.AppendLine("License Type: " + type);
                 message.AppendLine("Issued to: " + mail);
                 message.AppendLine("Valid till: " + expiration);
@@ -243,17 +234,14 @@ namespace Syntactik.MonoDevelop.License
             return false;
         }
 
-        protected void BtnRequestOnClicked(object sender, EventArgs e)
+        private void BtnRequestOnClicked(object sender, EventArgs e)
         {
-            this.KeepAbove = false;
-            var task = new Task(DoRequest);
-            task.Start();
+            Application.Invoke((s, ev) => DoRequest());
         }
 
-        protected void BtnCancelClicked(object sender, EventArgs e)
+        private void BtnCancelClicked(object sender, EventArgs e)
         {
-            this.DefaultResponse = ResponseType.Cancel;
-            this.Destroy();
+            Respond(ResponseType.Cancel);
         }
     }
 }

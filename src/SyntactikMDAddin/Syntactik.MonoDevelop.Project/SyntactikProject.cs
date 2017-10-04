@@ -104,7 +104,7 @@ namespace Syntactik.MonoDevelop.Projects
                 base.OnEndLoad();
                 ParseProjectFiles();
 
-                Gtk.Application.Invoke(delegate
+                Application.Invoke(delegate
                 {
                     lock (_rootSync)
                     {
@@ -149,10 +149,11 @@ namespace Syntactik.MonoDevelop.Projects
                 requireLicense = true;
             }
             if (!requireLicense) return;
-            var dlg = new LicenseInfoDialog();
-            dlg.SetPosition(WindowPosition.CenterAlways);
-            dlg.Run();
-            dlg.Hide();
+
+            using (var dlg = new LicenseInfoDialog())
+            {
+                MessageService.ShowCustomDialog(dlg);
+            }
             _license = null;
             try
             {
@@ -163,8 +164,6 @@ namespace Syntactik.MonoDevelop.Projects
                 // ignored
             }
         }
-
-
 
         protected abstract void ParseProjectFiles();
 
