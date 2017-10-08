@@ -67,8 +67,8 @@ namespace Syntactik.MonoDevelop.License
                 {
                     LicenseInfo licenseInfo;
                     var client = new DefaultApi(new Configuration(new ApiClient(ApiClient.Address)));
-                    RequestLicense(client, _email, out licenseInfo);
-                    if (licenseInfo.Uid != null && licenseInfo.Confirmed == false)
+                    var result = RequestLicense(client, _email, out licenseInfo);
+                    if (result && licenseInfo.Uid != null && licenseInfo.Confirmed == false)
                     {
                         Runtime.RunInMainThread(delegate
                         {
@@ -99,11 +99,18 @@ namespace Syntactik.MonoDevelop.License
             loaderImage.PixbufAnimation = loading ? new Gdk.PixbufAnimation(GetType().Assembly, "Syntactik.MonoDevelop.icons.24.gif") : null;
         }
 
+        /// <summary>
+        /// Requests license from the license server
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="mail"></param>
+        /// <param name="licenseInfo"></param>
+        /// <returns>Return false if error occured.</returns>
         internal bool RequestLicense(DefaultApi client, string mail, out LicenseInfo licenseInfo)
         {
             var license = client.RequestLicense(mail, LicenseValidator.GetMachineId(), Environment.MachineName);
             licenseInfo = license;
-            if (license.Uid == null)
+            if (!string.IsNullOrEmpty(license.ErrorMessage))
             {
                 DialogHelper.ShowError(licenseInfo.ErrorMessage, this);
                 Respond(ResponseType.Cancel);
@@ -111,7 +118,7 @@ namespace Syntactik.MonoDevelop.License
             }
             if (licenseInfo.Confirmed == false)
             {
-                return false;
+                return true;
             }
 
             var licenseBody = license.License;
