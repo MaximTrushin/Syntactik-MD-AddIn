@@ -110,6 +110,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SyntactikGtk\gtk-gui\Syntactik.MonoDevelop.License.ConfirmationStatusDialog.cs">
+      <Link>Syntactik.MonoDevelop.Licensing\Syntactik.MonoDevelop.License.ConfirmationStatusDialog.cs</Link>
+    </Compile>
     <Compile Include="..\SyntactikGtk\gtk-gui\Syntactik.MonoDevelop.License.LicenseInfoDialog.cs">
       <Link>Syntactik.MonoDevelop.Licensing\Syntactik.MonoDevelop.License.LicenseInfoDialog.cs</Link>
     </Compile>
@@ -118,6 +121,7 @@
     </Compile>
     <Compile Include="AddinInfo.cs" />
     <Compile Include="CompilerOptionsWidget.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Licensing\ConfirmationStatusDialog.cs" />
     <Compile Include="Syntactik.MonoDevelop.Licensing\LicenseRequestDialog.cs" />
     <Compile Include="Syntactik.MonoDevelop.Licensing\Swagger\Api\DefaultApi.cs" />
     <Compile Include="Syntactik.MonoDevelop.Licensing\Swagger\Client\ApiClient.cs" />
@@ -228,6 +232,7 @@
     <Compile Include="Syntactik.MonoDevelop.Schemas\XmlSchemaInstanceNamespace.cs" />
     <Compile Include="Syntactik.MonoDevelop.Schemas\XsdSchemaProvider.cs" />
     <Compile Include="SyntactikIcons.cs" />
+    <Compile Include="Util\DialogHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -293,6 +298,7 @@
   <ItemGroup>
     <EmbeddedResource Include="publicKey.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

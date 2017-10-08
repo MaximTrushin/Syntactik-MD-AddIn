@@ -25,6 +25,7 @@ namespace Syntactik.MonoDevelop.Licensing
 
             Validator = new LicenseValidator(key, licenseFileName);
             Validator.TryLoadingLicenseValuesFromValidatedXml();
+            Validator.DisableFutureChecks();
         }
 
         public void ValidateLicense()

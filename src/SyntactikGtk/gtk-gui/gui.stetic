@@ -73,8 +73,17 @@ Please visit the website www.syntactik.com to get more information about Syntact
                 <child>
                   <widget class="Gtk.VButtonBox" id="vbuttonbox1">
                     <property name="MemberName" />
-                    <property name="Size">1</property>
+                    <property name="Size">3</property>
                     <property name="LayoutStyle">Edge</property>
+                    <child>
+                      <widget class="Gtk.Image" id="image2">
+                        <property name="MemberName" />
+                      </widget>
+                      <packing>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
                     <child>
                       <widget class="Gtk.Button" id="btnRequest">
                         <property name="MemberName" />
@@ -85,6 +94,17 @@ Please visit the website www.syntactik.com to get more information about Syntact
                         <property name="BorderWidth">10</property>
                       </widget>
                       <packing>
+                        <property name="Position">1</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.Image" id="loaderImage">
+                        <property name="MemberName" />
+                      </widget>
+                      <packing>
+                        <property name="Position">2</property>
                         <property name="Expand">False</property>
                         <property name="Fill">False</property>
                       </packing>
@@ -499,10 +519,10 @@ Please visit the website www.syntactik.com to get more information about Syntact
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Dialog" id="Syntactik.MonoDevelop.License.LicenseRequestDialog" design-size="435 262">
+  <widget class="Gtk.Dialog" id="Syntactik.MonoDevelop.License.LicenseRequestDialog" design-size="379 356">
     <property name="MemberName" />
     <property name="Visible">False</property>
-    <property name="Title" translatable="yes">Early Access License</property>
+    <property name="Title" translatable="yes">Early Access License Request</property>
     <property name="Icon">stock:gtk-dialog-authentication Menu</property>
     <property name="WindowPosition">CenterOnParent</property>
     <property name="Modal">True</property>
@@ -518,14 +538,29 @@ Please visit the website www.syntactik.com to get more information about Syntact
         <property name="MemberName" />
         <property name="BorderWidth">2</property>
         <child>
+          <widget class="Gtk.Label" id="label5">
+            <property name="MemberName" />
+            <property name="Xalign">0</property>
+            <property name="LabelProp" translatable="yes">Please enter your email to get the Early Access license.
+
+If you are requesting the license first time, you will be asked to enter your full name, company and position.
+</property>
+            <property name="Wrap">True</property>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">False</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
           <widget class="Gtk.VBox" id="vbox2">
             <property name="MemberName" />
             <property name="Spacing">2</property>
             <child>
-              <widget class="Gtk.Label" id="label1">
+              <widget class="Gtk.HSeparator" id="hseparator8">
                 <property name="MemberName" />
-                <property name="Xalign">0</property>
-                <property name="LabelProp" translatable="yes">Email</property>
               </widget>
               <packing>
                 <property name="Position">0</property>
@@ -535,11 +570,10 @@ Please visit the website www.syntactik.com to get more information about Syntact
               </packing>
             </child>
             <child>
-              <widget class="Gtk.Entry" id="entryEmail">
+              <widget class="Gtk.Label" id="label1">
                 <property name="MemberName" />
-                <property name="CanFocus">True</property>
-                <property name="IsEditable">True</property>
-                <property name="InvisibleChar">●</property>
+                <property name="Xalign">0</property>
+                <property name="LabelProp" translatable="yes">Email *</property>
               </widget>
               <packing>
                 <property name="Position">1</property>
@@ -549,10 +583,12 @@ Please visit the website www.syntactik.com to get more information about Syntact
               </packing>
             </child>
             <child>
-              <widget class="Gtk.Label" id="label2">
+              <widget class="Gtk.Entry" id="entryEmail">
                 <property name="MemberName" />
-                <property name="Xalign">0</property>
-                <property name="LabelProp" translatable="yes">Full Name</property>
+                <property name="CanFocus">True</property>
+                <property name="Text" translatable="yes">trushin@gmail.co</property>
+                <property name="IsEditable">True</property>
+                <property name="InvisibleChar">●</property>
               </widget>
               <packing>
                 <property name="Position">2</property>
@@ -561,9 +597,22 @@ Please visit the website www.syntactik.com to get more information about Syntact
                 <property name="Fill">False</property>
               </packing>
             </child>
+            <child>
+              <widget class="Gtk.Label" id="label2">
+                <property name="MemberName" />
+                <property name="Xalign">0</property>
+                <property name="LabelProp" translatable="yes">Full Name *</property>
+              </widget>
+              <packing>
+                <property name="Position">3</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
           </widget>
           <packing>
-            <property name="Position">0</property>
+            <property name="Position">1</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -577,7 +626,7 @@ Please visit the website www.syntactik.com to get more information about Syntact
             <property name="InvisibleChar">●</property>
           </widget>
           <packing>
-            <property name="Position">1</property>
+            <property name="Position">2</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -590,7 +639,7 @@ Please visit the website www.syntactik.com to get more information about Syntact
             <property name="LabelProp" translatable="yes">Company</property>
           </widget>
           <packing>
-            <property name="Position">2</property>
+            <property name="Position">3</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -604,7 +653,7 @@ Please visit the website www.syntactik.com to get more information about Syntact
             <property name="InvisibleChar">●</property>
           </widget>
           <packing>
-            <property name="Position">3</property>
+            <property name="Position">4</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -617,7 +666,7 @@ Please visit the website www.syntactik.com to get more information about Syntact
             <property name="LabelProp" translatable="yes">Position</property>
           </widget>
           <packing>
-            <property name="Position">4</property>
+            <property name="Position">5</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -631,7 +680,20 @@ Please visit the website www.syntactik.com to get more information about Syntact
             <property name="InvisibleChar">●</property>
           </widget>
           <packing>
-            <property name="Position">5</property>
+            <property name="Position">6</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Label" id="label6">
+            <property name="MemberName" />
+            <property name="Xalign">0</property>
+            <property name="LabelProp" translatable="yes">* - required field</property>
+          </widget>
+          <packing>
+            <property name="Position">7</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -648,8 +710,8 @@ Please visit the website www.syntactik.com to get more information about Syntact
         <child>
           <widget class="Gtk.Image" id="loaderImage">
             <property name="MemberName" />
-            <property name="WidthRequest">120</property>
-            <property name="HeightRequest">4</property>
+            <property name="WidthRequest">100</property>
+            <property name="HeightRequest">25</property>
             <property name="Xalign">0</property>
           </widget>
           <packing>
@@ -676,15 +738,146 @@ Please visit the website www.syntactik.com to get more information about Syntact
         <child>
           <widget class="Gtk.Button" id="buttonRequest">
             <property name="MemberName" />
-            <property name="CanDefault">True</property>
+            <property name="Tooltip" translatable="yes">Check email</property>
             <property name="CanFocus">True</property>
             <property name="Type">TextOnly</property>
-            <property name="Label" translatable="yes">_Request License</property>
-            <property name="UseUnderline">True</property>
-            <property name="ResponseId">-5</property>
+            <property name="Label" translatable="yes">Request License</property>
+            <property name="ResponseId">-1</property>
           </widget>
           <packing>
             <property name="Position">2</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Dialog" id="Syntactik.MonoDevelop.License.ConfirmationStatusDialog" design-size="366 157">
+    <property name="MemberName" />
+    <property name="Visible">False</property>
+    <property name="Title" translatable="yes">Confirmation email</property>
+    <property name="Icon">stock:gtk-dialog-authentication Menu</property>
+    <property name="WindowPosition">CenterOnParent</property>
+    <property name="Modal">True</property>
+    <property name="BorderWidth">5</property>
+    <property name="Resizable">False</property>
+    <property name="DestroyWithParent">True</property>
+    <property name="SkipPagerHint">True</property>
+    <property name="SkipTaskbarHint">True</property>
+    <property name="Buttons">1</property>
+    <property name="HelpButton">False</property>
+    <child internal-child="VBox">
+      <widget class="Gtk.VBox" id="dialog1_VBox">
+        <property name="MemberName" />
+        <property name="BorderWidth">2</property>
+        <child>
+          <widget class="Gtk.HBox" id="hbox2">
+            <property name="MemberName" />
+            <property name="Spacing">6</property>
+            <child>
+              <widget class="Gtk.Image" id="loaderImage">
+                <property name="MemberName" />
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">False</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.VSeparator" id="vseparator1">
+                <property name="MemberName" />
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.VBox" id="vbox2">
+                <property name="MemberName" />
+                <property name="Spacing">6</property>
+                <child>
+                  <widget class="Gtk.Label" id="labelLineTop">
+                    <property name="MemberName" />
+                    <property name="Tooltip" translatable="yes">Confirmation email has been sent to.
+Waiting for confirmation.</property>
+                    <property name="Xalign">0</property>
+                    <property name="LabelProp" translatable="yes">&lt;b&gt;Confirmation email has been sent to:&lt;/b&gt;</property>
+                    <property name="UseMarkup">True</property>
+                  </widget>
+                  <packing>
+                    <property name="Position">0</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.Label" id="labelEmail">
+                    <property name="MemberName" />
+                    <property name="LabelProp" translatable="yes">test@mail.com</property>
+                  </widget>
+                  <packing>
+                    <property name="Position">1</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.Label" id="labelLineBottom">
+                    <property name="MemberName" />
+                    <property name="Xalign">0</property>
+                    <property name="LabelProp" translatable="yes">&lt;b&gt;Waiting for confirmation.&lt;/b&gt;</property>
+                    <property name="UseMarkup">True</property>
+                  </widget>
+                  <packing>
+                    <property name="Position">2</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+    <child internal-child="ActionArea">
+      <widget class="Gtk.HButtonBox" id="dialog1_ActionArea">
+        <property name="MemberName" />
+        <property name="Size">1</property>
+        <property name="LayoutStyle">Spread</property>
+        <child>
+          <widget class="Gtk.Button" id="buttonCancel">
+            <property name="MemberName" />
+            <property name="CanDefault">True</property>
+            <property name="HasDefault">True</property>
+            <property name="CanFocus">True</property>
+            <property name="Type">TextOnly</property>
+            <property name="Label" translatable="yes">_Cancel</property>
+            <property name="UseUnderline">True</property>
+            <property name="ResponseId">-6</property>
+          </widget>
+          <packing>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
           </packing>

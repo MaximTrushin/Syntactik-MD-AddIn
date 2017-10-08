@@ -1,6 +1,7 @@
 ﻿using MonoDevelop.Components.Commands;
 using MonoDevelop.Ide;
 using Syntactik.MonoDevelop.License;
+using Syntactik.MonoDevelop.Util;
 
 namespace Syntactik.MonoDevelop.Commands
 {
@@ -11,7 +12,7 @@ namespace Syntactik.MonoDevelop.Commands
             base.Run();
             using (var dlg = new LicenseInfoDialog())
             {
-                MessageService.ShowCustomDialog(dlg);
+                DialogHelper.ShowCustomDialog(dlg, null);
             }
         }
 

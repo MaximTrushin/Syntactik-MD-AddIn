@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Net.Mail;
-using System.Text;
+using System.Threading.Tasks;
 using Gtk;
 using IO.Swagger.Api;
 using IO.Swagger.Client;
-using IO.Swagger.Model;
-using MonoDevelop.Ide;
+using MonoDevelop.Core;
 using Rhino.Licensing;
-using Syntactik.MonoDevelop.Highlighting;
-using Syntactik.MonoDevelop.Projects;
+using Syntactik.MonoDevelop.Util;
+using Dialog = Gtk.Dialog;
+
 
 namespace Syntactik.MonoDevelop.License
 {
@@ -20,228 +20,209 @@ namespace Syntactik.MonoDevelop.License
         public string Position;
     }
 
-    public sealed partial class LicenseRequestDialog : Dialog
+    public partial class LicenseRequestDialog : Dialog
     {
         internal Info Info { get; } = new Info();
-        internal bool EmailConfirmed { get; private set; }
+        internal bool EmailConfirmed => LeadState == 2;
+        /// <summary>
+        /// 0 - New Lead, 1 - Existing with unconfirmed email, 2 - Existing with confirmed email
+        /// </summary>
         private int? LeadState { get; set; }
-        internal LicenseInfo LicenseInfo { get; private set; }
+        private string _email;
 
         public LicenseRequestDialog()
         {
+            // ReSharper disable once VirtualMemberCallInConstructor
             Build();
-            SetLoadingState(false);
-            entryEmail.FocusOutEvent += OnEmailEntered;
-            buttonCancel.Clicked += BtnCancelClicked;
+            entryEmail.Changed += OnEmailChanged;
             buttonRequest.Clicked += BtnRequestOnClicked;
+            entryName.Sensitive = false;
+            entryCompany.Sensitive = false;
+            entryPosition.Sensitive = false;
+            buttonRequest.Sensitive = false;
         }
 
-        private void SetLoadingState(bool loading)
+        private void OnEmailChanged(object sender, EventArgs e)
         {
-            loaderImage.PixbufAnimation = loading ? new Gdk.PixbufAnimation(this.GetType().Assembly, "Syntactik.MonoDevelop.icons.24.gif") : null;
-            entryEmail.Sensitive = loading == false;
-            entryName.Sensitive = loading == false;
-            entryCompany.Sensitive = loading == false;
-            entryPosition.Sensitive = loading == false;
-            buttonRequest.Sensitive = loading == false;
-            buttonCancel.Sensitive = loading == false;
-        }
-
-        private string _email;
-
-        private void OnEmailEntered(object o, FocusOutEventArgs args)
-        {
-            if (_email == entryEmail.Text || !IsValid(entryEmail.Text))
-                return;
-
-            Application.Invoke((sender, eventArgs) => DoCompletions());
-        }
-
-        private bool IsValid(string email)
-        {
-            try
-            {
-                var mailAddress = new MailAddress(email);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private void DoCompletions()
-        {
-            _email = entryEmail.Text;
-            SetLoadingState(true);
-            try
-            {
-                UpdateLeadState(_email, true);
-
-                if (LeadState > 0)
-                {
-                    entryCompany.Text = "●●●●●●";
-                    entryName.Text = "●●●●●●";
-                    entryPosition.Text = "●●●●●●";
-
-                    entryCompany.IsEditable = false;
-                    entryName.IsEditable = false;
-                    entryPosition.IsEditable = false;
-                }
-                else
-                {
-                    entryCompany.Text = "";
-                    entryName.Text = "";
-                    entryPosition.Text = "";
-                    entryCompany.IsEditable = true;
-                    entryName.IsEditable = true;
-                    entryPosition.IsEditable = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageService.ShowError("Error requesting license: " + ex.Message, "Error");
-            }
-            finally
-            {
-                SetLoadingState(false);
-            }
-        }
-
-
-        private void UpdateLeadState(string mail, bool force = false)
-        {
-            if (LeadState == null || force)
-            {
-                var client = new DefaultApi(new Configuration(new ApiClient(ApiClient.Address)));
-
-                LeadState = client.LeadIsConfirmed(mail);
-                EmailConfirmed = LeadState == 2;
-            }
-        }
-
-        private void DoRequest()
-        {
-            string mail = entryEmail.Text;
-            Info.Email = mail;
-            Info.FullName = entryName.Text;
-            Info.Company = entryCompany.Text;
-            Info.Position = entryPosition.Text;
-
-            if (!IsValid(mail))
-            {
-                MessageService.ShowError("Invalid email address.");
-                return;
-            }
-            string fullName = entryName.Text;
-            if (string.IsNullOrEmpty(fullName) && !EmailConfirmed)
-            {
-                MessageService.ShowError("Full Name required");
-                return;
-            }
-
-            SetLoadingState(true);
-            try
-            {
-                UpdateLeadState(mail);
-                var client = new DefaultApi(new Configuration(new ApiClient(ApiClient.Address)));
-                if (LeadState == 0) //Lead doesn't exist
-                {
-                    string company = entryCompany.Text;
-                    string position = entryPosition.Text;
-
-                    client.SignupLead(mail, fullName, position, company, LicenseValidator.GetMachineId());
-                    LeadState = 1;
-                }
-                EmailConfirmed = LeadState == 2;
-                if (LeadState == 1)
-                {
-                    MessageService.ShowMessage("Confirmation email has been sent to " + mail);
-                    Respond(ResponseType.Ok);
-                    return;
-                }
-
-                LicenseInfo licenseInfo;
-
-                bool valid = ValidateLicense(client, mail, out licenseInfo);
-                LicenseInfo = licenseInfo;
-                if (licenseInfo.Uid != null && licenseInfo.Confirmed == false)
-                {
-                    MessageService.ShowMessage("License Confirmation email has been sent to " + mail);
-                    Respond(ResponseType.Ok);
-                    return;
-                }
-
-                if (valid)
-                {
-                    Respond(ResponseType.Ok);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageService.ShowError("Error requesting license: " + ex.Message);
-                KeepAbove = true;
-            }
-            finally
-            {
-                SetLoadingState(false);
-            }
-        }
-
-        internal static bool ValidateLicense(DefaultApi client, string mail, out LicenseInfo licenseInfo)
-        {
-            var license = client.RequestLicense(mail, LicenseValidator.GetMachineId(), Environment.MachineName);
-            licenseInfo = license;
-            if (license.Uid == null)
-            {
-                MessageService.ShowError(license.ErrorMessage);
-                return false;
-            }
-            if (licenseInfo.Confirmed == false)
-                return false;
-
-            var licenseBody = license.License;
-            System.IO.File.WriteAllText(SyntactikProject.GetLicenseFileName(), licenseBody);
-            var lic = new Licensing.License(SyntactikProject.GetLicenseFileName());
-            bool valid;
-            string expiration = string.Empty;
-            string type = string.Empty;
-            string errorMessage = string.Empty;
-            try
-            {
-                lic.ValidateLicense();
-                valid = true;
-                expiration = lic.Validator.ExpirationDate.ToShortDateString();
-                type = lic.Validator.LicenseType.ToString();
-            }
-            catch (Exception ex)
-            {
-                valid = false;
-                errorMessage = ex.Message;
-            }
-
-            if (valid)
-            {
-                StringBuilder message = new StringBuilder();
-                message.AppendLine("License is Valid.");
-                message.AppendLine("License Type: " + type);
-                message.AppendLine("Issued to: " + mail);
-                message.AppendLine("Valid till: " + expiration);
-                MessageService.ShowMessage(message.ToString());
-                return true;
-            }
-            MessageService.ShowError("Invalid License Key " + errorMessage);
-            return false;
+            LeadState = null;
+            DisableNonEmailEntries();
+            buttonRequest.Sensitive = IsValidEmail(entryEmail.Text);
         }
 
         private void BtnRequestOnClicked(object sender, EventArgs e)
         {
-            Application.Invoke((s, ev) => DoRequest());
+            if (LeadState == null)
+            {
+                //Checking if email is already registered
+                Task.Run(() => UpdateLeadState()).ContinueWith(task => ProcessLeadState(true));
+            }
+            else ProcessLeadState();
         }
 
-        private void BtnCancelClicked(object sender, EventArgs e)
+        private void ProcessLeadState(bool newUser = false)
         {
-            Respond(ResponseType.Cancel);
+            switch (LeadState)
+            {
+                case 0:
+                    if (newUser)
+                    {
+                        Application.Invoke(delegate
+                        {
+                            DialogHelper.ShowMessage("You are requesting the license first time. To get the license, please enter your full name, company and position.", this);
+                            EnableNonEmailEntries();
+                            entryName.HasFocus = true;
+                        });
+                        break;
+                    }
+                    //Valid new email. Customer has to enter full name, company and position
+                    if (string.IsNullOrWhiteSpace(entryName.Text))
+                    {
+                        Application.Invoke(delegate{
+                                DialogHelper.ShowWarning("Please enter your full name.", this);
+                                entryName.HasFocus = true;
+                        });
+                        return;
+                    }
+                    Task.Run(() => SignupLead(entryEmail.Text, entryName.Text, entryPosition.Text, entryCompany.Text))
+                        .ContinueWith(task => ProcessLeadState());
+                    break;
+                case 1:
+                    Runtime.RunInMainThread(delegate
+                    {
+                        SetLoadingState(true);
+                        using (
+                            var dlg = new ConfirmationStatusDialog(entryEmail.Text,
+                                ConfirmationStatusDialog.ConfirmationEnum.email))
+                        {
+                            var result = DialogHelper.ShowCustomDialog(dlg, this);
+                            SetLoadingState(false);
+                            if (result != (int) ResponseType.Ok) return;
+                            LeadState = 2;
+                        }
+                    }).ContinueWith(task =>
+                    {
+                        if (LeadState == 2)
+                            Application.Invoke(delegate
+                            {
+                                ProcessLeadState();
+                            });
+                    });
+                    break;
+                case 2:
+                    Application.Invoke(delegate
+                    {
+                        SetLoadingState(true);
+                        using (
+                            var dlg = new ConfirmationStatusDialog(entryEmail.Text, ConfirmationStatusDialog.ConfirmationEnum.license))
+                        {
+                            var result = DialogHelper.ShowCustomDialog(dlg, this);
+                            SetLoadingState(false);
+                            if (result == (int) ResponseType.Ok || dlg.LicenseReceived)
+                            {
+                                Respond(ResponseType.Ok);
+                                Destroy();
+                                return;
+                            }
+                        }
+                    });
+                    break; 
+            }
+        }
+
+        private void SignupLead(string entryEmailText, string entryNameText, string entryPositionText, string entryCompanyText)
+        {
+            Application.Invoke(delegate {
+                SetLoadingState(true);
+            });
+            try
+            {
+                var client = new DefaultApi(new Configuration(new ApiClient(ApiClient.Address)));
+                client.SignupLead(entryEmailText, entryNameText, entryPositionText, entryCompanyText,
+                    LicenseValidator.GetMachineId());
+                LeadState = 1;
+            }
+            catch (Exception)
+            {
+                DialogHelper.ShowError("Something went wrong. Please try again.", this);
+            }
+            finally
+            {
+                Application.Invoke(delegate {
+                    SetLoadingState(false);
+                });
+            }
+        }
+
+        private void SetLoadingState(bool loading)
+        {
+            loaderImage.PixbufAnimation = loading ? new Gdk.PixbufAnimation(GetType().Assembly, "Syntactik.MonoDevelop.icons.24.gif") : null;
+            entryEmail.Sensitive = loading == false;
+            buttonCancel.Sensitive = loading == false;
+            buttonRequest.Sensitive = loading == false;
+
+            if (loading)
+            {
+                DisableNonEmailEntries();
+            }
+            else if (LeadState == 0)
+            {
+                EnableNonEmailEntries();
+            }
+        }
+
+
+        private void DisableNonEmailEntries()
+        {
+            entryName.Sensitive = false;
+            entryCompany.Sensitive = false;
+            entryPosition.Sensitive = false;
+        }
+
+        private void EnableNonEmailEntries()
+        {
+            entryName.Sensitive = true;
+            entryCompany.Sensitive = true;
+            entryPosition.Sensitive = true;
+        }
+
+        private static bool IsValidEmail(string email)
+        {
+            try
+            {
+                // ReSharper disable once UnusedVariable
+                var mailAddress = new MailAddress(email);
+                return true;
+            }
+            catch(Exception)
+            {
+                return false;
+            }
+        }
+
+        private void UpdateLeadState()
+        {
+            Application.Invoke(delegate {
+                SetLoadingState(true);
+            });
+            _email = entryEmail.Text;
+            try
+            {
+                var client = new DefaultApi(new Configuration(new ApiClient(ApiClient.Address)));
+                LeadState = client.LeadIsConfirmed(_email);
+            }
+            catch (Exception)
+            {
+                Application.Invoke(delegate {
+                    DialogHelper.ShowError("Invalid email.", this);
+                    entryEmail.HasFocus = true;
+                });
+            }
+            finally
+            {
+                Application.Invoke(delegate {
+                    SetLoadingState(false);
+                });
+            }
         }
     }
 }

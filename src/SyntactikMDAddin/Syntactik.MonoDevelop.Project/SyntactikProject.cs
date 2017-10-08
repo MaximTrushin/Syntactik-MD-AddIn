@@ -21,6 +21,7 @@ using Syntactik.Compiler.Steps;
 using Syntactik.DOM;
 using Syntactik.MonoDevelop.License;
 using Syntactik.MonoDevelop.Parser;
+using Syntactik.MonoDevelop.Util;
 
 namespace Syntactik.MonoDevelop.Projects
 {
@@ -135,24 +136,24 @@ namespace Syntactik.MonoDevelop.Projects
             }
             catch (LicenseExpiredException)
             {
-                MessageService.ShowError("Trial period expired. Please upgrade your license.");
+                DialogHelper.ShowError("Trial period expired. Please upgrade your license.", null);
                 requireLicense = true;
             }
             catch (LicenseFileNotFoundException)
             {
-                MessageService.ShowError("Syntactik License not found.");
+                DialogHelper.ShowError("Syntactik License not found.", null);
                 requireLicense = true;
             }
             catch (RhinoLicensingException)
             {
-                MessageService.ShowError("Syntactik License not found.");
+                DialogHelper.ShowError("Syntactik License not found.", null);
                 requireLicense = true;
             }
             if (!requireLicense) return;
 
             using (var dlg = new LicenseInfoDialog())
             {
-                MessageService.ShowCustomDialog(dlg);
+                DialogHelper.ShowCustomDialog(dlg, null);
             }
             _license = null;
             try
