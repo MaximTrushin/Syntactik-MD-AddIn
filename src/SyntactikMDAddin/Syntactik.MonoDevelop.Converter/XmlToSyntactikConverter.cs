@@ -58,6 +58,7 @@ namespace Syntactik.MonoDevelop.Converter
             _indentMultiplicity = indentMultiplicity;
 
             _indent = new string(indentChar, indent * indentMultiplicity);
+            var header = new StringBuilder();
             _sb = new StringBuilder();
             _elementStack = new Stack<ElementInfo>();
             _declaredNamespaces = declaredNamespaces;
@@ -143,13 +144,19 @@ namespace Syntactik.MonoDevelop.Converter
                                 _value.Append(xmlReader.Value);
                                 break;
                             case XmlNodeType.ProcessingInstruction:
-
+                                header.Append(@"'''");
+                                header.Append("ProcessingInstruction ");
+                                header.Append(xmlReader.Name);
+                                header.Append(": ");
+                                header.AppendLine(xmlReader.Value);
                                 break;
                             case XmlNodeType.Comment:
 
                                 break;
                             case XmlNodeType.XmlDeclaration:
-
+                                header.Append(@"'''");
+                                header.Append("XmlDeclaration: ");
+                                header.AppendLine(xmlReader.Value);
                                 break;
                             case XmlNodeType.Document:
                                 break;
@@ -164,11 +171,11 @@ namespace Syntactik.MonoDevelop.Converter
                 }
                 catch
                 {
-                    s4x = _withNamespaces?GetNamespaceDeclarations(_declaredNamespaces) + _sb: _sb.ToString();
+                    s4x = header + (_withNamespaces?GetNamespaceDeclarations(_declaredNamespaces) + _sb: _sb.ToString());
                     return false;
                 }
             }
-            s4x = _withNamespaces ? GetNamespaceDeclarations(_declaredNamespaces) + _sb : _sb.ToString();
+            s4x = header + (_withNamespaces ? GetNamespaceDeclarations(_declaredNamespaces) + _sb : _sb.ToString());
             return true;
         }
 
@@ -209,6 +216,7 @@ namespace Syntactik.MonoDevelop.Converter
 
         private string ResolveNsPrefix(string ns)
         {
+            if (ns == string.Empty) return ns;
             var @namespace = GetNamespace(ns);
 
             if (@namespace == null) return ns;
@@ -398,6 +406,7 @@ namespace Syntactik.MonoDevelop.Converter
                 ns = names[0];
                 name = names[1];
             }
+            if (ns == null && name.Contains(".")) ns = string.Empty;
         }
 
         private void IncreaseBlockCounter()
