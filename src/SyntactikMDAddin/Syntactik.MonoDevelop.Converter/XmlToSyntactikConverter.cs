@@ -74,8 +74,8 @@ namespace Syntactik.MonoDevelop.Converter
             {
                 if (!_validate)
                 {
-                    ((XmlTextReader)xmlReader).Namespaces = false;
-                    ((XmlTextReader)xmlReader).DtdProcessing = DtdProcessing.Ignore;
+                    xmlReader.Namespaces = false;
+                    xmlReader.DtdProcessing = DtdProcessing.Ignore;
                     xmlReader.Read();
                 }
                 try
@@ -187,25 +187,24 @@ namespace Syntactik.MonoDevelop.Converter
 
         private void ProcessAttributes(List<Tuple<string, string, string>> attributes)
         {
-            if (attributes != null)
+            if (attributes == null) return;
+
+            _currentIndent++;
+            foreach (var tuple in attributes)
             {
-                _currentIndent++;
-                foreach (var tuple in attributes)
+                StartWithNewLine();
+                _sb.Append('@');
+                if (tuple.Item1 != null) //namespace prefix
                 {
-                    StartWithNewLine();
-                    _sb.Append('@');
-                    if (tuple.Item1 != null) //namespace prefix
-                    {
-                        _sb.Append(tuple.Item1);
-                        _sb.Append(".");
-                    }
-                    _sb.Append(tuple.Item2); // name
-                    _newLine = false;
-                    IncreaseBlockCounter();
-                    if (!string.IsNullOrEmpty(tuple.Item3)) WriteValue(tuple.Item3);
+                    _sb.Append(tuple.Item1);
+                    _sb.Append(".");
                 }
-                _currentIndent--;
+                _sb.Append(tuple.Item2); // name
+                _newLine = false;
+                IncreaseBlockCounter();
+                if (!string.IsNullOrEmpty(tuple.Item3)) WriteValue(tuple.Item3);
             }
+            _currentIndent--;
         }
 
         private string ResolveNsPrefix(string ns)
@@ -276,19 +275,47 @@ namespace Syntactik.MonoDevelop.Converter
         private void WriteValue(string s)
         {
             bool escapeSymbolsFound;
-            var conv = EncodeValue(s, out escapeSymbolsFound);
+            List<Tuple<int, int>> mapping;
+            var conv = EncodeValue(s, out escapeSymbolsFound, out mapping);
 
-            if (escapeSymbolsFound || s.StartsWith(" ") || s.EndsWith(" "))
+            if (escapeSymbolsFound)
             {
                 _sb.Append(" == '");
-                _sb.Append(conv);
+                WriteValue(conv, 1, s, mapping);
                 _sb.Append("'");
+            }
+            else if (s.StartsWith(" ") || s.EndsWith(" "))
+            {
+                _sb.Append(" == \"");
+                WriteValue(conv, 2, s, mapping);
+                _sb.Append("\"");
             }
             else
             {
                 _sb.Append(" = ");
-                _sb.Append(s);
+                WriteValue(conv, 0, s, mapping);
             }
+        }
+
+        private void WriteValue(List<string> list, int quoteType, string original, List<Tuple<int, int>> mapping)
+        {
+            if (list.Count == 0) return;
+            var i = 0;
+            do
+            {
+                if (i > 0)
+                {
+                    _sb.AppendLine();
+                    if (quoteType == 1 && !string.IsNullOrEmpty(list[i-1])) _sb.AppendLine();
+                    _sb.Append(_indent);
+                    _sb.Append(_indentChar, (_currentIndent + 1) * _indentMultiplicity);
+                }
+                _sb.Append(quoteType == 1
+                    ? list[i]
+                    : (mapping[i].Item2 - mapping[i].Item1 + 1)>0? original.Substring(mapping[i].Item1, mapping[i].Item2 - mapping[i].Item1 + 1):"");
+                i++;
+            } while (i < list.Count);
+
         }
 
         private List<Tuple<string, string, string>> ProcessAttributes(XmlReader xmlReader, out string defaultNsPrefix)
@@ -392,21 +419,21 @@ namespace Syntactik.MonoDevelop.Converter
 
         public bool FirstNodeInBlock => _elementStack.Count > 0 && _elementStack.Peek().BlockCounter == 0;
 
-        public ListDictionary DeclaredNamespaces
-        {
-            get { return _declaredNamespaces; }
-        }
+        public ListDictionary DeclaredNamespaces => _declaredNamespaces;
 
-        public static string EncodeValue(string s, out bool escapeSymbolsFound)
+        public List<string> EncodeValue(string s, out bool escapeSymbolsFound, out List<Tuple<int,int>> mapping)
         {
+            var result = new List<string>();
+            mapping = new List<Tuple<int, int>>();
             escapeSymbolsFound = false;
-            if (string.IsNullOrEmpty(s)) return "";
+            if (string.IsNullOrEmpty(s)) return result;
             int i;
             var len = s.Length;
-            var sb = new StringBuilder(len + 4);
-
+            var sb = new StringBuilder();
+            int lineStart = -1;
             for (i = 0; i < len; i += 1)
             {
+                if (lineStart == -1) lineStart = i;
                 var c = s[i];
                 switch (c)
                 {
@@ -425,16 +452,21 @@ namespace Syntactik.MonoDevelop.Converter
                         escapeSymbolsFound = true;
                         break;
                     case '\n':
-                        sb.Append("\\n");
-                        escapeSymbolsFound = true;
+                        result.Add(sb.ToString());
+                        mapping.Add(new Tuple<int, int>(lineStart, i -1));
+                        lineStart = -1;
+                        sb = new StringBuilder();
                         break;
                     case '\f':
                         sb.Append("\\f");
                         escapeSymbolsFound = true;
                         break;
                     case '\r':
-                        sb.Append("\\r");
-                        escapeSymbolsFound = true;
+                        result.Add(sb.ToString());
+                        mapping.Add(new Tuple<int, int>(lineStart, i - 1));
+                        lineStart = -1;
+                        sb = new StringBuilder();
+                        if (i + 1 < len && s[i + 1] == '\n') i++;
                         break;
                     default:
                         if (c < ' ')
@@ -450,7 +482,12 @@ namespace Syntactik.MonoDevelop.Converter
                         break;
                 }
             }
-            return sb.ToString();
+            if (sb.Length > 0)
+            {
+                result.Add(sb.ToString());
+                mapping.Add(new Tuple<int, int>(lineStart, i - 1));
+            }
+            return result;
         }
     }
 }
