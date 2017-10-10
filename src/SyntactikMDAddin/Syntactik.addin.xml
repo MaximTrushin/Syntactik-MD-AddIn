@@ -40,8 +40,13 @@
     <Class fileExtensions = ".s4x,.s4j" class = "Syntactik.MonoDevelop.Formatting.SyntactikTextEditorIndentation" />
     <Class fileExtensions = ".s4x,.s4j" class = "Syntactik.MonoDevelop.Completion.SyntactikCompletionTextEditorExtension" />
     <Class fileExtensions = ".s4x,.s4j" class = "Syntactik.MonoDevelop.Parser.ErrorHandlerTextEditorExtension" />
-    <Class fileExtensions = ".s4x,.s4j" class = "Syntactik.MonoDevelop.Highlighting.HighlightUsagesExtension" />
+    <Class fileExtensions = ".s4x,.s4j,.xml" class = "Syntactik.MonoDevelop.Highlighting.HighlightUsagesExtension" />
   </Extension>
+  
+	<Extension path = "/MonoDevelop/Ide/DisplayBindings">
+		<DisplayBinding insertbefore = "DefaultDisplayBinding"
+		       class = "Syntactik.MonoDevelop.DisplayBinding.SyntactikDisplayBinding" />
+	</Extension>  
 
   <Extension path = "/MonoDevelop/Ide/FileTemplates">
     <FileTemplate id = "EmptyS4XFile" resource = "Syntactik.MonoDevelop.Templates.EmptyS4XFile.xft.xml"/>

@@ -7,7 +7,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 
-
 namespace Syntactik.MonoDevelop.Converter
 {
     internal class ElementInfo
@@ -18,6 +17,8 @@ namespace Syntactik.MonoDevelop.Converter
     }
     public class XmlToSyntactikConverter
     {
+        private readonly bool _validate;
+        private readonly bool _withNamespaces;
         private readonly string _text;
         private StringBuilder _sb;
         private StringBuilder _value;
@@ -29,9 +30,17 @@ namespace Syntactik.MonoDevelop.Converter
         private int _indentMultiplicity;
         private ListDictionary _declaredNamespaces;
 
-        public XmlToSyntactikConverter(string text)
+        /// <summary>
+        /// Converts xml to syntactik format
+        /// </summary>
+        /// <param name="text">xml to convert.</param>
+        /// <param name="validate">If true will validate as the whole xml document, otherwise can accept any xml fragment.</param>
+        /// <param name="withNamespaces">If true then output will include namespace declarations.</param>
+        public XmlToSyntactikConverter(string text, bool validate = false, bool withNamespaces = false)
         {
-            _text = Regex.Replace(text, @"<\?[^?]*(?:\?[^>]+)*\?+>(?:\r|\n)*", "");
+            _validate = validate;
+            _withNamespaces = withNamespaces;
+            _text = !validate ? Regex.Replace(text, @"<\?[^?]*(?:\?[^>]+)*\?+>(?:\r|\n)*", "") : text;
         }
 
         private string DefaultNamespace
@@ -58,13 +67,19 @@ namespace Syntactik.MonoDevelop.Converter
                 _sb.Append(_indent);
             }
             using(var stringReader = new StringReader(_text))
-            using (var xmlReader = new XmlTextReader(new FakeRootStreamReader(stringReader)))
+            using (var xmlReader = _validate? 
+                        new XmlTextReader(stringReader):
+                        //XmlReader.Create(stringReader,new XmlReaderSettings() {ConformanceLevel = ConformanceLevel.Document}) : 
+                        new XmlTextReader(new FakeRootStreamReader(stringReader)))
             {
-                xmlReader.Namespaces = false;
-                xmlReader.DtdProcessing = DtdProcessing.Ignore;
+                if (!_validate)
+                {
+                    ((XmlTextReader)xmlReader).Namespaces = false;
+                    ((XmlTextReader)xmlReader).DtdProcessing = DtdProcessing.Ignore;
+                    xmlReader.Read();
+                }
                 try
                 {
-                    xmlReader.Read();
                     while (xmlReader.Read())
                     {
                         switch (xmlReader.NodeType)
@@ -149,11 +164,25 @@ namespace Syntactik.MonoDevelop.Converter
                 }
                 catch
                 {
-                    // ignored
+                    s4x = _withNamespaces?GetNamespaceDeclarations(_declaredNamespaces) + _sb: _sb.ToString();
+                    return false;
                 }
             }
-            s4x = _sb.ToString();
+            s4x = _withNamespaces ? GetNamespaceDeclarations(_declaredNamespaces) + _sb : _sb.ToString();
             return true;
+        }
+
+        private static string GetNamespaceDeclarations(ListDictionary declaredNamespaces)
+        {
+            var sb = new StringBuilder();
+            foreach (DictionaryEntry ns in declaredNamespaces)
+            {
+                sb.Append("!#");
+                sb.Append(ns.Key);
+                sb.Append(" = ");
+                sb.AppendLine(ns.Value.ToString());
+            }
+            return sb.ToString();
         }
 
         private void ProcessAttributes(List<Tuple<string, string, string>> attributes)
@@ -262,7 +291,7 @@ namespace Syntactik.MonoDevelop.Converter
             }
         }
 
-        private List<Tuple<string, string, string>> ProcessAttributes(XmlTextReader xmlReader, out string defaultNsPrefix)
+        private List<Tuple<string, string, string>> ProcessAttributes(XmlReader xmlReader, out string defaultNsPrefix)
         {
             defaultNsPrefix = null;
             xmlReader.MoveToFirstAttribute();
@@ -362,6 +391,11 @@ namespace Syntactik.MonoDevelop.Converter
         }
 
         public bool FirstNodeInBlock => _elementStack.Count > 0 && _elementStack.Peek().BlockCounter == 0;
+
+        public ListDictionary DeclaredNamespaces
+        {
+            get { return _declaredNamespaces; }
+        }
 
         public static string EncodeValue(string s, out bool escapeSymbolsFound)
         {

@@ -76,6 +76,10 @@
     <Reference Include="MonoDevelop.Debugger">
       <HintPath>..\..\external\monodevelop\main\build\AddIns\MonoDevelop.Debugger\MonoDevelop.Debugger.dll</HintPath>
     </Reference>
+    <Reference Include="MonoDevelop.GtkCore, Version=2.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\external\monodevelop\main\build\AddIns\MonoDevelop.GtkCore\MonoDevelop.GtkCore.dll</HintPath>
+    </Reference>
     <Reference Include="MonoDevelop.Ide">
       <HintPath>..\..\external\monodevelop\main\build\bin\MonoDevelop.Ide.dll</HintPath>
     </Reference>
@@ -91,6 +95,7 @@
       <HintPath>..\..\external\syntactik\Syntactik\bin\Debug\Syntactik.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Collections.Immutable, Version=1.1.37.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
@@ -121,6 +126,8 @@
     </Compile>
     <Compile Include="AddinInfo.cs" />
     <Compile Include="CompilerOptionsWidget.cs" />
+    <Compile Include="Syntactik.MonoDevelop.DisplayBinding\SyntactikDisplayBinding.cs" />
+    <Compile Include="Syntactik.MonoDevelop.DisplayBinding\SyntactikView.cs" />
     <Compile Include="Syntactik.MonoDevelop.Licensing\ConfirmationStatusDialog.cs" />
     <Compile Include="Syntactik.MonoDevelop.Licensing\LicenseRequestDialog.cs" />
     <Compile Include="Syntactik.MonoDevelop.Licensing\Swagger\Api\DefaultApi.cs" />
