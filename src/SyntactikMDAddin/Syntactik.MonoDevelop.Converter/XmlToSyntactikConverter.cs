@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Text;
-using System.Web;
+using System.Text.RegularExpressions;
 using System.Xml;
 
 
@@ -24,14 +24,14 @@ namespace Syntactik.MonoDevelop.Converter
         private bool _newLine = true;
         private string _indent;
         private int _currentIndent = -1;
-        Stack<ElementInfo> _elementStack;
+        private Stack<ElementInfo> _elementStack;
         private char _indentChar;
         private int _indentMultiplicity;
         private ListDictionary _declaredNamespaces;
 
         public XmlToSyntactikConverter(string text)
         {
-            _text = text;
+            _text = Regex.Replace(text, @"<\?[^?]*(?:\?[^>]+)*\?+>(?:\r|\n)*", "");
         }
 
         private string DefaultNamespace

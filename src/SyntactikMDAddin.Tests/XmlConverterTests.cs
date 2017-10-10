@@ -36,14 +36,17 @@ namespace SyntactikMDAddin.Tests
         [Test, RecordedTest]
         public void NamespaceResolution3()
         {
-            var declaredNamespaces = new ListDictionary();
-            DoXmlConverterTest(declaredNamespaces);
+            DoXmlConverterTest();
         }
         [Test, RecordedTest]
         public void NamespaceResolution4()
         {
-            var declaredNamespaces = new ListDictionary();
-            DoXmlConverterTest(declaredNamespaces);
+            DoXmlConverterTest();
+        }
+        [Test, RecordedTest]
+        public void ProcessingInstruction()
+        {
+            DoXmlConverterTest();
         }
     }
 }
