@@ -247,9 +247,10 @@ namespace Syntactik.MonoDevelop.Completion
             _cancellationToken.ThrowIfCancellationRequested();
         }
 
-        public void ProcessComment(int commentType, Interval commentInterval)
+        public Syntactik.DOM.Comment ProcessComment(ICharStream input, int commentType, Interval commentInterval)
         {
             _cancellationToken.ThrowIfCancellationRequested();
+            return null;
         }
     }
 }

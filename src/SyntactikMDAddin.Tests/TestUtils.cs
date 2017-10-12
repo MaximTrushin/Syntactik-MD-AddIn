@@ -187,7 +187,7 @@ namespace SyntactikMDAddin.Tests
 
         private static CompilerParameters CreateCompilerParameters(string fileName, string content)
         {
-            var compilerParameters = new CompilerParameters { Pipeline = new CompileToMemory() };
+            var compilerParameters = new CompilerParameters { Pipeline = new CompileToMemory(true) };
             compilerParameters.Input.Add(new StringInput(fileName, content));
             return compilerParameters;
         }

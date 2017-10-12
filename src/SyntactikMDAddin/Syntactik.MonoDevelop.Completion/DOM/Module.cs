@@ -1,6 +1,5 @@
 ﻿using System;
 using Syntactik.DOM;
-using NamespaceDefinition = Syntactik.DOM.Mapped.NamespaceDefinition;
 
 namespace Syntactik.MonoDevelop.Completion.DOM
 {
@@ -62,7 +61,6 @@ namespace Syntactik.MonoDevelop.Completion.DOM
 
                 return _moduleDocument;
             }
-            set { throw new NotImplementedException(); }
         }
 
         public override PairCollection<ModuleMember> Members

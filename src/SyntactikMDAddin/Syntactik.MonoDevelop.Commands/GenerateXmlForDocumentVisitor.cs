@@ -1,4 +1,6 @@
-﻿using System.Xml;
+﻿using System;
+using System.Text;
+using System.Xml;
 using Syntactik.Compiler;
 using Syntactik.Compiler.Generator;
 using Syntactik.DOM.Mapped;
@@ -8,10 +10,9 @@ namespace Syntactik.MonoDevelop.Commands
 {
     internal class GenerateXmlForDocumentVisitor : XmlGenerator
     {
-        public GenerateXmlForDocumentVisitor(XmlTextWriter xmlWriter, CompilerContext context)
-            : base(name => xmlWriter, null, context)
+        public GenerateXmlForDocumentVisitor(Func<string, Encoding, XmlWriter> writerDelegate, CompilerContext context)
+            : base(writerDelegate, null, context)
         {
-            _xmlTextWriter = xmlWriter;
         }
 
         public override void OnDocument(Document document)
@@ -19,10 +20,16 @@ namespace Syntactik.MonoDevelop.Commands
             _currentDocument = (DOM.Mapped.Document)document;
             _currentModuleMember = document;
             _choiceStack.Push(_currentDocument.ChoiceInfo);
-            _xmlTextWriter.WriteStartDocument();
-            _rootElementAdded = false;
-            Visit(document.Entities);
-            _xmlTextWriter.WriteEndDocument();
+            var encoding = GetEncoding(document);
+            using (_xmlTextWriter = _writerDelegate(document.Name, encoding))
+            {
+                _xmlTextWriter.WriteStartDocument();
+                _rootElementAdded = false;
+                Visit(document.Entities);
+                _xmlTextWriter.WriteEndDocument();
+                _xmlTextWriter.Flush();
+            }
+
             _currentDocument = null;
             _currentModuleMember = null;
         }

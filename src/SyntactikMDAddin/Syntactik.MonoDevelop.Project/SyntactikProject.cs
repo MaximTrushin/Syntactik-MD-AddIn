@@ -378,7 +378,7 @@ namespace Syntactik.MonoDevelop.Projects
         {
             var compilerParameters = new CompilerParameters
             {
-                Pipeline = new CompileToFiles(),
+                Pipeline = new CompileToFiles(false),
                 OutputDirectory = outputDirectory
             };
             foreach (var fileName in files)

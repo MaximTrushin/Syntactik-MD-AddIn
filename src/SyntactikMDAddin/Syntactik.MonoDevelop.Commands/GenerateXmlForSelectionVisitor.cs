@@ -17,7 +17,7 @@ namespace Syntactik.MonoDevelop.Commands
         private readonly ISegment _selectionRange;
 
         public GenerateXmlForSelectionVisitor(XmlWriter xmlTextWriter, CompilerContext context, ISegment selectionRange)
-            : base(name => xmlTextWriter, null, context)
+            : base((name, encoding) => xmlTextWriter, null, context)
         {
             _xmlTextWriter = xmlTextWriter;
             _selectionRange = selectionRange;

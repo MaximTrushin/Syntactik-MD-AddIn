@@ -38,14 +38,18 @@ namespace Syntactik.MonoDevelop.Commands
             try
             {
                 _context.InMemoryOutputObjects = new Dictionary<string, object>();
-                using (var xmlWriter = new XmlTextWriter(_memoryStream, Encoding.UTF8) { Formatting = System.Xml.Formatting.Indented })
-                {
-                    var visitor = new GenerateXmlForDocumentVisitor(xmlWriter, _compilerContext);
-                    visitor.Visit(_doc);
-                    xmlWriter.Flush();
-                    _memoryStream.Position = 0;
-                    _context.InMemoryOutputObjects["CLIPBOARD"] = new StreamReader(_memoryStream).ReadToEnd();
-                }
+
+                var visitor =
+                    new GenerateXmlForDocumentVisitor(
+                        (name, encoding) =>
+                            new XmlTextWriter(_memoryStream, encoding)
+                            {
+                                Formatting = System.Xml.Formatting.Indented
+                            }, _compilerContext);
+                visitor.Visit(_doc);
+                _memoryStream.Position = 0;
+                _context.InMemoryOutputObjects["CLIPBOARD"] = new StreamReader(_memoryStream).ReadToEnd();
+
             }
             catch (Exception ex)
             {
