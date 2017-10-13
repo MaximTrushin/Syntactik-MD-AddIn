@@ -1,12 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using Mono.Addins;
+using MonoDevelop.Ide.Extensions;
 using MonoDevelop.Ide.Gui;
 
 namespace Syntactik.MonoDevelop.DisplayBinding
 {
     public class HiddenWorkbenchWindow : IWorkbenchWindow
     {
+        readonly ExtensionContext _extensionContext;
+        readonly FileTypeCondition _fileTypeCondition = new FileTypeCondition();
+
+        public HiddenWorkbenchWindow(ViewContent content)
+        {
+            ViewContent = content;
+            content.WorkbenchWindow = this;
+            _fileTypeCondition.SetFileName(content.ContentName ?? content.UntitledName);
+            _extensionContext = AddinManager.CreateExtensionContext();
+            _extensionContext.RegisterCondition("FileType", _fileTypeCondition);
+        }
+
         private ViewCommandHandlers _commandHandler;
         public string Title { get; set; }
 
@@ -28,7 +41,7 @@ namespace Syntactik.MonoDevelop.DisplayBinding
             set { }
         }
 
-        public ExtensionContext ExtensionContext => AddinManager.AddinEngine;
+        public ExtensionContext ExtensionContext => _extensionContext;
 
         public ViewContent ViewContent { get; set; }
 

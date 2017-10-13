@@ -147,8 +147,20 @@ namespace Syntactik.MonoDevelop.Commands
         protected override void Update(CommandInfo info)
         {
             info.Enabled = false;
+            info.Visible = false;
             var doc = IdeApp.Workbench.ActiveDocument;
-            info.Visible = doc.FileName.Extension.ToLower() == ".s4x" || doc.FileName.Extension.ToLower() == ".s4j";
+            if (doc.FileName.Extension.ToLower() == ".s4x" || doc.FileName.Extension.ToLower() == ".s4j")
+            {
+                info.Visible = true;
+            }
+
+            if (doc.FileName.Extension.ToLower() == ".xml")
+            {
+                var w = doc.Window;
+
+                info.Visible = true;
+            }
+
 
             if (!info.Visible) return;
 #if WIN32

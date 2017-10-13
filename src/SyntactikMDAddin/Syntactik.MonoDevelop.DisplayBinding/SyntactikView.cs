@@ -24,7 +24,7 @@ namespace Syntactik.MonoDevelop.DisplayBinding
             _viewContent = db.CreateContent(Path.ChangeExtension(fileName, "s4x"), mimeType, ownerProject);
             _syntactikEditor = (TextEditor) _viewContent.Control;
             _syntactikEditor.FileName = _viewContent.ContentName;
-            _hiddenWindow = new HiddenWorkbenchWindow();
+            _hiddenWindow = new HiddenWorkbenchWindow(_viewContent);
         }
 
         public override string TabPageLabel => GettextCatalog.GetString("Xml");
@@ -80,7 +80,6 @@ namespace Syntactik.MonoDevelop.DisplayBinding
                     {
                         AddButton("Syntactik", _syntactikEditor);
                         _viewContent.LoadNew(new MemoryStream(), SyntactikDisplayBinding.S4xMimeType);
-                        _hiddenWindow.ViewContent = _viewContent;
                         _hiddenWindow.CreateCommandHandler();
                     });
                 });
