@@ -23,7 +23,7 @@ namespace Syntactik.MonoDevelop.Commands
             var textEditor = IdeApp.Workbench.ActiveDocument?.Editor;
             if (textEditor == null) return;
 
-            var document = IdeApp.Workbench.ActiveDocument;
+            var document = IdeApp.Workbench.ActiveDocument.Window.ActiveViewContent.WorkbenchWindow.Document; //doing this to get right document in case of SynactikView 
             var data = document.GetContent<TextEditorData>();
             if (!data.CanEdit(data.Document.OffsetToLineNumber(data.IsSomethingSelected ? data.SelectionRange.Offset : data.Caret.Offset)))
                 return;
@@ -149,18 +149,20 @@ namespace Syntactik.MonoDevelop.Commands
             info.Enabled = false;
             info.Visible = false;
             var doc = IdeApp.Workbench.ActiveDocument;
-            if (doc.FileName.Extension.ToLower() == ".s4x" || doc.FileName.Extension.ToLower() == ".s4j")
-            {
-                info.Visible = true;
-            }
-
+            string extension;
             if (doc.FileName.Extension.ToLower() == ".xml")
             {
                 var w = doc.Window;
-
+                extension = w.ActiveViewContent.WorkbenchWindow.Document.FileName.Extension.ToLower();
+            }
+            else
+            {
+                extension = doc.FileName.Extension.ToLower();
+            }
+            if (extension == ".s4x" || extension == ".s4j")
+            {
                 info.Visible = true;
             }
-
 
             if (!info.Visible) return;
 #if WIN32
