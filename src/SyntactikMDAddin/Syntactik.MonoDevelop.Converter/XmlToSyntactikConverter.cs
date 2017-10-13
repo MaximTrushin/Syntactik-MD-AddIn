@@ -29,7 +29,7 @@ namespace Syntactik.MonoDevelop.Converter
         private char _indentChar;
         private int _indentMultiplicity;
         private ListDictionary _declaredNamespaces;
-
+        private bool _inElement;
         /// <summary>
         /// Converts xml to syntactik format
         /// </summary>
@@ -77,7 +77,7 @@ namespace Syntactik.MonoDevelop.Converter
                 {
                     xmlReader.Namespaces = false;
                     xmlReader.DtdProcessing = DtdProcessing.Ignore;
-                    xmlReader.Read();
+                    xmlReader.Read(); //Reading fake root first
                 }
                 try
                 {
@@ -123,21 +123,27 @@ namespace Syntactik.MonoDevelop.Converter
                                 _sb.Append(name);
                                 _value = null;
                                 _newLine = false;
+                                _inElement = true;
                                 ProcessAttributes(attributes);
+                                if (xmlReader.IsEmptyElement) ProcessEndElement();
                                 break;
                             case XmlNodeType.EndElement:
-                                if (_value != null)
-                                {
-                                    WriteValue(_value.ToString());
-                                    _value = null;
-                                }
-                                _currentIndent--;
-                                if (_elementStack.Count > 0) _elementStack.Pop();
-                                IncreaseBlockCounter();
+                                ProcessEndElement();
                                 break;
                             case XmlNodeType.Text:
-                                if (_value == null) _value = new StringBuilder();
-                                _value.Append(xmlReader.Value);
+                                if (_inElement)
+                                {
+                                    if (_value == null) _value = new StringBuilder();
+                                    _value.Append(xmlReader.Value);
+                                }
+                                else
+                                {
+                                    _currentIndent++;
+                                    StartWithNewLine();
+                                    WriteValue(xmlReader.Value);
+                                    _currentIndent--;
+                                    IncreaseBlockCounter();
+                                }
                                 break;
                             case XmlNodeType.CDATA:
                                 if (_value == null) _value = new StringBuilder();
@@ -177,6 +183,19 @@ namespace Syntactik.MonoDevelop.Converter
             }
             s4x = header + (_withNamespaces ? GetNamespaceDeclarations(_declaredNamespaces) + _sb : _sb.ToString());
             return true;
+        }
+
+        private void ProcessEndElement()
+        {
+            if (_value != null)
+            {
+                WriteValue(_value.ToString());
+                _value = null;
+            }
+            _currentIndent--;
+            if (_elementStack.Count > 0) _elementStack.Pop();
+            IncreaseBlockCounter();
+            _inElement = false;
         }
 
         private static string GetNamespaceDeclarations(ListDictionary declaredNamespaces)
@@ -282,25 +301,28 @@ namespace Syntactik.MonoDevelop.Converter
 
         private void WriteValue(string s)
         {
+            _newLine = false;
             bool escapeSymbolsFound;
             List<Tuple<int, int>> mapping;
             var conv = EncodeValue(s, out escapeSymbolsFound, out mapping);
 
+            if (_inElement) _sb.Append(" ");
+
             if (escapeSymbolsFound)
             {
-                _sb.Append(" == '");
+                _sb.Append("== '");
                 WriteValue(conv, 1, s, mapping);
                 _sb.Append("'");
             }
             else if (s.StartsWith(" ") || s.EndsWith(" "))
             {
-                _sb.Append(" == \"");
+                _sb.Append("== \"");
                 WriteValue(conv, 2, s, mapping);
                 _sb.Append("\"");
             }
             else
             {
-                _sb.Append(" = ");
+                _sb.Append("= ");
                 WriteValue(conv, 0, s, mapping);
             }
         }

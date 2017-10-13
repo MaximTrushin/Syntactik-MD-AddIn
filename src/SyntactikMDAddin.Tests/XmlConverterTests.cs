@@ -48,5 +48,10 @@ namespace SyntactikMDAddin.Tests
         {
             DoXmlConverterTest();
         }
+        [Test, RecordedTest]
+        public void TextNode1()
+        {
+            DoXmlConverterTest();
+        }
     }
 }
