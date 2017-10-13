@@ -9,6 +9,7 @@ namespace Syntactik.MonoDevelop.DisplayBinding
         private bool _excludeThis;
         internal const string TextXmlMimeType = "text/xml";
         internal const string ApplicationXmlMimeType = "application/xml";
+        internal const string S4xMimeType = "text/x-syntactik4xml";
         public bool CanHandle(FilePath fileName, string mimeType, Project ownerProject)
         {
             if (_excludeThis)
@@ -31,7 +32,7 @@ namespace Syntactik.MonoDevelop.DisplayBinding
             var db = DisplayBindingService.GetDefaultViewBinding(fileName, mimeType, ownerProject);
             var content = db.CreateContent(fileName, mimeType, ownerProject);
             _excludeThis = false;
-            var cdv = new SyntactikView(content, db, fileName, "text/x-syntactik4xml", ownerProject);
+            var cdv = new SyntactikView(content, db, fileName, S4xMimeType, ownerProject);
             return cdv;
         }
 

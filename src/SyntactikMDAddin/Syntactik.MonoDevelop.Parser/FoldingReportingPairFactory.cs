@@ -105,7 +105,7 @@ namespace Syntactik.MonoDevelop.Parser
 
 
 
-        public void ProcessComment(int commentType, Interval commentInterval)
+        public DOM.Comment ProcessComment(ICharStream input, int commentType, Interval commentInterval)
         {
             _cancellationToken.ThrowIfCancellationRequested();
 
@@ -114,7 +114,7 @@ namespace Syntactik.MonoDevelop.Parser
                     new DocumentRegion(commentInterval.Begin.Line, commentInterval.Begin.Column, commentInterval.End.Line,
                         commentInterval.End.Column + 1), FoldType.Comment, false));
 
-            _pairFactory.ProcessComment(commentType, commentInterval);
+            return _pairFactory.ProcessComment(input, commentType, commentInterval);
         }
     }
 }

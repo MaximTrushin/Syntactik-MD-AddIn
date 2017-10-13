@@ -126,6 +126,7 @@
     </Compile>
     <Compile Include="AddinInfo.cs" />
     <Compile Include="CompilerOptionsWidget.cs" />
+    <Compile Include="Syntactik.MonoDevelop.DisplayBinding\HiddenWorkbenchWindow.cs" />
     <Compile Include="Syntactik.MonoDevelop.DisplayBinding\SyntactikDisplayBinding.cs" />
     <Compile Include="Syntactik.MonoDevelop.DisplayBinding\SyntactikView.cs" />
     <Compile Include="Syntactik.MonoDevelop.Licensing\ConfirmationStatusDialog.cs" />
