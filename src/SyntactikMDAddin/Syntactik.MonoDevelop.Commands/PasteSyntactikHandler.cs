@@ -20,7 +20,7 @@ namespace Syntactik.MonoDevelop.Commands
     {
         protected override void Run()
         {
-            var textEditor = IdeApp.Workbench.ActiveDocument?.Editor;
+            var textEditor = IdeApp.Workbench.ActiveDocument?.Window?.ActiveViewContent?.WorkbenchWindow?.Document?.Editor;
             if (textEditor == null) return;
 
             var document = IdeApp.Workbench.ActiveDocument.Window.ActiveViewContent.WorkbenchWindow.Document; //doing this to get right document in case of SynactikView 

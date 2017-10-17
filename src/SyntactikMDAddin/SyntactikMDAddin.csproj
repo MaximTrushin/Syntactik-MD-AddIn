@@ -128,6 +128,7 @@
     <Compile Include="CompilerOptionsWidget.cs" />
     <Compile Include="Syntactik.MonoDevelop.DisplayBinding\HiddenWorkbenchWindow.cs" />
     <Compile Include="Syntactik.MonoDevelop.DisplayBinding\SyntactikDisplayBinding.cs" />
+    <Compile Include="Syntactik.MonoDevelop.DisplayBinding\SyntactikDocument.cs" />
     <Compile Include="Syntactik.MonoDevelop.DisplayBinding\SyntactikView.cs" />
     <Compile Include="Syntactik.MonoDevelop.Licensing\ConfirmationStatusDialog.cs" />
     <Compile Include="Syntactik.MonoDevelop.Licensing\LicenseRequestDialog.cs" />

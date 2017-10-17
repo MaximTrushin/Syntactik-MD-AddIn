@@ -17,14 +17,26 @@ namespace Syntactik.MonoDevelop.DisplayBinding
         private readonly TextEditor _syntactikEditor;
         private readonly ViewContent _viewContent;
         private int _prevPage;
-        private readonly HiddenWorkbenchWindow _hiddenWindow;
+        private readonly Document _doc;
 
-        public SyntactikView(ViewContent content, IViewDisplayBinding db, FilePath fileName, string mimeType, Project ownerProject) : base(content)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="content">View Content of the first tab (XML)</param>
+        /// <param name="fileName"></param>
+        /// <param name="mimeType"></param>
+        /// <param name="ownerProject"></param>
+        public SyntactikView(ViewContent content, FilePath fileName, string mimeType, Project ownerProject) : base(content)
         {
-            _viewContent = db.CreateContent(Path.ChangeExtension(fileName, "s4x"), mimeType, ownerProject);
-            _syntactikEditor = (TextEditor) _viewContent.Control;
-            _syntactikEditor.FileName = _viewContent.ContentName;
-            _hiddenWindow = new HiddenWorkbenchWindow(_viewContent);
+            var hiddenWindow = new HiddenWorkbenchWindow();
+            _syntactikEditor = TextEditorFactory.CreateNewEditor();
+            _syntactikEditor.MimeType = mimeType;
+            _syntactikEditor.FileName = Path.ChangeExtension(fileName, "s4x");
+            _viewContent = _syntactikEditor.GetContent<ViewContent>();
+            _viewContent.ContentName = _syntactikEditor.FileName;
+            hiddenWindow.AttachViewContent(_viewContent);
+            _doc = new SyntactikDocument(hiddenWindow, _syntactikEditor);
+            _doc.AttachToProject(ownerProject);
         }
 
         public override string TabPageLabel => GettextCatalog.GetString("Xml");
@@ -79,8 +91,12 @@ namespace Syntactik.MonoDevelop.DisplayBinding
                     return Runtime.RunInMainThread(delegate
                     {
                         AddButton("Syntactik", _syntactikEditor);
-                        _viewContent.LoadNew(new MemoryStream(), SyntactikDisplayBinding.S4xMimeType);
-                        _hiddenWindow.CreateCommandHandler();
+
+                        _syntactikEditor.TextChanged += (o, a) => {
+                            if (_doc.ParsedDocument != null)
+                                _doc.ParsedDocument.IsInvalid = true;
+                                _doc.ReparseDocument();
+                        };
                     });
                 });
         }

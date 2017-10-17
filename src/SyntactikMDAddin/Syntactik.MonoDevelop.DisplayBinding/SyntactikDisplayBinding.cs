@@ -32,7 +32,7 @@ namespace Syntactik.MonoDevelop.DisplayBinding
             var db = DisplayBindingService.GetDefaultViewBinding(fileName, mimeType, ownerProject);
             var content = db.CreateContent(fileName, mimeType, ownerProject);
             _excludeThis = false;
-            var cdv = new SyntactikView(content, db, fileName, S4xMimeType, ownerProject);
+            var cdv = new SyntactikView(content, fileName, S4xMimeType, ownerProject);
             return cdv;
         }
 

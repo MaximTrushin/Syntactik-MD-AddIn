@@ -8,19 +8,9 @@ namespace Syntactik.MonoDevelop.DisplayBinding
 {
     public class HiddenWorkbenchWindow : IWorkbenchWindow
     {
-        readonly ExtensionContext _extensionContext;
-        readonly FileTypeCondition _fileTypeCondition = new FileTypeCondition();
+        ExtensionContext _extensionContext;
+        private readonly FileTypeCondition _fileTypeCondition = new FileTypeCondition();
 
-        public HiddenWorkbenchWindow(ViewContent content)
-        {
-            ViewContent = content;
-            content.WorkbenchWindow = this;
-            _fileTypeCondition.SetFileName(content.ContentName ?? content.UntitledName);
-            _extensionContext = AddinManager.CreateExtensionContext();
-            _extensionContext.RegisterCondition("FileType", _fileTypeCondition);
-        }
-
-        private ViewCommandHandlers _commandHandler;
         public string Title { get; set; }
 
         public string DocumentType
@@ -74,14 +64,17 @@ namespace Syntactik.MonoDevelop.DisplayBinding
             return -1;
         }
 
-        public void AttachViewContent(BaseViewContent subViewContent)
+        public void AttachViewContent(BaseViewContent content)
         {
-
+            ViewContent = (ViewContent) content;
+            content.WorkbenchWindow = this;
+            _fileTypeCondition.SetFileName(ViewContent.ContentName ?? ViewContent.UntitledName);
+            _extensionContext = AddinManager.CreateExtensionContext();
+            _extensionContext.RegisterCondition("FileType", _fileTypeCondition);
         }
 
         public void InsertViewContent(int index, BaseViewContent subViewContent)
         {
-
         }
 
         public DocumentToolbar GetToolbar(BaseViewContent targetView)
@@ -89,18 +82,10 @@ namespace Syntactik.MonoDevelop.DisplayBinding
             return null;
         }
 
-        //public event EventHandler TitleChanged { add { } remove { } }
         public event EventHandler DocumentChanged { add { } remove { } }
         public event WorkbenchWindowEventHandler Closing { add { } remove { } }
         public event WorkbenchWindowEventHandler Closed { add { } remove { } }
         public event ActiveViewContentEventHandler ActiveViewContentChanged { add { } remove { } }
         public event EventHandler ViewsChanged { add { } remove { } }
-
-
-        internal void CreateCommandHandler()
-        {
-            _commandHandler = new ViewCommandHandlers(this);
-        }
-
     }
 }
