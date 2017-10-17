@@ -1,9 +1,11 @@
 ﻿using System.Linq;
 using MonoDevelop.Components.Commands;
 using MonoDevelop.Ide;
+using MonoDevelop.Ide.Editor;
 using Syntactik.Compiler;
 using Syntactik.DOM;
 using Syntactik.DOM.Mapped;
+using Syntactik.MonoDevelop.DisplayBinding;
 using Syntactik.MonoDevelop.Projects;
 using Document = Syntactik.DOM.Document;
 using Module = Syntactik.DOM.Module;
@@ -14,11 +16,23 @@ namespace Syntactik.MonoDevelop.Commands
     {
         protected override void Run()
         {
-            var textEditor = IdeApp.Workbench.ActiveDocument?.Editor;
-            if (textEditor == null) return;
             var document = IdeApp.Workbench.ActiveDocument;
+            if (document == null) return;
+            TextEditor textEditor;
+            if (document.FileName.Extension.ToLower() == ".xml")
+            {
+                var syntactikView = IdeApp.Workbench.ActiveDocument.Window.ViewContent as SyntactikView;
+                textEditor = syntactikView?.SyntactikEditor;
+                document = syntactikView?.SyntactikDocument;
+            }
+            else
+            {
+                textEditor = IdeApp.Workbench.ActiveDocument?.Editor;
+            }
+
+            if (textEditor == null) return;
             var project = document.Project as SyntactikProject;
-            var module = document?.ParsedDocument?.Ast as Module;
+            var module = document.ParsedDocument?.Ast as Module;
             if (module == null || project == null) return;
             var modules = new PairCollection<Module> { module };
 
@@ -63,7 +77,8 @@ namespace Syntactik.MonoDevelop.Commands
                     {
                         var mapped = (IMappedPair) p;
                         if (mapped.NameInterval != null) return mapped.NameInterval.Begin.Index;
-                        return mapped.DelimiterInterval.Begin.Index;
+                        if (mapped.DelimiterInterval != null) return mapped.DelimiterInterval.Begin.Index;
+                        return mapped.ValueInterval.Begin.Index;
                     }
                 );
             Pair offsetPair = null;
@@ -93,9 +108,19 @@ namespace Syntactik.MonoDevelop.Commands
         protected override void Update(CommandInfo info)
         {
             info.Enabled = false;
-            var doc = IdeApp.Workbench.ActiveDocument;
-            info.Visible = doc.FileName.Extension.ToLower() == ".s4x";
-
+            info.Visible = false;
+            var doc = IdeApp.Workbench?.ActiveDocument;
+            if (doc == null) return;
+            string extension;
+            if (doc.FileName.Extension.ToLower() == ".xml" && doc.Window.ViewContent?.TabPageLabel == "Syntactik")
+            {
+                extension = ".s4x";
+            }
+            else
+            {
+                extension = doc.FileName.Extension.ToLower();
+            }
+            info.Visible = extension == ".s4x";
             if (!info.Visible) return;
             info.Enabled = true;
         }

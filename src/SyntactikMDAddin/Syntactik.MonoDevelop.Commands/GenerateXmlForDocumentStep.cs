@@ -39,17 +39,20 @@ namespace Syntactik.MonoDevelop.Commands
             {
                 _context.InMemoryOutputObjects = new Dictionary<string, object>();
 
-                var visitor =
+                using (var visitor =
                     new GenerateXmlForDocumentVisitor(
                         (name, encoding) =>
                             new XmlTextWriter(_memoryStream, encoding)
                             {
                                 Formatting = System.Xml.Formatting.Indented
-                            }, _compilerContext);
-                visitor.Visit(_doc);
-                _memoryStream.Position = 0;
-                _context.InMemoryOutputObjects["CLIPBOARD"] = new StreamReader(_memoryStream).ReadToEnd();
+                            }, _compilerContext))
+                {
 
+                    visitor.Visit(_doc);
+                    //_memoryStream.
+                    _memoryStream.Position = 0;
+                    _context.InMemoryOutputObjects["CLIPBOARD"] = new StreamReader(_memoryStream).ReadToEnd();
+                }
             }
             catch (Exception ex)
             {

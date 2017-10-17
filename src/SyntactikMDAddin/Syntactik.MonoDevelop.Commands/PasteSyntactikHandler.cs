@@ -7,10 +7,12 @@ using Gtk;
 using Mono.TextEditor;
 using MonoDevelop.Components.Commands;
 using MonoDevelop.Ide;
+using MonoDevelop.Ide.Editor;
 using MonoDevelop.Ide.Gui.Content;
 using Syntactik.DOM;
 using Syntactik.DOM.Mapped;
 using Syntactik.MonoDevelop.Completion;
+using Syntactik.MonoDevelop.DisplayBinding;
 using Syntactik.MonoDevelop.Projects;
 using Module = Syntactik.DOM.Module;
 
@@ -20,17 +22,27 @@ namespace Syntactik.MonoDevelop.Commands
     {
         protected override void Run()
         {
-            var textEditor = IdeApp.Workbench.ActiveDocument?.Window?.ActiveViewContent?.WorkbenchWindow?.Document?.Editor;
-            if (textEditor == null) return;
+            var document = IdeApp.Workbench.ActiveDocument;
+            if (document == null) return;
 
-            var document = IdeApp.Workbench.ActiveDocument.Window.ActiveViewContent.WorkbenchWindow.Document; //doing this to get right document in case of SynactikView 
+            TextEditor textEditor;
+            if (document.FileName.Extension.ToLower() == ".xml")
+            {
+                var syntactikView = IdeApp.Workbench.ActiveDocument.Window.ViewContent as SyntactikView;
+                textEditor = syntactikView?.SyntactikEditor;
+                document = syntactikView?.SyntactikDocument;
+            }
+            else
+            {
+                textEditor = IdeApp.Workbench.ActiveDocument?.Editor;
+            }
+            if (textEditor == null) return;
             var data = document.GetContent<TextEditorData>();
             if (!data.CanEdit(data.Document.OffsetToLineNumber(data.IsSomethingSelected ? data.SelectionRange.Offset : data.Caret.Offset)))
                 return;
 
-
             var project = document.Project as SyntactikProject;
-            var module = document?.ParsedDocument?.Ast as Module;
+            var module = document.ParsedDocument?.Ast as Module;
             if (module == null || project == null) return;
 
             bool insertNewLine = false;
@@ -50,13 +62,10 @@ namespace Syntactik.MonoDevelop.Commands
                 CompletionContext context = task.Result;
                 PasteXmlHandler.GetIndentInfo(module, textEditor, out indentChar, out indentMultiplicity);
                 var lastPair = context.LastPair as IMappedPair;
-                
-
                 var caretLine = textEditor.CaretLine;
                 if (lastPair == null)
                 {
                     //module
-
                 }
                 else if (lastPair.ValueInterval != null) //TODO: Create unit tests
                 {
@@ -150,10 +159,9 @@ namespace Syntactik.MonoDevelop.Commands
             info.Visible = false;
             var doc = IdeApp.Workbench.ActiveDocument;
             string extension;
-            if (doc.FileName.Extension.ToLower() == ".xml")
+            if (doc.FileName.Extension.ToLower() == ".xml" && doc.Window.ViewContent?.TabPageLabel == "Syntactik")
             {
-                var w = doc.Window;
-                extension = w.ActiveViewContent.WorkbenchWindow.Document.FileName.Extension.ToLower();
+                extension = ".s4x";
             }
             else
             {

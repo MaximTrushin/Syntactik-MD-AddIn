@@ -12,6 +12,7 @@ using Syntactik.DOM;
 using Syntactik.DOM.Mapped;
 using Syntactik.MonoDevelop.Completion;
 using Syntactik.MonoDevelop.Converter;
+using Syntactik.MonoDevelop.DisplayBinding;
 using Syntactik.MonoDevelop.Projects;
 using Module = Syntactik.DOM.Module;
 using NamespaceDefinition = Syntactik.DOM.NamespaceDefinition;
@@ -22,13 +23,25 @@ namespace Syntactik.MonoDevelop.Commands
     {
         protected override void Run()
         {
-            var textEditor = IdeApp.Workbench.ActiveDocument?.Editor;
-            if (textEditor == null) return;
-            
             var document = IdeApp.Workbench.ActiveDocument;
+            if (document == null) return;
+
+            TextEditor textEditor;
+            if (document.FileName.Extension.ToLower() == ".xml")
+            {
+                var syntactikView = IdeApp.Workbench.ActiveDocument.Window.ViewContent as SyntactikView;
+                textEditor = syntactikView?.SyntactikEditor;
+                document = syntactikView?.SyntactikDocument;
+            }
+            else
+            {
+                textEditor = IdeApp.Workbench.ActiveDocument?.Editor;
+            }
+            if (textEditor == null) return;
             var project = document.Project as SyntactikProject;
-            var module = document?.ParsedDocument?.Ast as Module;
+            var module = document.ParsedDocument?.Ast as Module;
             if (module == null || project == null) return;
+
             bool insertNewLine = false;
             var indent = 0;
             var indentChar = '\t';
@@ -183,7 +196,16 @@ namespace Syntactik.MonoDevelop.Commands
         {
             info.Enabled = false;
             var doc = IdeApp.Workbench.ActiveDocument;
-            info.Visible = doc.FileName.Extension.ToLower() == ".s4x";
+            string extension;
+            if (doc.FileName.Extension.ToLower() == ".xml" && doc.Window.ViewContent?.TabPageLabel == "Syntactik")
+            {
+                extension = ".s4x";
+            }
+            else
+            {
+                extension = doc.FileName.Extension.ToLower();
+            }
+            info.Visible = extension == ".s4x";
 
             if (!info.Visible) return;
             bool inWpf = false;

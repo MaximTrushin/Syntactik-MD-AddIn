@@ -1,21 +1,35 @@
 ﻿using MonoDevelop.Components.Commands;
 using MonoDevelop.Core.Text;
 using MonoDevelop.Ide;
+using MonoDevelop.Ide.Editor;
 using Syntactik.Compiler;
 using Syntactik.DOM;
+using Syntactik.MonoDevelop.DisplayBinding;
 using Syntactik.MonoDevelop.Projects;
 
 namespace Syntactik.MonoDevelop.Commands
 {
-    public class CopyAsXmlHandler : CommandHandler  //TODO: Unit tests
+    public class CopyAsXmlHandler: CommandHandler  //TODO: Unit tests
     {
         protected override void Run()
         {
-            var textEditor = IdeApp.Workbench.ActiveDocument?.Editor;
-            if (textEditor == null) return;
             var document = IdeApp.Workbench.ActiveDocument;
+            if (document == null) return;
+
+            TextEditor textEditor;
+            if (document.FileName.Extension.ToLower() == ".xml")
+            {
+                var syntactikView = IdeApp.Workbench.ActiveDocument.Window.ViewContent as SyntactikView;
+                textEditor = syntactikView?.SyntactikEditor;
+                document = syntactikView?.SyntactikDocument;
+            }
+            else
+            {
+                textEditor = IdeApp.Workbench.ActiveDocument?.Editor;
+            }
+            if (textEditor == null) return;
             var project = document.Project as SyntactikProject;
-            var module = document?.ParsedDocument?.Ast as Module;
+            var module = document.ParsedDocument?.Ast as Module;
             if (module == null || project == null) return;
 
             var modules = new PairCollection<Module> {module};
@@ -51,12 +65,34 @@ namespace Syntactik.MonoDevelop.Commands
         protected override void Update(CommandInfo info)
         {
             info.Enabled = false;
+            info.Visible = false;
+
             var doc = IdeApp.Workbench.ActiveDocument;
-            info.Visible = doc.FileName.Extension.ToLower() == ".s4x";
+            if (doc == null) return;
+            string extension;
+            if (doc.FileName.Extension.ToLower() == ".xml" && doc.Window.ViewContent?.TabPageLabel == "Syntactik")
+            {
+                extension = ".s4x";
+            }
+            else
+            {
+                extension = doc.FileName.Extension.ToLower();
+            }
+            info.Visible = extension == ".s4x";
 
             if (!info.Visible) return;
-            
-            var textEditor = IdeApp.Workbench.ActiveDocument?.Editor;
+
+            TextEditor textEditor;
+            if (doc.FileName.Extension.ToLower() == ".xml")
+            {
+                var syntactikView = IdeApp.Workbench.ActiveDocument.Window.ViewContent as SyntactikView;
+                textEditor = syntactikView?.SyntactikEditor;
+            }
+            else
+            {
+                textEditor = IdeApp.Workbench.ActiveDocument?.Editor;
+            }
+
             if (!string.IsNullOrEmpty(textEditor?.SelectedText))
                 info.Enabled = true;
         }

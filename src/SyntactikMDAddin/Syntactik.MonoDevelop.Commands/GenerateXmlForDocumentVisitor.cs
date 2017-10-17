@@ -8,7 +8,7 @@ using Document = Syntactik.DOM.Document;
 
 namespace Syntactik.MonoDevelop.Commands
 {
-    internal class GenerateXmlForDocumentVisitor : XmlGenerator
+    internal class GenerateXmlForDocumentVisitor : XmlGenerator, IDisposable
     {
         public GenerateXmlForDocumentVisitor(Func<string, Encoding, XmlWriter> writerDelegate, CompilerContext context)
             : base(writerDelegate, null, context)
@@ -21,21 +21,24 @@ namespace Syntactik.MonoDevelop.Commands
             _currentModuleMember = document;
             _choiceStack.Push(_currentDocument.ChoiceInfo);
             var encoding = GetEncoding(document);
-            using (_xmlTextWriter = _writerDelegate(document.Name, encoding))
-            {
-                _xmlTextWriter.WriteStartDocument();
-                _rootElementAdded = false;
-                Visit(document.Entities);
-                _xmlTextWriter.WriteEndDocument();
-                _xmlTextWriter.Flush();
-            }
-
+            _xmlTextWriter = _writerDelegate(document.Name, encoding);
+            
+            _xmlTextWriter.WriteStartDocument();
+            _rootElementAdded = false;
+            Visit(document.Entities);
+            _xmlTextWriter.WriteEndDocument();
+            _xmlTextWriter.Flush();
             _currentDocument = null;
             _currentModuleMember = null;
         }
 
         protected override void AddLocationMapRecord(string fileName, IMappedPair pair)
         {
+        }
+
+        public void Dispose()
+        {
+            _xmlTextWriter.Dispose();
         }
     }
 }
