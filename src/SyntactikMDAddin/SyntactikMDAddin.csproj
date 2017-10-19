@@ -87,6 +87,10 @@
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\external\monodevelop\main\build\bin\pango-sharp.dll</HintPath>
+    </Reference>
     <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\RestSharp.105.2.3\lib\net46\RestSharp.dll</HintPath>
       <Private>True</Private>
@@ -126,7 +130,9 @@
     </Compile>
     <Compile Include="AddinInfo.cs" />
     <Compile Include="CompilerOptionsWidget.cs" />
+    <Compile Include="Syntactik.MonoDevelop.DisplayBinding\CompileErrorTooltipProvider.cs" />
     <Compile Include="Syntactik.MonoDevelop.DisplayBinding\HiddenWorkbenchWindow.cs" />
+    <Compile Include="Syntactik.MonoDevelop.DisplayBinding\LanguageItemWindow.cs" />
     <Compile Include="Syntactik.MonoDevelop.DisplayBinding\SyntactikDisplayBinding.cs" />
     <Compile Include="Syntactik.MonoDevelop.DisplayBinding\SyntactikDocument.cs" />
     <Compile Include="Syntactik.MonoDevelop.DisplayBinding\SyntactikView.cs" />

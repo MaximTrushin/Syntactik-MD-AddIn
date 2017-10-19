@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Mono.TextEditor;
+using MonoDevelop.Ide.Editor;
 using MonoDevelop.Ide.Editor.Extension;
 using MonoDevelop.Ide.FindInFiles;
 using MonoDevelop.Ide.Gui;
@@ -23,8 +24,8 @@ namespace Syntactik.MonoDevelop.Highlighting
 
             if (document.FileName.Extension == ".xml")
             {
-                var view = (SyntactikView) document.Window.ActiveViewContent;
-                textEditorData = view.ViewContent.GetContent<TextEditorData>();
+                var view = document.Window.ActiveViewContent;
+                textEditorData = view.GetContent<TextEditorData>();
             }
 
             var opt = textEditor.TextArea.Options;
@@ -53,5 +54,9 @@ namespace Syntactik.MonoDevelop.Highlighting
             return Task.FromResult<IEnumerable<MemberReference>>(null);
         }
 
+        public override bool IsValidInContext(DocumentContext context)
+        {
+            return context.Name.EndsWith(".s4x") || context.Name.EndsWith(".s4j") ||  context is SyntactikDocument;
+        }
     }
 }

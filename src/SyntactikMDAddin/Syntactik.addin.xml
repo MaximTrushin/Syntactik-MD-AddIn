@@ -37,12 +37,16 @@
   </Extension>
 
   <Extension path = "/MonoDevelop/Ide/TextEditorExtensions">
-    <Class fileExtensions = ".s4x,.s4j" class = "Syntactik.MonoDevelop.Formatting.SyntactikTextEditorIndentation" />
-    <Class fileExtensions = ".s4x,.s4j" class = "Syntactik.MonoDevelop.Completion.SyntactikCompletionTextEditorExtension" />
-    <Class fileExtensions = ".s4x,.s4j" class = "Syntactik.MonoDevelop.Parser.ErrorHandlerTextEditorExtension" />
-    <Class fileExtensions = ".s4x,.s4j,.xml" class = "Syntactik.MonoDevelop.Highlighting.HighlightUsagesExtension" />
+    <Class mimeTypes = "text/x-syntactik4xml,text/x-syntactik4json,application/xml" class = "Syntactik.MonoDevelop.Formatting.SyntactikTextEditorIndentation" />
+    <Class mimeTypes = "text/x-syntactik4xml,text/x-syntactik4json,application/xml" class = "Syntactik.MonoDevelop.Completion.SyntactikCompletionTextEditorExtension" />
+    <Class mimeTypes = "text/x-syntactik4xml,text/x-syntactik4json,application/xml" class = "Syntactik.MonoDevelop.Parser.ErrorHandlerTextEditorExtension" />
+    <Class mimeTypes = "text/x-syntactik4xml,text/x-syntactik4json,application/xml" class = "Syntactik.MonoDevelop.Highlighting.HighlightUsagesExtension" />
   </Extension>
   
+	<Extension path = "/MonoDevelop/SourceEditor2/TooltipProviders">
+		<Class id="SyntactikViewCompileError" class="Syntactik.MonoDevelop.DisplayBinding.CompileErrorTooltipProvider" />
+	</Extension>  
+    
 	<Extension path = "/MonoDevelop/Ide/DisplayBindings">
 		<DisplayBinding insertbefore = "DefaultDisplayBinding"
 		       class = "Syntactik.MonoDevelop.DisplayBinding.SyntactikDisplayBinding" />
@@ -177,20 +181,15 @@
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteJson"  insertafter="MonoDevelop.Ide.Commands.EditCommands.Paste" />
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteSyntactik" />
   </Extension>
-
+  
   <Extension path = "/MonoDevelop/SourceEditor2/ContextMenu/Editor">
-    <Condition id="FileType" fileExtensions=".s4x">
-      <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyAsXml" insertafter="MonoDevelop.Ide.Commands.EditCommands.Copy" />
-      <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyDocAsXml" />
-      <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteXml"  insertafter="MonoDevelop.Ide.Commands.EditCommands.Paste" />
-      <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteSyntactik" />
-    </Condition>
-    <Condition id="FileType" fileExtensions=".s4j">
-      <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyAsJson" insertafter="MonoDevelop.Ide.Commands.EditCommands.Copy" />
-      <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyDocAsJson" />
-      <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteJson"  insertafter="MonoDevelop.Ide.Commands.EditCommands.Paste" />
-      <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteSyntactik" insertafter="MonoDevelop.Ide.Commands.EditCommands.Paste" />
-    </Condition>
-    
+    <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyAsXml" insertafter="MonoDevelop.Ide.Commands.EditCommands.Copy" />
+    <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyDocAsXml" />
+    <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteXml"  insertafter="MonoDevelop.Ide.Commands.EditCommands.Paste" />
+    <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteSyntactik" />
+    <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyAsJson" insertafter="MonoDevelop.Ide.Commands.EditCommands.Copy" />
+    <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyDocAsJson" />
+    <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteJson"  insertafter="MonoDevelop.Ide.Commands.EditCommands.Paste" />
+    <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteSyntactik" insertafter="MonoDevelop.Ide.Commands.EditCommands.Paste" />
   </Extension>
 </ExtensionModel>

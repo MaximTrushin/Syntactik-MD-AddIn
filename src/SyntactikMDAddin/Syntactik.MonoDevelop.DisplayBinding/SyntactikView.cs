@@ -1,5 +1,4 @@
 ﻿using System.Collections.Specialized;
-using System.IO;
 using System.Threading.Tasks;
 using MonoDevelop.Components.Commands;
 using MonoDevelop.Core;
@@ -32,7 +31,7 @@ namespace Syntactik.MonoDevelop.DisplayBinding
             var hiddenWindow = new HiddenWorkbenchWindow();
             _syntactikEditor = TextEditorFactory.CreateNewEditor();
             _syntactikEditor.MimeType = mimeType;
-            _syntactikEditor.FileName = Path.ChangeExtension(fileName, "s4x");
+            _syntactikEditor.FileName = fileName;
             _viewContent = _syntactikEditor.GetContent<ViewContent>();
             _viewContent.ContentName = _syntactikEditor.FileName;
             hiddenWindow.AttachViewContent(_viewContent);
@@ -63,6 +62,7 @@ namespace Syntactik.MonoDevelop.DisplayBinding
                     if (_prevPage != npage)
                     {
                         SetSyntactikEditorText();
+                        WorkbenchWindow.ActiveViewContent = _viewContent;
                         _prevPage = npage;
                         _tabPageLabel = "Syntactik";
                     }
