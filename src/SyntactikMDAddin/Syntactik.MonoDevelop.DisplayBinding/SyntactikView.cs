@@ -3,11 +3,17 @@ using System.Threading.Tasks;
 using MonoDevelop.Components.Commands;
 using MonoDevelop.Core;
 using MonoDevelop.GtkCore.GuiBuilder;
+using MonoDevelop.Ide;
 using MonoDevelop.Ide.Editor;
 using MonoDevelop.Ide.Gui;
 using MonoDevelop.Projects;
+using Syntactik.Compiler;
+using Syntactik.DOM;
+using Syntactik.MonoDevelop.Commands;
 using Syntactik.MonoDevelop.Converter;
+using Syntactik.MonoDevelop.Projects;
 using Syntactik.MonoDevelop.Util;
+using Document = MonoDevelop.Ide.Gui.Document;
 
 namespace Syntactik.MonoDevelop.DisplayBinding
 {
@@ -54,6 +60,7 @@ namespace Syntactik.MonoDevelop.DisplayBinding
                 case 0:
                     if (_prevPage != npage)
                     {
+                        SetXmlEditorText();
                         _prevPage = npage;
                         _tabPageLabel = "Xml";
                     }
@@ -62,12 +69,50 @@ namespace Syntactik.MonoDevelop.DisplayBinding
                     if (_prevPage != npage)
                     {
                         SetSyntactikEditorText();
-                        WorkbenchWindow.ActiveViewContent = _viewContent;
                         _prevPage = npage;
                         _tabPageLabel = "Syntactik";
                     }
                     break;
             }
+        }
+
+        private void SetXmlEditorText()
+        {
+            var crc = Control.GetNativeWidget<CommandRouterContainer>();
+            var editor = (TextEditor) ((ViewContent)crc.GetDelegatedCommandTarget()).Control;
+            
+            var document = IdeApp.Workbench.ActiveDocument;
+            if (document == null) return;
+
+            var syntactikView = IdeApp.Workbench.ActiveDocument.Window.ViewContent as SyntactikView;
+            var textEditor = syntactikView?.SyntactikEditor;
+            document = syntactikView?.SyntactikDocument;
+
+            if (textEditor == null) return;
+            var project = document.Project as SyntactikProject;
+            var module = document.ParsedDocument?.Ast as Module;
+            if (module == null || project == null) return;
+            var modules = new PairCollection<Module> { module };
+
+            var doc = module.ModuleDocument;
+            if (doc == null) return;
+
+            var compilerParameters = CreateCompilerParameters(project.CompilerContext, doc);
+            var compiler = new SyntactikCompiler(compilerParameters);
+            var context = compiler.Run(new CompileUnit { Modules = modules });
+
+            object s;
+            if (context.InMemoryOutputObjects.TryGetValue("CLIPBOARD", out s))
+            {
+                editor.Text = (string) s;
+            }
+        }
+
+        protected virtual CompilerParameters CreateCompilerParameters(CompilerContext projectCompilerContext, DOM.Document doc)
+        {
+            var compilerParameters = new CompilerParameters { Pipeline = new CompilerPipeline() };
+            compilerParameters.Pipeline.Steps.Add(new GenerateXmlForDocumentStep(projectCompilerContext, doc));
+            return compilerParameters;
         }
 
         private void SetSyntactikEditorText()

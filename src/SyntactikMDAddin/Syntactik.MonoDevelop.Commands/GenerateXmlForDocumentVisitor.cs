@@ -11,7 +11,7 @@ namespace Syntactik.MonoDevelop.Commands
     internal class GenerateXmlForDocumentVisitor : XmlGenerator, IDisposable
     {
         public GenerateXmlForDocumentVisitor(Func<string, Encoding, XmlWriter> writerDelegate, CompilerContext context)
-            : base(writerDelegate, null, context)
+            : base(writerDelegate, null, context, true)
         {
         }
 
@@ -22,8 +22,8 @@ namespace Syntactik.MonoDevelop.Commands
             _choiceStack.Push(_currentDocument.ChoiceInfo);
             var encoding = GetEncoding(document);
             _xmlTextWriter = _writerDelegate(document.Name, encoding);
-            
-            _xmlTextWriter.WriteStartDocument();
+
+            WriteStartDocument(document);
             _rootElementAdded = false;
             Visit(document.Entities);
             _xmlTextWriter.WriteEndDocument();

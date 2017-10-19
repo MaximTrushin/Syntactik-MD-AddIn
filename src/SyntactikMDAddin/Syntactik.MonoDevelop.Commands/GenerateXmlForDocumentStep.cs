@@ -42,10 +42,19 @@ namespace Syntactik.MonoDevelop.Commands
                 using (var visitor =
                     new GenerateXmlForDocumentVisitor(
                         (name, encoding) =>
-                            new XmlTextWriter(_memoryStream, encoding)
+                            XmlWriter.Create(_memoryStream, new XmlWriterSettings()
                             {
-                                Formatting = System.Xml.Formatting.Indented
-                            }, _compilerContext))
+                                DoNotEscapeUriAttributes = true,
+                                Encoding = encoding,
+                                ConformanceLevel = ConformanceLevel.Document,
+                                Indent = true,
+                                NamespaceHandling = NamespaceHandling.OmitDuplicates,
+                                NewLineHandling = NewLineHandling.None,
+                                IndentChars = "\t",
+                                NewLineOnAttributes = true
+                                
+                            })
+                            , _compilerContext))
                 {
 
                     visitor.Visit(_doc);
