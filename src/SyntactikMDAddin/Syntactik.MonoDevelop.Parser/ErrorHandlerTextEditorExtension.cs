@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using MonoDevelop.Ide.Editor;
 using MonoDevelop.Ide.Editor.Extension;
 using MonoDevelop.Ide.TypeSystem;
+using Syntactik.MonoDevelop.DisplayBinding;
 
 namespace Syntactik.MonoDevelop.Parser
 {
@@ -15,6 +16,11 @@ namespace Syntactik.MonoDevelop.Parser
         protected override void Initialize()
         {
             DocumentContext.DocumentParsed += DocumentContext_DocumentParsed;
+        }
+
+        public override bool IsValidInContext(DocumentContext context)
+        {
+            return context.Name.EndsWith(".s4x") || context.Name.EndsWith(".s4j") || context is SyntactikDocument;
         }
 
         public override void Dispose()

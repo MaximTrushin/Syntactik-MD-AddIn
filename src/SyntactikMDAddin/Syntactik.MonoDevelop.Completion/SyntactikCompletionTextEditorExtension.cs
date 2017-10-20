@@ -20,6 +20,7 @@ using Syntactik.DOM;
 using Syntactik.DOM.Mapped;
 using Syntactik.IO;
 using Syntactik.MonoDevelop.Completion.DOM;
+using Syntactik.MonoDevelop.DisplayBinding;
 using Syntactik.MonoDevelop.Parser;
 using Syntactik.MonoDevelop.Projects;
 using Syntactik.MonoDevelop.Schemas;
@@ -44,6 +45,11 @@ namespace Syntactik.MonoDevelop.Completion
             Editor.CaretPositionChanged += HandleCaretPositionChanged;
             var data = DocumentContext.GetContent<TextEditorData>();
             data.TextPasteHandler = this;
+        }
+
+        public override bool IsValidInContext(DocumentContext context)
+        {
+            return context.Name.EndsWith(".s4x") || context.Name.EndsWith(".s4j") || context is SyntactikDocument;
         }
 
         public override void Dispose()

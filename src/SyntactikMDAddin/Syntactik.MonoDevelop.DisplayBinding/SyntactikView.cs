@@ -38,9 +38,9 @@ namespace Syntactik.MonoDevelop.DisplayBinding
             var hiddenWindow = new HiddenWorkbenchWindow();
             _syntactikEditor = TextEditorFactory.CreateNewEditor();
             _syntactikEditor.MimeType = mimeType;
-            _syntactikEditor.FileName = fileName;//Path.ChangeExtension(fileName, "s4x");Tooltip error window needs original file name
+            _syntactikEditor.FileName = Path.ChangeExtension(fileName, "s4x"); 
             _viewContent = _syntactikEditor.GetContent<ViewContent>();
-            _viewContent.ContentName = _syntactikEditor.FileName;
+            _viewContent.ContentName = fileName; //Tooltip error window needs original file name
             hiddenWindow.AttachViewContent(_viewContent);
             _syntactikDocument = new SyntactikDocument(hiddenWindow, _syntactikEditor);
             _syntactikDocument.AttachToProject(ownerProject);
