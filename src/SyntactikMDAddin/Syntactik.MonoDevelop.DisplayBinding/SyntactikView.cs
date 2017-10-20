@@ -1,4 +1,5 @@
 ﻿using System.Collections.Specialized;
+using System.IO;
 using System.Threading.Tasks;
 using MonoDevelop.Components.Commands;
 using MonoDevelop.Core;
@@ -37,12 +38,20 @@ namespace Syntactik.MonoDevelop.DisplayBinding
             var hiddenWindow = new HiddenWorkbenchWindow();
             _syntactikEditor = TextEditorFactory.CreateNewEditor();
             _syntactikEditor.MimeType = mimeType;
-            _syntactikEditor.FileName = fileName;
+            _syntactikEditor.FileName = fileName;//Path.ChangeExtension(fileName, "s4x");Tooltip error window needs original file name
             _viewContent = _syntactikEditor.GetContent<ViewContent>();
             _viewContent.ContentName = _syntactikEditor.FileName;
             hiddenWindow.AttachViewContent(_viewContent);
             _syntactikDocument = new SyntactikDocument(hiddenWindow, _syntactikEditor);
             _syntactikDocument.AttachToProject(ownerProject);
+
+
+            AddButton("Syntactik", _syntactikEditor);
+            _syntactikEditor.TextChanged += (o, a) => {
+                if (_syntactikDocument.ParsedDocument != null)
+                    _syntactikDocument.ParsedDocument.IsInvalid = true;
+                _syntactikDocument.ReparseDocument();
+            };
         }
 
         public override string TabPageLabel => _tabPageLabel;
@@ -136,20 +145,8 @@ namespace Syntactik.MonoDevelop.DisplayBinding
 
         public override Task Load(FileOpenInformation fileOpenInformation)
         {
-            return base.Load(fileOpenInformation).ContinueWith(
-                task =>
-                {
-                    return Runtime.RunInMainThread(delegate
-                    {
-                        AddButton("Syntactik", _syntactikEditor);
 
-                        _syntactikEditor.TextChanged += (o, a) => {
-                            if (_syntactikDocument.ParsedDocument != null)
-                                _syntactikDocument.ParsedDocument.IsInvalid = true;
-                                _syntactikDocument.ReparseDocument();
-                        };
-                    });
-                });
+            return base.Load(fileOpenInformation);
         }
     }
 }

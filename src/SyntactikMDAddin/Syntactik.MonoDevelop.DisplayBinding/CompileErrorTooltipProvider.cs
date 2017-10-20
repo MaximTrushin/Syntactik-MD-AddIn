@@ -31,6 +31,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using Mono.TextEditor;
 using MonoDevelop.Components;
+using MonoDevelop.Components.Commands;
 using MonoDevelop.Core;
 using MonoDevelop.Ide.Gui;
 using Xwt;
@@ -47,11 +48,16 @@ namespace Syntactik.MonoDevelop.DisplayBinding
         public override Task<TooltipItem> GetItem(TextEditor editor, DocumentContext ctx, int offset, CancellationToken token = default(CancellationToken))
         {
             var d = ctx as Document;
-            var ted = d?.GetContent<TextEditorData>();
-            
-            var hw = d?.Window.ActiveViewContent.WorkbenchWindow as HiddenWorkbenchWindow;
-            _editor = hw?.Document.Editor;
-            string errorInformation = GetErrorInformationAt(offset, ted?.Document);
+            var sv = d?.Views.FirstOrDefault(v => v.GetContent<ViewContent>() is SyntactikView);
+            _editor = sv?.GetContent<SyntactikView>().SyntactikEditor;
+            if (_editor == null) return Task.FromResult<TooltipItem>(null);
+            //var d1 = d?.Window.ActiveViewContent;
+            //var crc = d1.Control.GetNativeWidget<CommandRouterContainer>();
+            //_editor = (TextEditor)crc.GetDelegatedCommandTarget();
+            // ReSharper disable SuspiciousTypeConversion.Global
+            var sourceEditorView = (ITextEditorDataProvider) _editor.GetContent<ViewContent>();
+            // ReSharper restore SuspiciousTypeConversion.Global
+            string errorInformation = GetErrorInformationAt(offset, sourceEditorView.GetTextEditorData().Document);
             if (string.IsNullOrEmpty(errorInformation))
                 return Task.FromResult<TooltipItem>(null);
 
