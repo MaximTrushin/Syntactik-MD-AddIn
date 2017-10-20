@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using System.Linq;
 using System.Xml;
 using MonoDevelop.Core;
+using MonoDevelop.Ide;
+using MonoDevelop.Ide.Gui.Content;
+using MonoDevelop.Projects.Policies;
 using Syntactik.Compiler;
 using Syntactik.DOM;
+using MonoDevelop.Xml.Formatting;
 
 namespace Syntactik.MonoDevelop.Commands
 {
@@ -37,28 +41,28 @@ namespace Syntactik.MonoDevelop.Commands
         {
             try
             {
+                var provider = PolicyService.GetUserDefaultPolicySet() as IPolicyProvider;
+                var policyContainr = provider.Policies;
+                var mimeTypeScopes = DesktopService.GetMimeTypeInheritanceChain("application/xml").ToList();
+                var policy = policyContainr.Get<XmlFormattingPolicy>(mimeTypeScopes);
                 _context.InMemoryOutputObjects = new Dictionary<string, object>();
 
                 using (var visitor =
                     new GenerateXmlForDocumentVisitor(
                         (name, encoding) =>
-                            XmlWriter.Create(_memoryStream, new XmlWriterSettings()
+                            XmlWriter.Create(_memoryStream, new XmlWriterSettings
                             {
-                                DoNotEscapeUriAttributes = true,
                                 Encoding = encoding,
                                 ConformanceLevel = ConformanceLevel.Document,
-                                Indent = true,
+                                Indent = policy.DefaultFormat.IndentContent,
                                 NamespaceHandling = NamespaceHandling.OmitDuplicates,
                                 NewLineHandling = NewLineHandling.None,
-                                IndentChars = "\t",
-                                NewLineOnAttributes = true
-                                
+                                NewLineChars = policy.DefaultFormat.NewLineChars,
+                                IndentChars = policy.DefaultFormat.ContentIndentString
                             })
                             , _compilerContext))
                 {
-
                     visitor.Visit(_doc);
-                    //_memoryStream.
                     _memoryStream.Position = 0;
                     _context.InMemoryOutputObjects["CLIPBOARD"] = new StreamReader(_memoryStream).ReadToEnd();
                 }
