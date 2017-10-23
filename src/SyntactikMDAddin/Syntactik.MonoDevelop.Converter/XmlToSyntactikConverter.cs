@@ -175,9 +175,10 @@ namespace Syntactik.MonoDevelop.Converter
                         }
                     }
                 }
-                catch
+                catch (Exception e)
                 {
                     s4x = header + (_withNamespaces?GetNamespaceDeclarations(_declaredNamespaces) + _sb: _sb.ToString());
+                    if (e.HResult == -2146232000) return true; //ignoring Root element is missing.
                     return false;
                 }
             }
