@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.IO;
 using System.Threading.Tasks;
 using MonoDevelop.Components.Commands;
@@ -76,9 +75,9 @@ namespace Syntactik.MonoDevelop.DisplayBinding
                 return base.Save(fileSaveInformation);
             }
 
-            var msg = "The editor contains invalid Syntactik fragment that can't be converted to Xml." + 
-                    "\nPress Ok to ignore your changes and save original Xml View." +
-                    "\nPress Cancel to return to Syntactik view.";
+            const string msg = "The editor contains invalid Syntactik fragment that can't be converted to Xml." + 
+                               "\nPress Ok to ignore your changes and save original Xml View." +
+                               "\nPress Cancel to return to Syntactik view.";
             var md = new Gtk.MessageDialog(null, Gtk.DialogFlags.Modal, Gtk.MessageType.Question, Gtk.ButtonsType.OkCancel, msg);
             var result = DialogHelper.ShowCustomDialog(md);
             if (result == (int) Gtk.ResponseType.Ok)
@@ -99,8 +98,8 @@ namespace Syntactik.MonoDevelop.DisplayBinding
                         _syntactikEditor.TextChanged -= SyntactikEditorOnTextChanged;
                         if (!SetXmlEditorText())
                         {
-                            var msg = "The editor contains invalid Syntactik fragment that can't be converted to Xml. \nPress Ok to return to Syntactik View." +
-                                "\nPress Cancel to ignore your changes and return to Xml View.";
+                            const string msg = "The editor contains invalid Syntactik fragment that can't be converted to Xml. \nPress Ok to return to Syntactik View." +
+                                               "\nPress Cancel to ignore your changes and return to Xml View.";
                             var md = new Gtk.MessageDialog(null, Gtk.DialogFlags.Modal, Gtk.MessageType.Question, Gtk.ButtonsType.OkCancel, msg);
                             var result = DialogHelper.ShowCustomDialog(md);
 

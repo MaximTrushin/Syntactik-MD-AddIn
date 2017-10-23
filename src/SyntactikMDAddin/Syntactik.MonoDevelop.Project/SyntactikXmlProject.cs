@@ -10,6 +10,7 @@ namespace Syntactik.MonoDevelop.Projects
     [ProjectModelDataItem]
     public class SyntactikXmlProject : SyntactikProject, IProjectFilesProvider
     {
+        private readonly object _syncRoot = new object();
         public SchemasRepository SchemasRepository { get; private set; }
         public SyntactikXmlProject()
 		{
@@ -64,7 +65,7 @@ namespace Syntactik.MonoDevelop.Projects
 
         protected override void OnFileRemovedFromProject(ProjectFileEventArgs e)
         {
-            base.OnFileAddedToProject(e);
+            base.OnFileRemovedFromProject(e);
             var schemaRemoved = false;
             foreach (var file in e)
             {
@@ -74,6 +75,25 @@ namespace Syntactik.MonoDevelop.Projects
             }
             if (schemaRemoved)
                 SchemasRepository = new SchemasRepository(this);
+        }
+
+        protected override void OnFileRenamedInProject(ProjectFileRenamedEventArgs e)
+        {
+            base.OnFileRenamedInProject(e);
+            var sourceFileRenamed = false;
+            foreach (var file in e)
+            {
+                lock (_syncRoot)
+                {
+                    CompileInfo.Remove(file.OldName);
+                }
+                if (file.NewName.IsDirectory || file.NewName.Extension != ".s4x") continue;
+                ParseProjectFile(file.NewName);
+                sourceFileRenamed = true;
+            }
+            if (sourceFileRenamed)
+                CompilerContext = ValidateModules(CompileInfo);
+
         }
 
         public IEnumerable<string> GetSchemaProjectFiles()

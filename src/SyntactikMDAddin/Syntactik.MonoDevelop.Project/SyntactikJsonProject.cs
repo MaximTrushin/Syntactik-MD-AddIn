@@ -9,6 +9,7 @@ namespace Syntactik.MonoDevelop.Projects
     [ProjectModelDataItem]
     public class SyntactikJsonProject : SyntactikProject
     {
+        private readonly object _syncRoot = new object();
         public SyntactikJsonProject()
         {
         }
@@ -44,6 +45,25 @@ namespace Syntactik.MonoDevelop.Projects
         {
             return new[] { "", //Adds html, txt and xml to the list of file templates in the New File dialog
                 "S4J" };
+        }
+
+        protected override void OnFileRenamedInProject(ProjectFileRenamedEventArgs e)
+        {
+            base.OnFileRenamedInProject(e);
+            var sourceFileRenamed = false;
+            foreach (var file in e)
+            {
+                lock (_syncRoot)
+                {
+                    CompileInfo.Remove(file.OldName);
+                }
+                if (file.NewName.IsDirectory || file.NewName.Extension != ".s4j") continue;
+                ParseProjectFile(file.NewName);
+                sourceFileRenamed = true;
+            }
+            if (sourceFileRenamed)
+                CompilerContext = ValidateModules(CompileInfo);
+
         }
     }
 }

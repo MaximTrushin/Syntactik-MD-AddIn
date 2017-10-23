@@ -27,7 +27,7 @@ namespace Syntactik.MonoDevelop.Projects
 {
     [ProjectModelDataItem]
     public abstract class SyntactikProject : Project{
-        internal class ParseInfo
+        protected internal class ParseInfo
         {
             public ITextSourceVersion Version;
             public SyntactikParsedDocument Document;
@@ -37,7 +37,7 @@ namespace Syntactik.MonoDevelop.Projects
 
         public CompilerContext CompilerContext { get; protected set; }
 
-        readonly object _syncRoot = new object();
+        private readonly object _syncRoot = new object();
         private bool _validate_pending;
         private Licensing.License _license;
         internal Dictionary<string, ParseInfo> CompileInfo { get; } = new Dictionary<string, ParseInfo>();
@@ -153,7 +153,7 @@ namespace Syntactik.MonoDevelop.Projects
 
             using (var dlg = new LicenseInfoDialog())
             {
-                DialogHelper.ShowCustomDialog(dlg, null);
+                DialogHelper.ShowCustomDialog(dlg);
             }
             _license = null;
             try
@@ -235,7 +235,7 @@ namespace Syntactik.MonoDevelop.Projects
             }
         }
 
-        private static CompilerContext ValidateModules(Dictionary<string, ParseInfo> compileInfo)
+        protected static CompilerContext ValidateModules(Dictionary<string, ParseInfo> compileInfo)
         {
             var modules = new PairCollection<Module>();
             foreach (var item in compileInfo)
@@ -320,24 +320,7 @@ namespace Syntactik.MonoDevelop.Projects
                 CompilerContext = ValidateModules(CompileInfo);
         }
 
-        protected override void OnFileRenamedInProject(ProjectFileRenamedEventArgs e)
-        {
-            base.OnFileRenamedInProject(e);
-            var sourceFileRenamed = false;
-            foreach (var file in e)
-            {
-                lock (_syncRoot)
-                {
-                    CompileInfo.Remove(file.OldName);
-                }
-                if (file.NewName.IsDirectory) continue;
-                ParseProjectFile(file.NewName);
-                sourceFileRenamed = true;
-            }
-            if (sourceFileRenamed)
-                CompilerContext = ValidateModules(CompileInfo);
-            
-        }
+
 
         protected override Task<BuildResult> DoBuild(ProgressMonitor monitor, ConfigurationSelector configuration)
         {
