@@ -71,7 +71,7 @@ namespace Syntactik.MonoDevelop.Util
             md.Destroy();
         }
 
-        internal static int ShowCustomDialog(Dialog dialog, Window parent)
+        internal static int ShowCustomDialog(Dialog dialog, Window parent = null)
         {
             if (parent == null) return MessageService.ShowCustomDialog(dialog);
             

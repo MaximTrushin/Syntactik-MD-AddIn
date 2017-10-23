@@ -3,9 +3,11 @@ using MonoDevelop.Components.Commands;
 using MonoDevelop.Ide;
 using MonoDevelop.Ide.Editor;
 using Syntactik.Compiler;
+using Syntactik.Compiler.Steps;
 using Syntactik.DOM;
 using Syntactik.DOM.Mapped;
 using Syntactik.MonoDevelop.DisplayBinding;
+using Syntactik.MonoDevelop.Parser;
 using Syntactik.MonoDevelop.Projects;
 using Document = Syntactik.DOM.Document;
 using Module = Syntactik.DOM.Module;
@@ -44,6 +46,12 @@ namespace Syntactik.MonoDevelop.Commands
             var context = compiler.Run(new CompileUnit { Modules = modules });
             using (var monitor = IdeApp.Workbench.ProgressMonitors.GetBuildProgressMonitor())
             {
+                if (document.ParsedDocument.HasErrors)
+                {
+                    monitor.ReportError(ErrorMessage);
+                    return;
+                }
+
                 object s;
                 if (context.InMemoryOutputObjects.TryGetValue("CLIPBOARD", out s))
                 {
@@ -64,6 +72,8 @@ namespace Syntactik.MonoDevelop.Commands
         protected virtual CompilerParameters CreateCompilerParameters(CompilerContext projectCompilerContext, Document doc)
         {
             var compilerParameters = new CompilerParameters { Pipeline = new CompilerPipeline() };
+            compilerParameters.Pipeline.Steps.Add(new ProcessAliasesAndNamespaces());
+            compilerParameters.Pipeline.Steps.Add(new ValidateDocuments());
             compilerParameters.Pipeline.Steps.Add(new GenerateXmlForDocumentStep(projectCompilerContext, doc));
             return compilerParameters;
         }

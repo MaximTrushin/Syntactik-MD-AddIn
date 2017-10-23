@@ -5,7 +5,6 @@ using System.Linq;
 using System.Xml;
 using MonoDevelop.Core;
 using MonoDevelop.Ide;
-using MonoDevelop.Ide.Gui.Content;
 using MonoDevelop.Projects.Policies;
 using Syntactik.Compiler;
 using Syntactik.DOM;
