@@ -76,10 +76,6 @@
     <Reference Include="MonoDevelop.Debugger">
       <HintPath>..\..\external\monodevelop\main\build\AddIns\MonoDevelop.Debugger\MonoDevelop.Debugger.dll</HintPath>
     </Reference>
-    <Reference Include="MonoDevelop.GtkCore, Version=2.6.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\external\monodevelop\main\build\AddIns\MonoDevelop.GtkCore\MonoDevelop.GtkCore.dll</HintPath>
-    </Reference>
     <Reference Include="MonoDevelop.Ide">
       <HintPath>..\..\external\monodevelop\main\build\bin\MonoDevelop.Ide.dll</HintPath>
     </Reference>
@@ -133,6 +129,7 @@
     </Compile>
     <Compile Include="AddinInfo.cs" />
     <Compile Include="CompilerOptionsWidget.cs" />
+    <Compile Include="Syntactik.MonoDevelop.DisplayBinding\CombinedDesignView.cs" />
     <Compile Include="Syntactik.MonoDevelop.DisplayBinding\CompileErrorTooltipProvider.cs" />
     <Compile Include="Syntactik.MonoDevelop.DisplayBinding\HiddenWorkbenchWindow.cs" />
     <Compile Include="Syntactik.MonoDevelop.DisplayBinding\LanguageItemWindow.cs" />
