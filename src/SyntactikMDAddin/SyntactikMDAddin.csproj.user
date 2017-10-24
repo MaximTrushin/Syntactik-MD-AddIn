@@ -3,5 +3,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <StartAction>Program</StartAction>
     <StartProgram>$(SolutionDir)\..\external\monodevelop\main\build\bin\MonoDevelop.exe</StartProgram>
+    <StartWorkingDirectory>$(SolutionDir)\..\external\monodevelop\main\build\bin\</StartWorkingDirectory>
   </PropertyGroup>
 </Project>

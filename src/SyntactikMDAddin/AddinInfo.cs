@@ -3,8 +3,8 @@ using Mono.Addins;
 using Mono.Addins.Description;
 
 [assembly: Addin(
-    "Syntactik MonoDevelop Addin",
-    Namespace = "Syntactik.Monodevelop",
+    "Syntactik",
+    Namespace = "Monodevelop",
     Version = "0.1"
 )]
 
@@ -15,4 +15,6 @@ using Mono.Addins.Description;
 
 [assembly: AddinDependency("::MonoDevelop.Core", MonoDevelop.BuildInfo.Version)]
 [assembly: AddinDependency("::MonoDevelop.Ide", MonoDevelop.BuildInfo.Version)]
+[assembly: AddinDependency("::MonoDevelop.DesignerSupport", MonoDevelop.BuildInfo.Version)]
 [assembly: AddinDependency("::MonoDevelop.SourceEditor2", MonoDevelop.BuildInfo.Version)]
+[assembly: AddinDependency("::MonoDevelop.Xml", MonoDevelop.BuildInfo.Version)]
