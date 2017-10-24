@@ -37,6 +37,7 @@
   </Extension>
 
   <Extension path = "/MonoDevelop/Ide/TextEditorExtensions">
+    <Class mimeTypes = "text/x-syntactik4xml,text/x-syntactik4json,application/xml" class = "Syntactik.MonoDevelop.DisplayBinding.SyntactikViewCommandHandler" />
     <Class mimeTypes = "text/x-syntactik4xml,text/x-syntactik4json,application/xml" class = "Syntactik.MonoDevelop.Formatting.SyntactikTextEditorIndentation" />
     <Class mimeTypes = "text/x-syntactik4xml,text/x-syntactik4json,application/xml" class = "Syntactik.MonoDevelop.Completion.SyntactikCompletionTextEditorExtension" />
     <Class mimeTypes = "text/x-syntactik4xml,text/x-syntactik4json,application/xml" class = "Syntactik.MonoDevelop.Parser.ErrorHandlerTextEditorExtension" />
