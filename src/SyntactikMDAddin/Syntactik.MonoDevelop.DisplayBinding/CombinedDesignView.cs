@@ -169,10 +169,6 @@ namespace Syntactik.MonoDevelop.DisplayBinding
         {
         }
 
-        //public virtual void JumpToSignalHandler(Stetic.Signal signal)
-        //{
-        //}
-
         void OnTextDirtyChanged(object s, EventArgs args)
         {
             OnDirtyChanged();
@@ -219,6 +215,21 @@ namespace Syntactik.MonoDevelop.DisplayBinding
         {
             if (type.IsInstanceOfType(_content))
                 return _content;
+            var delegator = _content as ICommandDelegatorRouter;
+            if (WorkbenchWindow?.ActiveViewContent == this && delegator != null)
+            {
+                var target = delegator.GetDelegatedCommandTarget();
+                if (type.IsInstanceOfType(target))
+                    return target;
+                var textEditor = target as TextEditor;
+                var result = textEditor?.GetContents(type).FirstOrDefault();
+                if (result != null)
+                    return result;
+                var viewContent = target as BaseViewContent;
+                result = viewContent?.GetContent(type);
+                if (result != null)
+                    return result;
+            }
             return base.OnGetContent(type);
         }
 

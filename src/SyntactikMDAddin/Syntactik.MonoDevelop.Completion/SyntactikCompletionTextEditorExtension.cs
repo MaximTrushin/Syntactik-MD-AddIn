@@ -43,6 +43,7 @@ namespace Syntactik.MonoDevelop.Completion
         {
             base.Initialize();
             Editor.CaretPositionChanged += HandleCaretPositionChanged;
+            Editor.TextChanged += HandleCaretPositionChanged;
             var data = DocumentContext.GetContent<TextEditorData>();
             data.TextPasteHandler = this;
         }
@@ -55,6 +56,7 @@ namespace Syntactik.MonoDevelop.Completion
         public override void Dispose()
         {
             Editor.CaretPositionChanged -= HandleCaretPositionChanged;
+            Editor.TextChanged -= HandleCaretPositionChanged;
             base.Dispose();
         }
 

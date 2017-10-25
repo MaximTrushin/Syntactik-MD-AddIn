@@ -14,13 +14,11 @@ namespace Syntactik.MonoDevelop.Parser
             var fileName = options.FileName;
             var project = (SyntactikProject)options.Project;
             ParsedDocument result;
-
+            var oldParsedDocument = options.OldParsedDocument as SyntactikParsedDocument;
             //Parse if document has newer version
-            if (options.OldParsedDocument == null ||
-                !((SyntactikParsedDocument)options.OldParsedDocument).ContentVersion.BelongsToSameDocumentAs(options.Content.Version) ||
-                ((SyntactikParsedDocument)options.OldParsedDocument).ContentVersion.CompareAge(options.Content.Version) != 0
-                
-                )
+            if (oldParsedDocument == null ||
+                !oldParsedDocument.ContentVersion.BelongsToSameDocumentAs(options.Content.Version) ||
+                oldParsedDocument.ContentVersion.CompareAge(options.Content.Version) != 0)
             {
                 result = await project.ParseSyntactikDocument(options.FileName, options.Content.Text, options.Content.Version, cancellationToken);
             }
