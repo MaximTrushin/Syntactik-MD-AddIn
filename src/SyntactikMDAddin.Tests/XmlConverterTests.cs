@@ -8,6 +8,11 @@ namespace SyntactikMDAddin.Tests
     public class XmlConverterTests
     {
         [Test, RecordedTest]
+        public void Comment1()
+        {
+            DoXmlConverterTest();
+        }
+        [Test, RecordedTest]
         public void Fragment1()
         {
             DoXmlConverterTest();

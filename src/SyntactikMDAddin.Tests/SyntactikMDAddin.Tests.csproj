@@ -425,6 +425,9 @@
     <None Include="Scenarios\SyntaxHighlighting\OpenName.s4x">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Scenarios\XmlConverter\Comment1.text">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Scenarios\XmlConverter\TextNode1.text">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

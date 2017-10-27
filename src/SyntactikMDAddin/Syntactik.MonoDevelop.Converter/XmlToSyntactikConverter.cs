@@ -94,6 +94,7 @@ namespace Syntactik.MonoDevelop.Converter
                                 GetNsAndName(xmlReader.Name, out ns, out name);
                                 List<Tuple<string, string, string>> attributes = null;
                                 string defaultNsPrefix = null;
+                                var isEmptyElement = xmlReader.IsEmptyElement;
                                 if (xmlReader.HasAttributes) attributes = ProcessAttributes(xmlReader, out defaultNsPrefix);
                                 if (ns != null)
                                 {
@@ -125,7 +126,8 @@ namespace Syntactik.MonoDevelop.Converter
                                 _newLine = false;
                                 _inElement = true;
                                 ProcessAttributes(attributes);
-                                if (xmlReader.IsEmptyElement) ProcessEndElement();
+                                if (isEmptyElement)
+                                    ProcessEndElement();
                                 break;
                             case XmlNodeType.EndElement:
                                 ProcessEndElement();
@@ -157,7 +159,25 @@ namespace Syntactik.MonoDevelop.Converter
                                 header.AppendLine(xmlReader.Value);
                                 break;
                             case XmlNodeType.Comment:
-
+                                if (!_newLine)
+                                {
+                                    _sb.AppendLine();
+                                    _sb.Append(_indent);
+                                    _sb.Append(_indentChar, (_currentIndent + 1) * _indentMultiplicity);
+                                    _newLine = true;
+                                }
+                                if (xmlReader.Value.Contains("\n"))
+                                {
+                                    _sb.Append("\"\"\"");
+                                    _sb.Append(xmlReader.Value.Replace("\"\"\"", "\"\" \" "));
+                                    _sb.AppendLine("\"\"\"");
+                                }
+                                else
+                                {
+                                    _sb.Append("'''");
+                                    _sb.Append(xmlReader.Value);
+                                }
+                                _newLine = false;
                                 break;
                             case XmlNodeType.XmlDeclaration:
                                 header.Append(@"'''");
