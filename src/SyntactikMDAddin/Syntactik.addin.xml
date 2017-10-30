@@ -59,13 +59,13 @@
   </Extension>
 
   <Extension path = "/MonoDevelop/Core/MimeTypes">
-    <MimeType id="text/x-syntactik4xml" _description="Syntactik for XML source code" icon="md-csharp-file" isText="true">
+    <MimeType id="text/x-syntactik4xml" _description="Syntactik for XML source code" icon="md-file-source" isText="true">
       <File pattern="*.s4x" />
     </MimeType>
     <MimeType id="application/x-syntactik4xmlproject" _description="S4X-project file" baseType="application/x-msbuild">
       <File pattern="*.s4xproj" />
     </MimeType>
-    <MimeType id="text/x-syntactik4json" _description="Syntactik for JSON source code" icon="md-csharp-file" isText="true">
+    <MimeType id="text/x-syntactik4json" _description="Syntactik for JSON source code" icon="md-file-source" isText="true">
       <File pattern="*.s4j" />
     </MimeType>
     <MimeType id="application/x-syntactik4jsonproject" _description="S4J-project file" baseType="application/x-msbuild">
