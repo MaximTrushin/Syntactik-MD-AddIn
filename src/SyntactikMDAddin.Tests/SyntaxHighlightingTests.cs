@@ -122,6 +122,12 @@ namespace SyntactikMDAddin.Tests
             DoJsonHighlightingTest();
         }
         [Test, RecordedTest]
+        public void InlineOpenString()
+        {
+            DoHighlightingTest();
+        }
+
+        [Test, RecordedTest]
         public void JsonLiterals()
         {
             DoJsonHighlightingTest();

@@ -98,6 +98,7 @@ namespace Syntactik.MonoDevelop.Highlighting
             var indentSpan = CurSpan as IndentSpan;
 
             if (CurRule.Name.StartsWith("open_string") //Ending Open string
+                && (indentSpan == null || indentSpan.FirstLine) // First line only
                 && IsEndOfOpenString(CurText[i - StartOffset]) ) //And end of open string found
             {
                 var c = (CurText[i - StartOffset]);
