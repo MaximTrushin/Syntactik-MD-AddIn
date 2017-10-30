@@ -264,6 +264,20 @@ namespace Syntactik.MonoDevelop.Completion
             offset++;
             var startValue = offset;
             var nonSpaceMet = false;
+
+            //Checking if this is possible that cursor is in the middle of the name
+            var canBeInTheMiddleOfTheName = false;
+            offset--;
+            while (offset > 1)
+            {
+                if (IntegerCharExtensions.IsSpaceCharacter(content[offset])) { offset--; continue; }
+                if (IntegerCharExtensions.IsEndOfOpenName(content[offset])) break;
+                canBeInTheMiddleOfTheName = true; break;
+            }
+            if (!canBeInTheMiddleOfTheName) return startValue;
+
+            offset = startValue;
+            //Assuming that cursor is in the middle of the name
             while (offset < length && !IntegerCharExtensions.IsEndOfOpenName(content[offset]))
             {
                 if (content[offset] != ' ' && content[offset] != '\t')
