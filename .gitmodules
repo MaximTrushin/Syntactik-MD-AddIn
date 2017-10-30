@@ -4,3 +4,6 @@
 [submodule "external/syntactik"]
 	path = external/syntactik
 	url = https://github.com/MaximTrushin/Syntactik/
+[submodule "external/SyntactikMDBranding"]
+	path = external/SyntactikMDBranding
+	url = https://github.com/MaximTrushin/SyntactikMDBranding
