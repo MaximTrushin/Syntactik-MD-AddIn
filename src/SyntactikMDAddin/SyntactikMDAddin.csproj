@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\external\SyntactikMDBranding\main\build\AddIns\Syntactik\</OutputPath>
+    <OutputPath>..\..\external\monodevelop\main\build\AddIns\Syntactik\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -40,23 +40,23 @@
   <ItemGroup>
     <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\external\SyntactikMDBranding\main\build\AddIns\DisplayBindings\SourceEditor\atk-sharp.dll</HintPath>
+      <HintPath>..\..\external\monodevelop\main\build\AddIns\DisplayBindings\SourceEditor\atk-sharp.dll</HintPath>
     </Reference>
     <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\external\SyntactikMDBranding\main\build\AddIns\DisplayBindings\SourceEditor\gdk-sharp.dll</HintPath>
+      <HintPath>..\..\external\monodevelop\main\build\AddIns\DisplayBindings\SourceEditor\gdk-sharp.dll</HintPath>
     </Reference>
     <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\external\SyntactikMDBranding\main\build\AddIns\DisplayBindings\SourceEditor\glib-sharp.dll</HintPath>
+      <HintPath>..\..\external\monodevelop\main\build\AddIns\DisplayBindings\SourceEditor\glib-sharp.dll</HintPath>
     </Reference>
     <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\external\SyntactikMDBranding\main\build\AddIns\DisplayBindings\SourceEditor\gtk-sharp.dll</HintPath>
+      <HintPath>..\..\external\monodevelop\main\build\AddIns\DisplayBindings\SourceEditor\gtk-sharp.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.NRefactory, Version=5.0.0.0, Culture=neutral, PublicKeyToken=d4bfe873e7598c49, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\external\SyntactikMDBranding\main\build\bin\ICSharpCode.NRefactory.dll</HintPath>
+      <HintPath>..\..\external\monodevelop\main\build\bin\ICSharpCode.NRefactory.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
@@ -64,27 +64,27 @@
     </Reference>
     <Reference Include="Mono.Addins, Version=0.6.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\external\SyntactikMDBranding\main\build\bin\Mono.Addins.dll</HintPath>
+      <HintPath>..\..\external\monodevelop\main\build\bin\Mono.Addins.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Debugging">
-      <HintPath>..\..\external\SyntactikMDBranding\main\build\bin\Mono.Debugging.dll</HintPath>
+      <HintPath>..\..\external\monodevelop\main\build\bin\Mono.Debugging.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Posix, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL" />
     <Reference Include="Mono.TextEditor, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\external\SyntactikMDBranding\main\build\bin\Mono.TextEditor.dll</HintPath>
+      <HintPath>..\..\external\monodevelop\main\build\bin\Mono.TextEditor.dll</HintPath>
     </Reference>
     <Reference Include="MonoDevelop.Core">
-      <HintPath>..\..\external\SyntactikMDBranding\main\build\bin\MonoDevelop.Core.dll</HintPath>
+      <HintPath>..\..\external\monodevelop\main\build\bin\MonoDevelop.Core.dll</HintPath>
     </Reference>
     <Reference Include="MonoDevelop.Debugger">
-      <HintPath>..\..\external\SyntactikMDBranding\main\build\AddIns\MonoDevelop.Debugger\MonoDevelop.Debugger.dll</HintPath>
+      <HintPath>..\..\external\monodevelop\main\build\AddIns\MonoDevelop.Debugger\MonoDevelop.Debugger.dll</HintPath>
     </Reference>
     <Reference Include="MonoDevelop.Ide">
-      <HintPath>..\..\external\SyntactikMDBranding\main\build\bin\MonoDevelop.Ide.dll</HintPath>
+      <HintPath>..\..\external\monodevelop\main\build\bin\MonoDevelop.Ide.dll</HintPath>
     </Reference>
     <Reference Include="MonoDevelop.Xml">
-      <HintPath>..\..\external\SyntactikMDBranding\main\build\AddIns\Xml\MonoDevelop.Xml.dll</HintPath>
+      <HintPath>..\..\external\monodevelop\main\build\AddIns\Xml\MonoDevelop.Xml.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -92,7 +92,7 @@
     </Reference>
     <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\external\SyntactikMDBranding\main\build\bin\pango-sharp.dll</HintPath>
+      <HintPath>..\..\external\monodevelop\main\build\bin\pango-sharp.dll</HintPath>
     </Reference>
     <Reference Include="RestSharp, Version=105.2.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\RestSharp.105.2.2\lib\net45\RestSharp.dll</HintPath>
@@ -118,7 +118,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="Xwt, Version=0.1.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\external\SyntactikMDBranding\main\build\bin\Xwt.dll</HintPath>
+      <HintPath>..\..\external\monodevelop\main\build\bin\Xwt.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
