@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MonoDevelop.Components.Commands;
+using MonoDevelop.Core;
 using MonoDevelop.Ide;
 
 namespace Syntactik.MonoDevelop
@@ -19,18 +20,13 @@ namespace Syntactik.MonoDevelop
 
     class GlobalCommandHandler
     {
-        // This handler will hide the Run menu if there are no debuggers installed.
 
-        [CommandHandler("ReportBug")]
-        public void OnRun()
-        {
-        }
-
-        [CommandUpdateHandler("ReportBug")]
+        //Hidding Check for Updates menu for Syntactik Editor branding
+        [CommandUpdateHandler("MonoDevelop.Ide.Updater.UpdateCommands.CheckForUpdates")]
         public void OnRunUpdate(CommandInfo cinfo)
         {
-            cinfo.Visible = true;
-          
+            if (BrandingService.ApplicationName == "Syntactik Editor")
+                cinfo.Visible = false;
         }
     }
 }
