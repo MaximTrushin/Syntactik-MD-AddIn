@@ -133,6 +133,7 @@
     </Compile>
     <Compile Include="AddinInfo.cs" />
     <Compile Include="CompilerOptionsWidget.cs" />
+    <Compile Include="Initializer.cs" />
     <Compile Include="Syntactik.MonoDevelop.DisplayBinding\CombinedDesignView.cs" />
     <Compile Include="Syntactik.MonoDevelop.DisplayBinding\CompileErrorTooltipProvider.cs" />
     <Compile Include="Syntactik.MonoDevelop.DisplayBinding\HiddenWorkbenchWindow.cs" />

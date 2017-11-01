@@ -182,7 +182,11 @@
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteJson"  insertafter="MonoDevelop.Ide.Commands.EditCommands.Paste" />
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteSyntactik" />
   </Extension>
-  
+
+  <Extension path="/MonoDevelop/Ide/MainMenu/Help">
+  <LinkItem id = "ReportSyntactikBug" _label = "Report Syntactik Editor Problem..." link = "https://github.com/syntactik/Malina/issues" insertafter="ReportBug" />
+
+  </Extension>
   <Extension path = "/MonoDevelop/SourceEditor2/ContextMenu/Editor">
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyAsXml" insertafter="MonoDevelop.Ide.Commands.EditCommands.Copy" />
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyDocAsXml" />
@@ -193,4 +197,9 @@
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteJson"  insertafter="MonoDevelop.Ide.Commands.EditCommands.Paste" />
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteSyntactik" insertafter="MonoDevelop.Ide.Commands.EditCommands.Paste" />
   </Extension>
+
+  <Extension path = "/MonoDevelop/Ide/StartupHandlers">
+    <Class class="Syntactik.MonoDevelop.Initializer" />
+  </Extension>  
+  
 </ExtensionModel>
