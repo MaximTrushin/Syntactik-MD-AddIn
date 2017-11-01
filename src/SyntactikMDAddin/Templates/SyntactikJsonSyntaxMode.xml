@@ -113,6 +113,9 @@
   <Match color = "Xml Text">(?:.*)</Match>-->
   </Rule>
 
+  <Rule name = "free_open_string_sl">
+  </Rule>
+
   <!-- sq name -->
   <Match color = "Keyword(Type)">'.*?(?:'\s*(?=\s*(?::|=)))</Match>
   <!-- dq name -->

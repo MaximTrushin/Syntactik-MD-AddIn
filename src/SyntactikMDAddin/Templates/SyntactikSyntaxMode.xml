@@ -100,6 +100,10 @@
     <Match color = "Xml Text">(.*)</Match>
   </Rule>
 
+  <Rule name = "free_open_string_sl">
+    <Match color = "Xml Text">(.*)</Match>
+  </Rule>
+
   <Rule name = "free_open_string_high_attr">
     <Match color = "String">(.*)</Match>
   </Rule>

@@ -7,6 +7,7 @@ namespace Syntactik.MonoDevelop.Highlighting
     public class SyntactikSpanParser : SyntaxMode.SpanParser
     {
         private readonly Module.TargetFormats _format;
+        private bool _inline;
 
         public SyntactikSpanParser(SyntaxMode mode, CloneableStack<Span> spanStack, Module.TargetFormats format) : base(mode, spanStack)
         {
@@ -15,6 +16,8 @@ namespace Syntactik.MonoDevelop.Highlighting
 
         protected override bool ScanSpan(ref int i)
         {
+            if (i == StartOffset) _inline = false;
+
             if (CurSpan == null) return base.ScanSpan(ref i);
 
             if ((CurRule.Name.StartsWith("free_open_string") || CurRule.Name.StartsWith("open_string")) && 
@@ -31,7 +34,7 @@ namespace Syntactik.MonoDevelop.Highlighting
                         quote = r.Groups[1].Value[0];
                         var prev = RuleStack.Count > 1 ? RuleStack.ElementAt(1) : null;
                         var ruleName = quote == '\'' ? "sq_string" : "dq_string";
-                        if (CurRule.Name.EndsWith("_sl")) ruleName += "_sl";
+                        if (CurRule.Name.EndsWith("_sl") || _inline) ruleName += "_sl";
                         FoundSpanBegin(new IndentSpan
                                 {
                                     Indent = indent,
@@ -69,7 +72,7 @@ namespace Syntactik.MonoDevelop.Highlighting
                 {
                     Indent = indent,
                     FirstLine = true,
-                    Rule = CurRule.Name,
+                    Rule = CurRule.Name + (_inline?"_sl":""),
                     Color = prevRule == null || !prevRule.Name.StartsWith("string_high") ? textStyle : "String",
                     Quote = quote
                 }, i, 0);
@@ -80,11 +83,15 @@ namespace Syntactik.MonoDevelop.Highlighting
 
         protected override bool ScanSpanEnd(Span cur, ref int i)
         {
+            if (i == StartOffset)
+                _inline = false;
+
             if (CurSpan == null) return base.ScanSpanEnd(cur, ref i);
 
             if (CurRule.Name.StartsWith("punctuation"))
             {
                 FoundSpanEnd(CurSpan, i, 0);
+                _inline = true;
                 return false;
             }
 
