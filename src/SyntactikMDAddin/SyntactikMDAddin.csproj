@@ -326,6 +326,10 @@
     </PropertyGroup>
   </Target>
   <Import Project="..\SyntactikMDAddin\packages\MonoDevelop.Addins.0.3.14\build\net45\MonoDevelop.Addins.targets" Condition="Exists('..\SyntactikMDAddin\packages\MonoDevelop.Addins.0.3.14\build\net45\MonoDevelop.Addins.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>rmdir $(TargetDir)..\..\branding /s /q
+xcopy $(ProjectDir)..\..\branding  $(TargetDir)..\..\bin\branding /E /I /Y /Q</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

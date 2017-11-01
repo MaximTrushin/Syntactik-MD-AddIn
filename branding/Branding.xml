@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Branding>
-	<ApplicationName>Xamarin Studio</ApplicationName>
-	<SuiteName>Xamarin</SuiteName>
+	<ApplicationName>Syntactik Editor</ApplicationName>
+	<SuiteName>Syntactik Editor</SuiteName>
 	<ApplicationIcon>icon.icns</ApplicationIcon>
 	<ApplicationIcons>
 		<Icon>XamarinStudio16.png</Icon>
@@ -10,10 +10,6 @@
 		<Icon>XamarinStudio128.png</Icon>
 		<Icon>XamarinStudio256.png</Icon>
 	</ApplicationIcons>
-	<ProfileDirectoryName>XamarinStudio</ProfileDirectoryName>
-	<FirstRunDescription>Congratulations, you're now ready to start building mobile apps for iOS and Android in C#.\n\nThis free Starter edition allows you to build and ship small mobile apps to get a taste of using Xamarin. If you want the full experience, you can start a full-featured trial at any time. If you're already a customer, please log in to your Xamarin account.\n\nWe’ve worked hard to make this the best platform for building mobile apps, and we hope you enjoy it!</FirstRunDescription>
-	<CustomizerAssemblyPath>../Xamarin.IdeCustomization.dll;../../AddIns/Xamarin.Ide/Xamarin.IdeCustomization.dll;../../../../../md-addins/Xamarin.Ide/build/Xamarin.IdeCustomization.dll</CustomizerAssemblyPath>
-	<CustomizerType>Xamarin.IdeCustomization.XamarinCustomizer</CustomizerType>
-	<StatusAreaSteadyIcon>xs-status-steady</StatusAreaSteadyIcon>
-	<HelpAboutIcon>xs-about</HelpAboutIcon>
+	<ProfileDirectoryName>SyntactikEditor</ProfileDirectoryName>
+
 </Branding>
