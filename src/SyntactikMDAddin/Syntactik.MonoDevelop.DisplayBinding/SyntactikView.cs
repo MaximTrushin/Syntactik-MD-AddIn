@@ -182,6 +182,7 @@ namespace Syntactik.MonoDevelop.DisplayBinding
                 editor.EnsureCaretIsNotVirtual();
                 editor.Text = "";
                 editor.InsertText(0, (string)s);
+                editor.SetCaretLocation(1,1);
                 return true;
             }
         }
@@ -202,6 +203,7 @@ namespace Syntactik.MonoDevelop.DisplayBinding
             if (converter.Convert(0, '\t', 1, false, new ListDictionary(), out s4x))
             {
                 _syntactikEditor.Text = s4x;
+                _syntactikEditor.SetCaretLocation(1,1);
                 return true;
             }
             return false;
