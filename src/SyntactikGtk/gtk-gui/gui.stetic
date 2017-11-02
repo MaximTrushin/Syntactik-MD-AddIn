@@ -528,7 +528,6 @@ Please visit the website www.syntactik.com to get more information about Syntact
     <property name="Modal">True</property>
     <property name="BorderWidth">5</property>
     <property name="Resizable">False</property>
-    <property name="AllowShrink">True</property>
     <property name="SkipPagerHint">True</property>
     <property name="SkipTaskbarHint">True</property>
     <property name="Buttons">3</property>
@@ -586,7 +585,6 @@ If you are requesting the license first time, you will be asked to enter your fu
               <widget class="Gtk.Entry" id="entryEmail">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
-                <property name="Text" translatable="yes">trushin@gmail.co</property>
                 <property name="IsEditable">True</property>
                 <property name="InvisibleChar">●</property>
               </widget>

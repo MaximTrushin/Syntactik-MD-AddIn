@@ -45,7 +45,6 @@ namespace Syntactik.MonoDevelop.License
 			this.Modal = true;
 			this.BorderWidth = ((uint)(5));
 			this.Resizable = false;
-			this.AllowShrink = true;
 			this.SkipPagerHint = true;
 			this.SkipTaskbarHint = true;
 			// Internal child Syntactik.MonoDevelop.License.LicenseRequestDialog.VBox
@@ -91,7 +90,6 @@ namespace Syntactik.MonoDevelop.License
 			this.entryEmail = new global::Gtk.Entry();
 			this.entryEmail.CanFocus = true;
 			this.entryEmail.Name = "entryEmail";
-			this.entryEmail.Text = global::Mono.Unix.Catalog.GetString("trushin@gmail.co");
 			this.entryEmail.IsEditable = true;
 			this.entryEmail.InvisibleChar = '●';
 			this.vbox2.Add(this.entryEmail);
