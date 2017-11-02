@@ -133,6 +133,9 @@
     </Compile>
     <Compile Include="AddinInfo.cs" />
     <Compile Include="CompilerOptionsWidget.cs" />
+    <Compile Include="Dialogs\AboutMonoDevelopTabPage.cs" />
+    <Compile Include="Dialogs\CommonAboutDialog.cs" />
+    <Compile Include="Dialogs\VersionInformationTabPage.cs" />
     <Compile Include="Initializer.cs" />
     <Compile Include="Syntactik.MonoDevelop.DisplayBinding\CombinedDesignView.cs" />
     <Compile Include="Syntactik.MonoDevelop.DisplayBinding\CompileErrorTooltipProvider.cs" />
