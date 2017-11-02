@@ -20,6 +20,11 @@ namespace Syntactik.MonoDevelop.Commands
         {
             info.Enabled = false;
             var doc = IdeApp.Workbench.ActiveDocument;
+            if (doc == null)
+            {
+                info.Bypass = true;
+                return;
+            }
             info.Visible = doc.FileName.Extension.ToLower() == ".s4j";
 
             if (!info.Visible) return;

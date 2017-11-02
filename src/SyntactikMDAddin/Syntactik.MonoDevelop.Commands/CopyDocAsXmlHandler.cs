@@ -120,7 +120,11 @@ namespace Syntactik.MonoDevelop.Commands
             info.Enabled = false;
             info.Visible = false;
             var doc = IdeApp.Workbench?.ActiveDocument;
-            if (doc == null) return;
+            if (doc == null)
+            {
+                info.Bypass = true;
+                return;
+            }
             string extension;
             if (doc.FileName.Extension.ToLower() == ".xml" && doc.Window.ViewContent?.TabPageLabel == "Syntactik")
             {
