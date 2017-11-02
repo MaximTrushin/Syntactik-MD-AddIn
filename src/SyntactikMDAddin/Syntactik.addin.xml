@@ -164,6 +164,7 @@
   <Extension path="/MonoDevelop/Ide/MainMenu/Help">
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.LicenseInfo" insertbefore="MonoDevelop.Ide.Commands.HelpCommands.About" />
     <LinkItem id = "ReportSyntactikBug" _label = "Report Syntactik Editor Problem..." link = "https://github.com/syntactik/Malina/issues" />
+    <LinkItem id = "SyntactikSupport" _label = "Syntactik Live Support" link = "https://gitter.im/syntactik-Malina/Lobby" />
     <SeparatorItem id = "SyntactikSeparator1" />
   </Extension>
   
