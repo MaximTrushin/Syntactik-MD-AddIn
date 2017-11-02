@@ -7,6 +7,7 @@ using MonoDevelop.Components.Commands;
 using MonoDevelop.Core;
 using MonoDevelop.Ide;
 using MonoDevelop.Ide.Commands;
+using Syntactik.MonoDevelop.Dialogs;
 
 namespace Syntactik.MonoDevelop
 {
@@ -34,7 +35,7 @@ namespace Syntactik.MonoDevelop
         [CommandHandler(HelpCommands.About)]
         public void OnAbout()
         {
-
+            CommonAboutDialog.ShowAboutDialog();
             //cinfo.Visible = false;
         }
         [CommandUpdateHandler(HelpCommands.About)]

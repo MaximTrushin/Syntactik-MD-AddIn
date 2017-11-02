@@ -57,8 +57,8 @@ namespace Syntactik.MonoDevelop.Dialogs
             });
             cbox.PackStart(new Xwt.LinkLabel()
             {
-                Text = "http://xamarin.com/xamarin-studio-license",
-                Uri = new Uri("http://xamarin.com/xamarin-studio-license")
+                Text = "http://syntactik.com/syntactik-editor-license",
+                Uri = new Uri("http://syntactik.com/syntactik-editor-license")
             });
             infoBox.PackStart(cbox);
 
@@ -75,8 +75,8 @@ namespace Syntactik.MonoDevelop.Dialogs
             cbox.PackStart(new Xwt.Label("© 2011-" + DateTime.Now.Year + " "));
             cbox.PackStart(new Xwt.LinkLabel()
             {
-                Text = "Xamarin Inc.",
-                Uri = new Uri("http://www.xamarin.com")
+                Text = "Syntactik LLC.",
+                Uri = new Uri("http://www.syntactik.com")
             });
             infoBox.PackStart(cbox);
             infoBox.PackStart(new Xwt.Label()

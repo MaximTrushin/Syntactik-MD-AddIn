@@ -162,7 +162,9 @@
   </Extension>
 
   <Extension path="/MonoDevelop/Ide/MainMenu/Help">
-    <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.LicenseInfo" insertafter="MonoDevelop.Ide.Commands.HelpCommands.SendFeedback" />
+    <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.LicenseInfo" insertbefore="MonoDevelop.Ide.Commands.HelpCommands.About" />
+    <LinkItem id = "ReportSyntactikBug" _label = "Report Syntactik Editor Problem..." link = "https://github.com/syntactik/Malina/issues" />
+    <SeparatorItem id = "SyntactikSeparator1" />
   </Extension>
   
   <ExtensionPoint path = "/MonoDevelop/Syntactik/ContextMenu/ProjectPad/SchemaFolder">
@@ -183,10 +185,7 @@
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteSyntactik" />
   </Extension>
 
-  <Extension path="/MonoDevelop/Ide/MainMenu/Help">
-  <LinkItem id = "ReportSyntactikBug" _label = "Report Syntactik Editor Problem..." link = "https://github.com/syntactik/Malina/issues" insertafter="ReportBug" />
-
-  </Extension>
+  
   <Extension path = "/MonoDevelop/SourceEditor2/ContextMenu/Editor">
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyAsXml" insertafter="MonoDevelop.Ide.Commands.EditCommands.Copy" />
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyDocAsXml" />
