@@ -257,6 +257,8 @@
     <Compile Include="Syntactik.MonoDevelop.Schemas\XsdSchemaProvider.cs" />
     <Compile Include="SyntactikIcons.cs" />
     <Compile Include="Util\DialogHelper.cs" />
+    <Compile Include="WelcomePage\SyntactikWelcomePage.cs" />
+    <Compile Include="WelcomePage\WelcomePageProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

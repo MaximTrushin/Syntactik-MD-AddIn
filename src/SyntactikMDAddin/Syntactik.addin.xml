@@ -200,6 +200,12 @@
 
   <Extension path = "/MonoDevelop/Ide/StartupHandlers">
     <Class class="Syntactik.MonoDevelop.Initializer" />
-  </Extension>  
-  
+  </Extension>
+
+  <Extension path = "/MonoDevelop.Ide/TypeExtensions/MonoDevelop.Ide.WelcomePage.IWelcomePageProvider">
+    <Condition id="Branding" value="Syntactik">
+      <Type type="Syntactik.MonoDevelop.WelcomePage.WelcomePageProvider" />
+    </Condition>
+  </Extension>
+
 </ExtensionModel>
