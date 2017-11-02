@@ -72,7 +72,7 @@ namespace Syntactik.MonoDevelop.Highlighting
                 {
                     Indent = indent,
                     FirstLine = true,
-                    Rule = CurRule.Name + (_inline?"_sl":""),
+                    Rule = CurRule.Name + (_inline && !CurRule.Name.EndsWith("_sl") ? "_sl":""),
                     Color = prevRule == null || !prevRule.Name.StartsWith("string_high") ? textStyle : "String",
                     Quote = quote
                 }, i, 0);
