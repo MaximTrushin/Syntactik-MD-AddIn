@@ -98,8 +98,8 @@
       <HintPath>..\packages\RestSharp.105.2.2\lib\net45\RestSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Syntactik, Version=0.0.2.31885, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syntactik.0.0.2.31885\lib\net45\Syntactik.dll</HintPath>
+    <Reference Include="Syntactik, Version=0.0.2.37467, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syntactik.0.0.2.37467\lib\net45\Syntactik.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
