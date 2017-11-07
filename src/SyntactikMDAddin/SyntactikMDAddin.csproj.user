@@ -5,4 +5,9 @@
     <StartProgram>$(SolutionDir)\..\external\monodevelop\main\build\bin\MonoDevelop.exe</StartProgram>
     <StartWorkingDirectory>$(SolutionDir)\..\external\monodevelop\main\build\bin\</StartWorkingDirectory>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <StartAction>Program</StartAction>
+    <StartProgram>$(SolutionDir)\..\external\SyntactikMDBuild\bin\MonoDevelop.exe</StartProgram>
+    <StartWorkingDirectory>$(SolutionDir)\..\external\SyntactikMDBuild\bin\</StartWorkingDirectory>
+  </PropertyGroup>
 </Project>

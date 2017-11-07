@@ -38,7 +38,7 @@ namespace Syntactik.MonoDevelop.Parser
                 var module = CreateModule(fileName);
                 _context.CompileUnit.AppendChild(module);
                 Syntactik.Parser parser = GetParser(module, _input);
-                var errorListener = new ErrorListener(_context, fileName);
+                var errorListener = new Compiler.ErrorListener(_context, fileName);
                 parser.ErrorListeners.Add(errorListener);
                 parser.ParseModule(fileName);
             }
