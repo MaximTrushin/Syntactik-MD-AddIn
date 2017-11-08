@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
@@ -7,11 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading;
 using Mono.TextEditor;
 using Mono.TextEditor.Highlighting;
 using MonoDevelop.Ide.CodeCompletion;
-using MonoDevelop.Projects;
 using NUnit.Framework;
 using Syntactik.Compiler;
 using Syntactik.Compiler.IO;
@@ -50,6 +47,7 @@ namespace SyntactikMDAddin.Tests
 
         public static void DoCompletionExpectationsTest()
         {
+#if DEBUG
             var input = PrintTestScenario();
 
             var compilerParameters = CreateCompilerParameters(GetTestCaseName(), input);
@@ -74,10 +72,12 @@ namespace SyntactikMDAddin.Tests
                 context.InTag + "\r\n" + string.Join("\r\n", context.Expectations);
             if (IsRecordedTest() || IsRecordTest())
                 CompareResultAndRecordedFiles(expectation, IsRecordTest(), "exp");
+#endif
         }
 
         public static void DoCompletionContextTest(int offset = 0)
         {
+#if DEBUG
             var input = PrintTestScenario();
 
             Func<Dictionary<string, AliasDefinition>> func = () => new Dictionary<string, AliasDefinition>();
@@ -99,16 +99,20 @@ namespace SyntactikMDAddin.Tests
             
             if (IsRecordedTest() || IsRecordTest())
                 CompareResultAndRecordedFiles(expectation, IsRecordTest(), "list");
+#endif
         }
 
         public static void DoCompletionListTest(string schemaSet = "ipo")
         {
+#if DEBUG
             var input = PrintTestScenario();
             string completionList = GetCompletionList(GetTestCaseName(), input, new FileProvider(schemaSet));
             if (IsRecordedTest() || IsRecordTest())
                 CompareResultAndRecordedFiles(completionList, IsRecordTest(), "list");
+#endif
         }
 
+#if DEBUG
         private static string GetCompletionList(string fileName, string text, IProjectFilesProvider filesProvider)
         {
             var compilerParameters = CreateCompilerParameters(fileName, text);
@@ -152,7 +156,7 @@ namespace SyntactikMDAddin.Tests
 
             return string.Join("\n", list.Select(item => $"{item.DisplayText} ({item.CompletionText})"));
         }
-
+#endif
         public static void DoXmlConverterTest(ListDictionary declaredNamespaces = null, int indent = 0, char indentChar = '\t', int indentMultiplicity = 1, bool insertNewLine = false)
         {
             if (declaredNamespaces == null) declaredNamespaces = new ListDictionary();
