@@ -335,7 +335,7 @@
   <Import Project="..\SyntactikMDAddin\packages\MonoDevelop.Addins.0.3.14\build\net45\MonoDevelop.Addins.targets" Condition="Exists('..\SyntactikMDAddin\packages\MonoDevelop.Addins.0.3.14\build\net45\MonoDevelop.Addins.targets')" />
   <PropertyGroup>
     <PostBuildEvent>rmdir $(ProjectDir)..\..\external\SyntactikMDBuild\bin\branding /s /q
-xcopy $(ProjectDir)..\..\branding  $(ProjectDir)..\..\external\SyntactikMDBuild\bin\branding /E /I /Y /Q
+xcopy $(ProjectDir)..\..\branding\branding  $(ProjectDir)..\..\external\SyntactikMDBuild\bin\branding /E /I /Y /Q
 
 rmdir $(ProjectDir)..\..\external\SyntactikMDBuild\AddIns\Syntactik /s /q
 md $(ProjectDir)..\..\external\SyntactikMDBuild\AddIns\Syntactik

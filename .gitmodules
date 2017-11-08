@@ -4,3 +4,6 @@
 [submodule "external/SyntactikMDBuild"]
 	path = external/SyntactikMDBuild
 	url = https://github.com/MaximTrushin/SyntactikMDBuild/
+[submodule "branding"]
+	path = branding
+	url = https://github.com/MaximTrushin/SyntactikMDBranding
