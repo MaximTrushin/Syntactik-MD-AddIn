@@ -6,7 +6,7 @@ using Syntactik.MonoDevelop.Projects;
 
 namespace Syntactik.MonoDevelop.Schemas
 {
-    public class SchemasRepository
+    internal class SchemasRepository
     {
         readonly List<ISchemaProvider> _providers = new List<ISchemaProvider>();
 

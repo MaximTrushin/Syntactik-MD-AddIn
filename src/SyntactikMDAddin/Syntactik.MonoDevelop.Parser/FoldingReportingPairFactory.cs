@@ -10,7 +10,7 @@ using Syntactik.MonoDevelop.Completion.DOM;
 
 namespace Syntactik.MonoDevelop.Parser
 {
-    internal class FoldingReportingPairFactory: IPairFactory
+     class FoldingReportingPairFactory: IPairFactory
     {
         internal class FoldingInfo
         {

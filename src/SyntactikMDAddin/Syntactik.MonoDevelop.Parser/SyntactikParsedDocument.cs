@@ -8,7 +8,7 @@ using Syntactik.Compiler;
 
 namespace Syntactik.MonoDevelop.Parser
 {
-    public class SyntactikParsedDocument : ParsedDocument
+    class SyntactikParsedDocument : ParsedDocument
     {
         public SyntactikParsedDocument(string fileName, ITextSourceVersion contentVersion) : base(fileName)
         {

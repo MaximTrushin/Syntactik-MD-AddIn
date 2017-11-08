@@ -11,7 +11,7 @@ using Attribute = Syntactik.DOM.Attribute;
 
 namespace Syntactik.MonoDevelop.Schemas
 {
-    public class XsdSchemaProvider : ISchemaProvider
+    internal class XsdSchemaProvider : ISchemaProvider
     {
         XmlSchemaSet _schemaset;
         readonly Dictionary<string, XmlSchema> _includes = new Dictionary<string, XmlSchema>();

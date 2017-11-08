@@ -17,7 +17,7 @@ using NamespaceDefinition = Syntactik.DOM.NamespaceDefinition;
 
 namespace Syntactik.MonoDevelop.Completion
 {
-    public class CompletionHelper
+    internal class CompletionHelper
     {
         private static int AttributePriority = 10000;
         private static int ElementPriority = 0;

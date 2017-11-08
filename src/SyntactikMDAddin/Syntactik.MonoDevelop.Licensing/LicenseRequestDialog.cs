@@ -12,17 +12,9 @@ using Dialog = Gtk.Dialog;
 
 namespace Syntactik.MonoDevelop.License
 {
-    internal class Info
-    {
-        public string Email;
-        public string FullName;
-        public string Company;
-        public string Position;
-    }
 
     public partial class LicenseRequestDialog : Dialog
     {
-        internal Info Info { get; } = new Info();
         internal bool EmailConfirmed => LeadState == 2;
         /// <summary>
         /// 0 - New Lead, 1 - Existing with unconfirmed email, 2 - Existing with confirmed email
@@ -117,7 +109,7 @@ namespace Syntactik.MonoDevelop.License
                         {
                             var result = DialogHelper.ShowCustomDialog(dlg, this);
                             SetLoadingState(false);
-                            if (result == (int) ResponseType.Ok || dlg.LicenseReceived)
+                            if (result == (int) ResponseType.Ok)
                             {
                                 Respond(ResponseType.Ok);
                                 Destroy();

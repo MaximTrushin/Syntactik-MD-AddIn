@@ -4,7 +4,7 @@ using System.Xml;
 
 namespace Syntactik.MonoDevelop.Schemas
 {
-    public interface ISchemaProvider
+    internal interface ISchemaProvider
     {
         IEnumerable<NamespaceInfo> GetNamespaces();
         void Validate(XmlDocument doc, Action<XmlNode, string> onErrorAction);

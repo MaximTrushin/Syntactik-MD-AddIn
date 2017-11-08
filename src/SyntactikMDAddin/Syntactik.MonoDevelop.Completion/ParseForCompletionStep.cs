@@ -10,7 +10,7 @@ using Syntactik.MonoDevelop.Completion;
 
 namespace Syntactik.MonoDevelop.Parser
 {
-    public class ParseForCompletionStep : Parse
+    class ParseForCompletionStep : Parse
     {
         private readonly CancellationToken _cancellationToken;
         private readonly ICharStream _input;

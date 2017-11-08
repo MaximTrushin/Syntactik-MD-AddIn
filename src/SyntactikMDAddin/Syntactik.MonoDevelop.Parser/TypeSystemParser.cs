@@ -7,7 +7,7 @@ using TS = MonoDevelop.Ide.TypeSystem;
 
 namespace Syntactik.MonoDevelop.Parser
 {
-    public sealed class TypeSystemParser: TS.TypeSystemParser
+    sealed class TypeSystemParser: TS.TypeSystemParser
     {
         public override async Task<ParsedDocument> Parse(ParseOptions options, CancellationToken cancellationToken = new CancellationToken())
         {

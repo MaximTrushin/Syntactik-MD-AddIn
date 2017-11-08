@@ -23,7 +23,6 @@ namespace Syntactik.MonoDevelop.License
         private readonly string _email;
         private readonly ConfirmationEnum _type;
         private Timer _timer;
-        internal bool LicenseReceived;
 
         public ConfirmationStatusDialog(string email, ConfirmationEnum type)
         {

@@ -11,7 +11,7 @@ namespace Syntactik.MonoDevelop.Projects
     public class SyntactikXmlProject : SyntactikProject, IProjectFilesProvider
     {
         private readonly object _syncRoot = new object();
-        public SchemasRepository SchemasRepository { get; private set; }
+        internal SchemasRepository SchemasRepository { get; private set; }
         public SyntactikXmlProject()
 		{
         }

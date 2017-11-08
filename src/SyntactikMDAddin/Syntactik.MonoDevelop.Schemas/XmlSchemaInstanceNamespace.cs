@@ -8,7 +8,7 @@ using Syntactik.MonoDevelop.Completion;
 
 namespace Syntactik.MonoDevelop.Schemas
 {
-    public class XmlSchemaInstanceNamespace : ISchemaProvider
+    internal class XmlSchemaInstanceNamespace : ISchemaProvider
     {
         public static string Url = "http://www.w3.org/2001/XMLSchema-instance";
         public IEnumerable<NamespaceInfo> GetNamespaces()

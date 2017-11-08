@@ -6,7 +6,7 @@ using Syntactik.IO;
 
 namespace Syntactik.MonoDevelop.Parser
 {
-    public class ParseAndCreateFoldingStep : Parse
+    class ParseAndCreateFoldingStep : Parse
     {
         private readonly SyntactikParsedDocument _parsedDocument;
         private readonly CancellationToken _cancellationToken;

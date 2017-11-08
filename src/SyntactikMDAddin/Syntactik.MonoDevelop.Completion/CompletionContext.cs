@@ -14,7 +14,7 @@ using Module = Syntactik.DOM.Module;
 
 namespace Syntactik.MonoDevelop.Completion
 {
-    public class CompletionContext
+    internal class CompletionContext
     {
         private readonly CancellationToken _cancellationToken;
         private CompilerContext _context;
@@ -304,7 +304,7 @@ namespace Syntactik.MonoDevelop.Completion
         }
     }
 
-    public enum CompletionExpectation
+    internal enum CompletionExpectation
     {
         NoExpectation,
         Alias,

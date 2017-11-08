@@ -30,7 +30,7 @@ namespace Syntactik.MonoDevelop.Projects
         protected internal class ParseInfo
         {
             public ITextSourceVersion Version;
-            public SyntactikParsedDocument Document;
+            internal SyntactikParsedDocument Document;
         }
 
         private readonly object _rootSync = new object();

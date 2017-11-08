@@ -31,7 +31,7 @@ using Module = Syntactik.DOM.Module;
 
 namespace Syntactik.MonoDevelop.Completion
 {
-    public class SyntactikCompletionTextEditorExtension : CompletionTextEditorExtension, IPathedDocument, ITextPasteHandler
+    class SyntactikCompletionTextEditorExtension : CompletionTextEditorExtension, IPathedDocument, ITextPasteHandler
     {
         private readonly object _syncLock = new object();
         private PathEntry[] _currentPath;

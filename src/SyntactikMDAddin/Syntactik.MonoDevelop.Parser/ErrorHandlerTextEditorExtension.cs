@@ -9,7 +9,7 @@ using Syntactik.MonoDevelop.DisplayBinding;
 
 namespace Syntactik.MonoDevelop.Parser
 {
-    public class ErrorHandlerTextEditorExtension: TextEditorExtension
+    class ErrorHandlerTextEditorExtension: TextEditorExtension
     {
         CancellationTokenSource src = new CancellationTokenSource();
         bool isDisposed;

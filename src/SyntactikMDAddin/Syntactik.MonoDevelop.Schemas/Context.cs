@@ -3,7 +3,7 @@ using Syntactik.MonoDevelop.Completion;
 
 namespace Syntactik.MonoDevelop.Schemas
 {
-    public class Context
+    internal class Context
     {
         public List<NamespaceInfo> IncludedNamespaces { get; private set; }
 
