@@ -1,9 +1,12 @@
 [submodule "external/monodevelop"]
 	path = external/monodevelop
 	url = https://github.com/mono/monodevelop
+	ignore = dirty
 [submodule "external/SyntactikMDBuild"]
 	path = external/SyntactikMDBuild
 	url = https://github.com/MaximTrushin/SyntactikMDBuild/
+	ignore = dirty	
 [submodule "branding"]
 	path = branding
 	url = https://github.com/MaximTrushin/SyntactikMDBranding
+	ignore = dirty
