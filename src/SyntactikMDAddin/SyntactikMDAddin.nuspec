@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>SyntactikMDAddin</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <projectUrl>http://syntactik.com</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+	<copyright>$copyright$</copyright>
+    <tags>Syntactik xml json editor productivity tool</tags>
+	<dependencies>
+        <dependency id="Newtonsoft.Json" version="10.0.2" />
+		<dependency id="log4net" version="2.0.8" />
+		<dependency id="RestSharp" version="105.2.2" />
+		<dependency id="Syntactik" version="0.0.2.37467" />
+    </dependencies>
+  </metadata>
+</package>

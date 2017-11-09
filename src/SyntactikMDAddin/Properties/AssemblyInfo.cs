@@ -4,13 +4,13 @@ using System.Runtime.CompilerServices;
 // Information about this assembly is defined by the following attributes. 
 // Change them to the values specific to your project.
 
-[assembly: AssemblyTitle("Syntactik MonoDevelop Addin")]
-[assembly: AssemblyDescription("Syntactik MonoDevelop Addin")]
+[assembly: AssemblyTitle("Syntactik MonoDevelop Addin.")]
+[assembly: AssemblyDescription("Syntactik MonoDevelop Addin. Syntactik is preprocessor for XML and JSON.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Syntactik")]
+[assembly: AssemblyCompany("Syntactik, LLC")]
 [assembly: AssemblyProduct("Syntactik")]
-[assembly: AssemblyCopyright("Maxim Trushin")]
-[assembly: AssemblyTrademark("Syntactik")]
+[assembly: AssemblyCopyright("Copyright © Maxim Trushin, Syntactik, LLC,  2017")]
+[assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 #if DEBUG
