@@ -4,7 +4,7 @@ using Syntactik.DOM.Mapped;
 
 namespace Syntactik.MonoDevelop.Highlighting
 {
-    public class SyntactikSpanParser : SyntaxMode.SpanParser
+    class SyntactikSpanParser : SyntaxMode.SpanParser
     {
         private readonly Module.TargetFormats _format;
         private bool _inline;
@@ -225,7 +225,7 @@ namespace Syntactik.MonoDevelop.Highlighting
         }
     }
 
-    public class IndentSpan : Span
+    class IndentSpan : Span
     {
         public int Indent;
         public bool FirstLine;

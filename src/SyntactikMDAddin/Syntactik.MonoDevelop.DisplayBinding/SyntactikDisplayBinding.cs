@@ -4,7 +4,7 @@ using MonoDevelop.Projects;
 
 namespace Syntactik.MonoDevelop.DisplayBinding
 {
-    public class SyntactikDisplayBinding: IViewDisplayBinding //Public Addin class
+    class SyntactikDisplayBinding: IViewDisplayBinding //Public Addin class
     {
         private bool _excludeThis;
         internal const string TextXmlMimeType = "text/xml";

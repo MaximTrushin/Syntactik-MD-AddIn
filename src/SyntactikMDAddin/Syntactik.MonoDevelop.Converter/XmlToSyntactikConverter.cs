@@ -15,7 +15,7 @@ namespace Syntactik.MonoDevelop.Converter
         public string DefaultNamespace; // Used to track default ns declarations
         public ListDictionary NsDeclarations; // Used to track ns declarations
     }
-    public class XmlToSyntactikConverter
+    class XmlToSyntactikConverter
     {
         private readonly bool _validate;
         private readonly bool _withNamespaces;

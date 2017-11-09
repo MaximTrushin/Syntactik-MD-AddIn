@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Syntactik.MonoDevelop.Converter
 {
-    public class TokenInfo
+    class TokenInfo
     {
         public JsonToken Token;
         public int BlockCounter;
@@ -16,7 +16,7 @@ namespace Syntactik.MonoDevelop.Converter
         public object FirstPropertyValue;
 
     }
-    public class JsonToSyntactikConverter
+    class JsonToSyntactikConverter
     {
         private readonly string _text;
         private StringBuilder _sb;

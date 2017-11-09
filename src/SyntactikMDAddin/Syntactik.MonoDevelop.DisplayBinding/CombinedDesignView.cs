@@ -11,7 +11,7 @@ using MonoDevelop.Ide.Gui;
 
 namespace Syntactik.MonoDevelop.DisplayBinding
 {
-    public class CombinedDesignView : ViewContent
+    class CombinedDesignView : ViewContent
     {
         ViewContent content;
         Gtk.Widget control;

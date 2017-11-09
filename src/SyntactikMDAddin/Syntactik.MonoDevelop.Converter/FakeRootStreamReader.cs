@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Syntactik.MonoDevelop.Converter
 {
-    public class FakeRootStreamReader : TextReader
+    class FakeRootStreamReader : TextReader
     {
         private static readonly char[] _rootStart;
         private static readonly char[] _rootEnd;

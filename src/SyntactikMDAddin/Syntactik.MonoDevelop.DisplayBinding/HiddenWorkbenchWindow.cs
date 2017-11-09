@@ -6,7 +6,7 @@ using MonoDevelop.Ide.Gui;
 
 namespace Syntactik.MonoDevelop.DisplayBinding
 {
-    public class HiddenWorkbenchWindow : IWorkbenchWindow
+    class HiddenWorkbenchWindow : IWorkbenchWindow
     {
         ExtensionContext _extensionContext;
         private readonly FileTypeCondition _fileTypeCondition = new FileTypeCondition();

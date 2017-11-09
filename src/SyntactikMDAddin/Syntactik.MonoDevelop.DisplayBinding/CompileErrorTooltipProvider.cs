@@ -31,7 +31,6 @@ using System.Threading.Tasks;
 using System.Threading;
 using Mono.TextEditor;
 using MonoDevelop.Components;
-using MonoDevelop.Components.Commands;
 using MonoDevelop.Core;
 using MonoDevelop.Ide.Gui;
 using Xwt;

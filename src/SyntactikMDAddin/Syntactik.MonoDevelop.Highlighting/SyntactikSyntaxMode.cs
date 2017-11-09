@@ -6,7 +6,7 @@ using Syntactik.DOM.Mapped;
 
 namespace Syntactik.MonoDevelop.Highlighting
 {
-    public class SyntactikSyntaxMode : SyntaxMode
+    class SyntactikSyntaxMode : SyntaxMode
     {
         private readonly Module.TargetFormats _targetFormat;
 

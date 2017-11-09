@@ -11,7 +11,7 @@ using Syntactik.MonoDevelop.DisplayBinding;
 
 namespace Syntactik.MonoDevelop.Highlighting
 {
-    public class HighlightUsagesExtension : AbstractUsagesExtension<object>
+    class HighlightUsagesExtension : AbstractUsagesExtension<object>
     {
         protected override void Initialize()
         {

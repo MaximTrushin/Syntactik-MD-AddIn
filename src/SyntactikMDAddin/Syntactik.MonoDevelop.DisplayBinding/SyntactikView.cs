@@ -18,7 +18,7 @@ using Document = MonoDevelop.Ide.Gui.Document;
 
 namespace Syntactik.MonoDevelop.DisplayBinding
 {
-    public class SyntactikView : CombinedDesignView
+    class SyntactikView : CombinedDesignView
     {
         private readonly TextEditor _syntactikEditor;
         private readonly ViewContent _viewContent;
