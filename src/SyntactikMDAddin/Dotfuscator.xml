@@ -52,7 +52,7 @@
       <type name="Syntactik.MonoDevelop.WelcomePage.WelcomePageProvider" />
     </excludelist>
     <mapping>
-      <mapoutput overwrite="false">
+      <mapoutput overwrite="true">
         <file dir="${configdir}\bin\Release\Dotfuscated" name="Map.xml" />
       </mapoutput>
     </mapping>
@@ -62,11 +62,12 @@
       <referencerule rulekey="{2B7E7C8C-A39A-4db8-9DFC-6AFD38509061}" />
       <referencerule rulekey="{494EA3BA-B947-44B5-BEE8-A11CC85AAF9B}" />
       <referencerule rulekey="{89769974-93E9-4e71-8D92-BE70E855ACFC}" />
+      <referencerule rulekey="{D97286EB-CF80-4ae8-94D4-E90131E6D0D7}" />
     </referencerulelist>
   </renaming>
   <sos mergeruntime="true">
     <option>version:v4</option>
-    <option>sendanalytics</option>
+    <option>disable</option>
     <option>dontsendtamper</option>
   </sos>
   <smartobfuscation>
