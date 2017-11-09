@@ -3,7 +3,7 @@ using Syntactik.IO;
 
 namespace Syntactik.MonoDevelop.Completion.DOM
 {
-    public class Element: Syntactik.DOM.Mapped.Element, ICompletionNode
+    class Element: Syntactik.DOM.Mapped.Element, ICompletionNode
     {
         private readonly ICharStream _input;
 

@@ -10,7 +10,7 @@ using Syntactik.MonoDevelop.Projects;
 
 namespace Syntactik.MonoDevelop.Commands
 {
-    public class SchemaFolderCommandHandler : NodeCommandHandler
+    class SchemaFolderCommandHandler : NodeCommandHandler
     {
         static FilePath PreviousFolderPath
         {

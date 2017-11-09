@@ -1,10 +1,9 @@
-﻿using System;
-using Syntactik.DOM;
+﻿using Syntactik.DOM;
 using Syntactik.IO;
 
 namespace Syntactik.MonoDevelop.Completion.DOM
 {
-    public class Argument : Syntactik.DOM.Mapped.Argument, ICompletionNode
+    class Argument : Syntactik.DOM.Mapped.Argument, ICompletionNode
     {
         private readonly ICharStream _input;
 

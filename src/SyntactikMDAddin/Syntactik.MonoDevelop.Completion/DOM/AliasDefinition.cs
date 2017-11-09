@@ -1,10 +1,9 @@
-﻿using System;
-using Syntactik.DOM;
+﻿using Syntactik.DOM;
 using Syntactik.IO;
 
 namespace Syntactik.MonoDevelop.Completion.DOM
 {
-    public class AliasDefinition: Syntactik.DOM.Mapped.AliasDefinition, ICompletionNode
+    class AliasDefinition: Syntactik.DOM.Mapped.AliasDefinition, ICompletionNode
     {
         private readonly ICharStream _input;
 

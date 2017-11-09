@@ -6,7 +6,7 @@ using Syntactik.MonoDevelop.Schemas;
 
 namespace Syntactik.MonoDevelop.Completion
 {
-    public enum ItemType
+    enum ItemType
     {
         PrivateAttribute,
         Attribute,
@@ -16,7 +16,7 @@ namespace Syntactik.MonoDevelop.Completion
         AliasNamespace,
         Argument
     }
-    public class CompletionItem : CompletionData
+    class CompletionItem : CompletionData
     {
         private int _priorityGroup;
         public ItemType ItemType { get; set; }

@@ -2,7 +2,7 @@
 
 namespace Syntactik.MonoDevelop
 {
-    public class SyntactikIcons
+    class SyntactikIcons
     {
         public static readonly IconId Element = "ml-element";
         public static readonly IconId OptElement = "ml-element-opt";

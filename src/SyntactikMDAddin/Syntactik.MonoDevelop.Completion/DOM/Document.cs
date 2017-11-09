@@ -10,7 +10,7 @@ namespace Syntactik.MonoDevelop.Completion.DOM
     /// It can have zero or many Namespace definitions.
     /// It also can have either one entity.
     /// </summary>
-    public class Document: Syntactik.DOM.Mapped.Document, ICompletionNode
+    class Document: Syntactik.DOM.Mapped.Document, ICompletionNode
     {
         private readonly ICharStream _input;
 

@@ -8,7 +8,7 @@ namespace Syntactik.MonoDevelop.Completion.DOM
     /// It can have zero or many Namespace definitions.
     /// It also can have either one module member or entity.
     /// </summary>
-    public class Module: Syntactik.DOM.Mapped.Module
+    class Module: Syntactik.DOM.Mapped.Module
     {
         private ModuleMember _member;
         private Entity _entity;

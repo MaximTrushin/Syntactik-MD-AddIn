@@ -9,7 +9,7 @@ using Syntactik.MonoDevelop.Projects;
 
 namespace Syntactik.MonoDevelop.Commands
 {
-    public class CopyAsXmlHandler: CommandHandler  //TODO: Unit tests
+    class CopyAsXmlHandler: CommandHandler  //TODO: Unit tests
     {
         protected override void Run()
         {

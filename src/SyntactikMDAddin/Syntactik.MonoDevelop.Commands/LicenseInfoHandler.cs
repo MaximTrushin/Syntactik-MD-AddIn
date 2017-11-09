@@ -5,7 +5,7 @@ using Syntactik.MonoDevelop.Util;
 
 namespace Syntactik.MonoDevelop.Commands
 {
-    public class LicenseInfoHandler : CommandHandler
+    class LicenseInfoHandler : CommandHandler
     {
         protected override void Run()
         {

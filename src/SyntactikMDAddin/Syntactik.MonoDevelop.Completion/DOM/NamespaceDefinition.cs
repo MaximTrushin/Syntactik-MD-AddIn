@@ -4,7 +4,7 @@ using Syntactik.IO;
 
 namespace Syntactik.MonoDevelop.Completion.DOM
 {
-    public class NamespaceDefinition : Syntactik.DOM.Mapped.NamespaceDefinition, ICompletionNode
+    class NamespaceDefinition : Syntactik.DOM.Mapped.NamespaceDefinition, ICompletionNode
     {
         private readonly ICharStream _input;
 

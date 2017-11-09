@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Syntactik.DOM;
+﻿using Syntactik.DOM;
 
 namespace Syntactik.MonoDevelop.Completion.DOM
 {
-    public class CompletionContextVisitor: SyntactikDepthFirstVisitor
+    class CompletionContextVisitor: SyntactikDepthFirstVisitor
     {
         private Pair _lastPair;
 

@@ -3,7 +3,7 @@ using Syntactik.DOM.Mapped;
 
 namespace Syntactik.MonoDevelop.Completion.DOM
 {
-    public static class DomHelper
+    static class DomHelper
     {
         public static CharLocation GetPairEnd(Interval nameInterval, Interval delimiterInterval)
         {

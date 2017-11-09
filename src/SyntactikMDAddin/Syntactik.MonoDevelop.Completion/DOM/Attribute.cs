@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using Syntactik.DOM;
+﻿using Syntactik.DOM;
 using Syntactik.IO;
 
 namespace Syntactik.MonoDevelop.Completion.DOM
 {
-    public class Attribute : Syntactik.DOM.Mapped.Attribute, ICompletionNode
+    class Attribute : Syntactik.DOM.Mapped.Attribute, ICompletionNode
     {
         private readonly ICharStream _input;
 

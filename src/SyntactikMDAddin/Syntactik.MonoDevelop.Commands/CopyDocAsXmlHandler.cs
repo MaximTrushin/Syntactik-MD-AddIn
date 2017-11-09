@@ -14,7 +14,7 @@ using Module = Syntactik.DOM.Module;
 
 namespace Syntactik.MonoDevelop.Commands
 {
-    public class CopyDocAsXmlHandler : CommandHandler //TODO: Unit tests
+    class CopyDocAsXmlHandler : CommandHandler //TODO: Unit tests
     {
         protected override void Run()
         {

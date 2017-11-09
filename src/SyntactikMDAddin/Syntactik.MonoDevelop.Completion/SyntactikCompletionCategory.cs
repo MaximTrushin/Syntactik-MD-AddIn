@@ -3,7 +3,7 @@
 
 namespace Syntactik.MonoDevelop.Completion
 {
-    public class SyntactikCompletionCategory : CompletionCategory
+    class SyntactikCompletionCategory : CompletionCategory
     {
         public int Order { get; set; }
 
