@@ -3,7 +3,7 @@ using System.Xml.Schema;
 
 namespace Syntactik.MonoDevelop.Schemas
 {
-    public class TypeInfo
+    class TypeInfo
     {
         public List<TypeInfo> Descendants { get; private set; }
 

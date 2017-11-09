@@ -26,7 +26,7 @@ using Syntactik.MonoDevelop.Util;
 namespace Syntactik.MonoDevelop.Projects
 {
     [ProjectModelDataItem]
-    public abstract class SyntactikProject : Project{
+    abstract class SyntactikProject : Project{
         protected internal class ParseInfo
         {
             public ITextSourceVersion Version;

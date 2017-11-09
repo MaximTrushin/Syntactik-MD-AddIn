@@ -343,7 +343,7 @@ namespace SyntactikMDAddin.Tests
         {
             return TestHasAttribute<RecordTestAttribute>();
         }
-
+#if DEBUG
         public class FileProvider : IProjectFilesProvider
         {
             private string _schemaSet;
@@ -364,5 +364,6 @@ namespace SyntactikMDAddin.Tests
                 return files;
             }
         }
+#endif
     }
 }

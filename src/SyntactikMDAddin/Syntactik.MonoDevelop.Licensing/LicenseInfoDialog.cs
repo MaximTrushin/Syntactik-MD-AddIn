@@ -5,7 +5,7 @@ using Syntactik.MonoDevelop.Util;
 
 namespace Syntactik.MonoDevelop.License
 {
-    public partial class LicenseInfoDialog : Dialog
+    partial class LicenseInfoDialog : Dialog
     {
         public LicenseInfoDialog()
         {

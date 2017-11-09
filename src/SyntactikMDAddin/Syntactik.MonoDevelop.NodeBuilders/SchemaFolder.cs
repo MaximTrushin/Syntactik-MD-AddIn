@@ -4,7 +4,7 @@ using MonoDevelop.Projects;
 
 namespace Syntactik.MonoDevelop.NodeBuilders
 {
-    public class SchemaFolder : ProjectFolder
+    class SchemaFolder : ProjectFolder
     {
         public SchemaFolder(FilePath absolutePath, WorkspaceObject parentWorkspaceObject) : base(absolutePath, parentWorkspaceObject)
         {

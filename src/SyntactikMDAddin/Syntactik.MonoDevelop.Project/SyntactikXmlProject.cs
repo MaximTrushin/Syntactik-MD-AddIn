@@ -8,7 +8,7 @@ using Syntactik.MonoDevelop.Schemas;
 namespace Syntactik.MonoDevelop.Projects
 {
     [ProjectModelDataItem]
-    public class SyntactikXmlProject : SyntactikProject, IProjectFilesProvider
+    class SyntactikXmlProject : SyntactikProject, IProjectFilesProvider
     {
         private readonly object _syncRoot = new object();
         internal SchemasRepository SchemasRepository { get; private set; }

@@ -30,6 +30,7 @@
       <type name="Syntactik.MonoDevelop.Commands.CopyDocAsXmlHandler/&lt;&gt;c" />
       <type name="Syntactik.MonoDevelop.Commands.LicenseInfoHandler" />
       <type name="Syntactik.MonoDevelop.Commands.PasteJsonHandler" />
+      <type name="Syntactik.MonoDevelop.Commands.PasteSyntactikHandler" />
       <type name="Syntactik.MonoDevelop.Commands.PasteXmlHandler" />
       <type name="Syntactik.MonoDevelop.Initializer" />
       <type name="Syntactik.MonoDevelop.Completion.SyntactikCompletionTextEditorExtension" />

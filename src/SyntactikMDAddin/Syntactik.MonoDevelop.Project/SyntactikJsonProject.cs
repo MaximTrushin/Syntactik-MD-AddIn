@@ -7,7 +7,7 @@ using MonoDevelop.Projects;
 namespace Syntactik.MonoDevelop.Projects
 {
     [ProjectModelDataItem]
-    public class SyntactikJsonProject : SyntactikProject
+    class SyntactikJsonProject : SyntactikProject
     {
         private readonly object _syncRoot = new object();
         public SyntactikJsonProject()

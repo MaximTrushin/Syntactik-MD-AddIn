@@ -3,7 +3,7 @@ using MonoDevelop.Ide.WelcomePage;
 
 namespace Syntactik.MonoDevelop.WelcomePage
 {
-    public class WelcomePageProvider: IWelcomePageProvider
+    class WelcomePageProvider: IWelcomePageProvider
     {
         public Control CreateWidget()
         {

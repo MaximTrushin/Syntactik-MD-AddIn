@@ -4,13 +4,13 @@ using Rhino.Licensing;
 
 namespace Syntactik.MonoDevelop.Licensing
 {
-    public enum Mode
+    enum Mode
     {
         Demo,
         Full
     }
 
-    public class License
+    class License
     {
         public Mode RuntimeMode { get; private set; }
         public LicenseValidator Validator { get; }

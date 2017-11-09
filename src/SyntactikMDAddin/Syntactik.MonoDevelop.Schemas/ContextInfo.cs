@@ -3,7 +3,7 @@ using System.Xml.Schema;
 
 namespace Syntactik.MonoDevelop.Schemas
 {
-    public class ContextInfo
+    class ContextInfo
     {
         public List<XmlSchemaElement> Elements { get; private set; }
         public List<XmlSchemaAttribute> Attributes { get; private set; }

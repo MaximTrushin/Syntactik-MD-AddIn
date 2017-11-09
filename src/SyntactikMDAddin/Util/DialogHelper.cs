@@ -12,7 +12,7 @@ namespace Syntactik.MonoDevelop.Util
     /// Monodevelop MessageService class incorrectly process modal dialog creation if app is not in focus.
     /// This class is created to be used instead of MessageService.
     /// </summary>
-    public static class DialogHelper
+    static class DialogHelper
     {
         internal static void ShowMessage(string message, Window parent)
         {

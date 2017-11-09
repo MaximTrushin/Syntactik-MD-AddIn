@@ -9,11 +9,9 @@ using Rhino.Licensing;
 using Syntactik.MonoDevelop.Util;
 using Dialog = Gtk.Dialog;
 
-
 namespace Syntactik.MonoDevelop.License
 {
-
-    public partial class LicenseRequestDialog : Dialog
+    partial class LicenseRequestDialog : Dialog
     {
         internal bool EmailConfirmed => LeadState == 2;
         /// <summary>

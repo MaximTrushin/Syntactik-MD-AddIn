@@ -3,7 +3,7 @@ using MonoDevelop.Ide.Gui.Dialogs;
 
 namespace Syntactik.MonoDevelop.Projects
 {
-    public class CompilerOptionsPanel : ItemOptionsPanel
+    class CompilerOptionsPanel : ItemOptionsPanel
     {
         CompilerOptionsWidget widget;
 

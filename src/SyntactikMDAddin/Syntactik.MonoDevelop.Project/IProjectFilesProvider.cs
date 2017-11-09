@@ -3,7 +3,7 @@ using MonoDevelop.Projects;
 
 namespace Syntactik.MonoDevelop.Projects
 {
-    public interface IProjectFilesProvider
+    interface IProjectFilesProvider
     {
         IEnumerable<string> GetSchemaProjectFiles();
     }

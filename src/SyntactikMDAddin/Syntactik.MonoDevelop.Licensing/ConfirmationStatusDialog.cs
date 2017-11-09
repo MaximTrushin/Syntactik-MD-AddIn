@@ -13,7 +13,7 @@ using Timeout = System.Threading.Timeout;
 
 namespace Syntactik.MonoDevelop.License
 {
-    public partial class ConfirmationStatusDialog : Dialog
+    partial class ConfirmationStatusDialog : Dialog
     {
         public enum ConfirmationEnum
         {
