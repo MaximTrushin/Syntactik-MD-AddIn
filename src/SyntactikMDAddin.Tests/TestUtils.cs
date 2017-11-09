@@ -28,21 +28,25 @@ namespace SyntactikMDAddin.Tests
     {
         public static void DoHighlightingTest()
         {
+#if DEBUG
             var input = PrintTestScenario();
 
             string markup = GetMarkup(input);
 
             if (IsRecordedTest() || IsRecordTest())
                 CompareResultAndRecordedFiles(markup, IsRecordTest(), "html");
+#endif
         }
         public static void DoJsonHighlightingTest()
         {
+#if DEBUG
             var input = PrintTestScenario(".s4j");
 
             string markup = GetMarkup(input, "text/x-syntactik4json");
 
             if (IsRecordedTest() || IsRecordTest())
                 CompareResultAndRecordedFiles(markup, IsRecordTest(), "html");
+#endif
         }
 
         public static void DoCompletionExpectationsTest()
@@ -159,21 +163,26 @@ namespace SyntactikMDAddin.Tests
 #endif
         public static void DoXmlConverterTest(ListDictionary declaredNamespaces = null, int indent = 0, char indentChar = '\t', int indentMultiplicity = 1, bool insertNewLine = false)
         {
+#if DEBUG
             if (declaredNamespaces == null) declaredNamespaces = new ListDictionary();
             var input = PrintTestScenario(".text");
             string s = ConvertXml(input, declaredNamespaces, indent, indentChar, indentMultiplicity, insertNewLine);
             if (IsRecordedTest() || IsRecordTest())
                 CompareResultAndRecordedFiles(s, IsRecordTest(), "cxml");
+#endif
         }
 
         public static void DoJsonConverterTest(int indent = 0, char indentChar = '\t', int indentMultiplicity = 1, bool insertNewLine = false)
         {
+#if DEBUG
             var input = PrintTestScenario(".json");
             string s = ConvertJson(input, indent, indentChar, indentMultiplicity, insertNewLine);
             if (IsRecordedTest() || IsRecordTest())
                 CompareResultAndRecordedFiles(s, IsRecordTest(), "cjson");
+#endif
         }
 
+#if DEBUG
         private static string ConvertXml(string text, ListDictionary declaredNamespaces, int indent = 0, char indentChar = '\t', int indentMultiplicity = 1, bool insertNewLine = false)
         {
             var converter = new XmlToSyntactikConverter(text);
@@ -188,13 +197,16 @@ namespace SyntactikMDAddin.Tests
             converter.Convert(indent, indentChar, indentMultiplicity, insertNewLine, out output);
             return output;
         }
+#endif
 
+#if DEBUG
         private static CompilerParameters CreateCompilerParameters(string fileName, string content)
         {
             var compilerParameters = new CompilerParameters { Pipeline = new CompileToMemory(true) };
             compilerParameters.Input.Add(new StringInput(fileName, content));
             return compilerParameters;
         }
+
 
         public static string GetMarkup(string input, string mimeType = "text/x-syntactik4xml")
         {
@@ -265,7 +277,7 @@ namespace SyntactikMDAddin.Tests
             PrintCode(code);
             return code.TrimEnd('~');
         }
-
+#endif
 
         public static void PrintCode(string code)
         {

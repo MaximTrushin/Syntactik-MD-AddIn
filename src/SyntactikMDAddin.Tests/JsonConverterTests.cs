@@ -1,4 +1,4 @@
-﻿using System.Collections.Specialized;
+﻿#if DEBUG
 using NUnit.Framework;
 using static SyntactikMDAddin.Tests.TestUtils;
 
@@ -34,3 +34,4 @@ namespace SyntactikMDAddin.Tests
         }
     }
 }
+#endif

@@ -1,8 +1,10 @@
-﻿using static SyntactikMDAddin.Tests.TestUtils;
+﻿#if DEBUG
+using static SyntactikMDAddin.Tests.TestUtils;
 using NUnit.Framework;
 
 namespace SyntactikMDAddin.Tests
 {
+
     [TestFixture]
     public class CompletionContextTests
     {
@@ -22,4 +24,6 @@ namespace SyntactikMDAddin.Tests
             DoCompletionContextTest(1);
         }
     }
+
 }
+#endif

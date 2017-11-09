@@ -1,4 +1,5 @@
-﻿using Mono.TextEditor.Highlighting;
+﻿#if DEBUG
+using Mono.TextEditor.Highlighting;
 using NUnit.Framework;
 using static SyntactikMDAddin.Tests.TestUtils;
 
@@ -245,3 +246,4 @@ namespace SyntactikMDAddin.Tests
         }
     }
 }
+#endif

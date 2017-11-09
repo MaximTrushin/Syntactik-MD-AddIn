@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿#if DEBUG
+using NUnit.Framework;
 using static SyntactikMDAddin.Tests.TestUtils;
 
 namespace SyntactikMDAddin.Tests
@@ -117,3 +118,4 @@ namespace SyntactikMDAddin.Tests
         }
     }
 }
+#endif
