@@ -7,6 +7,7 @@ using Syntactik.Compiler.Steps;
 using Syntactik.DOM;
 using Syntactik.DOM.Mapped;
 using Syntactik.MonoDevelop.DisplayBinding;
+using Syntactik.MonoDevelop.Licensing;
 using Syntactik.MonoDevelop.Parser;
 using Syntactik.MonoDevelop.Projects;
 using Document = Syntactik.DOM.Document;
@@ -120,7 +121,7 @@ namespace Syntactik.MonoDevelop.Commands
             info.Enabled = false;
             info.Visible = false;
             var doc = IdeApp.Workbench?.ActiveDocument;
-            if (doc == null)
+            if (doc == null || ((SyntactikProject)doc.Project).License.RuntimeMode == Mode.Demo)
             {
                 info.Bypass = true;
                 return;

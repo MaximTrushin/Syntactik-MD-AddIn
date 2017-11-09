@@ -347,6 +347,7 @@ if $(ConfigurationName) == Release copy /Y  "$(TargetDir)\syntactik.dll" "$(Proj
 if $(ConfigurationName) == Release copy /Y  "$(TargetDir)\Dotfuscated\SyntactikMDAddin.dll" "$(ProjectDir)..\..\external\SyntactikMDBuild\AddIns\Syntactik\"
 if $(ConfigurationName) == Release copy /Y  "$(TargetDir)\Newton*.*" "$(ProjectDir)..\..\external\SyntactikMDBuild\AddIns\Syntactik\"
 if $(ConfigurationName) == Release copy /Y  "$(TargetDir)\log4*.*" "$(ProjectDir)..\..\external\SyntactikMDBuild\AddIns\Syntactik\"
+if $(ConfigurationName) == Release copy /Y  "$(TargetDir)\RestSharp*.*" "$(ProjectDir)..\..\external\SyntactikMDBuild\AddIns\Syntactik\"
 
 if $(ConfigurationName) == Release del "$(TargetDir)\SyntactikMDAddin.dll"
 if $(ConfigurationName) == Release copy /Y  "$(TargetDir)\Dotfuscated\SyntactikMDAddin.dll" "$(TargetDir)"

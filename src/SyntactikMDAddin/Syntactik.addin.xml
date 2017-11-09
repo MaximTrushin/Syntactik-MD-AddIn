@@ -191,7 +191,6 @@
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyAsXml" insertafter="MonoDevelop.Ide.Commands.EditCommands.Copy" />
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyDocAsXml" />
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteXml"  insertafter="MonoDevelop.Ide.Commands.EditCommands.Paste" />
-    <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteSyntactik" />
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyAsJson" insertafter="MonoDevelop.Ide.Commands.EditCommands.Copy" />
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.CopyDocAsJson" />
     <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.PasteJson"  insertafter="MonoDevelop.Ide.Commands.EditCommands.Paste" />

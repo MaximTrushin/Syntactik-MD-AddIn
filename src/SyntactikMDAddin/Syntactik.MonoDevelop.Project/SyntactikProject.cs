@@ -20,6 +20,7 @@ using Syntactik.Compiler.Pipelines;
 using Syntactik.Compiler.Steps;
 using Syntactik.DOM;
 using Syntactik.MonoDevelop.License;
+using Syntactik.MonoDevelop.Licensing;
 using Syntactik.MonoDevelop.Parser;
 using Syntactik.MonoDevelop.Util;
 
@@ -123,7 +124,7 @@ namespace Syntactik.MonoDevelop.Projects
             }
         }
 
-        private Licensing.License License => _license ?? (_license = new Licensing.License(GetLicenseFileName()));
+        internal Licensing.License License => _license ?? (_license = new Licensing.License(GetLicenseFileName()));
 
         private void ValidateLicense()
         {
@@ -324,24 +325,34 @@ namespace Syntactik.MonoDevelop.Projects
 
         protected override Task<BuildResult> DoBuild(ProgressMonitor monitor, ConfigurationSelector configuration)
         {
-            var projectConfig = (SyntactikProjectConfiguration)this.GetConfiguration(configuration);
-
-            try
+            if (License.RuntimeMode == Mode.Full)
             {
-                if (Directory.Exists(projectConfig.XMLOutputFolder))
+
+                var projectConfig = (SyntactikProjectConfiguration) this.GetConfiguration(configuration);
+
+                try
                 {
-                    Directory.Delete(projectConfig.XMLOutputFolder, true);
+                    if (Directory.Exists(projectConfig.XMLOutputFolder))
+                    {
+                        Directory.Delete(projectConfig.XMLOutputFolder, true);
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                LoggingService.LogError("Unhandled exception in SyntactikProject.DoBuild().", ex);
-            }
+                catch (Exception ex)
+                {
+                    LoggingService.LogError("Unhandled exception in SyntactikProject.DoBuild().", ex);
+                }
 
-            var compilerParameters = CreateCompilerParameters(projectConfig.XMLOutputFolder, GetProjectFiles(this));
-            var compiler = new SyntactikCompiler(compilerParameters);
-            var context = compiler.Run();
-            return Task.FromResult(GetBuildResult(context));
+                var compilerParameters = CreateCompilerParameters(projectConfig.XMLOutputFolder, GetProjectFiles(this));
+                var compiler = new SyntactikCompiler(compilerParameters);
+                var context = compiler.Run();
+                return Task.FromResult(GetBuildResult(context));
+            }
+            else
+            {
+                var result = new BuildResult();
+                result.AddError("Cannot compile in Demo Mode");
+                return Task.FromResult(result);
+            }
         }
 
         private BuildResult GetBuildResult(CompilerContext context)

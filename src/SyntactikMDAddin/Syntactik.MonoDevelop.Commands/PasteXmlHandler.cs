@@ -13,6 +13,7 @@ using Syntactik.DOM.Mapped;
 using Syntactik.MonoDevelop.Completion;
 using Syntactik.MonoDevelop.Converter;
 using Syntactik.MonoDevelop.DisplayBinding;
+using Syntactik.MonoDevelop.Licensing;
 using Syntactik.MonoDevelop.Projects;
 using Module = Syntactik.DOM.Module;
 using NamespaceDefinition = Syntactik.DOM.NamespaceDefinition;
@@ -196,7 +197,7 @@ namespace Syntactik.MonoDevelop.Commands
         {
             info.Enabled = false;
             var doc = IdeApp.Workbench.ActiveDocument;
-            if (doc == null)
+            if (doc == null || ((SyntactikProject)doc.Project).License.RuntimeMode == Mode.Demo)
             {
                 info.Bypass = true;
                 return;

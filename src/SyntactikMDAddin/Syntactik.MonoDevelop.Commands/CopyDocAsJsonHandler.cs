@@ -1,6 +1,8 @@
 ﻿using MonoDevelop.Components.Commands;
 using MonoDevelop.Ide;
 using Syntactik.Compiler;
+using Syntactik.MonoDevelop.Licensing;
+using Syntactik.MonoDevelop.Projects;
 using Document = Syntactik.DOM.Document;
 
 namespace Syntactik.MonoDevelop.Commands
@@ -20,7 +22,7 @@ namespace Syntactik.MonoDevelop.Commands
         {
             info.Enabled = false;
             var doc = IdeApp.Workbench.ActiveDocument;
-            if (doc == null)
+            if (doc == null || ((SyntactikProject)doc.Project).License.RuntimeMode == Mode.Demo)
             {
                 info.Bypass = true;
                 return;

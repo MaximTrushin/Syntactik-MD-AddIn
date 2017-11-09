@@ -21,6 +21,7 @@ using Syntactik.DOM.Mapped;
 using Syntactik.IO;
 using Syntactik.MonoDevelop.Completion.DOM;
 using Syntactik.MonoDevelop.DisplayBinding;
+using Syntactik.MonoDevelop.Licensing;
 using Syntactik.MonoDevelop.Parser;
 using Syntactik.MonoDevelop.Projects;
 using Syntactik.MonoDevelop.Schemas;
@@ -164,12 +165,26 @@ namespace Syntactik.MonoDevelop.Completion
         private async Task<ICompletionDataList> GetCompletionListAsync(CodeCompletionContext completionContext,
             CancellationToken token, int triggerWordLength)
         {
+            if (GetLicenseMode() == Mode.Demo)
+            {
+                var empty = new CompletionDataList();
+                var data = empty.Add("Not supported in Demo mode.");
+                data.CompletionText = string.Empty;
+                data.CompletionCategory = new SyntactikCompletionCategory {DisplayText = ""};
+                return empty;
+            }
+
             CompletionContext context = await GetCompletionContextAsync(token, Editor.Version, Editor.CaretOffset,
                    Editor.FileName, Editor.Text, ((SyntactikProject)DocumentContext.Project).GetAliasDefinitionList);
             context.CalculateExpectations();
             return GetCompletionList(context, completionContext, triggerWordLength,
                 ((SyntactikProject)DocumentContext.Project).GetAliasDefinitionList,
                 (DocumentContext.Project as SyntactikXmlProject)?.SchemasRepository);
+        }
+
+        Mode GetLicenseMode()
+        {
+            return ((SyntactikProject)DocumentContext.Project).License.RuntimeMode;
         }
 
         internal Task<CompletionContext> GetCompletionContextAsync(CancellationToken token, ITextSourceVersion version, int caretOffset, string fileName, string text, Func<Dictionary<string, Syntactik.DOM.AliasDefinition>> getAliasDefinitionList)
