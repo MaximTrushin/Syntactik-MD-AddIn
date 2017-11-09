@@ -6,7 +6,7 @@ namespace Syntactik.MonoDevelop.Projects
 {
 
     [ProjectModelDataItem]
-    public class SyntactikProjectConfiguration : ProjectConfiguration
+    class SyntactikProjectConfiguration : ProjectConfiguration
     {
         [ItemProperty("XMLOutputFolder")]
         string _xmlOutputFolder = "";

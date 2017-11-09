@@ -5,7 +5,8 @@ using Syntactik.Compiler;
 
 namespace Syntactik.MonoDevelop.Commands
 {
-    public class CopyAsJsonHandler : CopyAsXmlHandler  //TODO: Unit tests
+
+    class CopyAsJsonHandler : CopyAsXmlHandler  //TODO: Unit tests 
     {
 
         protected override CompilerParameters CreateCompilerParameters(CompilerContext projectCompilerContext, ISegment textEditorSelectionRange)

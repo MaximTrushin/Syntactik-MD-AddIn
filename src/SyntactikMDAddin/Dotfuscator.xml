@@ -23,6 +23,32 @@
       <namespace name="IO.Swagger.Model" />
       <namespace name="Rhino.Licensing" />
       <namespace name="Stetic" />
+      <type name="Syntactik.MonoDevelop.Commands.CopyAsJsonHandler" />
+      <type name="Syntactik.MonoDevelop.Commands.CopyAsXmlHandler" />
+      <type name="Syntactik.MonoDevelop.Commands.CopyDocAsJsonHandler" />
+      <type name="Syntactik.MonoDevelop.Commands.CopyDocAsXmlHandler" />
+      <type name="Syntactik.MonoDevelop.Commands.CopyDocAsXmlHandler/&lt;&gt;c" />
+      <type name="Syntactik.MonoDevelop.Commands.LicenseInfoHandler" />
+      <type name="Syntactik.MonoDevelop.Commands.PasteJsonHandler" />
+      <type name="Syntactik.MonoDevelop.Commands.PasteXmlHandler" />
+      <type name="Syntactik.MonoDevelop.Initializer" />
+      <type name="Syntactik.MonoDevelop.Completion.SyntactikCompletionTextEditorExtension" />
+      <type name="Syntactik.MonoDevelop.DisplayBinding.CompileErrorTooltipProvider" />
+      <type name="Syntactik.MonoDevelop.DisplayBinding.SyntactikDisplayBinding" />
+      <type name="Syntactik.MonoDevelop.DisplayBinding.SyntactikViewCommandHandler" />
+      <type name="Syntactik.MonoDevelop.Formatting.SyntactikTextEditorIndentation" />
+      <type name="Syntactik.MonoDevelop.Highlighting.HighlightUsagesExtension" />
+      <type name="Syntactik.MonoDevelop.NodeBuilders.ProjectNodeBuilder" />
+      <type name="Syntactik.MonoDevelop.NodeBuilders.SchemaFolderNodeBuilder" />
+      <type name="Syntactik.MonoDevelop.NodeBuilders.SchemaFolderNodeBuilderExtension" />
+      <type name="Syntactik.MonoDevelop.Parser.ErrorHandlerTextEditorExtension" />
+      <type name="Syntactik.MonoDevelop.Parser.TypeSystemParser" />
+      <type name="Syntactik.MonoDevelop.Projects.CompilerOptionsPanel" />
+      <type name="Syntactik.MonoDevelop.Projects.SyntactikJsonProject" />
+      <type name="Syntactik.MonoDevelop.Projects.SyntactikProject" />
+      <type name="Syntactik.MonoDevelop.Projects.SyntactikProjectRunConfigurationEditor" />
+      <type name="Syntactik.MonoDevelop.Projects.SyntactikXmlProject" />
+      <type name="Syntactik.MonoDevelop.WelcomePage.WelcomePageProvider" />
     </excludelist>
     <mapping>
       <mapoutput overwrite="false">

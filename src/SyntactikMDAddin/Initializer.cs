@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MonoDevelop.Components.Commands;
+﻿using MonoDevelop.Components.Commands;
 using MonoDevelop.Core;
 using MonoDevelop.Ide;
 using MonoDevelop.Ide.Commands;
@@ -27,7 +22,7 @@ namespace Syntactik.MonoDevelop
         [CommandUpdateHandler("MonoDevelop.Ide.Updater.UpdateCommands.CheckForUpdates")]
         public void OnCheckForUpdatesUpdate(CommandInfo cinfo)
         {
-            base.Update(cinfo);
+            Update(cinfo);
             if (BrandingService.ApplicationName == "Syntactik Editor")
                 cinfo.Visible = false;
         }
