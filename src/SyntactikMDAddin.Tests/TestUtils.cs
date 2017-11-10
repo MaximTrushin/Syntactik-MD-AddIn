@@ -15,12 +15,16 @@ using Syntactik.Compiler.IO;
 using Syntactik.Compiler.Pipelines;
 using Syntactik.DOM;
 using Syntactik.MonoDevelop.Completion;
-using Syntactik.MonoDevelop.Converter;
 using Syntactik.MonoDevelop.Highlighting;
 using Syntactik.MonoDevelop.Projects;
-using Syntactik.MonoDevelop.Schemas;
 using CompilerParameters = Syntactik.Compiler.CompilerParameters;
 using Module = Syntactik.DOM.Module;
+#if DEBUG
+using Syntactik.MonoDevelop.Converter;
+using Syntactik.MonoDevelop.Schemas;
+#endif
+
+
 
 namespace SyntactikMDAddin.Tests
 {
