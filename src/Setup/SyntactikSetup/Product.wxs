@@ -8,7 +8,7 @@
 		<MediaTemplate  EmbedCab="yes"/>
 
 		<Feature Id="ProductFeature" Title="SyntactikSetup" Level="1">
-			<ComponentGroupRef Id="ProductComponents" />
+			<ComponentGroupRef Id="SyntactikBranding" />
       <ComponentGroupRef Id="SyntactikMDBuildAddins"/>
       <ComponentGroupRef Id="SyntactikMDBuildBin"/>
       <ComponentGroupRef Id="SyntactikMDBuildData"/>
@@ -53,14 +53,15 @@
     </DirectoryRef>
 	</Product>
   
-	<Fragment>
-		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-		</ComponentGroup>
-	</Fragment>
-
+  <Fragment>
+    <DirectoryRef Id="BinDirectory">
+      <Directory Id="BrandingDirectory" Name="Branding">
+      </Directory>
+    </DirectoryRef>
+  </Fragment>
   <Fragment>
     <DirectoryRef Id="INSTALLFOLDER">
-      <Directory Id="dirAFDAF728BEE9EB6FBA2AC55E7EBD76C1" Name="Bin">
+      <Directory Id="BinDirectory" Name="Bin">
         <Component Id="cmp2395E2E3BE9EF4E0F1FF2D16A806AA5F" Guid="*">
           <File Id="fil4F4D02DD680FCFBB369E7328D1D37F8C" KeyPath="yes" Source="$(var.FolderBin)\atk-sharp.dll" />
         </Component>

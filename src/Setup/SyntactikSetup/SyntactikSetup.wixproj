@@ -34,6 +34,12 @@
     <MyFolderData Condition=" '$(MyFolderData)' == '' ">$(MSBuildProjectDirectory)\..\..\..\external\SyntactikMDBuild\Data</MyFolderData>
     <DefineConstants>$(DefineConstants);FolderData=$(MyFolderData)</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup>
+    <MyFolderBranding Condition=" '$(MyFolderBranding)' == '' ">$(MSBuildProjectDirectory)\..\..\..\branding\branding</MyFolderBranding>
+    <DefineConstants>$(DefineConstants);FolderBranding=$(MyFolderBranding)</DefineConstants>
+  </PropertyGroup>  
+  
+  
   <!--
   <PropertyGroup>
     <MyFolderSyntactik Condition=" '$(MyFolderSyntactik)' == '' ">$(MSBuildProjectDirectory)\external\Syntactik</MyFolderSyntactik>
@@ -103,6 +109,17 @@
         <PreprocessorVariable>var.FolderData</PreprocessorVariable>
       </HarvestDirectory>
     </ItemGroup>
+    <ItemGroup>
+      <HarvestDirectory Include="$(MyFolderBranding)">
+        <DirectoryRefId>BrandingDirectory</DirectoryRefId>
+        <SuppressRootDirectory>true</SuppressRootDirectory>
+        <SuppressCom>true</SuppressCom>
+        <SuppressRegistry>true</SuppressRegistry>
+        <ComponentGroupName>SyntactikBranding</ComponentGroupName>
+        <PreprocessorVariable>var.FolderBranding</PreprocessorVariable>
+      </HarvestDirectory>
+    </ItemGroup>	
+	
     <!--
     <ItemGroup>
       <HarvestDirectory Include="$(MyFolderSyntactik)">
