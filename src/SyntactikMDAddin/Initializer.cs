@@ -41,5 +41,21 @@ namespace Syntactik.MonoDevelop
                 cinfo.Bypass = true;
             }
         }
+
+        [CommandHandler(HelpCommands.Help)]
+        public void HelpResolver()
+        {
+            //widget.MonodocResolver();
+        }
+
+        [CommandUpdateHandler(HelpCommands.Help)]
+        public void HelpResolverUpdate(CommandInfo cinfo)
+        {
+            if (BrandingService.ApplicationName != "Syntactik Editor")
+            {
+                cinfo.Bypass = true;
+            }
+            //widget.MonodocResolverUpdate(cinfo);
+        }
     }
 }
