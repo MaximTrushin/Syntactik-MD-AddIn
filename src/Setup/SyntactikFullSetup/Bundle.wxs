@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:bal="http://schemas.microsoft.com/wix/BalExtension">
-	<Bundle Name="Syntactik Editor" Version="!(bind.packageVersion.Syntactik)" Manufacturer="Syntactik Ltd." UpgradeCode="CB50FDE4-7FA7-4A5A-93ED-73ECE9E6EC3D">
+	<Bundle Name="Syntactik Editor" Version="!(bind.packageVersion.Syntactik)" Manufacturer="Syntactik, LLC" UpgradeCode="CB50FDE4-7FA7-4A5A-93ED-73ECE9E6EC3D">
     <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLicense">
       <bal:WixStandardBootstrapperApplication
 				SuppressOptionsUI="yes"

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="B24801AF-E76E-45D5-942C-6DD8F3B71746" Name="Syntactik Editor" Language="1033" Version="!(bind.FileVersion.SyntactikMDAddin.dll)" Manufacturer="Syntactik Ltd." UpgradeCode="CB50FDE4-7FA7-4A5A-93ED-73ECE9E6EC3D">
+	<Product Id="*" Name="Syntactik Editor" Language="1033" Version="!(bind.FileVersion.SyntactikMDAddin.dll)" Manufacturer="Syntactik, LLC" UpgradeCode="CB50FDE4-7FA7-4A5A-93ED-73ECE9E6EC3D">
 		<Package Id="*" Keywords='Installer' Description="Syntactik Editor 0.1 Installer"
         Comments='Syntactik Editor.' Manufacturer='Syntactik Ltd.' InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
 
-		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MajorUpgrade AllowDowngrades="no" AllowSameVersionUpgrades="no" DowngradeErrorMessage="A newer version of [ProductName] is already installed." Schedule="afterInstallInitialize" />
 		<MediaTemplate  EmbedCab="yes"/>
 
 		<Feature Id="ProductFeature" Title="SyntactikSetup" Level="1">
