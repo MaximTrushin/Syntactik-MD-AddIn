@@ -1,0 +1,1110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="B24801AF-E76E-45D5-942C-6DD8F3B71746" Name="Syntactik Editor" Language="1033" Version="!(bind.FileVersion.SyntactikMDAddin.dll)" Manufacturer="Syntactik Ltd." UpgradeCode="CB50FDE4-7FA7-4A5A-93ED-73ECE9E6EC3D">
+		<Package Id="*" Keywords='Installer' Description="Syntactik Editor 0.1 Installer"
+        Comments='Syntactik Editor.' Manufacturer='Syntactik Ltd.' InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate  EmbedCab="yes"/>
+
+		<Feature Id="ProductFeature" Title="SyntactikSetup" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+      <ComponentGroupRef Id="SyntactikMDBuildAddins"/>
+      <ComponentGroupRef Id="SyntactikMDBuildBin"/>
+      <ComponentGroupRef Id="SyntactikMDBuildData"/>
+      <ComponentGroupRef Id="SyntactikMDAddin"/>
+    </Feature>
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="Syntactik">
+          <Directory Id="AddinsFolder" Name="Addins">
+            
+          </Directory>
+        </Directory>
+      </Directory>
+      <Directory Id="DesktopFolder" Name="Desktop" />
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="Syntactik"/>
+      </Directory>
+    </Directory>
+    
+    <DirectoryRef Id="ApplicationProgramsFolder">
+      <Component Id="ApplicationShortcutSm" Guid="9700E87A-1B7D-450A-91FA-90CBCDD6DA15">
+        <Shortcut Id="ApplicationStartMenuShortcut"
+                  Name="Syntactik Editor"
+                  Description="Syntactik Editor"
+                  Target="[#fil8FE9E0A17C07C11669A2C81782A5B31C]"
+                  WorkingDirectory="APPLICATIONROOTDIRECTORY"/>
+        <RegistryValue Root="HKCU" Key="Software\Syntactik\Editor" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+        
+        <RemoveFolder Id="CleanUpShortCut" Directory="ApplicationProgramsFolder" On="uninstall"/>
+      </Component>
+    </DirectoryRef>
+    <DirectoryRef Id="DesktopFolder">
+        <Component Id="ApplicationShortcutDt" Guid="F8FB6DAE-7D21-49C7-AD69-A9F3DA0E362B">
+          <Shortcut Id="ApplicationDesktopShortcut"
+                    Name="Syntactik Editor"
+                    Description="Syntactik Editor"
+                    Target="[#fil8FE9E0A17C07C11669A2C81782A5B31C]"
+                    WorkingDirectory="APPLICATIONROOTDIRECTORY"/>
+          <RegistryValue Root="HKCU" Key="Software\Syntactik\Editor" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+        </Component>
+    </DirectoryRef>
+	</Product>
+  
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+		</ComponentGroup>
+	</Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="INSTALLFOLDER">
+      <Directory Id="dirAFDAF728BEE9EB6FBA2AC55E7EBD76C1" Name="Bin">
+        <Component Id="cmp2395E2E3BE9EF4E0F1FF2D16A806AA5F" Guid="*">
+          <File Id="fil4F4D02DD680FCFBB369E7328D1D37F8C" KeyPath="yes" Source="$(var.FolderBin)\atk-sharp.dll" />
+        </Component>
+        <Component Id="cmpB607C38B83799092BEF8F2B893E1E8EA" Guid="*">
+          <File Id="fil59128C6B8D2C69DA9008B64A2E407F71" KeyPath="yes" Source="$(var.FolderBin)\atk-sharp.pdb" />
+        </Component>
+        <Component Id="cmp8EC894BAA3BE43EEDA1CCE999999C2C6" Guid="*">
+          <File Id="fil6D321BB7AD7D02433392D62C95C211B2" KeyPath="yes" Source="$(var.FolderBin)\buildinfo" />
+        </Component>
+        <Component Id="cmp58F0AE0B9CCDD689E14D5B259211CBAC" Guid="*">
+          <File Id="fil8A6189D163F4837966207F4BF7583B38" KeyPath="yes" Source="$(var.FolderBin)\buildlibrarypackage.cmd" />
+        </Component>
+        <Component Id="cmp0D7152DFC12FB06D09299F313DCC2625" Guid="*">
+          <File Id="fil2641F3A90DABAEFE18ED8DF6A911C4A4" KeyPath="yes" Source="$(var.FolderBin)\buildpackage.cmd" />
+        </Component>
+        <Component Id="cmp048B5AE6594284DEFB6CACA40325D43E" Guid="*">
+          <File Id="filAE8EB35639399D566B751F4FF21847E2" KeyPath="yes" Source="$(var.FolderBin)\gdk-sharp.dll" />
+        </Component>
+        <Component Id="cmp47AC5DC08EE2D5BABBE5DE26D0B559B3" Guid="*">
+          <File Id="filF04F6F3F28A31F5ADB3BF083975825CF" KeyPath="yes" Source="$(var.FolderBin)\gdk-sharp.pdb" />
+        </Component>
+        <Component Id="cmpFA8AA0B8C7C218A1EBB282191ECE5BF6" Guid="*">
+          <File Id="filEB089CF7EBEEC567EF3A44632E884504" KeyPath="yes" Source="$(var.FolderBin)\glade-sharp.dll" />
+        </Component>
+        <Component Id="cmpF3876CB590F67114CE6B7838ACC6D1CA" Guid="*">
+          <File Id="fil0FD8885FF6384AD6D8A1D46E5B1516AB" KeyPath="yes" Source="$(var.FolderBin)\glade-sharp.pdb" />
+        </Component>
+        <Component Id="cmpBD061D3BDB19F6C2069A559B77FDE2DE" Guid="*">
+          <File Id="fil3F2B219E07DE9C5501232BB779B31D6A" KeyPath="yes" Source="$(var.FolderBin)\glib-sharp.dll" />
+        </Component>
+        <Component Id="cmp1200FAB97ABB524C25FF780380CC17BC" Guid="*">
+          <File Id="fil9757BD3ED0A7CE963426D2A3014502EA" KeyPath="yes" Source="$(var.FolderBin)\glib-sharp.pdb" />
+        </Component>
+        <Component Id="cmp980BBF6A1A64D4CE3ABB62AAE2B5E82C" Guid="*">
+          <File Id="filDF5A0BF495787F160F064055F631C273" KeyPath="yes" Source="$(var.FolderBin)\gtk-sharp.dll" />
+        </Component>
+        <Component Id="cmp25F0A7CD1BE614D8BAE905232BA7BBDB" Guid="*">
+          <File Id="fil0A07402B3EEF32B700DD08EF9D5962BA" KeyPath="yes" Source="$(var.FolderBin)\gtkrc" />
+        </Component>
+        <Component Id="cmp981D6E049C6FBAC585C36A0DEF3B9A53" Guid="*">
+          <File Id="fil1C517C5C1851786D7318330D2FB35025" KeyPath="yes" Source="$(var.FolderBin)\gtkrc.mac" />
+        </Component>
+        <Component Id="cmp3AD5C7B86F514F34798C7AE547E17F9E" Guid="*">
+          <File Id="fil64269D01AAA6AF7707E65F874FBF7760" KeyPath="yes" Source="$(var.FolderBin)\gtkrc.mac-dark" />
+        </Component>
+        <Component Id="cmp5D4219E3E9CA46F5ACE49AD9CF9CD2CA" Guid="*">
+          <File Id="filC2540B69D688C09E7223AE67FE209A45" KeyPath="yes" Source="$(var.FolderBin)\gtkrc.win32" />
+        </Component>
+        <Component Id="cmp1D3B4234FFEEA991AF3A0E79265100F6" Guid="*">
+          <File Id="fil7EAAC6C9DE82F93454A7FD2E6AF88DED" KeyPath="yes" Source="$(var.FolderBin)\gtkrc.win32-dark" />
+        </Component>
+        <Component Id="cmpD003AF8C475E6673DA5C463FF1FD959C" Guid="*">
+          <File Id="filE93D1D7E5AA022C3999937A4938A7157" KeyPath="yes" Source="$(var.FolderBin)\ICSharpCode.Decompiler.dll" />
+        </Component>
+        <Component Id="cmp5338802ADA2295FDBE59036E44F3997D" Guid="*">
+          <File Id="fil8DD42E13EDFB40BBA3617B18CD4E962F" KeyPath="yes" Source="$(var.FolderBin)\ICSharpCode.Decompiler.pdb" />
+        </Component>
+        <Component Id="cmp74A91B96FB2EAFD077B6F93B480F935F" Guid="*">
+          <File Id="fil405D413A00989EAF80C538206BCDA1FE" KeyPath="yes" Source="$(var.FolderBin)\ICSharpCode.NRefactory.Cecil.dll" />
+        </Component>
+        <Component Id="cmp150C48BE8FBEEE35926F41BCAFE24B7B" Guid="*">
+          <File Id="fil189FD3D9F36B810C908C5DD3802D8DCC" KeyPath="yes" Source="$(var.FolderBin)\ICSharpCode.NRefactory.Cecil.pdb" />
+        </Component>
+        <Component Id="cmpD62315C059BA7406DDF3117CAFEEC515" Guid="*">
+          <File Id="filC2F6E44FEF6D3FC9EA1EBDDC93AE7B9F" KeyPath="yes" Source="$(var.FolderBin)\ICSharpCode.NRefactory.Cecil.xml" />
+        </Component>
+        <Component Id="cmpE88B1AA1BA40C47343B5390E416C612B" Guid="*">
+          <File Id="fil404F5D0B3F36A4284FBD8B9749F472E4" KeyPath="yes" Source="$(var.FolderBin)\ICSharpCode.NRefactory.CSharp.dll" />
+        </Component>
+        <Component Id="cmp9ABE0A6FE7411EF7E60F6DC403BD4AD1" Guid="*">
+          <File Id="filC216B73FC09621BBFC178B32E424E594" KeyPath="yes" Source="$(var.FolderBin)\ICSharpCode.NRefactory.CSharp.pdb" />
+        </Component>
+        <Component Id="cmp16012146B7F7620F0C9E935C417405FA" Guid="*">
+          <File Id="fil72C901F445B7662D190B14C47C335C35" KeyPath="yes" Source="$(var.FolderBin)\ICSharpCode.NRefactory.CSharp.xml" />
+        </Component>
+        <Component Id="cmpE85922D2A8F0BB5B85C195AD4F2256F5" Guid="*">
+          <File Id="filCE7E3297C2717BB27A7764A1A552A2A1" KeyPath="yes" Source="$(var.FolderBin)\ICSharpCode.NRefactory.dll" />
+        </Component>
+        <Component Id="cmpFB3DEF3322535DDF3392D01115894F7D" Guid="*">
+          <File Id="filC88D9FB51AD4B9F5916DD1160D750A8B" KeyPath="yes" Source="$(var.FolderBin)\ICSharpCode.NRefactory.IKVM.dll" />
+        </Component>
+        <Component Id="cmp6EA189AFC150E6E05D8A980CBCAE9099" Guid="*">
+          <File Id="fil53722612E678B326F60D32C3BE7A225B" KeyPath="yes" Source="$(var.FolderBin)\ICSharpCode.NRefactory.IKVM.pdb" />
+        </Component>
+        <Component Id="cmp73DCCB5AA1B3F581969E9A87F3A8BBB0" Guid="*">
+          <File Id="fil9BC8F7916E18068131EFD3EC0FCC2D8C" KeyPath="yes" Source="$(var.FolderBin)\ICSharpCode.NRefactory.pdb" />
+        </Component>
+        <Component Id="cmp9EE5DE4796F509CECA2441E8F537170C" Guid="*">
+          <File Id="filBB4B568EC51203E96229D298F47B411E" KeyPath="yes" Source="$(var.FolderBin)\ICSharpCode.NRefactory.xml" />
+        </Component>
+        <Component Id="cmp9701C99C0751C37291C7AA23688EA3EE" Guid="*">
+          <File Id="fil0E591CF0F552C9F59A07538F0495FF8D" KeyPath="yes" Source="$(var.FolderBin)\IKVM.Reflection.dll" />
+        </Component>
+        <Component Id="cmpC5380FEB03BA5611D270C9DF84F34082" Guid="*">
+          <File Id="filCFC94E09174AE042098C002F28C50498" KeyPath="yes" Source="$(var.FolderBin)\IKVM.Reflection.pdb" />
+        </Component>
+        <Component Id="cmp81754A6C468EF72E5A131160631737C3" Guid="*">
+          <File Id="filC7C3A4719DAAF335389892850F56DCD9" KeyPath="yes" Source="$(var.FolderBin)\mdhost.exe" />
+        </Component>
+        <Component Id="cmp7DEBFFD85C887219132B64AE5E17AB65" Guid="*">
+          <File Id="fil293044A55D11A0E3BFD7D29850763902" KeyPath="yes" Source="$(var.FolderBin)\mdhost.exe.config" />
+        </Component>
+        <Component Id="cmpB0F7968E48341B20C650873B8C04F09A" Guid="*">
+          <File Id="fil7EE1C9DBC3EFDC9396D2D6DC0A31F069" KeyPath="yes" Source="$(var.FolderBin)\mdhost.pdb" />
+        </Component>
+        <Component Id="cmp92033287ACF5B357917305BF69E55FEF" Guid="*">
+          <File Id="filCB6CBE9744D87CCBF4C21A8DAA6A861A" KeyPath="yes" Source="$(var.FolderBin)\mdhost.xml" />
+        </Component>
+        <Component Id="cmp36342F110A33E7EC1FE58BB370EA508A" Guid="*">
+          <File Id="fil6C6DD2937C171DD0F1EEF0F9BBEA3F9F" KeyPath="yes" Source="$(var.FolderBin)\mdmonitor.exe" />
+        </Component>
+        <Component Id="cmp1E0E67B89BEAB928892DED55288C8FB9" Guid="*">
+          <File Id="fil4BBEAA85C5A6801BD2373008455B40CF" KeyPath="yes" Source="$(var.FolderBin)\mdmonitor.pdb" />
+        </Component>
+        <Component Id="cmp372BBD8DFBF5BAFD7A099456D2C0AF06" Guid="*">
+          <File Id="fil438355B46698E050021EC5F8017F14C4" KeyPath="yes" Source="$(var.FolderBin)\mdmonitor.xml" />
+        </Component>
+        <Component Id="cmp5616F4D70361C788540C594DBC394909" Guid="*">
+          <File Id="fil5EBB7CCA74A65BDB95B12B8E1FE8D3E8" KeyPath="yes" Source="$(var.FolderBin)\mdtool.exe" />
+        </Component>
+        <Component Id="cmpED6D725A10C6FF8B67E044321464C51B" Guid="*">
+          <File Id="fil79C1B9CEA21F61ACA0498E59B22D28C8" KeyPath="yes" Source="$(var.FolderBin)\mdtool.exe.config" />
+        </Component>
+        <Component Id="cmp95C35C3E44662B347C744CAF8435A3BC" Guid="*">
+          <File Id="fil69665E9DBC631E699598D9C38232CC1F" KeyPath="yes" Source="$(var.FolderBin)\mdtool.pdb" />
+        </Component>
+        <Component Id="cmpE0DFA0CF6E44C1FB305F1DAA7607E1E9" Guid="*">
+          <File Id="filC7CC6F6DE1A82EF95CB1FE2410860582" KeyPath="yes" Source="$(var.FolderBin)\mdtool.xml" />
+        </Component>
+        <Component Id="cmpDA67B1B6A5440DFC58420AFE1FCF414C" Guid="*">
+          <File Id="fil049ACA3AD84D9624FC13EF6479E11C5E" KeyPath="yes" Source="$(var.FolderBin)\Microsoft.CodeAnalysis.CSharp.dll" />
+        </Component>
+        <Component Id="cmp23F693B0545793718886BCD9DAE3C42D" Guid="*">
+          <File Id="fil4C2156CAB95A9A34CAF0E270F95472F9" KeyPath="yes" Source="$(var.FolderBin)\Microsoft.CodeAnalysis.CSharp.Features.dll" />
+        </Component>
+        <Component Id="cmp31B22F759352C4EC9F467870FED9A936" Guid="*">
+          <File Id="fil52E2A9A27CB2FB19E1DF5E198BA52782" KeyPath="yes" Source="$(var.FolderBin)\Microsoft.CodeAnalysis.CSharp.pdb" />
+        </Component>
+        <Component Id="cmpF334801B5C224197D798C9F352C82E9A" Guid="*">
+          <File Id="fil8CF5B2E8B472D714E6F13F5B6E6913CD" KeyPath="yes" Source="$(var.FolderBin)\Microsoft.CodeAnalysis.CSharp.Workspaces.dll" />
+        </Component>
+        <Component Id="cmp9DF6169A7B9102B71DB00F8EFF875ECE" Guid="*">
+          <File Id="fil36C5B04407F81411AE2994E3105D8711" KeyPath="yes" Source="$(var.FolderBin)\Microsoft.CodeAnalysis.CSharp.Workspaces.pdb" />
+        </Component>
+        <Component Id="cmp4F7CC6078826FFA1BCF471D671B4F520" Guid="*">
+          <File Id="fil534EA70F3B9D54CD4B3DF79E4BFFC823" KeyPath="yes" Source="$(var.FolderBin)\Microsoft.CodeAnalysis.CSharp.Workspaces.xml" />
+        </Component>
+        <Component Id="cmp00FF3C395E2FDF7B3DD9667E03C8B539" Guid="*">
+          <File Id="fil674935C7C1028E77C71DDBFB33B6841A" KeyPath="yes" Source="$(var.FolderBin)\Microsoft.CodeAnalysis.CSharp.xml" />
+        </Component>
+        <Component Id="cmp81EC5E0C5874CBB969D7064387180878" Guid="*">
+          <File Id="filEF381934F84B2B7A2F5F1BB919E18A85" KeyPath="yes" Source="$(var.FolderBin)\Microsoft.CodeAnalysis.dll" />
+        </Component>
+        <Component Id="cmp31D1A0D3C954C9CDF61F6CDA19D6683C" Guid="*">
+          <File Id="filCCE36CE2E516423492727E42F8A044AB" KeyPath="yes" Source="$(var.FolderBin)\Microsoft.CodeAnalysis.Features.dll" />
+        </Component>
+        <Component Id="cmpF0C6BF5AD7C066C20256672C6889017A" Guid="*">
+          <File Id="fil47B1AAA0A283627E316E99A0C1D7233E" KeyPath="yes" Source="$(var.FolderBin)\Microsoft.CodeAnalysis.pdb" />
+        </Component>
+        <Component Id="cmp3CC5FBDA84FF6DFFDDE39E5633174B73" Guid="*">
+          <File Id="fil8633626B41FB3395B8382374EAD39D5D" KeyPath="yes" Source="$(var.FolderBin)\Microsoft.CodeAnalysis.VisualBasic.dll" />
+        </Component>
+        <Component Id="cmp395CCBDFA0508E5182B00997F4986F2D" Guid="*">
+          <File Id="filED66B7105156CC3EBC895B18862989DF" KeyPath="yes" Source="$(var.FolderBin)\Microsoft.CodeAnalysis.VisualBasic.pdb" />
+        </Component>
+        <Component Id="cmpB6AA4FAA894C6FD268A1CED3A03C14C1" Guid="*">
+          <File Id="fil986BD63B126F11474A7364E031E1A29E" KeyPath="yes" Source="$(var.FolderBin)\Microsoft.CodeAnalysis.VisualBasic.xml" />
+        </Component>
+        <Component Id="cmp33C9ABA1D49D7F445F6318AB40595E72" Guid="*">
+          <File Id="filFF350BCEE8F5AB35F4247C50BB8E746B" KeyPath="yes" Source="$(var.FolderBin)\Microsoft.CodeAnalysis.Workspaces.Desktop.dll" />
+        </Component>
+        <Component Id="cmpD3A418B4F78182CDDB54499A082F894B" Guid="*">
+          <File Id="fil897C42A959628FA012D2F609ABC5F9EE" KeyPath="yes" Source="$(var.FolderBin)\Microsoft.CodeAnalysis.Workspaces.dll" />
+        </Component>
+        <Component Id="cmpEA8009772B89EE11783B2FDB81FA93D2" Guid="*">
+          <File Id="fil28826C4789CD3C948DD0B92DB5437F17" KeyPath="yes" Source="$(var.FolderBin)\Microsoft.CodeAnalysis.Workspaces.pdb" />
+        </Component>
+        <Component Id="cmpB7457707EA0B7F31E67487E80965923F" Guid="*">
+          <File Id="filEC09EAA965E3EEBDBECB4AD77586DA05" KeyPath="yes" Source="$(var.FolderBin)\Microsoft.CodeAnalysis.Workspaces.xml" />
+        </Component>
+        <Component Id="cmp387C42E3290FE9D2EF6315751C02759E" Guid="*">
+          <File Id="filA62C851812F4CE64A6BBD6950B327946" KeyPath="yes" Source="$(var.FolderBin)\Microsoft.CodeAnalysis.xml" />
+        </Component>
+        <Component Id="cmpCAFA19A767BFD07048A867D19874E252" Guid="*">
+          <File Id="fil6510B5BDFEAA8F17EA4FDAF97F993B50" KeyPath="yes" Source="$(var.FolderBin)\Microsoft.DiaSymReader.Native.amd64.dll" />
+        </Component>
+        <Component Id="cmp44F6438CAE1148A590EBDC0422FA8045" Guid="*">
+          <File Id="fil3FF7C411A257CA13F69F7367FF971312" KeyPath="yes" Source="$(var.FolderBin)\Microsoft.DiaSymReader.Native.x86.dll" />
+        </Component>
+        <Component Id="cmp125C9871932B48A75225600661F8627E" Guid="*">
+          <File Id="fil5E85AEFE8F90649045A06EDCB2FEA39F" KeyPath="yes" Source="$(var.FolderBin)\Microsoft.WindowsAPICodePack.dll" />
+        </Component>
+        <Component Id="cmpEE549F53B9A1A9370951FAAFDAA7848A" Guid="*">
+          <File Id="fil7EC2E8DA1ADB7A598C21749291509380" KeyPath="yes" Source="$(var.FolderBin)\Microsoft.WindowsAPICodePack.pdb" />
+        </Component>
+        <Component Id="cmp4A6FB131AEC3951AD8EFDA0B832C8754" Guid="*">
+          <File Id="filFF7898659F0D1BC6FE7DEDFD2669E054" KeyPath="yes" Source="$(var.FolderBin)\Microsoft.WindowsAPICodePack.Shell.dll" />
+        </Component>
+        <Component Id="cmp6D49B24337DEE4EBB5AA1393E006B433" Guid="*">
+          <File Id="fil1169B4B0CFD256699626177B9362A31E" KeyPath="yes" Source="$(var.FolderBin)\Microsoft.WindowsAPICodePack.Shell.pdb" />
+        </Component>
+        <Component Id="cmp7EA54868FB9AFC46859D0B87FC7DC985" Guid="*">
+          <File Id="fil581EFA7AC7EBA807695AA45285185002" KeyPath="yes" Source="$(var.FolderBin)\Microsoft.WindowsAPICodePack.Shell.xml" />
+        </Component>
+        <Component Id="cmpD8A4B51AA7F5EC723B574C1EC45E173A" Guid="*">
+          <File Id="fil45716AF3D0F5A107BC35B6B63546875D" KeyPath="yes" Source="$(var.FolderBin)\Microsoft.WindowsAPICodePack.xml" />
+        </Component>
+        <Component Id="cmp8BF67948DDEC5D993B39EE3EFE9322C3" Guid="*">
+          <File Id="fil7C9B24C552D78A2CE06AFA7C7334763B" KeyPath="yes" Source="$(var.FolderBin)\Mono.Addins.CecilReflector.dll" />
+        </Component>
+        <Component Id="cmp254791E1304B2FEC6DE300710C7A5705" Guid="*">
+          <File Id="fil1A74594920627D884A654058C708AA27" KeyPath="yes" Source="$(var.FolderBin)\Mono.Addins.CecilReflector.pdb" />
+        </Component>
+        <Component Id="cmpCC90E516C6E75481967147CD2E2FEB17" Guid="*">
+          <File Id="filDDA76A59A6411E4F52DA3B0949D0FF56" KeyPath="yes" Source="$(var.FolderBin)\Mono.Addins.dll" />
+        </Component>
+        <Component Id="cmp9D57610EFEC0B857DF23CC5DDB847D7C" Guid="*">
+          <File Id="filA1DEC23D1FB1F53A0E578968EAF9D999" KeyPath="yes" Source="$(var.FolderBin)\Mono.Addins.Gui.dll" />
+        </Component>
+        <Component Id="cmpD7EFFDBFEC6E2948A768D52CCAFC2C2A" Guid="*">
+          <File Id="fil416055446EFB8AF9DEE9FE90FA87D38B" KeyPath="yes" Source="$(var.FolderBin)\Mono.Addins.Gui.pdb" />
+        </Component>
+        <Component Id="cmpD85C022CED26F2D0AEA9EE99995E9E69" Guid="*">
+          <File Id="fil5FCB9F4203D10B539527203EBE1E0C77" KeyPath="yes" Source="$(var.FolderBin)\Mono.Addins.pdb" />
+        </Component>
+        <Component Id="cmpF3FDC61144BD84FB4280C0E6026AAA3A" Guid="*">
+          <File Id="filA7B6B9D1985DB52966BF216C7F73399C" KeyPath="yes" Source="$(var.FolderBin)\Mono.Addins.Setup.dll" />
+        </Component>
+        <Component Id="cmpF5AE786094779BBE200F14629E6A6EB2" Guid="*">
+          <File Id="fil74A808D84E18CF85D03DC9CB53D1F964" KeyPath="yes" Source="$(var.FolderBin)\Mono.Addins.Setup.pdb" />
+        </Component>
+        <Component Id="cmpAF343A90CF20D77B942BE723F06748F1" Guid="*">
+          <File Id="fil0F0C6F27FE8A9F44291027935C8E89D3" KeyPath="yes" Source="$(var.FolderBin)\Mono.Addins.Setup.xml" />
+        </Component>
+        <Component Id="cmp9C2F99987D75B318700F6D7BCC1EAA2B" Guid="*">
+          <File Id="fil807C28D5B7BDAD5649A86FD79D747112" KeyPath="yes" Source="$(var.FolderBin)\Mono.Addins.xml" />
+        </Component>
+        <Component Id="cmp8D96377F33A188FA90984B208FC30854" Guid="*">
+          <File Id="fil9C58D6539604A68EDE6FA91043F43A97" KeyPath="yes" Source="$(var.FolderBin)\Mono.Cairo.dll" />
+        </Component>
+        <Component Id="cmp7D0E092D137CDF7C621A4DB7F5412E24" Guid="*">
+          <File Id="fil0DEE0EFC0DFC8645F46E82DC69DDF7F5" KeyPath="yes" Source="$(var.FolderBin)\Mono.Cecil.dll" />
+        </Component>
+        <Component Id="cmp84612F16CAC1F41694EA77B8259E6B05" Guid="*">
+          <File Id="filBD6C28DCC834A4F6D6F29682D694F299" KeyPath="yes" Source="$(var.FolderBin)\Mono.Cecil.Mdb.dll" />
+        </Component>
+        <Component Id="cmp22307872E81DC2E4A0A2F8889BDEA2D9" Guid="*">
+          <File Id="fil2B0A723FFA681FC75D80334512572508" KeyPath="yes" Source="$(var.FolderBin)\Mono.Cecil.Mdb.pdb" />
+        </Component>
+        <Component Id="cmp3191C5AA3806130ADBB0E1C497686D3D" Guid="*">
+          <File Id="fil3E5E049819121B14326EFA8028CC286F" KeyPath="yes" Source="$(var.FolderBin)\Mono.Cecil.pdb" />
+        </Component>
+        <Component Id="cmpDA0F5B6D0ACC9C68B2B1DB7F0B2469B6" Guid="*">
+          <File Id="fil5A81543247442EB052B213B2CD03FAC8" KeyPath="yes" Source="$(var.FolderBin)\Mono.Cecil.Pdb.dll" />
+        </Component>
+        <Component Id="cmp0F7B5BA732856024168861A4D95BE4A1" Guid="*">
+          <File Id="fil0365A668DA0FD3D1CD5B12E32CAC18DE" KeyPath="yes" Source="$(var.FolderBin)\Mono.Cecil.Pdb.pdb" />
+        </Component>
+        <Component Id="cmp049315058DCCE0F5587BA1CBEF9538A3" Guid="*">
+          <File Id="fil1F117C6D54E43239C183AF5776C5D297" KeyPath="yes" Source="$(var.FolderBin)\Mono.Debugging.dll" />
+        </Component>
+        <Component Id="cmpA129131773EE3D71F78CA91B368F61A9" Guid="*">
+          <File Id="filC2BC3CF21949747E0B67175541498990" KeyPath="yes" Source="$(var.FolderBin)\Mono.Debugging.pdb" />
+        </Component>
+        <Component Id="cmpB8F8242ECCE2E16B361BD092498C9BB5" Guid="*">
+          <File Id="filB97A4368384D386C06A9FDD7040852E1" KeyPath="yes" Source="$(var.FolderBin)\Mono.Debugging.xml" />
+        </Component>
+        <Component Id="cmp3F6ACBD33464B835F8BAB59E2AA212AE" Guid="*">
+          <File Id="fil1B2CCF46E3553F7465B8595879B5EC64" KeyPath="yes" Source="$(var.FolderBin)\Mono.Posix.dll" />
+        </Component>
+        <Component Id="cmpF72F3B7CC5F4D638EC1E37C1E7EBAB09" Guid="*">
+          <File Id="fil083FD047FD927AB11BB48B89C86B81C4" KeyPath="yes" Source="$(var.FolderBin)\Mono.TextEditor.dll" />
+        </Component>
+        <Component Id="cmp24D3EC3C7C47FC42EE560D2EA047B332" Guid="*">
+          <File Id="fil158E3647D0118C0AD4FA479757C0D7F2" KeyPath="yes" Source="$(var.FolderBin)\Mono.TextEditor.dll.config" />
+        </Component>
+        <Component Id="cmp6AFFD4BE20E7F8454C36EE66FCD8FF1E" Guid="*">
+          <File Id="fil0904772D71EC284F9FDEB2B6CD776C04" KeyPath="yes" Source="$(var.FolderBin)\Mono.TextEditor.pdb" />
+        </Component>
+        <Component Id="cmp9F691D634B87838AF8F8624CF6CD072A" Guid="*">
+          <File Id="fil33545A53751512FA59EE4C6EDB06AE50" KeyPath="yes" Source="$(var.FolderBin)\Mono.TextEditor.xml" />
+        </Component>
+        <Component Id="cmp218DFD18702710E30407613773B1FE7B" Guid="*">
+          <File Id="fil04D02226F2FC1E6694C6D2F9D9D2C759" KeyPath="yes" Source="$(var.FolderBin)\MonoDevelop.Core.dll" />
+        </Component>
+        <Component Id="cmp4EA1DEB146DFA3463C7068569E299BB0" Guid="*">
+          <File Id="fil67B471438EA348C99FD2E8ECE90F1078" KeyPath="yes" Source="$(var.FolderBin)\MonoDevelop.Core.dll.config" />
+        </Component>
+        <Component Id="cmp6B5143AC6CF743A36902A9BFBA3CF6E6" Guid="*">
+          <File Id="fil04CEC4A71416D5D8C771BD9E77B3F9AD" KeyPath="yes" Source="$(var.FolderBin)\MonoDevelop.Core.pdb" />
+        </Component>
+        <Component Id="cmp7201D83270C492BFFB43B6815C4A32AC" Guid="*">
+          <File Id="filB4EC218CED79A5B8097CAEBB7825B0FB" KeyPath="yes" Source="$(var.FolderBin)\MonoDevelop.Core.xml" />
+        </Component>
+        <Component Id="cmp5EED5B95AC897027AA8A0E9A7D79B8A9" Guid="*">
+          <File Id="fil8FE9E0A17C07C11669A2C81782A5B31C" KeyPath="yes" Source="$(var.FolderBin)\MonoDevelop.exe" />
+        </Component>
+        <Component Id="cmp0EB4D533F8035CAD4366A38FB2BE057C" Guid="*">
+          <File Id="fil8A494B30C2575901801AF5F51F0980DA" KeyPath="yes" Source="$(var.FolderBin)\MonoDevelop.exe.addins" />
+        </Component>
+        <Component Id="cmp86F825596B4BE05DFE55CA34B361FF4E" Guid="*">
+          <File Id="fil3FFB15E6B95C8C15DD942A58E512D935" KeyPath="yes" Source="$(var.FolderBin)\MonoDevelop.exe.config" />
+        </Component>
+        <Component Id="cmp8DDEBB445126FEC1360FA9A7453F966B" Guid="*">
+          <File Id="fil74D14DAAE2CA456928462E7BD0CE7125" KeyPath="yes" Source="$(var.FolderBin)\MonoDevelop.Ide.dll" />
+        </Component>
+        <Component Id="cmp00846FFB85584C411A1F732A735E9134" Guid="*">
+          <File Id="filCDEE8E98060D1BD0AA4F0102DE314878" KeyPath="yes" Source="$(var.FolderBin)\MonoDevelop.Ide.dll.config" />
+        </Component>
+        <Component Id="cmp99497F689A5FFF84428B2CD6449719B1" Guid="*">
+          <File Id="filBAF0A9470BE0F293FBC610FCE10C4B98" KeyPath="yes" Source="$(var.FolderBin)\MonoDevelop.Ide.pdb" />
+        </Component>
+        <Component Id="cmpAB6A29DD30152A471778F5F50E544456" Guid="*">
+          <File Id="fil68953BDF478EA88A7D9E4EDD7FED8364" KeyPath="yes" Source="$(var.FolderBin)\MonoDevelop.Ide.xml" />
+        </Component>
+        <Component Id="cmp38FB45C002D421E939814BD56F6E21C1" Guid="*">
+          <File Id="filA8E331B8CD506A211A8059140039E6C0" KeyPath="yes" Source="$(var.FolderBin)\MonoDevelop.pdb" />
+        </Component>
+        <Component Id="cmp4CF7EC1552EF1C10E83AF34DED68AAAC" Guid="*">
+          <File Id="filC36891C59D792A0CF0D33D10751C4A7F" KeyPath="yes" Source="$(var.FolderBin)\MonoDevelop.Projects.Formats.MSBuild.dll" />
+        </Component>
+        <Component Id="cmpDB8454CA0BBAA879FE26CFDA356BC7A3" Guid="*">
+          <File Id="filDA47E9F295AE4E079DB1BE470AB0D4A9" KeyPath="yes" Source="$(var.FolderBin)\MonoDevelop.Projects.Formats.MSBuild.pdb" />
+        </Component>
+        <Component Id="cmp8D9F2982DBE12B2804C8DECB7A253543" Guid="*">
+          <File Id="filAD69CB36181EEE7A521B7719A979FA4F" KeyPath="yes" Source="$(var.FolderBin)\monodoc.xml" />
+        </Component>
+        <Component Id="cmpB7E3918145D30FAC44008A85941A57C2" Guid="*">
+          <File Id="filF00EFAEAD4BDCFB354AF08B5750CC838" KeyPath="yes" Source="$(var.FolderBin)\Newtonsoft.Json.dll" />
+        </Component>
+        <Component Id="cmp789F0FA44A87DE8064DD749038C37076" Guid="*">
+          <File Id="fil1F943F8E70D6468816F372D99B4EB7E9" KeyPath="yes" Source="$(var.FolderBin)\Newtonsoft.Json.xml" />
+        </Component>
+        <Component Id="cmp3D0A139C81A20161A4EB39F26836678C" Guid="*">
+          <File Id="fil0F0C98FFC44008BE802E6DB86A7F5B05" KeyPath="yes" Source="$(var.FolderBin)\pango-sharp.dll" />
+        </Component>
+        <Component Id="cmp8F7A8D67CF3A5B1E05552CC9F0717079" Guid="*">
+          <File Id="fil8C64B2F82CDC1304CAE46053EB0824C2" KeyPath="yes" Source="$(var.FolderBin)\pango-sharp.pdb" />
+        </Component>
+        <Component Id="cmpF5838DD2B1BA6FCCD4A914BE9F2DDA53" Guid="*">
+          <File Id="fil90C21352C2EA88D2D35B8228488C97A7" KeyPath="yes" Source="$(var.FolderBin)\RefactoringEssentials.dll" />
+        </Component>
+        <Component Id="cmp945D5E1DFCEF076F99254A24E9332A3C" Guid="*">
+          <File Id="fil2C71F888B63C7674226EE826BD7ACD51" KeyPath="yes" Source="$(var.FolderBin)\RefactoringEssentials.nuspec" />
+        </Component>
+        <Component Id="cmp399891424B52656DBBCCD1FA13C4BA64" Guid="*">
+          <File Id="filDEF25F2E5AF8B187EAE1CFD3CA27126D" KeyPath="yes" Source="$(var.FolderBin)\RefactoringEssentials.pdb" />
+        </Component>
+        <Component Id="cmpC6CC5651628C3646CB991EA611766E27" Guid="*">
+          <File Id="fil8CC2F77DC43280E9AAE328993A81231B" KeyPath="yes" Source="$(var.FolderBin)\System.Collections.Immutable.dll" />
+        </Component>
+        <Component Id="cmp0113A16BE3E9BC01C30A6B12DEAFCA54" Guid="*">
+          <File Id="fil79A60EC93F67F6CE309E90AF43E0A781" KeyPath="yes" Source="$(var.FolderBin)\System.Collections.Immutable.xml" />
+        </Component>
+        <Component Id="cmpB6895194FA6D068691EC30B907CD3640" Guid="*">
+          <File Id="filD0260CED4182732BB99979211539554E" KeyPath="yes" Source="$(var.FolderBin)\System.Composition.AttributedModel.dll" />
+        </Component>
+        <Component Id="cmpC4D24CA3EED511CE8B6786590E577392" Guid="*">
+          <File Id="filC2D229D9FCB73549618D6DB4677931D2" KeyPath="yes" Source="$(var.FolderBin)\System.Composition.AttributedModel.xml" />
+        </Component>
+        <Component Id="cmp85A828D9C83BD69E81D190EE2803230A" Guid="*">
+          <File Id="filE795D63C28DDC6A122DDB190BC2D44FE" KeyPath="yes" Source="$(var.FolderBin)\System.Composition.Hosting.dll" />
+        </Component>
+        <Component Id="cmpF656CC331972B78608E2760219027996" Guid="*">
+          <File Id="fil965F73A59A1AB98B8058AFD27C9D2F37" KeyPath="yes" Source="$(var.FolderBin)\System.Composition.Hosting.xml" />
+        </Component>
+        <Component Id="cmp9C45267D66631505E76F01690C4BDD79" Guid="*">
+          <File Id="fil4984395B979675A93090B80D10C1D2ED" KeyPath="yes" Source="$(var.FolderBin)\System.Composition.Runtime.dll" />
+        </Component>
+        <Component Id="cmpAF8B4246EE6F111C0C1292B93282394B" Guid="*">
+          <File Id="fil041AC36812F7CD2E5523D9A06938B9D0" KeyPath="yes" Source="$(var.FolderBin)\System.Composition.Runtime.xml" />
+        </Component>
+        <Component Id="cmpB124B179DC246CA988806D3437EE7321" Guid="*">
+          <File Id="filCFA6038FEE6424184A67B17F7EED530A" KeyPath="yes" Source="$(var.FolderBin)\System.Composition.TypedParts.dll" />
+        </Component>
+        <Component Id="cmpF8A7C4E41FD13E518DA335CA1F1A6380" Guid="*">
+          <File Id="fil7BB45CC2832DF28BD755609F80AC51D9" KeyPath="yes" Source="$(var.FolderBin)\System.Composition.TypedParts.xml" />
+        </Component>
+        <Component Id="cmpC24D51F2B0845FA7FE98C0D6A0F442D3" Guid="*">
+          <File Id="fil4D17EDCFB1A97555FE655F695CE1F5F5" KeyPath="yes" Source="$(var.FolderBin)\System.Reflection.Metadata.dll" />
+        </Component>
+        <Component Id="cmp62EA7290990911B2F253F26CA815A1CC" Guid="*">
+          <File Id="filC1A29503E0771EE54A86E73C0844F0BE" KeyPath="yes" Source="$(var.FolderBin)\System.Reflection.Metadata.xml" />
+        </Component>
+        <Component Id="cmp1C1107E829C308B3D2FD7C18E41DC92D" Guid="*">
+          <File Id="filC9B68768344F48C9451420EAE4D9110F" KeyPath="yes" Source="$(var.FolderBin)\WindowsPlatform.dll" />
+        </Component>
+        <Component Id="cmp4B2C6CFB3F81AF0AC412E988258D7B5A" Guid="*">
+          <File Id="filD3AFC523B2257E3E95E12437EEEFCFDE" KeyPath="yes" Source="$(var.FolderBin)\WindowsPlatform.pdb" />
+        </Component>
+        <Component Id="cmp81C2CC45C5236B91CF3355A20345E6F2" Guid="*">
+          <File Id="fil816EB2730016BFA6714A2DA6659AEE39" KeyPath="yes" Source="$(var.FolderBin)\WindowsPlatform.xml" />
+        </Component>
+        <Component Id="cmp1AE4739FE36752C232EDC74515AEB32B" Guid="*">
+          <File Id="fil72D3994E30AC21A8EEB0D4F69D4F442C" KeyPath="yes" Source="$(var.FolderBin)\Xwt.dll" />
+        </Component>
+        <Component Id="cmp1ED22E92DF87FBA6DC4DB4FDAFBD87D7" Guid="*">
+          <File Id="fil64E638FC361C25F477B5856A6C7FBC3A" KeyPath="yes" Source="$(var.FolderBin)\Xwt.Gtk.dll" />
+        </Component>
+        <Component Id="cmp3C7128969853DAEA43D03D0620E0788D" Guid="*">
+          <File Id="filCA452BB5BE14288BF4E565E66B8DF096" KeyPath="yes" Source="$(var.FolderBin)\Xwt.Gtk.dll.config" />
+        </Component>
+        <Component Id="cmp1194012FDDE32097AB9742A32B268D03" Guid="*">
+          <File Id="fil14E52222D884AB1E0339816A63EDFBFE" KeyPath="yes" Source="$(var.FolderBin)\Xwt.Gtk.pdb" />
+        </Component>
+        <Component Id="cmp0C3CBCD6A56E05DFF56507678F2FC408" Guid="*">
+          <File Id="filDED0960F910537339ED29F5AD8FA52F5" KeyPath="yes" Source="$(var.FolderBin)\Xwt.Gtk.Windows.dll" />
+        </Component>
+        <Component Id="cmp1C3B59177B4ACAA216FDF60336BE4B37" Guid="*">
+          <File Id="fil5950AB249CE940779546A9D88C148162" KeyPath="yes" Source="$(var.FolderBin)\Xwt.Gtk.Windows.pdb" />
+        </Component>
+        <Component Id="cmpA7EDB797EDB4F7DBB2A7FC9025D74567" Guid="*">
+          <File Id="fil66641CB6C1F308DAA51D0390BEDBA0CA" KeyPath="yes" Source="$(var.FolderBin)\Xwt.pdb" />
+        </Component>
+        <Component Id="cmp4735D9390D76904E63F6A590DCEEDBF8" Guid="*">
+          <File Id="fil7ADB6D41758E6B23C3321F1858500F50" KeyPath="yes" Source="$(var.FolderBin)\Xwt.WPF.dll" />
+        </Component>
+        <Component Id="cmpEF5061F5BA785490853317623ED0EF9B" Guid="*">
+          <File Id="fil29389F84D0CFA69A2C8C0A4C5B30B214" KeyPath="yes" Source="$(var.FolderBin)\Xwt.WPF.pdb" />
+        </Component>
+        <Directory Id="dir9ED8F3E8FC2958D763F02EF80E6F455E" Name="locale">
+          <Directory Id="dir60755F235D92710E60A3085486BDC5B7" Name="ca">
+            <Directory Id="dir422192F35B86C1D38161E2E8422AE720" Name="LC_MESSAGES">
+              <Component Id="cmpD142FAA2D94B2A9CEAC51FA73DD174E4" Guid="*">
+                <File Id="filE764D5F848A72CC4A52972A9A544D5BA" KeyPath="yes" Source="$(var.FolderBin)\locale\ca\LC_MESSAGES\monodevelop.mo" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Directory Id="dir746A27F2FC6B453A26545D900C266A4A" Name="cs">
+            <Directory Id="dir8826D440868D17E12FA8F59CFBFC78A1" Name="LC_MESSAGES">
+              <Component Id="cmp674DB663F0F3E875B61F30E171C53FAC" Guid="*">
+                <File Id="fil99B791A4DD4A7704255E43238FDB6FE4" KeyPath="yes" Source="$(var.FolderBin)\locale\cs\LC_MESSAGES\monodevelop.mo" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Directory Id="dir046518A737CD4A0D28C09E5494AE9193" Name="da">
+            <Directory Id="dir3B6E14FA3C8685378D89B7E30BD91F43" Name="LC_MESSAGES">
+              <Component Id="cmp00D30AA9B35AAA1F26B3F9BDA06BC459" Guid="*">
+                <File Id="fil4F39F4DEA74CA4A1751678415F830D7E" KeyPath="yes" Source="$(var.FolderBin)\locale\da\LC_MESSAGES\monodevelop.mo" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Directory Id="dir46A43EBBD3E943854E60632AA6273B94" Name="de">
+            <Directory Id="dir524B6457FF42494267C41141D719AFFB" Name="LC_MESSAGES">
+              <Component Id="cmp3AD3EB665F310F599F7FB49538BB65A4" Guid="*">
+                <File Id="filB779E69E579A953E99ADF216CE046AEE" KeyPath="yes" Source="$(var.FolderBin)\locale\de\LC_MESSAGES\monodevelop.mo" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Directory Id="dirA590E8032CAA1B6085767C0705041762" Name="es">
+            <Directory Id="dir7422D520692C420B9A32F48B61AB607F" Name="LC_MESSAGES">
+              <Component Id="cmp95C392AE199C712A758D0A0F9687920A" Guid="*">
+                <File Id="fil0C0D01C3BDC0CF99C104C71C9D2827C6" KeyPath="yes" Source="$(var.FolderBin)\locale\es\LC_MESSAGES\monodevelop.mo" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Directory Id="dirFD636B1CE3371D27AD799975518A1941" Name="fr">
+            <Directory Id="dir13107214A41F5DBE5E6475976813E237" Name="LC_MESSAGES">
+              <Component Id="cmp38385D01A0891865C69F3BD84F3963AE" Guid="*">
+                <File Id="filA7F6BD91C2287820571A086A36E97136" KeyPath="yes" Source="$(var.FolderBin)\locale\fr\LC_MESSAGES\monodevelop.mo" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Directory Id="dir7ED478685106F43DECA31FACFA9BA37E" Name="gl">
+            <Directory Id="dir90C6233AE3CC8CD140F75E046FB3C775" Name="LC_MESSAGES">
+              <Component Id="cmp3D825BDFB152215B29C586D151D5E07C" Guid="*">
+                <File Id="filADA055006827CAA45E473B5DE49DD756" KeyPath="yes" Source="$(var.FolderBin)\locale\gl\LC_MESSAGES\monodevelop.mo" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Directory Id="dir4AA3DBD94EB970A4B080FB1DE303E07B" Name="hu">
+            <Directory Id="dir7CBC08B210672E9B2F151F70B7837457" Name="LC_MESSAGES">
+              <Component Id="cmp04932109CDDF1FA7168CFE65DA62E2C9" Guid="*">
+                <File Id="fil060D47419AE7B6B58408FB2E9823C986" KeyPath="yes" Source="$(var.FolderBin)\locale\hu\LC_MESSAGES\monodevelop.mo" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Directory Id="dir88A9B26AE18D93B5DF84A077D36418BD" Name="id">
+            <Directory Id="dirB67ABDE10CB4BA1280BCCEAE038114EA" Name="LC_MESSAGES">
+              <Component Id="cmpCD758EEEA907FD39E7768322A7E4A904" Guid="*">
+                <File Id="fil3BDB717A4CF92322A6B0F6299B56C338" KeyPath="yes" Source="$(var.FolderBin)\locale\id\LC_MESSAGES\monodevelop.mo" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Directory Id="dirFEB5E6AAC1FA4B0C98B2E6635A882EB9" Name="it">
+            <Directory Id="dirCE88DA9F7F692502DA82C03C719DC3CC" Name="LC_MESSAGES">
+              <Component Id="cmp3C7E65F941F53166A1E72F20370FC345" Guid="*">
+                <File Id="fil76DEE108A2EDF652EB52BE6EFBF1A5D2" KeyPath="yes" Source="$(var.FolderBin)\locale\it\LC_MESSAGES\monodevelop.mo" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Directory Id="dir06DF1C777629E9622B9D04530BA05570" Name="ja">
+            <Directory Id="dirC452165DA07D1F8191839461CB6A70D4" Name="LC_MESSAGES">
+              <Component Id="cmp6AB25DFEF7F41C7ADD5BC311B98D3407" Guid="*">
+                <File Id="fil18C25CBC39147D57752ADBB418617F77" KeyPath="yes" Source="$(var.FolderBin)\locale\ja\LC_MESSAGES\monodevelop.mo" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Directory Id="dir9176CD86AC17AAE995338994C0179FDE" Name="ko">
+            <Directory Id="dir1A7D819DA5DFB7F59918DD77B53053D3" Name="LC_MESSAGES">
+              <Component Id="cmpFC4F67B8E147EE2877B1141D5D735A90" Guid="*">
+                <File Id="fil9B811BF9454B94667E4A293D60AD762A" KeyPath="yes" Source="$(var.FolderBin)\locale\ko\LC_MESSAGES\monodevelop.mo" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Directory Id="dir01DC5C9FF7BF295454E7D04AD8E14ADA" Name="nb">
+            <Directory Id="dir191DC334C60C04DBD5FECE02D4052CCC" Name="LC_MESSAGES">
+              <Component Id="cmp3A08A3102D9CF4C2A701C8EE7072F7A1" Guid="*">
+                <File Id="fil790925EDEB90A8425CE57B610AB0C126" KeyPath="yes" Source="$(var.FolderBin)\locale\nb\LC_MESSAGES\monodevelop.mo" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Directory Id="dirB0F968A225AD0987346C99397352C00A" Name="nl">
+            <Directory Id="dirC5ACF237204BCCC21856F23ACCCB86FD" Name="LC_MESSAGES">
+              <Component Id="cmp0F49146281211A07AFF5445329C17626" Guid="*">
+                <File Id="fil6ECA15CE6FCFCCD6683AA7D3657F38E0" KeyPath="yes" Source="$(var.FolderBin)\locale\nl\LC_MESSAGES\monodevelop.mo" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Directory Id="dir240BAFE25468247425CD5D5F91193CA0" Name="pl">
+            <Directory Id="dir6735092D848D5E15D7040347AC6F0FF7" Name="LC_MESSAGES">
+              <Component Id="cmpFC6C38C7C78847A5C45F33EF90A40A92" Guid="*">
+                <File Id="fil94E755A0C9231598E46B71991F041A2E" KeyPath="yes" Source="$(var.FolderBin)\locale\pl\LC_MESSAGES\monodevelop.mo" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Directory Id="dirE4F6F9B5CBDE2B6F4F45BF0FEC5C3B67" Name="pt">
+            <Directory Id="dir597C5063670753722830E8BAA594D748" Name="LC_MESSAGES">
+              <Component Id="cmpF978566FF699284F022667B20C558353" Guid="*">
+                <File Id="fil14CFDE0D7C1904763E40F97AAE158E19" KeyPath="yes" Source="$(var.FolderBin)\locale\pt\LC_MESSAGES\monodevelop.mo" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Directory Id="dirEAFC8EDA7AFB1802FF973AED7F2ABC2B" Name="pt_BR">
+            <Directory Id="dir1BB206089EC08C2643561C4FA66A30EC" Name="LC_MESSAGES">
+              <Component Id="cmp56E761CAEE3B8C44E14B8317ABB7C0EE" Guid="*">
+                <File Id="fil4C8353E0F7DCB289CF92A7D5E12FDC23" KeyPath="yes" Source="$(var.FolderBin)\locale\pt_BR\LC_MESSAGES\monodevelop.mo" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Directory Id="dir7D37B729B74019D9B04F675F732574C3" Name="ru">
+            <Directory Id="dir4284E42DCB567398C09465E93C59CF79" Name="LC_MESSAGES">
+              <Component Id="cmp388276FEE813EF43555B5626B06D74E1" Guid="*">
+                <File Id="fil7FC475536F45A6923DF55BAAA666949D" KeyPath="yes" Source="$(var.FolderBin)\locale\ru\LC_MESSAGES\monodevelop.mo" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Directory Id="dir1516C30BF254C403CAC73C06009B1DEF" Name="sl">
+            <Directory Id="dir0D4D2148E0FE8BD9E27E40CA32FAF7E7" Name="LC_MESSAGES">
+              <Component Id="cmp99BDEFEFA9828839BC5DF39577F4D773" Guid="*">
+                <File Id="fil7C683C898E44154A94E9283E84B3C0FE" KeyPath="yes" Source="$(var.FolderBin)\locale\sl\LC_MESSAGES\monodevelop.mo" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Directory Id="dirC8DD56961AC243D386C9DAF5D504385C" Name="sv">
+            <Directory Id="dirC3070CD29BB2F6CE0333BF880EE010EE" Name="LC_MESSAGES">
+              <Component Id="cmp55BBD645B3FEF2F1804D45D65D246833" Guid="*">
+                <File Id="filDBB53EA2D9BDD31A578A3359D6A37E52" KeyPath="yes" Source="$(var.FolderBin)\locale\sv\LC_MESSAGES\monodevelop.mo" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Directory Id="dir679CB1821E5FA98CE8F938A8419E60A7" Name="tr">
+            <Directory Id="dir600D8B58A29C38CEA2E8E440477F913A" Name="LC_MESSAGES">
+              <Component Id="cmp06E8B92CF7F70BDB97D055751FCC3AAE" Guid="*">
+                <File Id="filBC39ADBC87CC1F26D343ECCB8FB7FE96" KeyPath="yes" Source="$(var.FolderBin)\locale\tr\LC_MESSAGES\monodevelop.mo" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Directory Id="dir7A077DCDE7B80DEF1EE51A87DDA1DBA0" Name="uk">
+            <Directory Id="dirF880BA9723AA84A82850941D317CB890" Name="LC_MESSAGES">
+              <Component Id="cmpD19F872A1F80EAFE0C3049A3B217B171" Guid="*">
+                <File Id="fil787C92E01A11EED9E93EDB3EE47BA675" KeyPath="yes" Source="$(var.FolderBin)\locale\uk\LC_MESSAGES\monodevelop.mo" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Directory Id="dir626858ED6E3864A1D3F690882F523CFA" Name="zh_CN">
+            <Directory Id="dirC798869A09B35DE5542E679E93946817" Name="LC_MESSAGES">
+              <Component Id="cmpB78C67428B5EF8F968B72A415DEFAE17" Guid="*">
+                <File Id="filCDE86A9F48DA47A5B82E416AEB47E2C0" KeyPath="yes" Source="$(var.FolderBin)\locale\zh_CN\LC_MESSAGES\monodevelop.mo" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Directory Id="dirDFAB1FE7871F61FB0A60A1C4D930F627" Name="zh_TW">
+            <Directory Id="dir8B8F1770B746C52EA4C329078AB1BA25" Name="LC_MESSAGES">
+              <Component Id="cmp4FA05B5E47706087C5CF2DAA0F103807" Guid="*">
+                <File Id="filA3B6054FBA4FFE4921D5E17A8ADDE37A" KeyPath="yes" Source="$(var.FolderBin)\locale\zh_TW\LC_MESSAGES\monodevelop.mo" />
+              </Component>
+            </Directory>
+          </Directory>
+        </Directory>
+        <Directory Id="dir840E0ED358E2549F8AA4FE8D41EA1730" Name="MSBuild">
+          <Component Id="cmpE0F49578C2D8BDFEBBF28C39DA83E5A4" Guid="*">
+            <File Id="fil462DCB2EEE259F6AD7842B1393034567" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\CodeSharing.Common.Default.props" />
+          </Component>
+          <Component Id="cmp12D55B80DA1B70DE2932730A1BC2590D" Guid="*">
+            <File Id="filD22F4FA73FF0EA6FED05E862F1F30F09" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\CodeSharing.Common.props" />
+          </Component>
+          <Component Id="cmpE5922AF3B89D23EC17590C880B48D66B" Guid="*">
+            <File Id="fil166BABC80D4FB35FC7CDD60DE96D9237" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\CodeSharing.CSharp.targets" />
+          </Component>
+          <Directory Id="dirE3C2AC714534758BEE8A968A164A4375" Name="4.0">
+            <Component Id="cmp1E30F2E4865D3107998A5223C6693A5B" Guid="*">
+              <File Id="fil44BD239C88FB87E6FF77BB58A89041EA" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\4.0\MonoDevelop.Projects.Formats.MSBuild.exe" />
+            </Component>
+            <Component Id="cmpB65629D894DC2C7CF90240B27D5086FE" Guid="*">
+              <File Id="filE4EA5E4E60A232D4302197D1391617E1" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\4.0\MonoDevelop.Projects.Formats.MSBuild.exe.config" />
+            </Component>
+            <Component Id="cmpDA5BD0469C591DA866975803723C563A" Guid="*">
+              <File Id="fil8BA0B678039131C74EFE81685ADA72D2" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\4.0\MonoDevelop.Projects.Formats.MSBuild.pdb" />
+            </Component>
+          </Directory>
+          <Directory Id="dirEB554A5A2B2E7F1DEC1ED8884FE7911B" Name="dotnet.12.0">
+            <Component Id="cmp86BA9CD13E2C28F5CCA0FC2E709D883D" Guid="*">
+              <File Id="fil0C064CF4590527889B559C60895916B3" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\Microsoft.Build.dll" />
+            </Component>
+            <Component Id="cmpD337EF991A5BF84C6E3D6EF0DB06FC00" Guid="*">
+              <File Id="fil8F0EB7478F18744C012E17214AF696D4" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\Microsoft.Build.Engine.dll" />
+            </Component>
+            <Component Id="cmpD919477495AC5A1FEF4A4A26A357FF34" Guid="*">
+              <File Id="filA9CFAA5E8F69D7A6374DA9ED7D078D7C" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\Microsoft.Build.Framework.dll" />
+            </Component>
+            <Component Id="cmp96967DFFD328AF26299BEE8D7330B575" Guid="*">
+              <File Id="fil7768F778277ECCFC762D1036EAE71012" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\Microsoft.Build.Utilities.v12.0.dll" />
+            </Component>
+            <Component Id="cmp424404D10B8CFEC670690CFEADA6B637" Guid="*">
+              <File Id="filD2EA18FD7662E2F80A2CBECDA1711764" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\MonoDevelop.Projects.Formats.MSBuild.exe" />
+            </Component>
+            <Component Id="cmp87A45DEB688BDB2E8718FC33DCF58702" Guid="*">
+              <File Id="fil009A7F299A91937009DD118FED5A254A" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\MonoDevelop.Projects.Formats.MSBuild.exe.config" />
+            </Component>
+            <Component Id="cmpA4BB5252CA4EDAA4A0070D8B98B5BA00" Guid="*">
+              <File Id="fil6D18DFBEE2A7A837A1A205DAA08A224F" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\MonoDevelop.Projects.Formats.MSBuild.pdb" />
+            </Component>
+            <Directory Id="dirC94F725F1E4FDD69189FB3A89BCE0C6B" Name="de">
+              <Component Id="cmpD4091E8B2E1B70FBABFFE2F51428134D" Guid="*">
+                <File Id="fil868524DDFA8D40496F48AEFF5A8C077B" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\de\Microsoft.Build.Engine.resources.dll" />
+              </Component>
+              <Component Id="cmp5363B2DDDFA445A41EA969BA6B5A1FC2" Guid="*">
+                <File Id="filA198E98A7AA1B28826C28BEAD3348E21" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\de\Microsoft.Build.resources.dll" />
+              </Component>
+              <Component Id="cmpF2784D96CAC8193EB7A8733DF7EDCF33" Guid="*">
+                <File Id="filE731A3D2F0F2A557E848CF270DC18EEE" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\de\Microsoft.Build.Utilities.v12.0.resources.dll" />
+              </Component>
+            </Directory>
+            <Directory Id="dir6FF36E6482AAE54C48E16D8397BB896A" Name="es">
+              <Component Id="cmp7DB701FDD1A7248AEEC63EFFD4CF62F7" Guid="*">
+                <File Id="fil91A17251A39890DAA52C23561FDF1CA4" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\es\Microsoft.Build.Engine.resources.dll" />
+              </Component>
+              <Component Id="cmp4D3C7641C09E835F18DF43534B3DDFFC" Guid="*">
+                <File Id="fil9843CD056B7254036FF004CB427DD6EA" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\es\Microsoft.Build.resources.dll" />
+              </Component>
+              <Component Id="cmp8C288F932085ADB004072D88D8D69B64" Guid="*">
+                <File Id="filCB5B55726FB518AAE4261CA1316E39A6" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\es\Microsoft.Build.Utilities.v12.0.resources.dll" />
+              </Component>
+            </Directory>
+            <Directory Id="dir67526B960AB839404ED8D646DDE31AE0" Name="fr">
+              <Component Id="cmp726E2BF5D90CFA6223813C733EA85340" Guid="*">
+                <File Id="fil4987F05F7C79644E979A4DDCE719750A" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\fr\Microsoft.Build.Engine.resources.dll" />
+              </Component>
+              <Component Id="cmp769B0BC95FDADA2FE8860005DFDA8163" Guid="*">
+                <File Id="fil626785FD25140E56EAEE0DC6061636D6" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\fr\Microsoft.Build.resources.dll" />
+              </Component>
+              <Component Id="cmp32F6035954316AB8522E72BFDF294761" Guid="*">
+                <File Id="fil8EB89B5AD2470BD9762DC44E4DB21BA0" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\fr\Microsoft.Build.Utilities.v12.0.resources.dll" />
+              </Component>
+            </Directory>
+            <Directory Id="dir456E42710FC32C571B50B95EC5F822FD" Name="it">
+              <Component Id="cmpFBE37517B0EA766CEF96B003A347D6BC" Guid="*">
+                <File Id="filAD5094F14BDC10F6D85AEDBC19E1CA87" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\it\Microsoft.Build.Engine.resources.dll" />
+              </Component>
+              <Component Id="cmpED1A2FF1032184A5D44B64661579E901" Guid="*">
+                <File Id="fil9057429FF448292D8A0B6471FBFAB7E9" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\it\Microsoft.Build.resources.dll" />
+              </Component>
+              <Component Id="cmp17CB69027B7852C273246B4FCC937F5B" Guid="*">
+                <File Id="filE1C356B7E999270866C6867E7D3E3AF4" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\it\Microsoft.Build.Utilities.v12.0.resources.dll" />
+              </Component>
+            </Directory>
+            <Directory Id="dir40223EDABE1C156F6524DB987A895D04" Name="ja">
+              <Component Id="cmpEBA2FA8551950C74D4B93FB11AC5A4DC" Guid="*">
+                <File Id="filD4BC1ED39A2750BA0599485F3981ED68" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\ja\Microsoft.Build.Engine.resources.dll" />
+              </Component>
+              <Component Id="cmp93E64F6E17E15A99B0B4B7490B94B19A" Guid="*">
+                <File Id="fil1FDAA46550FC2CD8708DEFB4254B276C" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\ja\Microsoft.Build.resources.dll" />
+              </Component>
+              <Component Id="cmpE8A50D0F2CDA3CE438F353E81E6FE0E6" Guid="*">
+                <File Id="filB76FE2635ADF5FE4E1C88810B9F8B033" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\ja\Microsoft.Build.Utilities.v12.0.resources.dll" />
+              </Component>
+            </Directory>
+            <Directory Id="dir0AC9CB536B4D9B8A8C0460C030F613A6" Name="ko">
+              <Component Id="cmp41D2C46AE9BEB030AE61C34799310B2C" Guid="*">
+                <File Id="fil05F377CB8934C803578D6414F54A6133" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\ko\Microsoft.Build.Engine.resources.dll" />
+              </Component>
+              <Component Id="cmp841560E84E49808C6E94461265AE9CB2" Guid="*">
+                <File Id="filCE4A3620903B6CF01368B7D110A59934" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\ko\Microsoft.Build.resources.dll" />
+              </Component>
+              <Component Id="cmp5256C65297C71C669C83D2BC6ADCDA32" Guid="*">
+                <File Id="fil5F03A1CF7C1C9F4D6D1EE0F18DBA496F" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\ko\Microsoft.Build.Utilities.v12.0.resources.dll" />
+              </Component>
+            </Directory>
+            <Directory Id="dir729DD8DE377205974FFE1A461ED39AFF" Name="ru">
+              <Component Id="cmp57F02C496A869EA379336018507F2D97" Guid="*">
+                <File Id="fil4245A07327A636D682260345B966831E" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\ru\Microsoft.Build.Engine.resources.dll" />
+              </Component>
+              <Component Id="cmpF401AC4B62AED8482894B67574E486C9" Guid="*">
+                <File Id="fil4F15ED5B161F59F868E6F96930E68BA3" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\ru\Microsoft.Build.resources.dll" />
+              </Component>
+              <Component Id="cmp84A9895D51CEF273B746F548BE486973" Guid="*">
+                <File Id="fil9232A95781BBD375709B5D9E21B15E82" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\ru\Microsoft.Build.Utilities.v12.0.resources.dll" />
+              </Component>
+            </Directory>
+            <Directory Id="dir04C75CA0FDD0C7A107DBB24C0189DDCA" Name="zh-CHS">
+              <Component Id="cmpA3B76C5AD1FA83D3A69AC358C2F887F7" Guid="*">
+                <File Id="filEDC58CF56930F134E88B36D6773FAC91" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\zh-CHS\Microsoft.Build.Engine.resources.dll" />
+              </Component>
+              <Component Id="cmp594E63C0B586C40473CBEB7F91F61B7B" Guid="*">
+                <File Id="fil533268763C976B43BDADC0F4251B52CD" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\zh-CHS\Microsoft.Build.resources.dll" />
+              </Component>
+              <Component Id="cmpAA90042D00EE03F82852A0C5A7DE300D" Guid="*">
+                <File Id="fil6169CEE9B42F1412624FBF87294C8A5A" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\zh-CHS\Microsoft.Build.Utilities.v12.0.resources.dll" />
+              </Component>
+            </Directory>
+            <Directory Id="dirE07B6BC715D8B4EA190EEEC4EFB8C53D" Name="zh-CHT">
+              <Component Id="cmp811C974EAABADB87D377C66119EAFB8D" Guid="*">
+                <File Id="filDFB9232F757312A0559165470C960C4A" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\zh-CHT\Microsoft.Build.Engine.resources.dll" />
+              </Component>
+              <Component Id="cmp9DC6D1B759A0A35C105CF86779BC7C6A" Guid="*">
+                <File Id="fil7C2615E72F1FB69E7BE9D6E576BEA96C" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\zh-CHT\Microsoft.Build.resources.dll" />
+              </Component>
+              <Component Id="cmp280CD185CD0FD0CDB5656190ED6577EC" Guid="*">
+                <File Id="fil62B4792D7822F2DDBBF13CD62577A6B4" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.12.0\zh-CHT\Microsoft.Build.Utilities.v12.0.resources.dll" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Directory Id="dir30465091F1DC499A3815C5F7F17C0468" Name="dotnet.14.0">
+            <Component Id="cmpFE3B01558C1C5EC60378E4DC1A53ED9E" Guid="*">
+              <File Id="fil8EE2A8C30FE5EBB78CDCAAB61813C35A" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.14.0\Microsoft.Build.dll" />
+            </Component>
+            <Component Id="cmpBA283EAFF116A2B3E7EBCD1AB998FA6C" Guid="*">
+              <File Id="fil9D79334780AD6F471D255A024A717802" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.14.0\Microsoft.Build.Engine.dll" />
+            </Component>
+            <Component Id="cmp555A2457421D6747566D1F5420E32616" Guid="*">
+              <File Id="filDF9F97E58E05C5D60F63CC22FBC170CF" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.14.0\Microsoft.Build.Framework.dll" />
+            </Component>
+            <Component Id="cmpFBFE36B4DDAB254268705BA0A1EBBDC2" Guid="*">
+              <File Id="fil2AC4BE99C4543B7FAB57D715B4A1518C" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.14.0\Microsoft.Build.Utilities.Core.dll" />
+            </Component>
+            <Component Id="cmpE45B9690A8114BF6428239AFA0BD868B" Guid="*">
+              <File Id="filDE061E4FAF9CC51487B223A13BAFCDE6" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.14.0\MonoDevelop.Projects.Formats.MSBuild.exe" />
+            </Component>
+            <Component Id="cmp3DC9A5FC82FE971F722ED55906BE6ACC" Guid="*">
+              <File Id="filDEFD66AFB45771D617BD616D393F39DF" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.14.0\MonoDevelop.Projects.Formats.MSBuild.exe.config" />
+            </Component>
+          </Directory>
+          <Directory Id="dir3D8B6545225D9592B8C0ABD951777CFD" Name="dotnet.4.0">
+            <Component Id="cmpE8CEF7AD9B6CC121CA4543C8B7E3B0D9" Guid="*">
+              <File Id="filE60114A137CC584EE77224A53B010671" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.4.0\MonoDevelop.Projects.Formats.MSBuild.exe" />
+            </Component>
+            <Component Id="cmpDE335458620183151792844EBD571E90" Guid="*">
+              <File Id="fil40ADC7FA27DCA5DA3DEA336454D9F4D0" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.4.0\MonoDevelop.Projects.Formats.MSBuild.exe.config" />
+            </Component>
+            <Component Id="cmp3A92C6232C370A6316597D9BD0AADD61" Guid="*">
+              <File Id="fil49082B1AB31649E9B7EED3B95AB22188" KeyPath="yes" Source="$(var.FolderBin)\MSBuild\dotnet.4.0\MonoDevelop.Projects.Formats.MSBuild.pdb" />
+            </Component>
+          </Directory>
+        </Directory>
+        <Directory Id="dirEA44446E221820B94A8C4E33BBDA381A" Name="sources">
+          <Component Id="cmp4E522809995F72B84D9629315FC9D590" Guid="*">
+            <File Id="filD2795B612558EA4533B96F0E2ED05555" KeyPath="yes" Source="$(var.FolderBin)\sources\monodoc.xml" />
+          </Component>
+        </Directory>
+        <Directory Id="dir434190293E349FE700E88D2506D81F1C" Name="tools">
+          <Component Id="cmp0629E5CB76131B4610929421D3F0C217" Guid="*">
+            <File Id="fil63ABFEA70ADF7BAE261A4A525DD119BF" KeyPath="yes" Source="$(var.FolderBin)\tools\install.ps1" />
+          </Component>
+          <Component Id="cmp713CFA6695DEE15891404150F6A8C0F7" Guid="*">
+            <File Id="filBC49C6E28C6B9D1AB49929F9E8D11928" KeyPath="yes" Source="$(var.FolderBin)\tools\uninstall.ps1" />
+          </Component>
+        </Directory>
+      </Directory>
+    </DirectoryRef>
+  </Fragment>
+  <Fragment>
+    <ComponentGroup Id="SyntactikMDBuildBin">
+      <ComponentRef Id="ApplicationShortcutSm" />
+      <ComponentRef Id="ApplicationShortcutDt" />
+      <ComponentRef Id="cmp2395E2E3BE9EF4E0F1FF2D16A806AA5F" />
+      <ComponentRef Id="cmpB607C38B83799092BEF8F2B893E1E8EA" />
+      <ComponentRef Id="cmp8EC894BAA3BE43EEDA1CCE999999C2C6" />
+      <ComponentRef Id="cmp58F0AE0B9CCDD689E14D5B259211CBAC" />
+      <ComponentRef Id="cmp0D7152DFC12FB06D09299F313DCC2625" />
+      <ComponentRef Id="cmp048B5AE6594284DEFB6CACA40325D43E" />
+      <ComponentRef Id="cmp47AC5DC08EE2D5BABBE5DE26D0B559B3" />
+      <ComponentRef Id="cmpFA8AA0B8C7C218A1EBB282191ECE5BF6" />
+      <ComponentRef Id="cmpF3876CB590F67114CE6B7838ACC6D1CA" />
+      <ComponentRef Id="cmpBD061D3BDB19F6C2069A559B77FDE2DE" />
+      <ComponentRef Id="cmp1200FAB97ABB524C25FF780380CC17BC" />
+      <ComponentRef Id="cmp980BBF6A1A64D4CE3ABB62AAE2B5E82C" />
+      <ComponentRef Id="cmp25F0A7CD1BE614D8BAE905232BA7BBDB" />
+      <ComponentRef Id="cmp981D6E049C6FBAC585C36A0DEF3B9A53" />
+      <ComponentRef Id="cmp3AD5C7B86F514F34798C7AE547E17F9E" />
+      <ComponentRef Id="cmp5D4219E3E9CA46F5ACE49AD9CF9CD2CA" />
+      <ComponentRef Id="cmp1D3B4234FFEEA991AF3A0E79265100F6" />
+      <ComponentRef Id="cmpD003AF8C475E6673DA5C463FF1FD959C" />
+      <ComponentRef Id="cmp5338802ADA2295FDBE59036E44F3997D" />
+      <ComponentRef Id="cmp74A91B96FB2EAFD077B6F93B480F935F" />
+      <ComponentRef Id="cmp150C48BE8FBEEE35926F41BCAFE24B7B" />
+      <ComponentRef Id="cmpD62315C059BA7406DDF3117CAFEEC515" />
+      <ComponentRef Id="cmpE88B1AA1BA40C47343B5390E416C612B" />
+      <ComponentRef Id="cmp9ABE0A6FE7411EF7E60F6DC403BD4AD1" />
+      <ComponentRef Id="cmp16012146B7F7620F0C9E935C417405FA" />
+      <ComponentRef Id="cmpE85922D2A8F0BB5B85C195AD4F2256F5" />
+      <ComponentRef Id="cmpFB3DEF3322535DDF3392D01115894F7D" />
+      <ComponentRef Id="cmp6EA189AFC150E6E05D8A980CBCAE9099" />
+      <ComponentRef Id="cmp73DCCB5AA1B3F581969E9A87F3A8BBB0" />
+      <ComponentRef Id="cmp9EE5DE4796F509CECA2441E8F537170C" />
+      <ComponentRef Id="cmp9701C99C0751C37291C7AA23688EA3EE" />
+      <ComponentRef Id="cmpC5380FEB03BA5611D270C9DF84F34082" />
+      <ComponentRef Id="cmp81754A6C468EF72E5A131160631737C3" />
+      <ComponentRef Id="cmp7DEBFFD85C887219132B64AE5E17AB65" />
+      <ComponentRef Id="cmpB0F7968E48341B20C650873B8C04F09A" />
+      <ComponentRef Id="cmp92033287ACF5B357917305BF69E55FEF" />
+      <ComponentRef Id="cmp36342F110A33E7EC1FE58BB370EA508A" />
+      <ComponentRef Id="cmp1E0E67B89BEAB928892DED55288C8FB9" />
+      <ComponentRef Id="cmp372BBD8DFBF5BAFD7A099456D2C0AF06" />
+      <ComponentRef Id="cmp5616F4D70361C788540C594DBC394909" />
+      <ComponentRef Id="cmpED6D725A10C6FF8B67E044321464C51B" />
+      <ComponentRef Id="cmp95C35C3E44662B347C744CAF8435A3BC" />
+      <ComponentRef Id="cmpE0DFA0CF6E44C1FB305F1DAA7607E1E9" />
+      <ComponentRef Id="cmpDA67B1B6A5440DFC58420AFE1FCF414C" />
+      <ComponentRef Id="cmp23F693B0545793718886BCD9DAE3C42D" />
+      <ComponentRef Id="cmp31B22F759352C4EC9F467870FED9A936" />
+      <ComponentRef Id="cmpF334801B5C224197D798C9F352C82E9A" />
+      <ComponentRef Id="cmp9DF6169A7B9102B71DB00F8EFF875ECE" />
+      <ComponentRef Id="cmp4F7CC6078826FFA1BCF471D671B4F520" />
+      <ComponentRef Id="cmp00FF3C395E2FDF7B3DD9667E03C8B539" />
+      <ComponentRef Id="cmp81EC5E0C5874CBB969D7064387180878" />
+      <ComponentRef Id="cmp31D1A0D3C954C9CDF61F6CDA19D6683C" />
+      <ComponentRef Id="cmpF0C6BF5AD7C066C20256672C6889017A" />
+      <ComponentRef Id="cmp3CC5FBDA84FF6DFFDDE39E5633174B73" />
+      <ComponentRef Id="cmp395CCBDFA0508E5182B00997F4986F2D" />
+      <ComponentRef Id="cmpB6AA4FAA894C6FD268A1CED3A03C14C1" />
+      <ComponentRef Id="cmp33C9ABA1D49D7F445F6318AB40595E72" />
+      <ComponentRef Id="cmpD3A418B4F78182CDDB54499A082F894B" />
+      <ComponentRef Id="cmpEA8009772B89EE11783B2FDB81FA93D2" />
+      <ComponentRef Id="cmpB7457707EA0B7F31E67487E80965923F" />
+      <ComponentRef Id="cmp387C42E3290FE9D2EF6315751C02759E" />
+      <ComponentRef Id="cmpCAFA19A767BFD07048A867D19874E252" />
+      <ComponentRef Id="cmp44F6438CAE1148A590EBDC0422FA8045" />
+      <ComponentRef Id="cmp125C9871932B48A75225600661F8627E" />
+      <ComponentRef Id="cmpEE549F53B9A1A9370951FAAFDAA7848A" />
+      <ComponentRef Id="cmp4A6FB131AEC3951AD8EFDA0B832C8754" />
+      <ComponentRef Id="cmp6D49B24337DEE4EBB5AA1393E006B433" />
+      <ComponentRef Id="cmp7EA54868FB9AFC46859D0B87FC7DC985" />
+      <ComponentRef Id="cmpD8A4B51AA7F5EC723B574C1EC45E173A" />
+      <ComponentRef Id="cmp8BF67948DDEC5D993B39EE3EFE9322C3" />
+      <ComponentRef Id="cmp254791E1304B2FEC6DE300710C7A5705" />
+      <ComponentRef Id="cmpCC90E516C6E75481967147CD2E2FEB17" />
+      <ComponentRef Id="cmp9D57610EFEC0B857DF23CC5DDB847D7C" />
+      <ComponentRef Id="cmpD7EFFDBFEC6E2948A768D52CCAFC2C2A" />
+      <ComponentRef Id="cmpD85C022CED26F2D0AEA9EE99995E9E69" />
+      <ComponentRef Id="cmpF3FDC61144BD84FB4280C0E6026AAA3A" />
+      <ComponentRef Id="cmpF5AE786094779BBE200F14629E6A6EB2" />
+      <ComponentRef Id="cmpAF343A90CF20D77B942BE723F06748F1" />
+      <ComponentRef Id="cmp9C2F99987D75B318700F6D7BCC1EAA2B" />
+      <ComponentRef Id="cmp8D96377F33A188FA90984B208FC30854" />
+      <ComponentRef Id="cmp7D0E092D137CDF7C621A4DB7F5412E24" />
+      <ComponentRef Id="cmp84612F16CAC1F41694EA77B8259E6B05" />
+      <ComponentRef Id="cmp22307872E81DC2E4A0A2F8889BDEA2D9" />
+      <ComponentRef Id="cmp3191C5AA3806130ADBB0E1C497686D3D" />
+      <ComponentRef Id="cmpDA0F5B6D0ACC9C68B2B1DB7F0B2469B6" />
+      <ComponentRef Id="cmp0F7B5BA732856024168861A4D95BE4A1" />
+      <ComponentRef Id="cmp049315058DCCE0F5587BA1CBEF9538A3" />
+      <ComponentRef Id="cmpA129131773EE3D71F78CA91B368F61A9" />
+      <ComponentRef Id="cmpB8F8242ECCE2E16B361BD092498C9BB5" />
+      <ComponentRef Id="cmp3F6ACBD33464B835F8BAB59E2AA212AE" />
+      <ComponentRef Id="cmpF72F3B7CC5F4D638EC1E37C1E7EBAB09" />
+      <ComponentRef Id="cmp24D3EC3C7C47FC42EE560D2EA047B332" />
+      <ComponentRef Id="cmp6AFFD4BE20E7F8454C36EE66FCD8FF1E" />
+      <ComponentRef Id="cmp9F691D634B87838AF8F8624CF6CD072A" />
+      <ComponentRef Id="cmp218DFD18702710E30407613773B1FE7B" />
+      <ComponentRef Id="cmp4EA1DEB146DFA3463C7068569E299BB0" />
+      <ComponentRef Id="cmp6B5143AC6CF743A36902A9BFBA3CF6E6" />
+      <ComponentRef Id="cmp7201D83270C492BFFB43B6815C4A32AC" />
+      <ComponentRef Id="cmp5EED5B95AC897027AA8A0E9A7D79B8A9" />
+      <ComponentRef Id="cmp0EB4D533F8035CAD4366A38FB2BE057C" />
+      <ComponentRef Id="cmp86F825596B4BE05DFE55CA34B361FF4E" />
+      <ComponentRef Id="cmp8DDEBB445126FEC1360FA9A7453F966B" />
+      <ComponentRef Id="cmp00846FFB85584C411A1F732A735E9134" />
+      <ComponentRef Id="cmp99497F689A5FFF84428B2CD6449719B1" />
+      <ComponentRef Id="cmpAB6A29DD30152A471778F5F50E544456" />
+      <ComponentRef Id="cmp38FB45C002D421E939814BD56F6E21C1" />
+      <ComponentRef Id="cmp4CF7EC1552EF1C10E83AF34DED68AAAC" />
+      <ComponentRef Id="cmpDB8454CA0BBAA879FE26CFDA356BC7A3" />
+      <ComponentRef Id="cmp8D9F2982DBE12B2804C8DECB7A253543" />
+      <ComponentRef Id="cmpB7E3918145D30FAC44008A85941A57C2" />
+      <ComponentRef Id="cmp789F0FA44A87DE8064DD749038C37076" />
+      <ComponentRef Id="cmp3D0A139C81A20161A4EB39F26836678C" />
+      <ComponentRef Id="cmp8F7A8D67CF3A5B1E05552CC9F0717079" />
+      <ComponentRef Id="cmpF5838DD2B1BA6FCCD4A914BE9F2DDA53" />
+      <ComponentRef Id="cmp945D5E1DFCEF076F99254A24E9332A3C" />
+      <ComponentRef Id="cmp399891424B52656DBBCCD1FA13C4BA64" />
+      <ComponentRef Id="cmpC6CC5651628C3646CB991EA611766E27" />
+      <ComponentRef Id="cmp0113A16BE3E9BC01C30A6B12DEAFCA54" />
+      <ComponentRef Id="cmpB6895194FA6D068691EC30B907CD3640" />
+      <ComponentRef Id="cmpC4D24CA3EED511CE8B6786590E577392" />
+      <ComponentRef Id="cmp85A828D9C83BD69E81D190EE2803230A" />
+      <ComponentRef Id="cmpF656CC331972B78608E2760219027996" />
+      <ComponentRef Id="cmp9C45267D66631505E76F01690C4BDD79" />
+      <ComponentRef Id="cmpAF8B4246EE6F111C0C1292B93282394B" />
+      <ComponentRef Id="cmpB124B179DC246CA988806D3437EE7321" />
+      <ComponentRef Id="cmpF8A7C4E41FD13E518DA335CA1F1A6380" />
+      <ComponentRef Id="cmpC24D51F2B0845FA7FE98C0D6A0F442D3" />
+      <ComponentRef Id="cmp62EA7290990911B2F253F26CA815A1CC" />
+      <ComponentRef Id="cmp1C1107E829C308B3D2FD7C18E41DC92D" />
+      <ComponentRef Id="cmp4B2C6CFB3F81AF0AC412E988258D7B5A" />
+      <ComponentRef Id="cmp81C2CC45C5236B91CF3355A20345E6F2" />
+      <ComponentRef Id="cmp1AE4739FE36752C232EDC74515AEB32B" />
+      <ComponentRef Id="cmp1ED22E92DF87FBA6DC4DB4FDAFBD87D7" />
+      <ComponentRef Id="cmp3C7128969853DAEA43D03D0620E0788D" />
+      <ComponentRef Id="cmp1194012FDDE32097AB9742A32B268D03" />
+      <ComponentRef Id="cmp0C3CBCD6A56E05DFF56507678F2FC408" />
+      <ComponentRef Id="cmp1C3B59177B4ACAA216FDF60336BE4B37" />
+      <ComponentRef Id="cmpA7EDB797EDB4F7DBB2A7FC9025D74567" />
+      <ComponentRef Id="cmp4735D9390D76904E63F6A590DCEEDBF8" />
+      <ComponentRef Id="cmpEF5061F5BA785490853317623ED0EF9B" />
+      <ComponentRef Id="cmpD142FAA2D94B2A9CEAC51FA73DD174E4" />
+      <ComponentRef Id="cmp674DB663F0F3E875B61F30E171C53FAC" />
+      <ComponentRef Id="cmp00D30AA9B35AAA1F26B3F9BDA06BC459" />
+      <ComponentRef Id="cmp3AD3EB665F310F599F7FB49538BB65A4" />
+      <ComponentRef Id="cmp95C392AE199C712A758D0A0F9687920A" />
+      <ComponentRef Id="cmp38385D01A0891865C69F3BD84F3963AE" />
+      <ComponentRef Id="cmp3D825BDFB152215B29C586D151D5E07C" />
+      <ComponentRef Id="cmp04932109CDDF1FA7168CFE65DA62E2C9" />
+      <ComponentRef Id="cmpCD758EEEA907FD39E7768322A7E4A904" />
+      <ComponentRef Id="cmp3C7E65F941F53166A1E72F20370FC345" />
+      <ComponentRef Id="cmp6AB25DFEF7F41C7ADD5BC311B98D3407" />
+      <ComponentRef Id="cmpFC4F67B8E147EE2877B1141D5D735A90" />
+      <ComponentRef Id="cmp3A08A3102D9CF4C2A701C8EE7072F7A1" />
+      <ComponentRef Id="cmp0F49146281211A07AFF5445329C17626" />
+      <ComponentRef Id="cmpFC6C38C7C78847A5C45F33EF90A40A92" />
+      <ComponentRef Id="cmpF978566FF699284F022667B20C558353" />
+      <ComponentRef Id="cmp56E761CAEE3B8C44E14B8317ABB7C0EE" />
+      <ComponentRef Id="cmp388276FEE813EF43555B5626B06D74E1" />
+      <ComponentRef Id="cmp99BDEFEFA9828839BC5DF39577F4D773" />
+      <ComponentRef Id="cmp55BBD645B3FEF2F1804D45D65D246833" />
+      <ComponentRef Id="cmp06E8B92CF7F70BDB97D055751FCC3AAE" />
+      <ComponentRef Id="cmpD19F872A1F80EAFE0C3049A3B217B171" />
+      <ComponentRef Id="cmpB78C67428B5EF8F968B72A415DEFAE17" />
+      <ComponentRef Id="cmp4FA05B5E47706087C5CF2DAA0F103807" />
+      <ComponentRef Id="cmpE0F49578C2D8BDFEBBF28C39DA83E5A4" />
+      <ComponentRef Id="cmp12D55B80DA1B70DE2932730A1BC2590D" />
+      <ComponentRef Id="cmpE5922AF3B89D23EC17590C880B48D66B" />
+      <ComponentRef Id="cmp1E30F2E4865D3107998A5223C6693A5B" />
+      <ComponentRef Id="cmpB65629D894DC2C7CF90240B27D5086FE" />
+      <ComponentRef Id="cmpDA5BD0469C591DA866975803723C563A" />
+      <ComponentRef Id="cmp86BA9CD13E2C28F5CCA0FC2E709D883D" />
+      <ComponentRef Id="cmpD337EF991A5BF84C6E3D6EF0DB06FC00" />
+      <ComponentRef Id="cmpD919477495AC5A1FEF4A4A26A357FF34" />
+      <ComponentRef Id="cmp96967DFFD328AF26299BEE8D7330B575" />
+      <ComponentRef Id="cmp424404D10B8CFEC670690CFEADA6B637" />
+      <ComponentRef Id="cmp87A45DEB688BDB2E8718FC33DCF58702" />
+      <ComponentRef Id="cmpA4BB5252CA4EDAA4A0070D8B98B5BA00" />
+      <ComponentRef Id="cmpD4091E8B2E1B70FBABFFE2F51428134D" />
+      <ComponentRef Id="cmp5363B2DDDFA445A41EA969BA6B5A1FC2" />
+      <ComponentRef Id="cmpF2784D96CAC8193EB7A8733DF7EDCF33" />
+      <ComponentRef Id="cmp7DB701FDD1A7248AEEC63EFFD4CF62F7" />
+      <ComponentRef Id="cmp4D3C7641C09E835F18DF43534B3DDFFC" />
+      <ComponentRef Id="cmp8C288F932085ADB004072D88D8D69B64" />
+      <ComponentRef Id="cmp726E2BF5D90CFA6223813C733EA85340" />
+      <ComponentRef Id="cmp769B0BC95FDADA2FE8860005DFDA8163" />
+      <ComponentRef Id="cmp32F6035954316AB8522E72BFDF294761" />
+      <ComponentRef Id="cmpFBE37517B0EA766CEF96B003A347D6BC" />
+      <ComponentRef Id="cmpED1A2FF1032184A5D44B64661579E901" />
+      <ComponentRef Id="cmp17CB69027B7852C273246B4FCC937F5B" />
+      <ComponentRef Id="cmpEBA2FA8551950C74D4B93FB11AC5A4DC" />
+      <ComponentRef Id="cmp93E64F6E17E15A99B0B4B7490B94B19A" />
+      <ComponentRef Id="cmpE8A50D0F2CDA3CE438F353E81E6FE0E6" />
+      <ComponentRef Id="cmp41D2C46AE9BEB030AE61C34799310B2C" />
+      <ComponentRef Id="cmp841560E84E49808C6E94461265AE9CB2" />
+      <ComponentRef Id="cmp5256C65297C71C669C83D2BC6ADCDA32" />
+      <ComponentRef Id="cmp57F02C496A869EA379336018507F2D97" />
+      <ComponentRef Id="cmpF401AC4B62AED8482894B67574E486C9" />
+      <ComponentRef Id="cmp84A9895D51CEF273B746F548BE486973" />
+      <ComponentRef Id="cmpA3B76C5AD1FA83D3A69AC358C2F887F7" />
+      <ComponentRef Id="cmp594E63C0B586C40473CBEB7F91F61B7B" />
+      <ComponentRef Id="cmpAA90042D00EE03F82852A0C5A7DE300D" />
+      <ComponentRef Id="cmp811C974EAABADB87D377C66119EAFB8D" />
+      <ComponentRef Id="cmp9DC6D1B759A0A35C105CF86779BC7C6A" />
+      <ComponentRef Id="cmp280CD185CD0FD0CDB5656190ED6577EC" />
+      <ComponentRef Id="cmpFE3B01558C1C5EC60378E4DC1A53ED9E" />
+      <ComponentRef Id="cmpBA283EAFF116A2B3E7EBCD1AB998FA6C" />
+      <ComponentRef Id="cmp555A2457421D6747566D1F5420E32616" />
+      <ComponentRef Id="cmpFBFE36B4DDAB254268705BA0A1EBBDC2" />
+      <ComponentRef Id="cmpE45B9690A8114BF6428239AFA0BD868B" />
+      <ComponentRef Id="cmp3DC9A5FC82FE971F722ED55906BE6ACC" />
+      <ComponentRef Id="cmpE8CEF7AD9B6CC121CA4543C8B7E3B0D9" />
+      <ComponentRef Id="cmpDE335458620183151792844EBD571E90" />
+      <ComponentRef Id="cmp3A92C6232C370A6316597D9BD0AADD61" />
+      <ComponentRef Id="cmp4E522809995F72B84D9629315FC9D590" />
+      <ComponentRef Id="cmp0629E5CB76131B4610929421D3F0C217" />
+      <ComponentRef Id="cmp713CFA6695DEE15891404150F6A8C0F7" />
+    </ComponentGroup>
+  </Fragment>
+  <Fragment>
+      <DirectoryRef Id="AddinsFolder">
+          <Directory Id="dirD7843B62894AB85056B1B5E7701A5E76" Name="Syntactik">
+              <Component Id="cmp1A89EE684723ACA08CF031774D0904F7" Guid="*">
+                  <File Id="filDA232EB53A7E3A742CE44FC3C323CCF2" KeyPath="yes" Source="$(var.SyntactikMDAddin.TargetDir)\log4net.dll" />
+              </Component>
+              <Component Id="cmp2408327C5C29715D3663A981CDB784DB" Guid="*">
+                  <File Id="fil229B22A07B784ED142FF27D115A40A19" KeyPath="yes" Source="$(var.SyntactikMDAddin.TargetDir)\log4net.xml" />
+              </Component>
+              <Component Id="cmp3E978542418277FA822C82EEF3AFFE34" Guid="*">
+                  <File Id="fil46E7F757A3498FB5A3ED7A0BB3E88EE3" KeyPath="yes" Source="$(var.SyntactikMDAddin.TargetDir)\Newtonsoft.Json.dll" />
+              </Component>
+              <Component Id="cmpD878447FCA21159BB559DD51CC1FE25E" Guid="*">
+                  <File Id="fil09889AF1C513AC019DC34DDB149B011E" KeyPath="yes" Source="$(var.SyntactikMDAddin.TargetDir)\Newtonsoft.Json.xml" />
+              </Component>
+              <Component Id="cmpE45874F0A8CEC95177E378CC423907B8" Guid="*">
+                  <File Id="filF3D76E5375615B02CA8C83ACF655846F" KeyPath="yes" Source="$(var.SyntactikMDAddin.TargetDir)\RestSharp.dll" />
+              </Component>
+              <Component Id="cmp28E37ADB66E288F9BC94221782986675" Guid="*">
+                  <File Id="filE6D504B21972721EA35D24CBE537581C" KeyPath="yes" Source="$(var.SyntactikMDAddin.TargetDir)\RestSharp.xml" />
+              </Component>
+              <Component Id="cmp4528A983527F9A883DD4DA3744ABD9F2" Guid="*">
+                  <File Id="fil4302DE88B0B2FD5F37A548CCF36B4735" KeyPath="yes" Source="$(var.SyntactikMDAddin.TargetDir)\Syntactik.dll" />
+              </Component>
+              <Component Id="cmp2498C8F8650A1CBF1818DA39B2ECFB1C" Guid="*">
+                  <File Id="SyntactikMDAddin.dll" KeyPath="yes" Source="$(var.SyntactikMDAddin.TargetPath)" />
+              </Component>
+          </Directory>
+      </DirectoryRef>
+  </Fragment>
+  <Fragment>
+      <ComponentGroup Id="SyntactikMDAddin">
+          <ComponentRef Id="cmp1A89EE684723ACA08CF031774D0904F7" />
+          <ComponentRef Id="cmp2408327C5C29715D3663A981CDB784DB" />
+          <ComponentRef Id="cmp3E978542418277FA822C82EEF3AFFE34" />
+          <ComponentRef Id="cmpD878447FCA21159BB559DD51CC1FE25E" />
+          <ComponentRef Id="cmpE45874F0A8CEC95177E378CC423907B8" />
+          <ComponentRef Id="cmp28E37ADB66E288F9BC94221782986675" />
+          <ComponentRef Id="cmp4528A983527F9A883DD4DA3744ABD9F2" />
+          <ComponentRef Id="cmp2498C8F8650A1CBF1818DA39B2ECFB1C" />
+      </ComponentGroup>
+  </Fragment>  
+
+</Wix>

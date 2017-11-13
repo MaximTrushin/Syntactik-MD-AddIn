@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:bal="http://schemas.microsoft.com/wix/BalExtension">
+	<Bundle Name="Syntactik Editor" Version="!(bind.packageVersion.Syntactik)" Manufacturer="Syntactik Ltd." UpgradeCode="CB50FDE4-7FA7-4A5A-93ED-73ECE9E6EC3D">
+    <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLicense">
+      <bal:WixStandardBootstrapperApplication
+				SuppressOptionsUI="yes"
+				LicenseFile="LicenseFile.rtf"
+				LogoFile="res/banner.png"
+				ThemeFile="res/RtfLargeTheme.xml"
+				LocalizationFile="res/ClassicTheme.wxl"
+				/>
+    </BootstrapperApplicationRef>
+
+		<Chain>
+			<!-- TODO: Define the list of chained packages. -->
+			<!-- <MsiPackage SourceFile="path\to\your.msi" /> -->
+      <MsiPackage Id="GtkSharp" SourceFile="gtk-sharp-2.12.45.msi" DisplayInternalUI="no" ForcePerMachine="yes" Compressed="yes"/>
+      <MsiPackage Id="Syntactik" SourceFile="$(var.SyntactikSetup.TargetPath)" DisplayInternalUI="yes" ForcePerMachine="yes" Compressed="yes"/>
+		</Chain>
+	</Bundle>
+</Wix>

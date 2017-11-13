@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" InitialTargets="EnsureWixToolsetInstalled" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\WiX.3.11.0\build\wix.props" Condition="Exists('..\packages\WiX.3.11.0\build\wix.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>3.10</ProductVersion>
+    <ProjectGuid>c2113fed-2f42-4e9f-8980-ffd23b6e139b</ProjectGuid>
+    <SchemaVersion>2.0</SchemaVersion>
+    <OutputName>SyntactikEditor</OutputName>
+    <OutputType>Package</OutputType>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+    <DefineConstants>Debug</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+    <SuppressIces>ICE69</SuppressIces>
+  </PropertyGroup>
+  <PropertyGroup>
+    <MyFolderAddins Condition=" '$(MyFolderAddins)' == '' ">$(MSBuildProjectDirectory)\..\..\..\external\SyntactikMDBuild\Addins</MyFolderAddins>
+    <DefineConstants>$(DefineConstants);FolderAddins=$(MyFolderAddins)</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup>
+    <MyFolderBin Condition=" '$(MyFolderBin)' == '' ">$(MSBuildProjectDirectory)\..\..\..\external\SyntactikMDBuild\Bin</MyFolderBin>
+    <DefineConstants>$(DefineConstants);FolderBin=$(MyFolderBin)</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup>
+    <MyFolderData Condition=" '$(MyFolderData)' == '' ">$(MSBuildProjectDirectory)\..\..\..\external\SyntactikMDBuild\Data</MyFolderData>
+    <DefineConstants>$(DefineConstants);FolderData=$(MyFolderData)</DefineConstants>
+  </PropertyGroup>
+  <!--
+  <PropertyGroup>
+    <MyFolderSyntactik Condition=" '$(MyFolderSyntactik)' == '' ">$(MSBuildProjectDirectory)\external\Syntactik</MyFolderSyntactik>
+    <DefineConstants>$(DefineConstants);FolderSyntactik=$(MyFolderSyntactik)</DefineConstants>
+  </PropertyGroup> -->
+  <ItemGroup>
+    <Compile Include="Product.wxs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\SyntactikMDAddin\SyntactikMDAddin.csproj">
+      <Name>SyntactikMDAddin</Name>
+      <Project>{7018d761-eb56-443c-9ffb-c820c33ce6e4}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(WixTargetsPath)" Condition=" '$(WixTargetsPath)' != '' " />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets" Condition=" '$(WixTargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets') " />
+  <Target Name="EnsureWixToolsetInstalled" Condition=" '$(WixTargetsImported)' != 'true' ">
+    <Error Text="The WiX Toolset v3.11 (or newer) build tools must be installed to build this project. To download the WiX Toolset, see http://wixtoolset.org/releases/" />
+  </Target>
+  <Target Name="BeforeBuild">
+    <RemoveDir Directories="$(MSBuildProjectDirectory)\..\..\..\external\SyntactikMDBuild\Addins\Syntactik" />
+    <!--
+  No need to explicitly call HeatDirectory MSBuild Task.
+  Instead follow documentation http://wixtoolset.org/documentation/manual/v3/msbuild/target_reference/harvestdirectory.html, which has sample and 
+  important comment:
+   This target is processed before compilation. Generated authoring is automatically added to the Compile item group to be compiled by the Candle task.
+  So, *.wsx file created in the IntermediateOutputPath and included in Compile list (processed by Candle).
+
+  The following ItemGroup with special name "HarvestDirectory" can be prepared, and later the "HarvestDirectory" target will process it, see
+  C:\Program Files (x86)\MSBuild\Microsoft\WiX\v3.x\wix2010.targets
+  -->
+    <ItemGroup>
+      <HarvestDirectory Include="$(MyFolderAddins)">
+        <DirectoryRefId>INSTALLFOLDER</DirectoryRefId>
+        <SuppressRootDirectory>false</SuppressRootDirectory>
+        <SuppressCom>true</SuppressCom>
+        <SuppressRegistry>true</SuppressRegistry>
+        <ComponentGroupName>SyntactikMDBuildAddins</ComponentGroupName>
+        <PreprocessorVariable>var.FolderAddins</PreprocessorVariable>
+      </HarvestDirectory>
+    </ItemGroup>
+    <!--
+    <ItemGroup>
+      <HarvestDirectory Include="$(MyFolderBin)">
+        <DirectoryRefId>INSTALLFOLDER</DirectoryRefId>
+        <SuppressRootDirectory>false</SuppressRootDirectory>
+        <SuppressCom>true</SuppressCom>
+        <SuppressRegistry>true</SuppressRegistry>
+        <ComponentGroupName>SyntactikMDBuildBin</ComponentGroupName>
+        <PreprocessorVariable>var.FolderBin</PreprocessorVariable>
+      </HarvestDirectory>
+    </ItemGroup>-->
+    <ItemGroup>
+      <HarvestDirectory Include="$(MyFolderData)">
+        <DirectoryRefId>INSTALLFOLDER</DirectoryRefId>
+        <SuppressRootDirectory>false</SuppressRootDirectory>
+        <SuppressCom>true</SuppressCom>
+        <SuppressRegistry>true</SuppressRegistry>
+        <ComponentGroupName>SyntactikMDBuildData</ComponentGroupName>
+        <PreprocessorVariable>var.FolderData</PreprocessorVariable>
+      </HarvestDirectory>
+    </ItemGroup>
+    <!--
+    <ItemGroup>
+      <HarvestDirectory Include="$(MyFolderSyntactik)">
+        <DirectoryRefId>AddinsFolder</DirectoryRefId>
+        <SuppressRootDirectory>false</SuppressRootDirectory>
+        <SuppressCom>true</SuppressCom>
+        <SuppressRegistry>true</SuppressRegistry>
+        <ComponentGroupName>SyntactikMDAddin</ComponentGroupName>
+        <PreprocessorVariable>var.FolderSyntactik</PreprocessorVariable>
+      </HarvestDirectory>
+    </ItemGroup>	-->
+  </Target>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\WiX.3.11.0\build\wix.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WiX.3.11.0\build\wix.props'))" />
+  </Target>
+  <PropertyGroup>
+    <PreBuildEvent />
+  </PropertyGroup>
+  <!--
+	To modify your build process, add your task inside one of the targets below and uncomment it.
+	Other similar extension points exist, see Wix.targets.
+	<Target Name="BeforeBuild">
+	</Target>
+	<Target Name="AfterBuild">
+	</Target>
+	-->
+</Project>

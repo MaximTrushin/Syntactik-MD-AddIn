@@ -11,3 +11,8 @@
 SyntactikMDAddin.sln.DotSettings.user
 *.userprefs
 *.user
+/src/Setup/packages
+/src/Setup/SyntactikFullSetup/bin
+/src/Setup/SyntactikFullSetup/obj
+/src/Setup/SyntactikSetup/bin
+/src/Setup/SyntactikSetup/obj
