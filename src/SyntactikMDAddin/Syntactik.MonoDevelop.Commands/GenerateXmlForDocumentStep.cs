@@ -61,7 +61,9 @@ namespace Syntactik.MonoDevelop.Commands
                             })
                             , _compilerContext))
                 {
-                    visitor.Visit(_doc);
+                    var module = _compilerContext.CompileUnit.Modules.First(m => m.FileName == _doc.Module.FileName);
+                    var doc = module.Members.First(m => m.Name == _doc.Name);
+                    visitor.Visit(doc);
                     _memoryStream.Position = 0;
                     _context.InMemoryOutputObjects["CLIPBOARD"] = new StreamReader(_memoryStream).ReadToEnd();
                 }

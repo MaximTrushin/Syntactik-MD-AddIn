@@ -37,7 +37,7 @@ namespace Syntactik.MonoDevelop.Commands
             var project = document.Project as SyntactikProject;
             var module = document.ParsedDocument?.Ast as Module;
             if (module == null || project == null) return;
-            var modules = new PairCollection<Module> { module };
+            var modules = project.CompilerContext.CompileUnit.Modules;
 
             Document doc = FindCurrentDocument(module, textEditor.CaretOffset);
             if (doc == null) return;
