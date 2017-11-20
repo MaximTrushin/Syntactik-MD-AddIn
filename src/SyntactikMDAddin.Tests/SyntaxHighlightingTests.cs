@@ -184,6 +184,11 @@ namespace SyntactikMDAddin.Tests
             DoHighlightingTest();
         }
         [Test, RecordedTest]
+        public void OpenStringComments()
+        {
+            DoHighlightingTest();
+        }
+        [Test, RecordedTest]
         public void OpenStringJson()
         {
             DoJsonHighlightingTest();

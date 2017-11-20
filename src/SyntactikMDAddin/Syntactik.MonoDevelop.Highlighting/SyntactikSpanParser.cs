@@ -28,7 +28,7 @@ namespace Syntactik.MonoDevelop.Highlighting
                 var textStyle = "Xml Text";
                 if (CurRule.Name.StartsWith("open_string")) //"open_string"
                 {
-                    var r = new System.Text.RegularExpressions.Regex(@"\s*('|"")").Match(CurText, i - StartOffset);
+                    var r = new System.Text.RegularExpressions.Regex(@"\s*('(?!'')|""(?!""""'))").Match(CurText, i - StartOffset);//starts with quote but not a comment?
                     if (r.Success && r.Index == i - StartOffset) //quoted string processing
                     {
                         quote = r.Groups[1].Value[0];
