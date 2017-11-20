@@ -18,7 +18,7 @@ namespace Syntactik.MonoDevelop.Completion
         {
             _context = context;
             _cancellationToken = cancellationToken;
-            _pairFactory = new ReportingPairFactoryForJson(context, module);
+            _pairFactory = new PairFactoryForJson(context, module);
         }
 
         public Pair CreateMappedPair(ICharStream input, int nameQuotesType, Interval nameInterval, DelimiterEnum delimiter,

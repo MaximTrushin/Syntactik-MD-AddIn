@@ -24,7 +24,7 @@ namespace Syntactik.MonoDevelop.Completion
             _context = context;
             _module = (Module) module;
             _cancellationToken = cancellationToken;
-            _pairFactory = new ReportingPairFactoryForXml(context, module);
+            _pairFactory = new PairFactoryForXml(context, module);
         }
 
         public Pair CreateMappedPair(ICharStream input, int nameQuotesType, Interval nameInterval,
