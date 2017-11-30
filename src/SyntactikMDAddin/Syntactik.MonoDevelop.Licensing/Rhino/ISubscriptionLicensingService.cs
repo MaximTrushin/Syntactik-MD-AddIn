@@ -6,7 +6,7 @@ namespace Rhino.Licensing
     /// Service contract of subscription server.
     /// </summary>
     [ServiceContract]
-    public interface ISubscriptionLicensingService
+    interface ISubscriptionLicensingService
     {
         /// <summary>
         /// Issues a leased license

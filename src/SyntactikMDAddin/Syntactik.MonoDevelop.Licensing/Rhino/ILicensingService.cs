@@ -7,7 +7,7 @@ namespace Rhino.Licensing
     /// Service contract of the licensing server.
     /// </summary>
     [ServiceContract(SessionMode = SessionMode.NotAllowed)]
-    public interface ILicensingService
+    interface ILicensingService
     {
         /// <summary>
         /// Issues a float license for the user.

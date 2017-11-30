@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace Rhino.Licensing
 {
-	public class SntpClient
+	class SntpClient
 	{
 		private const byte SntpDataLength = 48;
 		private readonly string[] hosts;

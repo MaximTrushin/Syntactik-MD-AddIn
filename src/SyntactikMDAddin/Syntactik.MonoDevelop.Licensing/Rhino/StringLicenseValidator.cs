@@ -3,7 +3,7 @@
     /// <summary>
     /// Validates content of a license file
     /// </summary>
-    public class StringLicenseValidator : AbstractLicenseValidator
+    class StringLicenseValidator : AbstractLicenseValidator
     {
         /// <summary>
         /// Creates a new instance of <seealso cref="StringLicenseValidator"/>

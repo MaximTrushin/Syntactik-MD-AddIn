@@ -52,8 +52,8 @@
       <HintPath>..\packages\NUnit.3.8.1\lib\net45\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Syntactik, Version=0.1.6533.27176, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syntactik.0.1.6533.27176\lib\net45\Syntactik.dll</HintPath>
+    <Reference Include="Syntactik, Version=0.1.6543.17150, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syntactik.0.1.6543.17150\lib\net45\Syntactik.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

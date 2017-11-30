@@ -14,7 +14,7 @@ namespace Rhino.Licensing
     /// expect to have to deal with huge load, anyway.
     /// </summary>
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Single)]
-    public class LicensingService : ILicensingService
+    class LicensingService : ILicensingService
     {
         private readonly List<LicenseValidator> availableLicenses = new List<LicenseValidator>();
         private readonly Dictionary<string, KeyValuePair<DateTime, LicenseValidator>> leasedLicenses = new Dictionary<string, KeyValuePair<DateTime, LicenseValidator>>();

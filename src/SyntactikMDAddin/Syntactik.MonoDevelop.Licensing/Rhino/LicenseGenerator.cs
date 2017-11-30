@@ -12,7 +12,7 @@ namespace Rhino.Licensing
     /// <summary>
     /// LicenseGenerator generates and signs license.
     /// </summary>
-    public class LicenseGenerator
+    class LicenseGenerator
     {
         private readonly string privateKey;
 

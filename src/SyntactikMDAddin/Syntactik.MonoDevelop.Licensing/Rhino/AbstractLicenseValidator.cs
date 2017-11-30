@@ -14,7 +14,7 @@ namespace Rhino.Licensing
     /// <summary>
     /// Base license validator.
     /// </summary>
-    public abstract class AbstractLicenseValidator
+    abstract class AbstractLicenseValidator
     {
         /// <summary>
         /// License validator logger

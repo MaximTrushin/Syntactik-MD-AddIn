@@ -3,7 +3,7 @@ namespace Rhino.Licensing
     /// <summary>
     /// License Type
     /// </summary>
-    public enum LicenseType
+    enum LicenseType
     {
         /// <summary>
         /// No type specified

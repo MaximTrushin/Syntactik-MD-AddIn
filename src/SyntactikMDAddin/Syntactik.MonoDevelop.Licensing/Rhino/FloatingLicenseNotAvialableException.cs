@@ -6,7 +6,7 @@ namespace Rhino.Licensing
     /// <summary>
     /// 
     /// </summary>
-    public class FloatingLicenseNotAvialableException : RhinoLicensingException
+    class FloatingLicenseNotAvialableException : RhinoLicensingException
     {
         /// <summary>
         /// Creates a new instance of <seealso cref="FloatingLicenseNotAvialableException"/>.

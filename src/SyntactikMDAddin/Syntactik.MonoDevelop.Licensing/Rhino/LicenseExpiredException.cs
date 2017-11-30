@@ -6,7 +6,7 @@ namespace Rhino.Licensing
     ///<summary>
     /// Thrown when license is found but is past it's expiration date
     ///</summary>
-    public class LicenseExpiredException : RhinoLicensingException
+    class LicenseExpiredException : RhinoLicensingException
     {
         /// <summary>
         /// Creates a new instance of <seealso cref="RhinoLicensingException"/>.

@@ -7,7 +7,7 @@ namespace Rhino.Licensing
     /// Base class for all licensing exceptions.
     /// </summary>
     [Serializable]
-    public class RhinoLicensingException : Exception
+    class RhinoLicensingException : Exception
     {
         /// <summary>
         /// Creates a new instance of <seealso cref="RhinoLicensingException"/>.

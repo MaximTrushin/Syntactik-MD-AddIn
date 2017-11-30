@@ -8,7 +8,7 @@ namespace Rhino.Licensing
     /// found on the client machine.
     /// </summary>
     [Serializable]
-    public class LicenseFileNotFoundException : RhinoLicensingException
+    class LicenseFileNotFoundException : RhinoLicensingException
     {
         /// <summary>
         /// Creates a new instance of <seealso cref="LicenseFileNotFoundException"/>

@@ -10,7 +10,7 @@ namespace Rhino.Licensing
     /// License validator validates a license file
     /// that can be located on disk.
     /// </summary>
-    public class LicenseValidator : AbstractLicenseValidator
+    class LicenseValidator : AbstractLicenseValidator
     {
         public const string COMPUTER_ID = "ComputerId";
         public const string EMAIL = "Email";

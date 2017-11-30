@@ -3,7 +3,7 @@ namespace Rhino.Licensing
     /// <summary>
     /// InvalidationType
     /// </summary>
-    public enum InvalidationType
+    enum InvalidationType
     {
         /// <summary>
         /// Can not create a new license

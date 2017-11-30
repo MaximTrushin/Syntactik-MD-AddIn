@@ -7,7 +7,7 @@ namespace Rhino.Licensing
     /// Thrown when suitable license is not found.
     /// </summary>
     [Serializable]
-    public class LicenseNotFoundException : RhinoLicensingException
+    class LicenseNotFoundException : RhinoLicensingException
     {
         /// <summary>
         /// Creates a new instance of <seealso cref="LicenseNotFoundException"/>.

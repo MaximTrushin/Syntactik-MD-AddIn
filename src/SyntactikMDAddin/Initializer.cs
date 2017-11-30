@@ -3,7 +3,7 @@ using MonoDevelop.Components.Commands;
 using MonoDevelop.Core;
 using MonoDevelop.Ide;
 using MonoDevelop.Ide.Commands;
-using Syntactik.DOM.Mapped;
+using Syntactik.DOM;
 using Syntactik.MonoDevelop.Completion;
 using Syntactik.MonoDevelop.Dialogs;
 using Syntactik.MonoDevelop.Licensing;
@@ -65,7 +65,7 @@ namespace Syntactik.MonoDevelop
                 if (task.Status != TaskStatus.RanToCompletion) return;
                 CompletionContext context = task.Result;
                 
-                var lastPair = context.LastPair as IMappedPair;
+                var lastPair = context.LastPair as DOM.Mapped.IMappedPair;
                 if (lastPair == null) return;
                 if (lastPair is Argument)
                 {
@@ -90,10 +90,6 @@ namespace Syntactik.MonoDevelop
                 else if (lastPair is Element)
                 {
                     DesktopService.ShowUrl(@"https://github.com/syntactik/Syntactik/blob/master/README.md#element");
-                }
-                else if (lastPair is Module)
-                {
-                    DesktopService.ShowUrl(@"https://github.com/syntactik/Syntactik/blob/master/README.md#module");
                 }
                 else if (lastPair is NamespaceDefinition)
                 {
