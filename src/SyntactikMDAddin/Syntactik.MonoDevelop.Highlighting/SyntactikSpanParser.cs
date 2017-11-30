@@ -26,41 +26,41 @@ namespace Syntactik.MonoDevelop.Highlighting
                 char quote = (char) 0;
                 var indent = CurText.TakeWhile(c => c == ' ' || c == '\t').Count(); //calculating indent span for multiline strings
                 var textStyle = "Xml Text";
-                if (CurRule.Name.StartsWith("open_string")) //"open_string"
+                var r = new System.Text.RegularExpressions.Regex(@"\s*('(?!'')|""(?!""""'))").Match(CurText, i - StartOffset);//starts with quote but not a comment?
+                if (r.Success && r.Index == i - StartOffset) //quoted string processing
                 {
-                    var r = new System.Text.RegularExpressions.Regex(@"\s*('(?!'')|""(?!""""'))").Match(CurText, i - StartOffset);//starts with quote but not a comment?
-                    if (r.Success && r.Index == i - StartOffset) //quoted string processing
+                    quote = r.Groups[1].Value[0];
+                    var prev = RuleStack.Count > 1 ? RuleStack.ElementAt(1) : null;
+                    var ruleName = quote == '\'' ? "sq_string" : "dq_string";
+                    if (CurRule.Name.EndsWith("_sl") || _inline) ruleName += "_sl";
+                    FoundSpanBegin(new IndentSpan
+                            {
+                                Indent = indent,
+                                FirstLine = true,
+                                Rule = ruleName,
+                                Color = prev == null || !prev.Name.StartsWith("string_high") ? textStyle: "String",
+                                Quote = quote }, i, 0
+                            );
+                    i += r.Length - 1;
+                    return false;
+                }
+                
+                if (_format == Module.TargetFormats.Json) //processing json literals
+                {
+                    //System.Text.RegularExpressions.Match r;
+                    if (CurRule.Name.StartsWith("f") /*"free_open_string"*/)
                     {
-                        quote = r.Groups[1].Value[0];
-                        var prev = RuleStack.Count > 1 ? RuleStack.ElementAt(1) : null;
-                        var ruleName = quote == '\'' ? "sq_string" : "dq_string";
-                        if (CurRule.Name.EndsWith("_sl") || _inline) ruleName += "_sl";
-                        FoundSpanBegin(new IndentSpan
-                                {
-                                    Indent = indent,
-                                    FirstLine = true,
-                                    Rule = ruleName,
-                                    Color = prev == null || !prev.Name.StartsWith("string_high") ? textStyle: "String",
-                                    Quote = quote }, i, 0
-                               );
-                        i += r.Length - 1;
-                        return false;
+                        r = new System.Text.RegularExpressions.Regex(
+                                @"\s*(?:false|true|null|-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?)\s*$").Match(
+                                CurText, i - StartOffset);
                     }
-                    if (_format == Module.TargetFormats.Json) //processing json literals
+                    else
                     {
                         r = new System.Text.RegularExpressions.Regex(
                                 @"\s*(?:false|true|null|-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?)\s*(?=[=:()'"",]|$)").Match(
                                 CurText, i - StartOffset);
-                        if (r.Success && r.Index == i - StartOffset)
-                        {
-                            textStyle = "Keyword(Constants)";
-                        }
                     }
-                }
-                
-                if (CurRule.Name.StartsWith("f") /*"free_open_string"*/ && _format == Module.TargetFormats.Json) //processing json literals
-                {
-                    var r = new System.Text.RegularExpressions.Regex(@"\s*(?:false|true|null|-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?)\s*$").Match(CurText, i - StartOffset);
+
                     if (r.Success && r.Index == i - StartOffset)
                     {
                         textStyle = "Keyword(Constants)";
