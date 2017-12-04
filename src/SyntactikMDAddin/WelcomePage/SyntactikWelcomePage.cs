@@ -19,8 +19,8 @@ namespace Syntactik.MonoDevelop.WelcomePage
             var row1 = new WelcomePageRow();
             row1.PackStart(new WelcomePageButtonBar(
                 new WelcomePageBarButton("Syntactik.com", "http://www.syntactik.com", "welcome-link-md-16.png"),
-                new WelcomePageBarButton(GettextCatalog.GetString("Documentation"), "https://syntactik.github.io/Malina/", "welcome-link-info-16.png"),
-                new WelcomePageBarButton(GettextCatalog.GetString("Support"), "https://gitter.im/syntactik-Malina/Lobby", "welcome-link-support-16.png")
+                new WelcomePageBarButton(GettextCatalog.GetString("Documentation"), "https://github.com/syntactik/Syntactik/blob/master/README.md", "welcome-link-info-16.png"),
+                new WelcomePageBarButton(GettextCatalog.GetString("Support"), "https://gitter.im/syntactik", "welcome-link-support-16.png")
                 )
             );
             mainCol.PackStart(row1, false, false, 0);
