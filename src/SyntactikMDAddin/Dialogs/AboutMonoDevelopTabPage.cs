@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Gtk;
@@ -32,7 +33,7 @@ namespace Syntactik.MonoDevelop.Dialogs
 
             infoBox.PackStart(new Xwt.Label()
             {
-                Text = GettextCatalog.GetString("Version"),
+                Text = GettextCatalog.GetString("Syntactik Addin Version"),
                 Font = infoBox.Font.WithWeight(Xwt.Drawing.FontWeight.Bold)
             });
             infoBox.PackStart(new Xwt.Label()
@@ -95,6 +96,8 @@ namespace Syntactik.MonoDevelop.Dialogs
                 string v = "";
 #pragma warning disable 162
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                var ver = typeof(AboutMonoDevelopTabPage).Assembly.GetName().Version;
+                return ver.ToString();
                 if (BuildInfo.Version != BuildInfo.VersionLabel)
                     // ReSharper disable once HeuristicUnreachableCode
                     v += BuildInfo.Version;
