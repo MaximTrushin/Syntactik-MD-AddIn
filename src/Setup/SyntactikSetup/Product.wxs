@@ -34,7 +34,7 @@
         <Shortcut Id="ApplicationStartMenuShortcut"
                   Name="Syntactik Editor"
                   Description="Syntactik Editor"
-                  Target="[#fil8FE9E0A17C07C11669A2C81782A5B31C]"
+                  Target="[#fil64082629ACBE455B8A25A40E8411E435]"
                   WorkingDirectory="APPLICATIONROOTDIRECTORY"/>
         <RegistryValue Root="HKCU" Key="Software\Syntactik\Editor" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
         
@@ -46,7 +46,7 @@
           <Shortcut Id="ApplicationDesktopShortcut"
                     Name="Syntactik Editor"
                     Description="Syntactik Editor"
-                    Target="[#fil8FE9E0A17C07C11669A2C81782A5B31C]"
+                    Target="[#fil64082629ACBE455B8A25A40E8411E435]"
                     WorkingDirectory="APPLICATIONROOTDIRECTORY"/>
           <RegistryValue Root="HKCU" Key="Software\Syntactik\Editor" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
         </Component>
@@ -358,6 +358,9 @@
         </Component>
         <Component Id="cmp5EED5B95AC897027AA8A0E9A7D79B8A9" Guid="*">
           <File Id="fil8FE9E0A17C07C11669A2C81782A5B31C" KeyPath="yes" Source="$(var.FolderBin)\MonoDevelop.exe" />
+        </Component>
+        <Component Id="cmp433FD1BAAEAB41CF87C2B9484C54BAA1" Guid="*">
+          <File Id="fil64082629ACBE455B8A25A40E8411E435" KeyPath="yes" Source="$(var.FolderBin)\SyntactikEditor.exe" />
         </Component>
         <Component Id="cmp0EB4D533F8035CAD4366A38FB2BE057C" Guid="*">
           <File Id="fil8A494B30C2575901801AF5F51F0980DA" KeyPath="yes" Source="$(var.FolderBin)\MonoDevelop.exe.addins" />
@@ -946,6 +949,7 @@
       <ComponentRef Id="cmp6B5143AC6CF743A36902A9BFBA3CF6E6" />
       <ComponentRef Id="cmp7201D83270C492BFFB43B6815C4A32AC" />
       <ComponentRef Id="cmp5EED5B95AC897027AA8A0E9A7D79B8A9" />
+      <ComponentRef Id="cmp433FD1BAAEAB41CF87C2B9484C54BAA1" />
       <ComponentRef Id="cmp0EB4D533F8035CAD4366A38FB2BE057C" />
       <ComponentRef Id="cmp86F825596B4BE05DFE55CA34B361FF4E" />
       <ComponentRef Id="cmp8DDEBB445126FEC1360FA9A7453F966B" />

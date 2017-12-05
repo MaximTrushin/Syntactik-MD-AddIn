@@ -9,6 +9,8 @@ Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "SyntactikFullSetup", "Synta
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyntactikMDAddin", "..\SyntactikMDAddin\SyntactikMDAddin.csproj", "{7018D761-EB56-443C-9FFB-C820C33CE6E4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyntactikEditor", "..\SyntactikEditor\SyntactikEditor.csproj", "{918E459A-FEDF-4C3E-A0C9-0BA82200A523}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,14 @@ Global
 		{7018D761-EB56-443C-9FFB-C820C33CE6E4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7018D761-EB56-443C-9FFB-C820C33CE6E4}.Release|x86.ActiveCfg = Release|Any CPU
 		{7018D761-EB56-443C-9FFB-C820C33CE6E4}.Release|x86.Build.0 = Release|Any CPU
+		{918E459A-FEDF-4C3E-A0C9-0BA82200A523}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{918E459A-FEDF-4C3E-A0C9-0BA82200A523}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{918E459A-FEDF-4C3E-A0C9-0BA82200A523}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{918E459A-FEDF-4C3E-A0C9-0BA82200A523}.Debug|x86.Build.0 = Debug|Any CPU
+		{918E459A-FEDF-4C3E-A0C9-0BA82200A523}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{918E459A-FEDF-4C3E-A0C9-0BA82200A523}.Release|Any CPU.Build.0 = Release|Any CPU
+		{918E459A-FEDF-4C3E-A0C9-0BA82200A523}.Release|x86.ActiveCfg = Release|Any CPU
+		{918E459A-FEDF-4C3E-A0C9-0BA82200A523}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

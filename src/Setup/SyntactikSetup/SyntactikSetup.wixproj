@@ -37,9 +37,7 @@
   <PropertyGroup>
     <MyFolderBranding Condition=" '$(MyFolderBranding)' == '' ">$(MSBuildProjectDirectory)\..\..\..\branding\branding</MyFolderBranding>
     <DefineConstants>$(DefineConstants);FolderBranding=$(MyFolderBranding)</DefineConstants>
-  </PropertyGroup>  
-  
-  
+  </PropertyGroup>
   <!--
   <PropertyGroup>
     <MyFolderSyntactik Condition=" '$(MyFolderSyntactik)' == '' ">$(MSBuildProjectDirectory)\external\Syntactik</MyFolderSyntactik>
@@ -52,6 +50,14 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\SyntactikEditor\SyntactikEditor.csproj">
+      <Name>SyntactikEditor</Name>
+      <Project>{918e459a-fedf-4c3e-a0c9-0ba82200a523}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
     <ProjectReference Include="..\..\SyntactikMDAddin\SyntactikMDAddin.csproj">
       <Name>SyntactikMDAddin</Name>
       <Project>{7018d761-eb56-443c-9ffb-c820c33ce6e4}</Project>
@@ -118,8 +124,7 @@
         <ComponentGroupName>SyntactikBranding</ComponentGroupName>
         <PreprocessorVariable>var.FolderBranding</PreprocessorVariable>
       </HarvestDirectory>
-    </ItemGroup>	
-	
+    </ItemGroup>
     <!--
     <ItemGroup>
       <HarvestDirectory Include="$(MyFolderSyntactik)">
