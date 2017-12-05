@@ -16,3 +16,5 @@ SyntactikMDAddin.sln.DotSettings.user
 /src/Setup/SyntactikFullSetup/obj
 /src/Setup/SyntactikSetup/bin
 /src/Setup/SyntactikSetup/obj
+/src/SyntactikEditor/bin
+/src/SyntactikEditor/obj
