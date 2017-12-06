@@ -108,6 +108,10 @@
     <Match color = "String">(.*)</Match>
   </Rule>
 
+  <Rule name = "free_open_string_high_attr_sl">
+    <Match color = "String">(.*)</Match>
+  </Rule>
+
   <!-- attribute -->
   <Span color = "String(Escape)" rule ="string_high_attr">
     <Begin>@</Begin>
