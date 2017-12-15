@@ -4,7 +4,7 @@
   <TemplateConfiguration>
     <_Name>Empty Syntactik for JSON File</_Name>
     <Icon>md-text-file-icon</Icon>
-    <_Category>General</_Category>
+    <_Category>Syntactik</_Category>
     <LanguageName>S4J</LanguageName>
     <_Description>Creates an empty S4J file.</_Description>
     <DefaultFilename>S4JFile</DefaultFilename>

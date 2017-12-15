@@ -4,7 +4,7 @@
   <TemplateConfiguration>
     <_Name>Empty Syntactik for XML File</_Name>
     <Icon>md-text-file-icon</Icon>
-    <_Category>General</_Category>
+    <_Category>Syntactik</_Category>
     <LanguageName>S4X</LanguageName>
     <_Description>Creates an empty S4X file.</_Description>
     <DefaultFilename>S4XFile</DefaultFilename>

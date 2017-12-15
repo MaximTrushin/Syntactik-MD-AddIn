@@ -20,7 +20,7 @@ namespace Syntactik.MonoDevelop.WelcomePage
             row1.PackStart(new WelcomePageButtonBar(
                 new WelcomePageBarButton("Syntactik.com", "http://www.syntactik.com", "welcome-link-md-16.png"),
                 new WelcomePageBarButton(GettextCatalog.GetString("Documentation"), "https://github.com/syntactik/Syntactik/blob/master/README.md", "welcome-link-info-16.png"),
-                new WelcomePageBarButton(GettextCatalog.GetString("Support"), "https://gitter.im/syntactik", "welcome-link-support-16.png")
+                new WelcomePageBarButton(GettextCatalog.GetString("Support"), "https://gitter.im/syntactik/Syntactik", "welcome-link-support-16.png")
                 )
             );
             mainCol.PackStart(row1, false, false, 0);

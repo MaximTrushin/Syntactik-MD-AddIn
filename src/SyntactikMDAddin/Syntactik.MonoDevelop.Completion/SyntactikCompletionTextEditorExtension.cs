@@ -490,6 +490,7 @@ namespace Syntactik.MonoDevelop.Completion
                 return;
             _pathUpdateQueued = true;
             var editor = Editor;
+            if (editor == null) return;
             editor.EnsureCaretIsNotVirtual(); //TODO: To find how to parse completion context with virtual caret.
             
             GLib.Timeout.Add(UpdatePathInterval, delegate
