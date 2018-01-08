@@ -33,7 +33,7 @@ namespace Syntactik.MonoDevelop.Parser
             _cancellationToken = cancellationToken;
             _foldingStack = new Stack<FoldingInfo>();
         }
-        public Pair CreateMappedPair(ICharStream input, int nameQuotesType, Interval nameInterval, DelimiterEnum delimiter, Interval delimiterInterval,
+        public Pair CreateMappedPair(ITextSource input, int nameQuotesType, Interval nameInterval, DelimiterEnum delimiter, Interval delimiterInterval,
             int valueQuotesType, Interval valueInterval, int valueIndent)
         {
             _cancellationToken.ThrowIfCancellationRequested();
@@ -105,7 +105,7 @@ namespace Syntactik.MonoDevelop.Parser
 
 
 
-        public DOM.Comment ProcessComment(ICharStream input, int commentType, Interval commentInterval)
+        public DOM.Comment ProcessComment(ITextSource input, int commentType, Interval commentInterval)
         {
             _cancellationToken.ThrowIfCancellationRequested();
 

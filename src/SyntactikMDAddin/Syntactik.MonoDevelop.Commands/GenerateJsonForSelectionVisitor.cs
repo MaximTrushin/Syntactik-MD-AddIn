@@ -22,72 +22,72 @@ namespace Syntactik.MonoDevelop.Commands
 
         private void CheckBlockStart(Pair node, bool inSelection)
         {
-            if (!_blockStart || !inSelection) return;
+            if (!BlockIsStarting || !inSelection) return;
 
             //This element is the first element of the block. It decides if the block is array or object
             if (string.IsNullOrEmpty(node.Name) || node.Delimiter == DelimiterEnum.None)
             {
-                _jsonWriter.WriteStartArray(); //start array
+                JsonWriter.WriteStartArray(); //start array
                 
-                _blockState.Push(BlockState.Array);
+                BlockState.Push(BlockStateEnum.Array);
             }
             else
             {
-                _jsonWriter.WriteStartObject(); //start array
-                _blockState.Push(BlockState.Object);
+                JsonWriter.WriteStartObject(); //start array
+                BlockState.Push(BlockStateEnum.Object);
             }
-            _blockStart = false;
+            BlockIsStarting = false;
         }
 
-        public override void OnElement(Element element)
+        public override void Visit(Element element)
         {
             var inSelection = IsInSelection(element as IMappedPair, _selectionRange);
             CheckBlockStart(element, inSelection);
             if (inSelection)
             {
                 if (!string.IsNullOrEmpty(element.Name) && element.Delimiter != DelimiterEnum.None)
-                    _jsonWriter.WritePropertyName((element.NsPrefix != null ? element.NsPrefix + "." : "") + element.Name);
+                    JsonWriter.WritePropertyName((element.NsPrefix != null ? element.NsPrefix + "." : "") + element.Name);
 
                 if (ResolveValue(element)) return; //Block has value therefore it has no block.
             }
 
             //Working with node's block
-            if (inSelection) _blockStart = true;
-            var prevBlockStateCount = _blockState.Count;
+            if (inSelection) BlockIsStarting = true;
+            var prevBlockStateCount = BlockState.Count;
             Visit(element.Entities);
 
-            if (inSelection) _blockStart = false;
+            if (inSelection) BlockIsStarting = false;
 
-            if (inSelection && _blockState.Count > prevBlockStateCount)
+            if (inSelection && BlockState.Count > prevBlockStateCount)
             {
-                if (_blockState.Pop() == BlockState.Array)
+                if (BlockState.Pop() == BlockStateEnum.Array)
                 {
-                    _jsonWriter.WriteEndArray();
+                    JsonWriter.WriteEndArray();
                 }
                 else
                 {
-                    _jsonWriter.WriteEndObject();
+                    JsonWriter.WriteEndObject();
                 }
                 return;
             }
 
-            //Element hase nor block no value. Writing an empty object as a value.
+            //Element has nor block no value. Writing an empty object as a value.
             if (inSelection && (!string.IsNullOrEmpty(element.Name) || ((DOM.Mapped.Element)element).ValueType == ValueType.Object))
             {
                 if (element.Delimiter == DelimiterEnum.CC)
                 {
-                    _jsonWriter.WriteStartArray();
-                    _jsonWriter.WriteEndArray();
+                    JsonWriter.WriteStartArray();
+                    JsonWriter.WriteEndArray();
                 }
                 else
                 {
-                    _jsonWriter.WriteStartObject();
-                    _jsonWriter.WriteEndObject();
+                    JsonWriter.WriteStartObject();
+                    JsonWriter.WriteEndObject();
                 }
             }
         }
 
-        public override void OnAliasDefinition(DOM.AliasDefinition aliasDef)
+        public override void Visit(DOM.AliasDefinition aliasDef)
         {
             Visit(aliasDef.Entities);
         }
@@ -112,7 +112,7 @@ namespace Syntactik.MonoDevelop.Commands
                    pair.DelimiterInterval.End.Index <= selectionRange.EndOffset;
         }
 
-        public override void OnAlias(Alias alias)
+        public override void Visit(Alias alias)
         {
             var inSelection = IsInSelection(alias as IMappedPair, _selectionRange);
 
@@ -126,7 +126,7 @@ namespace Syntactik.MonoDevelop.Commands
                     OnValue(ResolveValueAlias((DOM.Mapped.Alias)alias, out valueType), valueType);
                 }
 
-                AliasContext.Push(new AliasContext() { AliasDefinition = aliasDef, Alias = (DOM.Mapped.Alias)alias, AliasNsInfo = GetContextNsInfo() });
+                AliasContext.Push((DOM.Mapped.Alias)alias);
                 if (!EnterChoiceContainer((DOM.Mapped.Alias)alias, aliasDef.Entities))
                     Visit(aliasDef.Entities.Where(e => !(e is DOM.Attribute)));
                 AliasContext.Pop();

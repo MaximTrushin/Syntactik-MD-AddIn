@@ -1,27 +1,22 @@
-﻿using System;
-using Syntactik.DOM;
+﻿using Syntactik.DOM;
+using Syntactik.DOM.Mapped;
 using Syntactik.IO;
 
 namespace Syntactik.MonoDevelop.Completion.DOM
 {
     class Alias: Syntactik.DOM.Mapped.Alias, ICompletionNode
     {
-        private readonly ICharStream _input;
+        private readonly ITextSource _input;
 
-        internal Alias(ICharStream input)
+        internal Alias(ITextSource input, DelimiterEnum delimiter = DelimiterEnum.None, Interval nameInterval = null, Interval valueInterval = null, Interval delimiterInterval = null,
+            int nameQuotesType = 0, int valueQuotesType = 0, int valueIndent = 0, ValueType valueType = ValueType.None) : base(nameInterval: nameInterval, valueInterval: valueInterval,
+            delimiterInterval: delimiterInterval, nameQuotesType: nameQuotesType, valueQuotesType: valueQuotesType, delimiter: delimiter, valueIndent: valueIndent, valueType: valueType)
         {
             _input = input;
         }
-        public override string Name
-        {
-            get
-            {
-                if (base.Name != null) return base.Name;
-                base.Name = Element.GetNameText(_input, NameQuotesType, NameInterval).Substring(1);
-                return base.Name;
-            }
-            set { base.Name = value; }
-        }
+
+        private string _name;
+        public override string Name => _name ?? (_name = Element.GetNameText(_input, NameQuotesType, NameInterval).Substring(1));
 
         private Pair _lastAddedChild;
         public override void AppendChild(Pair child)
@@ -42,9 +37,9 @@ namespace Syntactik.MonoDevelop.Completion.DOM
 
         public void DeleteChildren()
         {
-            InterpolationItems = null;
-            _arguments = null;
-            _entities = null;
+            InterpolationItems?.Clear();
+            Arguments = null;
+            Entities = null;
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Syntactik.MonoDevelop.Completion
             _pairFactory = new PairFactoryForJson(context, module);
         }
 
-        public Pair CreateMappedPair(ICharStream input, int nameQuotesType, Interval nameInterval, DelimiterEnum delimiter,
+        public Pair CreateMappedPair(ITextSource input, int nameQuotesType, Interval nameInterval, DelimiterEnum delimiter,
             Interval delimiterInterval, int valueQuotesType, Interval valueInterval, int valueIndent)
         {
             _cancellationToken.ThrowIfCancellationRequested();
@@ -44,7 +44,7 @@ namespace Syntactik.MonoDevelop.Completion
             _cancellationToken.ThrowIfCancellationRequested();
         }
 
-        public Comment ProcessComment(ICharStream input, int commentType, Interval commentInterval)
+        public Comment ProcessComment(ITextSource input, int commentType, Interval commentInterval)
         {
             _cancellationToken.ThrowIfCancellationRequested();
             return null;

@@ -8,58 +8,58 @@ namespace Syntactik.MonoDevelop.Completion.DOM
 
         public Pair LastPair => _lastPair;
 
-        public override void OnDocument(Syntactik.DOM.Document pair)
+        public override void Visit(Syntactik.DOM.Document pair)
         {
             _lastPair = pair;
-            base.OnDocument(pair);
+            base.Visit(pair);
         }
 
-        public override void OnElement(Syntactik.DOM.Element pair)
+        public override void Visit(Syntactik.DOM.Element pair)
         {
             _lastPair = pair;
-            base.OnElement(pair);
+            base.Visit(pair);
         }
 
 
 
-        public override void OnAttribute(Syntactik.DOM.Attribute pair)
+        public override void Visit(Syntactik.DOM.Attribute pair)
         {
             _lastPair = pair;
-            base.OnAttribute(pair);
+            base.Visit(pair);
         }
 
-        public override void OnAlias(Syntactik.DOM.Alias pair)
+        public override void Visit(Syntactik.DOM.Alias pair)
         {
             _lastPair = pair;
-            base.OnAlias(pair);
+            base.Visit(pair);
         }
-        public override void OnArgument(Syntactik.DOM.Argument pair)
+        public override void Visit(Syntactik.DOM.Argument pair)
         {
             _lastPair = pair;
-            base.OnArgument(pair);
+            base.Visit(pair);
         }
-        public override void OnParameter(Syntactik.DOM.Parameter pair)
+        public override void Visit(Syntactik.DOM.Parameter pair)
         {
             _lastPair = pair;
-            base.OnParameter(pair);
-        }
-
-        public override void OnAliasDefinition(Syntactik.DOM.AliasDefinition pair)
-        {
-            _lastPair = pair;
-            base.OnAliasDefinition(pair);
+            base.Visit(pair);
         }
 
-        public override void OnNamespaceDefinition(Syntactik.DOM.NamespaceDefinition pair)
+        public override void Visit(Syntactik.DOM.AliasDefinition pair)
         {
             _lastPair = pair;
-            base.OnNamespaceDefinition(pair);
+            base.Visit(pair);
         }
 
-        public override void OnScope(Syntactik.DOM.Scope pair)
+        public override void Visit(Syntactik.DOM.NamespaceDefinition pair)
         {
             _lastPair = pair;
-            base.OnScope(pair);
+            base.Visit(pair);
+        }
+
+        public override void Visit(Syntactik.DOM.Scope pair)
+        {
+            _lastPair = pair;
+            base.Visit(pair);
         }
     }
 }

@@ -15,11 +15,11 @@ namespace Syntactik.MonoDevelop.Commands
         {
         }
 
-        public override void OnDocument(Document document)
+        public override void Visit(Document document)
         {
-            _currentDocument = (DOM.Mapped.Document)document;
+            CurrentDocument = (DOM.Mapped.Document)document;
             _currentModuleMember = document;
-            _choiceStack.Push(_currentDocument.ChoiceInfo);
+            _choiceStack.Push(CurrentDocument.ChoiceInfo);
             var encoding = GetEncoding(document);
             _xmlTextWriter = _writerDelegate(document.Name, encoding);
 
@@ -28,7 +28,7 @@ namespace Syntactik.MonoDevelop.Commands
             Visit(document.Entities);
             _xmlTextWriter.WriteEndDocument();
             _xmlTextWriter.Flush();
-            _currentDocument = null;
+            CurrentDocument = null;
             _currentModuleMember = null;
         }
 

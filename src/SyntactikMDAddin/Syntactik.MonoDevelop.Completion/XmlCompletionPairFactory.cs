@@ -27,7 +27,7 @@ namespace Syntactik.MonoDevelop.Completion
             _pairFactory = new PairFactoryForXml(context, module);
         }
 
-        public Pair CreateMappedPair(ICharStream input, int nameQuotesType, Interval nameInterval,
+        public Pair CreateMappedPair(ITextSource input, int nameQuotesType, Interval nameInterval,
             DelimiterEnum delimiter,
             Interval delimiterInterval, int valueQuotesType, Interval valueInterval, int valueIndent)
         {
@@ -39,196 +39,172 @@ namespace Syntactik.MonoDevelop.Completion
                 if (delimiter == DelimiterEnum.None)
                     delimiter = DelimiterEnum.C;
 
-                pair = new DOM.Element(input)
-                {
-                    NameQuotesType = nameQuotesType,
-                    NameInterval = nameInterval,
-                    Delimiter = delimiter,
-                    DelimiterInterval = delimiterInterval,
-                    ValueQuotesType = valueQuotesType,
-                    ValueInterval = valueInterval,
-                    ValueIndent = valueIndent
-                };
+                pair = new DOM.Element(input, 
+                    nameQuotesType: nameQuotesType,
+                    nameInterval: nameInterval,
+                    delimiter: delimiter,
+                    delimiterInterval: delimiterInterval,
+                    valueQuotesType: valueQuotesType,
+                    valueInterval: valueInterval,
+                    valueIndent: valueIndent,
+                    valueType: GetValueType(delimiter)
+                );
             }
             else if (nameText.StartsWith("@"))
             {
                 if (delimiter == DelimiterEnum.None)
                     delimiter = DelimiterEnum.E;
-                pair = new DOM.Attribute(input)
-                {
-                    NameInterval = nameInterval,
-                    Delimiter = delimiter,
-                    DelimiterInterval = delimiterInterval,
-                    ValueQuotesType = valueQuotesType,
-                    ValueInterval = valueInterval,
-                    ValueIndent = valueIndent
-                };
+                pair = new DOM.Attribute(input,
+                    nameInterval: nameInterval,
+                    delimiter: delimiter,
+                    delimiterInterval: delimiterInterval,
+                    valueQuotesType: valueQuotesType,
+                    valueInterval: valueInterval,
+                    valueIndent: valueIndent,
+                    valueType: GetValueType(delimiter)
+                );
             }
             else if (nameText.StartsWith("!$"))
             {
                 if (delimiter == DelimiterEnum.None)
                     delimiter = DelimiterEnum.C;
-                pair = new DOM.AliasDefinition(input)
-                {
-                    NameInterval = nameInterval,
-                    Delimiter = delimiter,
-                    DelimiterInterval = delimiterInterval,
-                    ValueQuotesType = valueQuotesType,
-                    ValueInterval = valueInterval,
-                    ValueIndent = valueIndent
-                };
+                pair = new DOM.AliasDefinition(input,
+                    nameInterval: nameInterval,
+                    delimiter: delimiter,
+                    delimiterInterval: delimiterInterval,
+                    valueQuotesType: valueQuotesType,
+                    valueInterval: valueInterval,
+                    valueIndent: valueIndent,
+                    valueType: GetValueType(delimiter)
+                );
             }
             else if (nameText.StartsWith("!#"))
             {
                 if (delimiter == DelimiterEnum.None)
                     delimiter = DelimiterEnum.EE;
-                pair = new DOM.NamespaceDefinition(input)
-                {
-                    NameInterval = nameInterval,
-                    Delimiter = delimiter,
-                    DelimiterInterval = delimiterInterval,
-                    ValueQuotesType = valueQuotesType,
-                    ValueInterval = valueInterval,
-                    ValueIndent = valueIndent
-                };
+                pair = new DOM.NamespaceDefinition(input,
+                    nameInterval: nameInterval,
+                    delimiter: delimiter,
+                    delimiterInterval: delimiterInterval,
+                    valueQuotesType: valueQuotesType,
+                    valueInterval: valueInterval,
+                    valueIndent: valueIndent,
+                    valueType: GetValueType(delimiter)
+                );
             }
             else if (nameText.StartsWith("!%"))
             {
-                pair = new DOM.Parameter(input)
-                {
-                    NameInterval = nameInterval,
-                    Delimiter = delimiter,
-                    DelimiterInterval = delimiterInterval,
-                    ValueQuotesType = valueQuotesType,
-                    ValueInterval = valueInterval,
-                    ValueIndent = valueIndent
-                };
+                pair = new DOM.Parameter(input,
+                    nameInterval: nameInterval,
+                    delimiter: delimiter,
+                    delimiterInterval: delimiterInterval,
+                    valueQuotesType: valueQuotesType,
+                    valueInterval: valueInterval,
+                    valueIndent: valueIndent,
+                    valueType: GetValueType(delimiter)
+                );
             }
             else if (nameText.StartsWith("!"))
             {
                 if (delimiter == DelimiterEnum.None)
                     delimiter = DelimiterEnum.C;
-                pair = new DOM.Document(input)
-                {
-                    NameInterval = nameInterval,
-                    Delimiter = delimiter,
-                    DelimiterInterval = delimiterInterval,
-                    ValueQuotesType = valueQuotesType,
-                    ValueInterval = valueInterval,
-                    ValueIndent = valueIndent
-                };
+                pair = new DOM.Document(input,
+                    nameInterval: nameInterval,
+                    delimiter: delimiter,
+                    delimiterInterval: delimiterInterval,
+                    valueQuotesType: valueQuotesType,
+                    valueInterval: valueInterval,
+                    valueIndent: valueIndent,
+                    valueType: GetValueType(delimiter)
+                );
             }
             else if (nameText.StartsWith("$"))
             {
-                pair = new DOM.Alias(input)
-                {
-                    NameInterval = nameInterval,
-                    Delimiter = delimiter,
-                    DelimiterInterval = delimiterInterval,
-                    ValueQuotesType = valueQuotesType,
-                    ValueInterval = valueInterval,
-                    ValueIndent = valueIndent
-                };
+                pair = new DOM.Alias(input,
+                    nameInterval: nameInterval,
+                    delimiter: delimiter,
+                    delimiterInterval: delimiterInterval,
+                    valueQuotesType: valueQuotesType,
+                    valueInterval: valueInterval,
+                    valueIndent: valueIndent,
+                    valueType: GetValueType(delimiter)
+                );
             }
             else if (nameText.StartsWith("%"))
             {
-                pair = new DOM.Argument(input)
-                {
-                    NameInterval = nameInterval,
-                    Delimiter = delimiter,
-                    DelimiterInterval = delimiterInterval,
-                    ValueQuotesType = valueQuotesType,
-                    ValueInterval = valueInterval,
-                    ValueIndent = valueIndent
-                };
+                pair = new DOM.Argument(input,
+                    nameInterval: nameInterval,
+                    delimiter: delimiter,
+                    delimiterInterval: delimiterInterval,
+                    valueQuotesType: valueQuotesType,
+                    valueInterval: valueInterval,
+                    valueIndent: valueIndent,
+                    valueType: GetValueType(delimiter)
+                );
             }
             else if (nameText.StartsWith("#"))
             {
                 if (delimiter == DelimiterEnum.None)
                     delimiter = DelimiterEnum.C;
-                pair = new DOM.Scope(input)
-                {
-                    NameInterval = nameInterval,
-                    Delimiter = delimiter,
-                    DelimiterInterval = delimiterInterval
-                };
+                pair = new DOM.Scope(input,
+                    nameInterval: nameInterval,
+                    delimiter: delimiter,
+                    delimiterInterval: delimiterInterval,
+                    valueType: GetValueType(delimiter)
+                );
             }
             else
             {
                 if (delimiter == DelimiterEnum.None)
                     delimiter = DelimiterEnum.C;
 
-                pair = new DOM.Element(input)
-                {
-                    NameQuotesType = nameQuotesType,
-                    NameInterval = nameInterval,
-                    Delimiter = delimiter,
-                    DelimiterInterval = delimiterInterval,
-                    ValueQuotesType = valueQuotesType,
-                    ValueInterval = valueInterval,
-                    ValueIndent = valueIndent
-                };
+                pair = new DOM.Element(input,
+                    nameQuotesType: nameQuotesType,
+                    nameInterval: nameInterval,
+                    delimiter: delimiter,
+                    delimiterInterval: delimiterInterval,
+                    valueQuotesType: valueQuotesType,
+                    valueInterval: valueInterval,
+                    valueIndent: valueIndent, 
+                    valueType: GetValueType(delimiter) 
+                    
+                );
             }
-            SetValueType(pair, delimiter, /*value.Item1*/ null, valueQuotesType);
             return (Pair) pair;
         }
 
-        private void SetValueType(IMappedPair pair, DelimiterEnum delimiter, string value, int valueQuotesType)
+        private ValueType GetValueType(DelimiterEnum delimiter)
         {
             switch (delimiter)
             {
                 case DelimiterEnum.CE:
-                    pair.ValueType = ValueType.PairValue;
-                    return;
+                    return ValueType.PairValue;
+
                 case DelimiterEnum.EC:
-                    pair.ValueType = ValueType.Concatenation;
-                    return;
+                    return ValueType.Concatenation;
+
                 case DelimiterEnum.ECC:
-                    pair.ValueType = ValueType.LiteralChoice;
-                    return;
+                    return ValueType.LiteralChoice;
                 case DelimiterEnum.C:
                 case DelimiterEnum.CC:
-                    pair.ValueType = ValueType.Object;
-                    return;
+                    return ValueType.Object;
             }
-            //if (value == null) return;
-
-            //if (valueQuotesType == 1)
-            //{
-            //    pair.ValueType = GetJsonValueType(value, ValueType.SingleQuotedString);
-            //    return;
-            //}
-            //if (valueQuotesType == 2)
-            //{
-            //    pair.ValueType = ValueType.DoubleQuotedString;
-            //    return;
-            //}
-            //if (delimiter == DelimiterEnum.E)
-            //{
-            //    pair.ValueType = GetJsonValueType(value, ValueType.FreeOpenString);
-            //    return;
-            //}
-
-            //if (delimiter == DelimiterEnum.EE)
-            //{
-            //    pair.ValueType = GetJsonValueType(value, ValueType.OpenString);
-            //    return;
-            //}
+            return ValueType.None;
         }
 
-        internal static string GetNameText(ICharStream input, int nameQuotesType, Interval nameInterval)
+        internal static string GetNameText(ITextSource input, int nameQuotesType, Interval nameInterval)
         {
             if (nameQuotesType == 0)
-                return ((ITextSource) input).GetText(nameInterval.Begin.Index, nameInterval.End.Index);
-            var c = ((ITextSource) input).GetChar(nameInterval.End.Index);
+                return input.GetText(nameInterval.Begin.Index, nameInterval.End.Index);
+            var c = input.GetChar(nameInterval.End.Index);
             if (nameQuotesType == 1)
                 return c == '\''
-                    ? ((ITextSource) input).GetText(nameInterval.Begin.Index + 1, nameInterval.End.Index - 1)
-                    : ((ITextSource) input).GetText(nameInterval.Begin.Index + 1, nameInterval.End.Index);
+                    ? input.GetText(nameInterval.Begin.Index + 1, nameInterval.End.Index - 1)
+                    : input.GetText(nameInterval.Begin.Index + 1, nameInterval.End.Index);
 
             return c == '"'
-                ? ((ITextSource) input).GetText(nameInterval.Begin.Index + 1, nameInterval.End.Index - 1)
-                : ((ITextSource) input).GetText(nameInterval.Begin.Index + 1, nameInterval.End.Index);
+                ? input.GetText(nameInterval.Begin.Index + 1, nameInterval.End.Index - 1)
+                : input.GetText(nameInterval.Begin.Index + 1, nameInterval.End.Index);
         }
 
         public void AppendChild(Pair parent, Pair child)
@@ -247,7 +223,7 @@ namespace Syntactik.MonoDevelop.Completion
             _cancellationToken.ThrowIfCancellationRequested();
         }
 
-        public Syntactik.DOM.Comment ProcessComment(ICharStream input, int commentType, Interval commentInterval)
+        public Syntactik.DOM.Comment ProcessComment(ITextSource input, int commentType, Interval commentInterval)
         {
             _cancellationToken.ThrowIfCancellationRequested();
             return null;

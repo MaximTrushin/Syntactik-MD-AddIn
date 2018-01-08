@@ -5,7 +5,7 @@ namespace Syntactik.MonoDevelop.Completion.DOM
 {
     /// <summary>
     /// Module DOM-class for completion.
-    /// It can have zero or many Namespace definitions.
+    /// It can have zero or many NamespaceDefinitions.
     /// It also can have either one module member or entity.
     /// </summary>
     class Module: Syntactik.DOM.Mapped.Module
@@ -26,7 +26,7 @@ namespace Syntactik.MonoDevelop.Completion.DOM
             {
                 child.InitializeParent(this);
                 _entity = null;
-                _members = null;
+                Members = null;
                 _moduleDocument = null;
                 _member = member;
                 return;
@@ -37,7 +37,7 @@ namespace Syntactik.MonoDevelop.Completion.DOM
             {
                 child.InitializeParent(this);
                 _moduleDocument = null;
-                _members = null;
+                Members = null;
                 _member = null;
                 _entity = entity;
             }
@@ -51,11 +51,11 @@ namespace Syntactik.MonoDevelop.Completion.DOM
                 if (_entity != null)
                 {
                     _moduleDocument = new Syntactik.DOM.Mapped.Document
-                    {
-                        Name = Name,
-                        NameInterval = Interval.Empty,
-                        Delimiter = DelimiterEnum.C
-                    };
+                    (
+                        Name,
+                        nameInterval: Interval.Empty,
+                        delimiter: DelimiterEnum.C
+                    );
                     _moduleDocument.AppendChild(_entity);
                 }
 
@@ -67,12 +67,16 @@ namespace Syntactik.MonoDevelop.Completion.DOM
         {
             get
             {
-                if (_members != null) return _members;
-                _members = new PairCollection<ModuleMember>(this);
-                if (_member != null) _members.Add(_member);
-                return _members;
+                if (base.Members != null) return base.Members;
+                base.Members = new PairCollection<ModuleMember>(this);
+                if (_member != null) base.Members.Add(_member);
+                return base.Members;
             }
-            set { throw new NotImplementedException(); }
+            set { base.Members = value; }
+        }
+
+        public Module(string name, string fileName = null) : base(name, fileName)
+        {
         }
     }
 }

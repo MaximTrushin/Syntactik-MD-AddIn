@@ -21,51 +21,51 @@ namespace Syntactik.MonoDevelop.Completion
             base.OnPair(pair);
         }
 
-        public override void OnAlias(Alias alias)
+        public override void Visit(Alias alias)
         {
-            base.OnAlias(alias);
+            base.Visit(alias);
             Visit(alias.PairValue);
         }
 
-        public override void OnAliasDefinition(AliasDefinition aliasDefinition)
+        public override void Visit(AliasDefinition aliasDefinition)
         {
-            base.OnAliasDefinition(aliasDefinition);
+            base.Visit(aliasDefinition);
             Visit(aliasDefinition.PairValue);
         }
 
-        public override void OnArgument(Argument argument)
+        public override void Visit(Argument argument)
         {
-            base.OnArgument(argument);
+            base.Visit(argument);
             Visit(argument.PairValue);
         }
 
-        public override void OnAttribute(Syntactik.DOM.Attribute attribute)
+        public override void Visit(Syntactik.DOM.Attribute attribute)
         {
-            base.OnAttribute(attribute);
+            base.Visit(attribute);
             Visit(attribute.PairValue);
         }
 
-        public override void OnDocument(Document document)
+        public override void Visit(Document document)
         {
-            base.OnDocument(document);
+            base.Visit(document);
             Visit(document.PairValue);
         }
 
-        public override void OnElement(Element element)
+        public override void Visit(Element element)
         {
-            base.OnElement(element);
+            base.Visit(element);
             Visit(element.PairValue);
         }
 
-        public override void OnScope(Scope scope)
+        public override void Visit(Scope scope)
         {
-            base.OnScope(scope);
+            base.Visit(scope);
             Visit(scope.PairValue);
         }
 
-        public override void OnParameter(Parameter parameter)
+        public override void Visit(Parameter parameter)
         {
-            base.OnParameter(parameter);
+            base.Visit(parameter);
             Visit(parameter.PairValue);
         }
     }

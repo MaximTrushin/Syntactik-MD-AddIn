@@ -23,22 +23,22 @@ namespace Syntactik.MonoDevelop.Commands
             _selectionRange = selectionRange;
         }
 
-        public override void OnDocument(DOM.Document document)
+        public override void Visit(DOM.Document document)
         {
-            _currentDocument = (Document) document;
-            _choiceStack.Push(_currentDocument.ChoiceInfo);
+            CurrentDocument = (Document) document;
+            _choiceStack.Push(CurrentDocument.ChoiceInfo);
             Visit(document.Entities);
-            _currentDocument = null;
+            CurrentDocument = null;
         }
 
-        public override void OnElement(Element pair)
+        public override void Visit(Element pair)
         {
             var inSelection = IsInSelection(pair as IMappedPair, _selectionRange);
             if (inSelection)
             {
                 string prefix = null, ns;
-                if (_currentDocument != null) //User can copy from AliasDef
-                    NamespaceResolver.GetPrefixAndNs(pair, _currentDocument,
+                if (CurrentDocument != null) //User can copy from AliasDef
+                    NamespaceResolver.GetPrefixAndNs(pair, CurrentDocument,
                         () => ScopeContext.Peek(),
                         out prefix, out ns);
                 
@@ -59,7 +59,7 @@ namespace Syntactik.MonoDevelop.Commands
             }
         }
 
-        public override void OnAliasDefinition(DOM.AliasDefinition aliasDef)
+        public override void Visit(DOM.AliasDefinition aliasDef)
         {
             Visit(aliasDef.Entities);        
         }
@@ -107,7 +107,7 @@ namespace Syntactik.MonoDevelop.Commands
                    pair.DelimiterInterval.End.Index <= selectionRange.EndOffset;
         }
 
-        public override void OnAlias(Alias alias)
+        public override void Visit(Alias alias)
         {
             var inSelection = IsInSelection(alias as IMappedPair, _selectionRange);
 
@@ -119,12 +119,7 @@ namespace Syntactik.MonoDevelop.Commands
                     ValueType valueType;
                     OnValue(ResolveValueAlias((DOM.Mapped.Alias) alias, out valueType), valueType);
                 }
-                AliasContext.Push(new AliasContext()
-                {
-                    AliasDefinition = aliasDef,
-                    Alias = (DOM.Mapped.Alias) alias,
-                    AliasNsInfo = GetContextNsInfo()
-                });
+                AliasContext.Push((DOM.Mapped.Alias) alias);
                 if (!EnterChoiceContainer((DOM.Mapped.Alias) alias, aliasDef.Entities))
                     Visit(aliasDef.Entities.Where(e => !(e is DOM.Attribute)));
                 AliasContext.Pop();
@@ -138,7 +133,7 @@ namespace Syntactik.MonoDevelop.Commands
 
 
 
-        public override void OnAttribute(DOM.Attribute pair)
+        public override void Visit(DOM.Attribute pair)
         {
             var inSelection = IsInSelection(pair as IMappedPair, _selectionRange);
 
@@ -146,7 +141,7 @@ namespace Syntactik.MonoDevelop.Commands
 
             string prefix, ns;
 
-            NamespaceResolver.GetPrefixAndNs(pair, _currentDocument,
+            NamespaceResolver.GetPrefixAndNs(pair, CurrentDocument,
                 () => ScopeContext.Peek(),
                 out prefix, out ns);
             _xmlTextWriter.WriteStartAttribute(prefix == null?pair.Name:$"{prefix}:{pair.Name}");

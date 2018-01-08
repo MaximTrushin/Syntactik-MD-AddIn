@@ -1,16 +1,21 @@
 ﻿using Syntactik.DOM;
+using Syntactik.DOM.Mapped;
 using Syntactik.IO;
 
 namespace Syntactik.MonoDevelop.Completion.DOM
 {
     class Element: Syntactik.DOM.Mapped.Element, ICompletionNode
     {
-        private readonly ICharStream _input;
+        private readonly ITextSource _input;
 
-        internal Element(ICharStream input)
+        internal Element(ITextSource input, DelimiterEnum delimiter = DelimiterEnum.None, Interval nameInterval = null, Interval valueInterval = null, Interval delimiterInterval = null,
+            int nameQuotesType = 0, int valueQuotesType = 0, int valueIndent = 0, ValueType valueType = ValueType.None) :base(nameInterval: nameInterval, valueInterval: valueInterval, 
+                delimiterInterval: delimiterInterval, nameQuotesType: nameQuotesType, valueQuotesType: valueQuotesType, delimiter: delimiter, valueIndent: valueIndent,
+                valueType: valueType)
         {
             _input = input;
         }
+
         private Pair _lastAddedChild;
         public override void AppendChild(Pair child)
         {
@@ -20,36 +25,34 @@ namespace Syntactik.MonoDevelop.Completion.DOM
             base.AppendChild(child);
         }
 
+        private string _name;
         public override string Name
         {
             get
             {
-                if (base.Name != null) return base.Name;
+                if (_name != null) return _name;
                 var nameText = GetNameText(_input, NameQuotesType, NameInterval);
                 if (NameQuotesType > 0)
                 {
-                    base.Name = nameText;
                     return nameText;
                 }
                 var tuple = GetNameAndNs(nameText, NameQuotesType);
                 var ns = string.IsNullOrEmpty(tuple.Item1) ? null : tuple.Item1;
-                base.Name = tuple.Item2;
-                NsPrefix = ns;
-                return base.Name;
+                OverrideNsPrefix(ns);
+                return _name = tuple.Item2;
 
             }
-            set { base.Name = value; }
         }
 
-        internal static string GetNameText(ICharStream input, int nameQuotesType, Interval nameInterval)
+        internal static string GetNameText(ITextSource input, int nameQuotesType, Interval nameInterval)
         {
             if (nameQuotesType == 0)
-                return ((ITextSource)input).GetText(nameInterval.Begin.Index, nameInterval.End.Index);
-            var c = ((ITextSource)input).GetChar(nameInterval.End.Index);
+                return input.GetText(nameInterval.Begin.Index, nameInterval.End.Index);
+            var c = input.GetChar(nameInterval.End.Index);
             if (nameQuotesType == 1)
-                return c == '\'' ? ((ITextSource)input).GetText(nameInterval.Begin.Index + 1, nameInterval.End.Index - 1) : ((ITextSource)input).GetText(nameInterval.Begin.Index + 1, nameInterval.End.Index);
+                return c == '\'' ? input.GetText(nameInterval.Begin.Index + 1, nameInterval.End.Index - 1) : input.GetText(nameInterval.Begin.Index + 1, nameInterval.End.Index);
 
-            return c == '"' ? ((ITextSource)input).GetText(nameInterval.Begin.Index + 1, nameInterval.End.Index - 1) : ((ITextSource)input).GetText(nameInterval.Begin.Index + 1, nameInterval.End.Index);
+            return c == '"' ? input.GetText(nameInterval.Begin.Index + 1, nameInterval.End.Index - 1) : input.GetText(nameInterval.Begin.Index + 1, nameInterval.End.Index);
         }
 
         public void StoreStringValues()
@@ -61,8 +64,8 @@ namespace Syntactik.MonoDevelop.Completion.DOM
 
         public void DeleteChildren()
         {
-            InterpolationItems = null;
-            _entities = null;
+            InterpolationItems?.Clear();
+            Entities = null;
         }
     }
 }

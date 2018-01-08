@@ -1,41 +1,40 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Syntactik.DOM;
+using Syntactik.DOM.Mapped;
 using Syntactik.IO;
 
 namespace Syntactik.MonoDevelop.Completion.DOM
 {
     class NamespaceDefinition : Syntactik.DOM.Mapped.NamespaceDefinition, ICompletionNode
     {
-        private readonly ICharStream _input;
+        private readonly ITextSource _input;
 
-        internal NamespaceDefinition(ICharStream input)
+        internal NamespaceDefinition(ITextSource input, DelimiterEnum delimiter = DelimiterEnum.None, Interval nameInterval = null, Interval valueInterval = null, 
+            Interval delimiterInterval = null, int nameQuotesType = 0, int valueQuotesType = 0, int valueIndent = 0, ValueType valueType = ValueType.None) : base(
+                nameInterval: nameInterval, valueInterval: valueInterval, delimiterInterval: delimiterInterval, nameQuotesType: nameQuotesType, 
+                valueQuotesType: valueQuotesType, delimiter: delimiter, valueIndent: valueIndent, valueType: valueType)
         {
             _input = input;
         }
-        public override string Name
-        {
-            get
-            {
-                if (base.Name != null) return base.Name;
-                base.Name = Element.GetNameText(_input, NameQuotesType, NameInterval).Substring(2);
-                return base.Name;
-            }
-            set { base.Name = value; }
-        }
 
+        private string _name;
+        public override string Name => _name?? (_name = Element.GetNameText(_input, NameQuotesType, NameInterval).Substring(2));
+
+        private string _value;
         public override string Value
         {
             get
             {
-                if (ValueInterval == null) base.Value = string.Empty;
-                if (base.Value != null) return base.Value;
-                base.Value = Element.GetNameText(_input, ValueQuotesType, ValueInterval);
-                return base.Value;
+                if (_value != null) return _value;
+                if (ValueInterval == null) return string.Empty;
+                return _value = Element.GetNameText(_input, ValueQuotesType, ValueInterval);
             }
-            set { base.Value = value; }
         }
 
         private Pair _lastAddedChild;
+        
+
         public override void AppendChild(Pair child)
         {
             var completionNode = _lastAddedChild as ICompletionNode;
@@ -52,7 +51,7 @@ namespace Syntactik.MonoDevelop.Completion.DOM
 
         public void DeleteChildren()
         {
-            InterpolationItems = null;
+            InterpolationItems?.Clear();
         }
     }
 }
