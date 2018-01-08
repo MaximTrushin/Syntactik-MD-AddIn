@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using Syntactik.DOM;
+﻿using Syntactik.DOM;
 using Syntactik.DOM.Mapped;
 using Syntactik.IO;
 

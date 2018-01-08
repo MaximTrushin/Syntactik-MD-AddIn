@@ -172,7 +172,7 @@ namespace Syntactik.MonoDevelop.DisplayBinding
 
             var compilerParameters = CreateCompilerParameters(project.CompilerContext, doc);
             var compiler = new SyntactikCompiler(compilerParameters);
-            var context = compiler.Run(new CompileUnit { Modules = modules });
+            var context = compiler.Run(new Projects.CompileUnit { Modules = modules });
 
             object s;
             if (!context.InMemoryOutputObjects.TryGetValue("CLIPBOARD", out s)) return false;

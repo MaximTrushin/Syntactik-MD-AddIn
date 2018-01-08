@@ -99,7 +99,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Syntactik, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syntactik.0.2.0-beta1\lib\net45\Syntactik.dll</HintPath>
+      <HintPath>..\packages\Syntactik.0.2.1-beta1\lib\net45\Syntactik.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -238,6 +238,7 @@
     <Compile Include="Syntactik.MonoDevelop.Parser\SyntactikParsedDocument.cs" />
     <Compile Include="Syntactik.MonoDevelop.Parser\TypeSystemParser.cs" />
     <Compile Include="Syntactik.MonoDevelop.Project\CompilerOptionsPanel.cs" />
+    <Compile Include="Syntactik.MonoDevelop.Project\CompileUnit.cs" />
     <Compile Include="Syntactik.MonoDevelop.Project\IProjectFilesProvider.cs" />
     <Compile Include="Syntactik.MonoDevelop.Project\SyntactikJsonProject.cs" />
     <Compile Include="Syntactik.MonoDevelop.Project\SyntactikXmlProject.cs" />

@@ -56,7 +56,7 @@ namespace Syntactik.MonoDevelop.Projects
 
         private void Init()
         {
-            //Preventing setting of brakepoints in files of Syntactik project.
+            //Preventing setting of breakpoints in files of Syntactik project.
             var breakpoints = DebuggingService.Breakpoints;
             breakpoints.CheckingReadOnly += BreakpointsOnCheckingReadOnly;
         }
@@ -245,7 +245,7 @@ namespace Syntactik.MonoDevelop.Projects
             }
             var compilerParameters = CreateValidationOnlyCompilerParameters();
             var compiler = new SyntactikCompiler(compilerParameters);
-            var context = compiler.Run(new CompileUnit {Modules = modules});
+            var context = compiler.Run(new CompileUnit { Modules = modules});
             CleanNonParserErrors(compileInfo);
             AddValidationError(context.Errors, compileInfo);
             return context;
@@ -372,7 +372,7 @@ namespace Syntactik.MonoDevelop.Projects
         {
             var compilerParameters = new CompilerParameters
             {
-                Pipeline = new CompileToFiles(false),
+                Pipeline = new CompileToFiles(),
                 OutputDirectory = outputDirectory
             };
             foreach (var fileName in files)

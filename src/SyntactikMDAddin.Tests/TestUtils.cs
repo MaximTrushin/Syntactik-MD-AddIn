@@ -18,6 +18,7 @@ using Syntactik.MonoDevelop.Completion;
 using Syntactik.MonoDevelop.Highlighting;
 using Syntactik.MonoDevelop.Projects;
 using CompilerParameters = Syntactik.Compiler.CompilerParameters;
+using CompileUnit = Syntactik.DOM.CompileUnit;
 using Module = Syntactik.DOM.Module;
 #if DEBUG
 using Syntactik.MonoDevelop.Converter;

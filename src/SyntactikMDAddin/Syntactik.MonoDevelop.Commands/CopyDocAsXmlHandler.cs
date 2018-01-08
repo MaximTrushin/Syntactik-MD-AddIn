@@ -44,7 +44,7 @@ namespace Syntactik.MonoDevelop.Commands
 
             var compilerParameters = CreateCompilerParameters(project.CompilerContext, doc);
             var compiler = new SyntactikCompiler(compilerParameters);
-            var context = compiler.Run(new CompileUnit { Modules = modules });
+            var context = compiler.Run(new Projects.CompileUnit { Modules = modules });
             using (var monitor = IdeApp.Workbench.ProgressMonitors.GetBuildProgressMonitor())
             {
                 if (document.ParsedDocument.HasErrors)
