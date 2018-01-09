@@ -80,7 +80,7 @@ namespace Syntactik.MonoDevelop.Commands
                     insertNewLine = true;
                     var pair = (Pair)lastPair;
                     indentLevel = lastPair.ValueIndent / indentMultiplicity - 1;
-                    if (pair.Delimiter == DelimiterEnum.C || pair.Delimiter == DelimiterEnum.CC) indentLevel++;
+                    if (pair.Assignment == AssignmentEnum.C || pair.Assignment == AssignmentEnum.CC) indentLevel++;
                 }
                 else
                 {

@@ -87,13 +87,13 @@ namespace Syntactik.MonoDevelop.Completion
                     return;
                 }
 
-                if (alias.Delimiter == DelimiterEnum.None) return;
-                if (alias.Delimiter == DelimiterEnum.E || alias.Delimiter == DelimiterEnum.EE)
+                if (alias.Assignment == AssignmentEnum.None) return;
+                if (alias.Assignment == AssignmentEnum.E || alias.Assignment == AssignmentEnum.EE)
                 {
                     AddExpectation(CompletionExpectation.Value);
                     return;
                 }
-                if (alias.Delimiter == DelimiterEnum.C)
+                if (alias.Assignment == AssignmentEnum.C)
                 {
                     AliasDefinition aliasDef1; 
                     if (_aliasDefinitions().TryGetValue(alias.Name, out aliasDef1) && ((Mapped.AliasDefinition)aliasDef1).Parameters.Count > 0)
@@ -110,13 +110,13 @@ namespace Syntactik.MonoDevelop.Completion
                     AddExpectation(CompletionExpectation.Argument);
                     return;
                 }
-                if (argument.Delimiter == DelimiterEnum.None) return;
-                if (argument.Delimiter == DelimiterEnum.E || argument.Delimiter == DelimiterEnum.EE)
+                if (argument.Assignment == AssignmentEnum.None) return;
+                if (argument.Assignment == AssignmentEnum.E || argument.Assignment == AssignmentEnum.EE)
                 {
                     AddExpectation(CompletionExpectation.Value);
                     return;
                 }
-                if (argument.Delimiter == DelimiterEnum.C)
+                if (argument.Assignment == AssignmentEnum.C)
                 {
                     AddExpectation(CompletionExpectation.Alias);
                     AddExpectation(CompletionExpectation.Element);
@@ -135,7 +135,7 @@ namespace Syntactik.MonoDevelop.Completion
                     return;
                 }
 
-                if (attribute.Delimiter == DelimiterEnum.E || attribute.Delimiter == DelimiterEnum.EE)
+                if (attribute.Assignment == AssignmentEnum.E || attribute.Assignment == AssignmentEnum.EE)
                 {
                     AddExpectation(CompletionExpectation.Value);
                     return;
@@ -152,13 +152,13 @@ namespace Syntactik.MonoDevelop.Completion
                     AddExpectation(CompletionExpectation.Element);
                     return;
                 }
-                if (element.Delimiter == DelimiterEnum.None) return;
-                if (element.Delimiter == DelimiterEnum.E || element.Delimiter == DelimiterEnum.EE)
+                if (element.Assignment == AssignmentEnum.None) return;
+                if (element.Assignment == AssignmentEnum.E || element.Assignment == AssignmentEnum.EE)
                 {
                     AddExpectation(CompletionExpectation.Value);
                     return;
                 }
-                if (element.Delimiter == DelimiterEnum.C)
+                if (element.Assignment == AssignmentEnum.C)
                 {
                     AddExpectation(CompletionExpectation.Alias);
                     AddExpectation(CompletionExpectation.Element);
@@ -175,13 +175,13 @@ namespace Syntactik.MonoDevelop.Completion
                     InTag = CompletionExpectation.Document;
                     return;
                 }
-                if (document.Delimiter == DelimiterEnum.None) return;
-                if (document.Delimiter == DelimiterEnum.E || document.Delimiter == DelimiterEnum.EE)
+                if (document.Assignment == AssignmentEnum.None) return;
+                if (document.Assignment == AssignmentEnum.E || document.Assignment == AssignmentEnum.EE)
                 {
                     AddExpectation(CompletionExpectation.Value);
                     return;
                 }
-                if (document.Delimiter == DelimiterEnum.C)
+                if (document.Assignment == AssignmentEnum.C)
                 {
                     AddExpectation(CompletionExpectation.Alias);
                     AddExpectation(CompletionExpectation.Element);
@@ -197,7 +197,7 @@ namespace Syntactik.MonoDevelop.Completion
                     return;
                 }
                 
-                if (nsDef.Delimiter == DelimiterEnum.E || nsDef.Delimiter == DelimiterEnum.EE)
+                if (nsDef.Assignment == AssignmentEnum.E || nsDef.Assignment == AssignmentEnum.EE)
                 {
                     AddExpectation(CompletionExpectation.Value);
                 }
@@ -212,13 +212,13 @@ namespace Syntactik.MonoDevelop.Completion
                     InTag = CompletionExpectation.AliasDefinition;
                     return;
                 }
-                if (aliasDef.Delimiter == DelimiterEnum.None) return;
-                if (aliasDef.Delimiter == DelimiterEnum.E || aliasDef.Delimiter == DelimiterEnum.EE)
+                if (aliasDef.Assignment == AssignmentEnum.None) return;
+                if (aliasDef.Assignment == AssignmentEnum.E || aliasDef.Assignment == AssignmentEnum.EE)
                 {
                     AddExpectation(CompletionExpectation.Value);
                     return;
                 }
-                if (aliasDef.Delimiter == DelimiterEnum.C)
+                if (aliasDef.Assignment == AssignmentEnum.C)
                 {
                     AddExpectation(CompletionExpectation.Attribute);
                     AddExpectation(CompletionExpectation.Alias);

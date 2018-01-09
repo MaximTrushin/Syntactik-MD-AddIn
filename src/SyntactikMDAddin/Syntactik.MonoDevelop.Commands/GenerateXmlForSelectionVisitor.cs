@@ -101,10 +101,10 @@ namespace Syntactik.MonoDevelop.Commands
                        pair.NameInterval.End.Index <= selectionRange.EndOffset;
             }
 
-            return pair.DelimiterInterval.Begin.Index >= selectionRange.Offset &&
-                   pair.DelimiterInterval.Begin.Index <= selectionRange.EndOffset ||
-                   pair.DelimiterInterval.End.Index >= selectionRange.Offset &&
-                   pair.DelimiterInterval.End.Index <= selectionRange.EndOffset;
+            return pair.AssignmentInterval.Begin.Index >= selectionRange.Offset &&
+                   pair.AssignmentInterval.Begin.Index <= selectionRange.EndOffset ||
+                   pair.AssignmentInterval.End.Index >= selectionRange.Offset &&
+                   pair.AssignmentInterval.End.Index <= selectionRange.EndOffset;
         }
 
         public override void Visit(Alias alias)

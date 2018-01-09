@@ -281,7 +281,7 @@ namespace Syntactik.MonoDevelop.Completion
                         Icon = SyntactikIcons.Enum,
                         DisplayText = f.Value,
                         CompletionText =
-                            context.LastPair.Delimiter == DelimiterEnum.E ? f.Value : EncodeSQString(f.Value, true),
+                            context.LastPair.Assignment == AssignmentEnum.E ? f.Value : EncodeSQString(f.Value, true),
                         CompletionCategory = category
                     };
                     completionList.Add(completionItem);
@@ -327,7 +327,7 @@ namespace Syntactik.MonoDevelop.Completion
                     ItemType = ItemType.Attribute,
                     Icon = SyntactikIcons.Enum,
                     DisplayText = text,
-                    CompletionText = attribute.Delimiter == DelimiterEnum.E ? text : EncodeSQString(text, true),
+                    CompletionText = attribute.Assignment == AssignmentEnum.E ? text : EncodeSQString(text, true),
                     CompletionCategory = category
                 };
                 if (newNs)
@@ -350,7 +350,7 @@ namespace Syntactik.MonoDevelop.Completion
                 ItemType = ItemType.Attribute,
                 Icon = SyntactikIcons.Enum,
                 DisplayText = text,
-                CompletionText = attribute.Delimiter == DelimiterEnum.E ? text : EncodeSQString(text, true),
+                CompletionText = attribute.Assignment == AssignmentEnum.E ? text : EncodeSQString(text, true),
                 CompletionCategory = category
             };
             if (newNs)

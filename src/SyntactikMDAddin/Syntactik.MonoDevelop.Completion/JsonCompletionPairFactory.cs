@@ -21,11 +21,11 @@ namespace Syntactik.MonoDevelop.Completion
             _pairFactory = new PairFactoryForJson(context, module);
         }
 
-        public Pair CreateMappedPair(ITextSource input, int nameQuotesType, Interval nameInterval, DelimiterEnum delimiter,
-            Interval delimiterInterval, int valueQuotesType, Interval valueInterval, int valueIndent)
+        public Pair CreateMappedPair(ITextSource input, int nameQuotesType, Interval nameInterval, AssignmentEnum assignment,
+            Interval assignmentInterval, int valueQuotesType, Interval valueInterval, int valueIndent)
         {
             _cancellationToken.ThrowIfCancellationRequested();
-            return _pairFactory.CreateMappedPair(input, nameQuotesType, nameInterval, delimiter, delimiterInterval,
+            return _pairFactory.CreateMappedPair(input, nameQuotesType, nameInterval, assignment, assignmentInterval,
             valueQuotesType, valueInterval, valueIndent);
         }
         public void AppendChild(Pair parent, Pair child)

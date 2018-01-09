@@ -33,17 +33,17 @@ namespace Syntactik.MonoDevelop.Parser
             _cancellationToken = cancellationToken;
             _foldingStack = new Stack<FoldingInfo>();
         }
-        public Pair CreateMappedPair(ITextSource input, int nameQuotesType, Interval nameInterval, DelimiterEnum delimiter, Interval delimiterInterval,
+        public Pair CreateMappedPair(ITextSource input, int nameQuotesType, Interval nameInterval, AssignmentEnum assignment, Interval assignmentInterval,
             int valueQuotesType, Interval valueInterval, int valueIndent)
         {
             _cancellationToken.ThrowIfCancellationRequested();
 
-            var result = _pairFactory.CreateMappedPair(input, nameQuotesType, nameInterval, delimiter, delimiterInterval, valueQuotesType, valueInterval,
+            var result = _pairFactory.CreateMappedPair(input, nameQuotesType, nameInterval, assignment, assignmentInterval, valueQuotesType, valueInterval,
                 valueIndent);
 
-            if (delimiter != DelimiterEnum.E && delimiter != DelimiterEnum.EE && delimiter != DelimiterEnum.None)
+            if (assignment != AssignmentEnum.E && assignment != AssignmentEnum.EE && assignment != AssignmentEnum.None)
             {
-                _foldingStack.Push(new FoldingInfo {Pair = result, Begin = DomHelper.GetPairEnd(nameInterval, delimiterInterval), End = DomHelper.GetPairEnd(nameInterval, delimiterInterval) });    
+                _foldingStack.Push(new FoldingInfo {Pair = result, Begin = DomHelper.GetPairEnd(nameInterval, assignmentInterval), End = DomHelper.GetPairEnd(nameInterval, assignmentInterval) });    
             }
 
             return result;
@@ -53,7 +53,7 @@ namespace Syntactik.MonoDevelop.Parser
         {
             _cancellationToken.ThrowIfCancellationRequested();
 
-            if (child.Delimiter == DelimiterEnum.E || child.Delimiter == DelimiterEnum.EE)
+            if (child.Assignment == AssignmentEnum.E || child.Assignment == AssignmentEnum.EE)
             {
                 if (_foldingStack.Count > 0)
                 {

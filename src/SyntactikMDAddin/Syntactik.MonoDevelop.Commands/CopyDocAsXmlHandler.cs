@@ -88,7 +88,7 @@ namespace Syntactik.MonoDevelop.Commands
                     {
                         var mapped = (IMappedPair) p;
                         if (mapped.NameInterval != null) return mapped.NameInterval.Begin.Index;
-                        if (mapped.DelimiterInterval != null) return mapped.DelimiterInterval.Begin.Index;
+                        if (mapped.AssignmentInterval != null) return mapped.AssignmentInterval.Begin.Index;
                         return mapped.ValueInterval.Begin.Index;
                     }
                 );

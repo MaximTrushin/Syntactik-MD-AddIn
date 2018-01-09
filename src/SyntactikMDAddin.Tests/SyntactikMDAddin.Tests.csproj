@@ -53,7 +53,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Syntactik, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syntactik.0.2.1-beta1\lib\net45\Syntactik.dll</HintPath>
+      <HintPath>..\packages\Syntactik.0.2.1-beta2\lib\net45\Syntactik.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

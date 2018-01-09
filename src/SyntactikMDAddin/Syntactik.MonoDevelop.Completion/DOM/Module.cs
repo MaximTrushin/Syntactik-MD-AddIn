@@ -27,7 +27,7 @@ namespace Syntactik.MonoDevelop.Completion.DOM
                 child.InitializeParent(this);
                 _entity = null;
                 Members = null;
-                _moduleDocument = null;
+                //_moduleDocument = null;
                 _member = member;
                 return;
             }
@@ -36,7 +36,7 @@ namespace Syntactik.MonoDevelop.Completion.DOM
             if (entity != null)
             {
                 child.InitializeParent(this);
-                _moduleDocument = null;
+                //_moduleDocument = null;
                 Members = null;
                 _member = null;
                 _entity = entity;
@@ -47,19 +47,19 @@ namespace Syntactik.MonoDevelop.Completion.DOM
         {
             get
             {
-                if (_moduleDocument != null) return _moduleDocument;
+                if (base.ModuleDocument != null) return base.ModuleDocument;
                 if (_entity != null)
                 {
-                    _moduleDocument = new Syntactik.DOM.Mapped.Document
-                    (
-                        Name,
-                        nameInterval: Interval.Empty,
-                        delimiter: DelimiterEnum.C
-                    );
-                    _moduleDocument.AppendChild(_entity);
+                    //_moduleDocument = new Syntactik.DOM.Mapped.Document
+                    //(
+                    //    Name,
+                    //    nameInterval: Interval.Empty,
+                    //    assignment: AssignmentEnum.C
+                    //);
+                    //_moduleDocument.AppendChild(_entity);
+                    AddEntity(_entity);
                 }
-
-                return _moduleDocument;
+                return base.ModuleDocument;
             }
         }
 

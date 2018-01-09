@@ -28,165 +28,165 @@ namespace Syntactik.MonoDevelop.Completion
         }
 
         public Pair CreateMappedPair(ITextSource input, int nameQuotesType, Interval nameInterval,
-            DelimiterEnum delimiter,
-            Interval delimiterInterval, int valueQuotesType, Interval valueInterval, int valueIndent)
+            AssignmentEnum assignment,
+            Interval assignmentInterval, int valueQuotesType, Interval valueInterval, int valueIndent)
         {
             _cancellationToken.ThrowIfCancellationRequested();
             IMappedPair pair;
             var nameText = GetNameText(input, nameQuotesType, nameInterval);
             if (nameQuotesType > 0)
             {
-                if (delimiter == DelimiterEnum.None)
-                    delimiter = DelimiterEnum.C;
+                if (assignment == AssignmentEnum.None)
+                    assignment = AssignmentEnum.C;
 
                 pair = new DOM.Element(input, 
                     nameQuotesType: nameQuotesType,
                     nameInterval: nameInterval,
-                    delimiter: delimiter,
-                    delimiterInterval: delimiterInterval,
+                    assignment: assignment,
+                    assignmentInterval: assignmentInterval,
                     valueQuotesType: valueQuotesType,
                     valueInterval: valueInterval,
                     valueIndent: valueIndent,
-                    valueType: GetValueType(delimiter)
+                    valueType: GetValueType(assignment)
                 );
             }
             else if (nameText.StartsWith("@"))
             {
-                if (delimiter == DelimiterEnum.None)
-                    delimiter = DelimiterEnum.E;
+                if (assignment == AssignmentEnum.None)
+                    assignment = AssignmentEnum.E;
                 pair = new DOM.Attribute(input,
                     nameInterval: nameInterval,
-                    delimiter: delimiter,
-                    delimiterInterval: delimiterInterval,
+                    assignment: assignment,
+                    assignmentInterval: assignmentInterval,
                     valueQuotesType: valueQuotesType,
                     valueInterval: valueInterval,
                     valueIndent: valueIndent,
-                    valueType: GetValueType(delimiter)
+                    valueType: GetValueType(assignment)
                 );
             }
             else if (nameText.StartsWith("!$"))
             {
-                if (delimiter == DelimiterEnum.None)
-                    delimiter = DelimiterEnum.C;
+                if (assignment == AssignmentEnum.None)
+                    assignment = AssignmentEnum.C;
                 pair = new DOM.AliasDefinition(input,
                     nameInterval: nameInterval,
-                    delimiter: delimiter,
-                    delimiterInterval: delimiterInterval,
+                    assignment: assignment,
+                    assignmentInterval: assignmentInterval,
                     valueQuotesType: valueQuotesType,
                     valueInterval: valueInterval,
                     valueIndent: valueIndent,
-                    valueType: GetValueType(delimiter)
+                    valueType: GetValueType(assignment)
                 );
             }
             else if (nameText.StartsWith("!#"))
             {
-                if (delimiter == DelimiterEnum.None)
-                    delimiter = DelimiterEnum.EE;
+                if (assignment == AssignmentEnum.None)
+                    assignment = AssignmentEnum.EE;
                 pair = new DOM.NamespaceDefinition(input,
                     nameInterval: nameInterval,
-                    delimiter: delimiter,
-                    delimiterInterval: delimiterInterval,
+                    assignment: assignment,
+                    assignmentInterval: assignmentInterval,
                     valueQuotesType: valueQuotesType,
                     valueInterval: valueInterval,
                     valueIndent: valueIndent,
-                    valueType: GetValueType(delimiter)
+                    valueType: GetValueType(assignment)
                 );
             }
             else if (nameText.StartsWith("!%"))
             {
                 pair = new DOM.Parameter(input,
                     nameInterval: nameInterval,
-                    delimiter: delimiter,
-                    delimiterInterval: delimiterInterval,
+                    assignment: assignment,
+                    assignmentInterval: assignmentInterval,
                     valueQuotesType: valueQuotesType,
                     valueInterval: valueInterval,
                     valueIndent: valueIndent,
-                    valueType: GetValueType(delimiter)
+                    valueType: GetValueType(assignment)
                 );
             }
             else if (nameText.StartsWith("!"))
             {
-                if (delimiter == DelimiterEnum.None)
-                    delimiter = DelimiterEnum.C;
+                if (assignment == AssignmentEnum.None)
+                    assignment = AssignmentEnum.C;
                 pair = new DOM.Document(input,
                     nameInterval: nameInterval,
-                    delimiter: delimiter,
-                    delimiterInterval: delimiterInterval,
+                    assignment: assignment,
+                    assignmentInterval: assignmentInterval,
                     valueQuotesType: valueQuotesType,
                     valueInterval: valueInterval,
                     valueIndent: valueIndent,
-                    valueType: GetValueType(delimiter)
+                    valueType: GetValueType(assignment)
                 );
             }
             else if (nameText.StartsWith("$"))
             {
                 pair = new DOM.Alias(input,
                     nameInterval: nameInterval,
-                    delimiter: delimiter,
-                    delimiterInterval: delimiterInterval,
+                    assignment: assignment,
+                    assignmentInterval: assignmentInterval,
                     valueQuotesType: valueQuotesType,
                     valueInterval: valueInterval,
                     valueIndent: valueIndent,
-                    valueType: GetValueType(delimiter)
+                    valueType: GetValueType(assignment)
                 );
             }
             else if (nameText.StartsWith("%"))
             {
                 pair = new DOM.Argument(input,
                     nameInterval: nameInterval,
-                    delimiter: delimiter,
-                    delimiterInterval: delimiterInterval,
+                    assignment: assignment,
+                    assignmentInterval: assignmentInterval,
                     valueQuotesType: valueQuotesType,
                     valueInterval: valueInterval,
                     valueIndent: valueIndent,
-                    valueType: GetValueType(delimiter)
+                    valueType: GetValueType(assignment)
                 );
             }
             else if (nameText.StartsWith("#"))
             {
-                if (delimiter == DelimiterEnum.None)
-                    delimiter = DelimiterEnum.C;
+                if (assignment == AssignmentEnum.None)
+                    assignment = AssignmentEnum.C;
                 pair = new DOM.Scope(input,
                     nameInterval: nameInterval,
-                    delimiter: delimiter,
-                    delimiterInterval: delimiterInterval,
-                    valueType: GetValueType(delimiter)
+                    assignment: assignment,
+                    assignmentInterval: assignmentInterval,
+                    valueType: GetValueType(assignment)
                 );
             }
             else
             {
-                if (delimiter == DelimiterEnum.None)
-                    delimiter = DelimiterEnum.C;
+                if (assignment == AssignmentEnum.None)
+                    assignment = AssignmentEnum.C;
 
                 pair = new DOM.Element(input,
                     nameQuotesType: nameQuotesType,
                     nameInterval: nameInterval,
-                    delimiter: delimiter,
-                    delimiterInterval: delimiterInterval,
+                    assignment: assignment,
+                    assignmentInterval: assignmentInterval,
                     valueQuotesType: valueQuotesType,
                     valueInterval: valueInterval,
                     valueIndent: valueIndent, 
-                    valueType: GetValueType(delimiter) 
+                    valueType: GetValueType(assignment) 
                     
                 );
             }
             return (Pair) pair;
         }
 
-        private ValueType GetValueType(DelimiterEnum delimiter)
+        private ValueType GetValueType(AssignmentEnum assignment)
         {
-            switch (delimiter)
+            switch (assignment)
             {
-                case DelimiterEnum.CE:
+                case AssignmentEnum.CE:
                     return ValueType.PairValue;
 
-                case DelimiterEnum.EC:
+                case AssignmentEnum.EC:
                     return ValueType.Concatenation;
 
-                case DelimiterEnum.ECC:
+                case AssignmentEnum.ECC:
                     return ValueType.LiteralChoice;
-                case DelimiterEnum.C:
-                case DelimiterEnum.CC:
+                case AssignmentEnum.C:
+                case AssignmentEnum.CC:
                     return ValueType.Object;
             }
             return ValueType.None;

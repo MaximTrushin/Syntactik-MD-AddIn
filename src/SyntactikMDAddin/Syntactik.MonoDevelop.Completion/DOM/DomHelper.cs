@@ -5,16 +5,16 @@ namespace Syntactik.MonoDevelop.Completion.DOM
 {
     static class DomHelper
     {
-        public static CharLocation GetPairEnd(Interval nameInterval, Interval delimiterInterval)
+        public static CharLocation GetPairEnd(Interval nameInterval, Interval assignmentInterval)
         {
-            if (delimiterInterval != null) return delimiterInterval.End;
+            if (assignmentInterval != null) return assignmentInterval.End;
             return nameInterval.End;
         }
 
         public static CharLocation GetPairEnd(IMappedPair pair)
         {
             if (pair.ValueInterval != null) return pair.ValueInterval.End;
-            if (pair.DelimiterInterval != null) return pair.DelimiterInterval.End;
+            if (pair.AssignmentInterval != null) return pair.AssignmentInterval.End;
             return pair.NameInterval.End;
         }
     }

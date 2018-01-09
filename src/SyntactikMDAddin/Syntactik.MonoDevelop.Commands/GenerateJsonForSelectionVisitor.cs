@@ -25,7 +25,7 @@ namespace Syntactik.MonoDevelop.Commands
             if (!BlockIsStarting || !inSelection) return;
 
             //This element is the first element of the block. It decides if the block is array or object
-            if (string.IsNullOrEmpty(node.Name) || node.Delimiter == DelimiterEnum.None)
+            if (string.IsNullOrEmpty(node.Name) || node.Assignment == AssignmentEnum.None)
             {
                 JsonWriter.WriteStartArray(); //start array
                 
@@ -45,7 +45,7 @@ namespace Syntactik.MonoDevelop.Commands
             CheckBlockStart(element, inSelection);
             if (inSelection)
             {
-                if (!string.IsNullOrEmpty(element.Name) && element.Delimiter != DelimiterEnum.None)
+                if (!string.IsNullOrEmpty(element.Name) && element.Assignment != AssignmentEnum.None)
                     JsonWriter.WritePropertyName((element.NsPrefix != null ? element.NsPrefix + "." : "") + element.Name);
 
                 if (ResolveValue(element)) return; //Block has value therefore it has no block.
@@ -74,7 +74,7 @@ namespace Syntactik.MonoDevelop.Commands
             //Element has nor block no value. Writing an empty object as a value.
             if (inSelection && (!string.IsNullOrEmpty(element.Name) || ((DOM.Mapped.Element)element).ValueType == ValueType.Object))
             {
-                if (element.Delimiter == DelimiterEnum.CC)
+                if (element.Assignment == AssignmentEnum.CC)
                 {
                     JsonWriter.WriteStartArray();
                     JsonWriter.WriteEndArray();
@@ -106,10 +106,10 @@ namespace Syntactik.MonoDevelop.Commands
                        pair.NameInterval.End.Index <= selectionRange.EndOffset;
             }
 
-            return pair.DelimiterInterval.Begin.Index >= selectionRange.Offset &&
-                   pair.DelimiterInterval.Begin.Index <= selectionRange.EndOffset ||
-                   pair.DelimiterInterval.End.Index >= selectionRange.Offset &&
-                   pair.DelimiterInterval.End.Index <= selectionRange.EndOffset;
+            return pair.AssignmentInterval.Begin.Index >= selectionRange.Offset &&
+                   pair.AssignmentInterval.Begin.Index <= selectionRange.EndOffset ||
+                   pair.AssignmentInterval.End.Index >= selectionRange.Offset &&
+                   pair.AssignmentInterval.End.Index <= selectionRange.EndOffset;
         }
 
         public override void Visit(Alias alias)

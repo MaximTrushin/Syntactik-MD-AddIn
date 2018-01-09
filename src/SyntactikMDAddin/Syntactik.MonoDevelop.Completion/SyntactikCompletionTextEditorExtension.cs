@@ -416,7 +416,7 @@ namespace Syntactik.MonoDevelop.Completion
                     cpos = pair.ValueInterval.Begin.Index;
                     return true;
                 }
-                if (pair?.DelimiterInterval != null) return true;
+                if (pair?.AssignmentInterval != null) return true;
 
                 if (pair != null)
                 {
@@ -471,7 +471,7 @@ namespace Syntactik.MonoDevelop.Completion
         private CharLocation GetPairStart(IMappedPair pair)
         {
             if (pair.NameInterval != null) return pair.NameInterval.Begin;
-            if (pair.DelimiterInterval != null) return pair.DelimiterInterval.Begin;
+            if (pair.AssignmentInterval != null) return pair.AssignmentInterval.Begin;
             return pair.ValueInterval.Begin;
         }
 

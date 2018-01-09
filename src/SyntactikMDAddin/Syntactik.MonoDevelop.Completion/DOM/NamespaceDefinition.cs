@@ -8,10 +8,10 @@ namespace Syntactik.MonoDevelop.Completion.DOM
     {
         private readonly ITextSource _input;
 
-        internal NamespaceDefinition(ITextSource input, DelimiterEnum delimiter = DelimiterEnum.None, Interval nameInterval = null, Interval valueInterval = null, 
-            Interval delimiterInterval = null, int nameQuotesType = 0, int valueQuotesType = 0, int valueIndent = 0, ValueType valueType = ValueType.None) : base(
-                nameInterval: nameInterval, valueInterval: valueInterval, delimiterInterval: delimiterInterval, nameQuotesType: nameQuotesType, 
-                valueQuotesType: valueQuotesType, delimiter: delimiter, valueIndent: valueIndent, valueType: valueType)
+        internal NamespaceDefinition(ITextSource input, AssignmentEnum assignment = AssignmentEnum.None, Interval nameInterval = null, Interval valueInterval = null, 
+            Interval assignmentInterval = null, int nameQuotesType = 0, int valueQuotesType = 0, int valueIndent = 0, ValueType valueType = ValueType.None) : base(
+                nameInterval: nameInterval, valueInterval: valueInterval, assignmentInterval: assignmentInterval, nameQuotesType: nameQuotesType, 
+                valueQuotesType: valueQuotesType, assignment: assignment, valueIndent: valueIndent, valueType: valueType)
         {
             _input = input;
         }

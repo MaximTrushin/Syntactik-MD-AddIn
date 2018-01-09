@@ -15,9 +15,9 @@ namespace Syntactik.MonoDevelop.Completion.DOM
     {
         private readonly ITextSource _input;
 
-        internal Document(ITextSource input, DelimiterEnum delimiter = DelimiterEnum.None, Interval nameInterval = null, Interval valueInterval = null, Interval delimiterInterval = null,
+        internal Document(ITextSource input, AssignmentEnum assignment = AssignmentEnum.None, Interval nameInterval = null, Interval valueInterval = null, Interval assignmentInterval = null,
             int nameQuotesType = 0, int valueQuotesType = 0, int valueIndent = 0, ValueType valueType = ValueType.None) : base(nameInterval: nameInterval, valueInterval: valueInterval,
-            delimiterInterval: delimiterInterval, nameQuotesType: nameQuotesType, valueQuotesType: valueQuotesType, delimiter: delimiter, valueIndent: valueIndent,
+            assignmentInterval: assignmentInterval, nameQuotesType: nameQuotesType, valueQuotesType: valueQuotesType, assignment: assignment, valueIndent: valueIndent,
             valueType: valueType)
         {
             _input = input;
