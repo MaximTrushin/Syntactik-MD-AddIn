@@ -22,8 +22,8 @@ namespace Syntactik.MonoDevelop.Parser
             var m = module as DOM.Mapped.Module;
             if (m == null) throw new ArgumentException("Invalid module type.");
 
-            return m.TargetFormat == DOM.Mapped.Module.TargetFormats.Json ? new Syntactik.Parser(input, new FoldingReportingPairFactory(new PairFactoryForJson(_context, module), _parsedDocument, _cancellationToken), module) : 
-                new Syntactik.Parser(input, new FoldingReportingPairFactory(new PairFactoryForXml(_context, module), _parsedDocument, _cancellationToken), module);
+            return m.TargetFormat == DOM.Mapped.Module.TargetFormats.Json ? new Syntactik.Parser(input, new FoldingReportingPairFactory(new PairFactoryForJson(Context, module), _parsedDocument, _cancellationToken), module) : 
+                new Syntactik.Parser(input, new FoldingReportingPairFactory(new PairFactoryForXml(Context, module), _parsedDocument, _cancellationToken), module);
         }
     }
 }

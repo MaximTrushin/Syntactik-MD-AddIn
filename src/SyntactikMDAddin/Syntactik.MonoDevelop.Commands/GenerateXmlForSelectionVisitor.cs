@@ -19,14 +19,14 @@ namespace Syntactik.MonoDevelop.Commands
         public GenerateXmlForSelectionVisitor(XmlWriter xmlTextWriter, CompilerContext context, ISegment selectionRange)
             : base((name, encoding) => xmlTextWriter, null, context)
         {
-            _xmlTextWriter = xmlTextWriter;
+            XmlTextWriter = xmlTextWriter;
             _selectionRange = selectionRange;
         }
 
         public override void Visit(DOM.Document document)
         {
             CurrentDocument = (Document) document;
-            _choiceStack.Push(CurrentDocument.ChoiceInfo);
+            ChoiceStack.Push(CurrentDocument.ChoiceInfo);
             Visit(document.Entities);
             CurrentDocument = null;
         }
@@ -39,12 +39,12 @@ namespace Syntactik.MonoDevelop.Commands
                 string prefix = null, ns;
                 if (CurrentDocument != null) //User can copy from AliasDef
                     NamespaceResolver.GetPrefixAndNs(pair, CurrentDocument,
-                        () => ScopeContext.Peek(),
+                        ScopeContext.Peek(),
                         out prefix, out ns);
                 
                 //Starting Element
                 if (!string.IsNullOrEmpty(pair.Name)) //not text node
-                    _xmlTextWriter.WriteStartElement(prefix == null ? pair.Name : $"{prefix}:{pair.Name}");
+                    XmlTextWriter.WriteStartElement(prefix == null ? pair.Name : $"{prefix}:{pair.Name}");
                 ResolveValue(pair);
             }
 
@@ -55,7 +55,7 @@ namespace Syntactik.MonoDevelop.Commands
             {
                 //End Element
                 if (!string.IsNullOrEmpty(pair.Name)) //not text node
-                    _xmlTextWriter.WriteEndElement();
+                    XmlTextWriter.WriteEndElement();
             }
         }
 
@@ -137,16 +137,16 @@ namespace Syntactik.MonoDevelop.Commands
         {
             var inSelection = IsInSelection(pair as IMappedPair, _selectionRange);
 
-            if (!inSelection || _xmlTextWriter.WriteState != WriteState.Element) return;
+            if (!inSelection || XmlTextWriter.WriteState != WriteState.Element) return;
 
             string prefix, ns;
 
             NamespaceResolver.GetPrefixAndNs(pair, CurrentDocument,
-                () => ScopeContext.Peek(),
+                ScopeContext.Peek(),
                 out prefix, out ns);
-            _xmlTextWriter.WriteStartAttribute(prefix == null?pair.Name:$"{prefix}:{pair.Name}");
+            XmlTextWriter.WriteStartAttribute(prefix == null?pair.Name:$"{prefix}:{pair.Name}");
             ResolveValue(pair);
-            _xmlTextWriter.WriteEndAttribute();
+            XmlTextWriter.WriteEndAttribute();
         }
     }
 }

@@ -18,18 +18,18 @@ namespace Syntactik.MonoDevelop.Commands
         public override void Visit(Document document)
         {
             CurrentDocument = (DOM.Mapped.Document)document;
-            _currentModuleMember = document;
-            _choiceStack.Push(CurrentDocument.ChoiceInfo);
+            CurrentModuleMember = document;
+            ChoiceStack.Push(CurrentDocument.ChoiceInfo);
             var encoding = GetEncoding(document);
-            _xmlTextWriter = _writerDelegate(document.Name, encoding);
+            XmlTextWriter = WriterDelegate(document.Name, encoding);
 
             WriteStartDocument(document);
-            _rootElementAdded = false;
+            DocumentElementAdded = false;
             Visit(document.Entities);
-            _xmlTextWriter.WriteEndDocument();
-            _xmlTextWriter.Flush();
+            XmlTextWriter.WriteEndDocument();
+            XmlTextWriter.Flush();
             CurrentDocument = null;
-            _currentModuleMember = null;
+            CurrentModuleMember = null;
         }
 
         protected override void AddLocationMapRecord(string fileName, IMappedPair pair)
@@ -38,7 +38,7 @@ namespace Syntactik.MonoDevelop.Commands
 
         public void Dispose()
         {
-            _xmlTextWriter.Dispose();
+            XmlTextWriter.Dispose();
         }
     }
 }

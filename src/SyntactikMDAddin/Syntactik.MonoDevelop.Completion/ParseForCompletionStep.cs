@@ -26,27 +26,26 @@ namespace Syntactik.MonoDevelop.Parser
             var m = module as DOM.Mapped.Module;
             if (m == null) throw new ArgumentException("Invalid module type.");
 
-            return m.TargetFormat == DOM.Mapped.Module.TargetFormats.Json ? new Syntactik.Parser(input, new JsonCompletionPairFactory(_context, module,_cancellationToken), module) : 
-                new Syntactik.Parser(input, new XmlCompletionPairFactory(_context, module, _cancellationToken), module);
+            return m.TargetFormat == DOM.Mapped.Module.TargetFormats.Json ? new Syntactik.Parser(input, new JsonCompletionPairFactory(Context, module,_cancellationToken), module) : 
+                new Syntactik.Parser(input, new XmlCompletionPairFactory(Context, module, _cancellationToken), module);
         }
 
         protected override void DoParse(string fileName, TextReader reader)
         {
-            _context.InMemoryOutputObjects = new Dictionary<string, object>();
+            Context.InMemoryOutputObjects = new Dictionary<string, object>();
             try
             {
                 var module = CreateModule(fileName);
-                _context.CompileUnit.AppendChild(module);
+                Context.CompileUnit.AppendChild(module);
                 Syntactik.Parser parser = GetParser(module, _input);
-                var errorListener = new ErrorListener(_context, fileName);
+                var errorListener = new ErrorListener(Context, fileName);
                 parser.ErrorListeners.Add(errorListener);
                 parser.ParseModule();
             }
             catch (Exception ex)
             {
-                _context.AddError(CompilerErrorFactory.FatalError(ex));
+                Context.AddError(CompilerErrorFactory.FatalError(ex));
             }
-
         }
     }
 }
