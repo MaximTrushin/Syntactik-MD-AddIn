@@ -18,3 +18,4 @@ SyntactikMDAddin.sln.DotSettings.user
 /src/Setup/SyntactikSetup/obj
 /src/SyntactikEditor/bin
 /src/SyntactikEditor/obj
+*.pfx

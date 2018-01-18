@@ -3,11 +3,12 @@
 	<Bundle Name="Syntactik Editor" Version="!(bind.packageVersion.Syntactik)" Manufacturer="Syntactik, LLC" UpgradeCode="CB50FDE4-7FA7-4A5A-93ED-73ECE9E6EC3D">
     <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLicense">
       <bal:WixStandardBootstrapperApplication
-				SuppressOptionsUI="yes"
+				SuppressOptionsUI="no"
 				LicenseFile="LicenseFile.rtf"
 				LogoFile="res/banner.png"
 				ThemeFile="res/RtfLargeTheme.xml"
 				LocalizationFile="res/ClassicTheme.wxl"
+        ShowVersion="yes"
 				/>
     </BootstrapperApplicationRef>
 

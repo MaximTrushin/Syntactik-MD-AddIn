@@ -14,16 +14,15 @@
 		<Image X="0" Y="0" Width="218" Height="-45" ImageFile="logo.png" Visible="yes"/>
 		<Text X="218" Y="-45" Width="500" Height="2" FontId="5" Visible="yes"></Text>
     <Text X="240" Y="11" Width="-11" Height="64" FontId="1" Visible="yes" DisablePrefix="yes">#(loc.Title)</Text>
-
+    <Text Name="InstallVersion" X="240" Y="41" Width="-11" Height="17" FontId="3" Visible="yes" DisablePrefix="yes">#(loc.InstallVersion)</Text>
     <Page Name="Help">
         <Text X="218" Y="80" Width="-11" Height="30" FontId="2" DisablePrefix="yes">#(loc.HelpHeader)</Text>
         <Text X="218" Y="112" Width="-11" Height="-35" FontId="3" DisablePrefix="yes">#(loc.HelpText)</Text>
         <Button Name="HelpCancelButton" X="-11" Y="-11" Width="75" Height="23" TabStop="yes" FontId="0">#(loc.HelpCloseButton)</Button>
     </Page>
     <Page Name="Install">
-    <Text X="229" Y="59" Width="-11" Height="-70" TabStop="no" FontId="2" HexStyle="0x800000" DisablePrefix="yes" />
-    <Richedit Name="EulaRichedit" X="230" Y="60" Width="-12" Height="-71" TabStop="yes" FontId="0" />
-        <Text Name="InstallVersion" X="240" Y="-60" Width="210" Height="17" FontId="3" DisablePrefix="yes" HideWhenDisabled="yes">#(loc.InstallVersion)</Text>
+      <Text X="229" Y="59" Width="-11" Height="-70" TabStop="no" FontId="2" HexStyle="0x800000" DisablePrefix="yes" />
+      <Richedit Name="EulaRichedit" X="230" Y="60" Width="-12" Height="-71" TabStop="yes" FontId="0" />
         <Checkbox Name="EulaAcceptCheckbox" X="-11" Y="-50" Width="260" Height="17" TabStop="yes" FontId="3" HideWhenDisabled="yes">#(loc.InstallAcceptCheckbox)</Checkbox>
         <Button Name="OptionsButton" X="-171" Y="-11" Width="75" Height="23" TabStop="yes" FontId="0" HideWhenDisabled="yes">#(loc.InstallOptionsButton)</Button>
         <Button Name="InstallButton" X="-91" Y="-11" Width="75" Height="23" TabStop="yes" FontId="0">#(loc.InstallInstallButton)</Button>

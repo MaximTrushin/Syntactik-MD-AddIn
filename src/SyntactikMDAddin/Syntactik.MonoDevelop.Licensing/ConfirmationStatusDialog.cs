@@ -104,7 +104,7 @@ namespace Syntactik.MonoDevelop.License
         /// <param name="client"></param>
         /// <param name="mail"></param>
         /// <param name="licenseInfo"></param>
-        /// <returns>Return false if error occured.</returns>
+        /// <returns>Return false if error occurred.</returns>
         internal bool RequestLicense(DefaultApi client, string mail, out LicenseInfo licenseInfo)
         {
             var license = client.RequestLicense(mail, LicenseValidator.GetMachineId(), Environment.MachineName);
