@@ -18,7 +18,7 @@ namespace Syntactik.MonoDevelop.WelcomePage
 
             var row1 = new WelcomePageRow();
             row1.PackStart(new WelcomePageButtonBar(
-                new WelcomePageBarButton("Syntactik.com", "http://www.syntactik.com", "welcome-link-md-16.png"),
+                new WelcomePageBarButton("Syntactik.com", "https://www.syntactik.com", "welcome-link-md-16.png"),
                 new WelcomePageBarButton(GettextCatalog.GetString("Documentation"), "https://github.com/syntactik/Syntactik/blob/master/README.md", "welcome-link-info-16.png"),
                 new WelcomePageBarButton(GettextCatalog.GetString("Support"), "https://gitter.im/syntactik/Syntactik", "welcome-link-support-16.png")
                 )
@@ -30,7 +30,7 @@ namespace Syntactik.MonoDevelop.WelcomePage
                 new WelcomePageRecentProjectsList(GettextCatalog.GetString("Solutions"))
                 ),
                 new WelcomePageColumn(
-                    new WelcomePageNewsFeed(GettextCatalog.GetString("Syntactik News"), "http://software.xamarin.com/Service/News", "NewsLinks")
+                    new WelcomePageNewsFeed(GettextCatalog.GetString("News"), "http://software.xamarin.com/Service/News", "NewsLinks")
                 ),
                 new WelcomePageColumn(
                     new WelcomePageTipOfTheDaySection()
