@@ -63,28 +63,30 @@ namespace Syntactik.MonoDevelop.Commands
                 declaredNamespaces = GetDeclaredNamespaces(context.Context);
                 GetIndentInfo(module, textEditor, out indentChar, out indentMultiplicity);
                 var lastPair = context.LastPair as IMappedPair;
-                if (lastPair == null) return;
-
-                var caretLine = textEditor.CaretLine;
-
-                if (lastPair.ValueInterval != null) //TODO: Create unit tests
+                if (lastPair != null)
                 {
-                    if (caretLine == lastPair.ValueInterval.End.Line)
+
+                    var caretLine = textEditor.CaretLine;
+
+                    if (lastPair.ValueInterval != null) //TODO: Create unit tests
+                    {
+                        if (caretLine == lastPair.ValueInterval.End.Line)
+                        {
+                            insertNewLine = true;
+                        }
+                        indent = lastPair.ValueIndent / indentMultiplicity - 1;
+                    }
+                    else if (caretLine == lastPair.NameInterval.End.Line)
                     {
                         insertNewLine = true;
+                        var pair = (Pair) lastPair;
+                        indent = lastPair.ValueIndent / indentMultiplicity - 1;
+                        if (pair.Assignment == AssignmentEnum.C || pair.Assignment == AssignmentEnum.CC) indent++;
                     }
-                    indent = lastPair.ValueIndent / indentMultiplicity - 1;
-                }
-                else if (caretLine == lastPair.NameInterval.End.Line)
-                {
-                    insertNewLine = true;
-                    var pair = (Pair) lastPair;
-                    indent = lastPair.ValueIndent / indentMultiplicity - 1;
-                    if (pair.Assignment == AssignmentEnum.C || pair.Assignment == AssignmentEnum.CC) indent++;
-                }
-                else
-                {
-                    indent = lastPair.ValueIndent / indentMultiplicity;
+                    else
+                    {
+                        indent = lastPair.ValueIndent / indentMultiplicity;
+                    }
                 }
             }
             var clipboard = Gtk.Clipboard.Get(Gdk.Atom.Intern("CLIPBOARD", false));
@@ -183,6 +185,7 @@ namespace Syntactik.MonoDevelop.Commands
             var text = textEditor.GetLineText(textEditor.CaretLine);
             if (string.IsNullOrEmpty(text))
             {
+                if (indentSymbol == 0) indentSymbol = '\t'; //todo: read this from code formatting settings (replace tabs with spaces)
                 indentMultiplicity = 1;
                 return;
             }

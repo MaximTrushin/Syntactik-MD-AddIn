@@ -354,7 +354,7 @@ namespace Syntactik.MonoDevelop.Completion
             var document = DocumentContext.ParsedDocument;
             var module = document.Ast as Syntactik.DOM.Mapped.Module;
             int offset = FindOffsetForNewNamespaceInsertion(module);
-            var text = (offset == 0?"":"\r\n") + $"!#{nsPrefix} = {ns}" + (offset == 0 ? "\r\n": "");
+            var text = (offset == 0?"":Editor.EolMarker) + $"!#{nsPrefix} = {ns}" + (offset == 0 ? Editor.EolMarker : "");
             Editor.InsertText(offset, text);
         }
 

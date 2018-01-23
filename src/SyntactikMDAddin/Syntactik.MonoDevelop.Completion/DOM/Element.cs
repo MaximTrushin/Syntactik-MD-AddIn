@@ -46,6 +46,7 @@ namespace Syntactik.MonoDevelop.Completion.DOM
 
         internal static string GetNameText(ITextSource input, int nameQuotesType, Interval nameInterval)
         {
+            if (nameInterval == null) return null;
             if (nameQuotesType == 0)
                 return input.GetText(nameInterval.Begin.Index, nameInterval.End.Index);
             var c = input.GetChar(nameInterval.End.Index);
