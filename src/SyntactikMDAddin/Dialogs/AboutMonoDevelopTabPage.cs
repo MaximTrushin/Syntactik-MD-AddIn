@@ -58,8 +58,8 @@ namespace Syntactik.MonoDevelop.Dialogs
             });
             cbox.PackStart(new Xwt.LinkLabel()
             {
-                Text = "http://syntactik.com/syntactik-editor-license",
-                Uri = new Uri("http://syntactik.com/syntactik-editor-license")
+                Text = "https://www.syntactik.com/syntactik-editor-license",
+                Uri = new Uri("https://www.syntactik.com/syntactik-editor-license")
             });
             infoBox.PackStart(cbox);
 
@@ -77,7 +77,7 @@ namespace Syntactik.MonoDevelop.Dialogs
             cbox.PackStart(new Xwt.LinkLabel()
             {
                 Text = "Syntactik LLC.",
-                Uri = new Uri("http://www.syntactik.com")
+                Uri = new Uri("https://www.syntactik.com")
             });
             infoBox.PackStart(cbox);
             infoBox.PackStart(new Xwt.Label()

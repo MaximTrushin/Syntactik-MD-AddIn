@@ -134,7 +134,7 @@ Please visit the website www.syntactik.com to get more information about Syntact
 			this.btnRequest.Name = "btnRequest";
 			this.btnRequest.UseUnderline = true;
 			this.btnRequest.BorderWidth = ((uint)(10));
-			this.btnRequest.Label = global::Mono.Unix.Catalog.GetString("Request Early Access");
+			this.btnRequest.Label = global::Mono.Unix.Catalog.GetString("Request Trial License");
 			this.vbuttonbox1.Add(this.btnRequest);
 			global::Gtk.ButtonBox.ButtonBoxChild w5 = ((global::Gtk.ButtonBox.ButtonBoxChild)(this.vbuttonbox1[this.btnRequest]));
 			w5.Position = 1;

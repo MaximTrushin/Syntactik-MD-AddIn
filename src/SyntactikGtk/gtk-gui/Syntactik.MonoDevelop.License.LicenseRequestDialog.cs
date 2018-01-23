@@ -39,7 +39,7 @@ namespace Syntactik.MonoDevelop.License
 			global::Stetic.Gui.Initialize(this);
 			// Widget Syntactik.MonoDevelop.License.LicenseRequestDialog
 			this.Name = "Syntactik.MonoDevelop.License.LicenseRequestDialog";
-			this.Title = global::Mono.Unix.Catalog.GetString("Early Access License Request");
+			this.Title = global::Mono.Unix.Catalog.GetString("License Request");
 			this.Icon = global::Stetic.IconLoader.LoadIcon(this, "gtk-dialog-authentication", global::Gtk.IconSize.Menu);
 			this.WindowPosition = ((global::Gtk.WindowPosition)(4));
 			this.Modal = true;
@@ -55,7 +55,7 @@ namespace Syntactik.MonoDevelop.License
 			this.label5 = new global::Gtk.Label();
 			this.label5.Name = "label5";
 			this.label5.Xalign = 0F;
-			this.label5.LabelProp = global::Mono.Unix.Catalog.GetString("Please enter your email to get the Early Access license.\n\nIf you are requesting t" +
+			this.label5.LabelProp = global::Mono.Unix.Catalog.GetString("Please enter your email to get the license.\n\nIf you are requesting t" +
 					"he license first time, you will be asked to enter your full name, company and po" +
 					"sition.\n");
 			this.label5.Wrap = true;
