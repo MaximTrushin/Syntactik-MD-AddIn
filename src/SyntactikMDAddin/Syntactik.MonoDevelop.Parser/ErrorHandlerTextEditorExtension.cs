@@ -113,6 +113,10 @@ namespace Syntactik.MonoDevelop.Parser
 
         private void UnderLineError(Error info)
         {
+            int offset = Editor.LocationToOffset(info.Region.BeginLine, info.Region.BeginColumn);
+            int endOffset = Editor.LocationToOffset(info.Region.EndLine, info.Region.EndColumn);
+
+            if (offset < 0 || endOffset < 0) return; // don't report if critical error.
             var error = TextMarkerFactory.CreateErrorMarker(Editor, info);
             Editor.AddMarker(error);
             _errors.Add(error);
