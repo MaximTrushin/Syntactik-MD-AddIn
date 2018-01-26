@@ -26,7 +26,12 @@ namespace Syntactik.MonoDevelop.Commands
             WriteStartDocument(document);
             DocumentElementAdded = false;
             Visit(document.Entities);
-            XmlTextWriter.WriteEndDocument();
+            if (XmlTextWriter.WriteState != WriteState.Prolog)
+            {
+                //If we are still in the prolog state then don't end the document because it will cause exception.
+                //This case is valid if we only have xml declaration, processing instruction etc.
+                XmlTextWriter.WriteEndDocument();
+            } 
             XmlTextWriter.Flush();
             CurrentDocument = null;
             CurrentModuleMember = null;

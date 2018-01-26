@@ -68,9 +68,9 @@ namespace Syntactik.MonoDevelop.Commands
                     _context.InMemoryOutputObjects["CLIPBOARD"] = new StreamReader(_memoryStream).ReadToEnd();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                LoggingService.LogError("Unhandled exception in GenerateXmlForDocumentStep.Run.", ex);
+                //ignoring Generate XML exception.
             }
         }
     }
