@@ -392,6 +392,9 @@
         <Component Id="cmp8D9F2982DBE12B2804C8DECB7A253543" Guid="*">
           <File Id="filAD69CB36181EEE7A521B7719A979FA4F" KeyPath="yes" Source="$(var.FolderBin)\monodoc.xml" />
         </Component>
+        <Component Id="cmp84E29B06711D434283A00E1ADFC56E8D" Guid="*">
+          <File Id="filF2A0E8734A604A43922997F62CA0B444" KeyPath="yes" Source="$(var.FolderBin)\monodoc.dll" />
+        </Component>
         <Component Id="cmpB7E3918145D30FAC44008A85941A57C2" Guid="*">
           <File Id="filF00EFAEAD4BDCFB354AF08B5750CC838" KeyPath="yes" Source="$(var.FolderBin)\Newtonsoft.Json.dll" />
         </Component>
@@ -960,6 +963,7 @@
       <ComponentRef Id="cmp4CF7EC1552EF1C10E83AF34DED68AAAC" />
       <ComponentRef Id="cmpDB8454CA0BBAA879FE26CFDA356BC7A3" />
       <ComponentRef Id="cmp8D9F2982DBE12B2804C8DECB7A253543" />
+      <ComponentRef Id="cmp84E29B06711D434283A00E1ADFC56E8D" />
       <ComponentRef Id="cmpB7E3918145D30FAC44008A85941A57C2" />
       <ComponentRef Id="cmp789F0FA44A87DE8064DD749038C37076" />
       <ComponentRef Id="cmp3D0A139C81A20161A4EB39F26836678C" />

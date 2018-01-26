@@ -19,6 +19,7 @@
 			<!-- TODO: Define the list of chained packages. -->
 			<!-- <MsiPackage SourceFile="path\to\your.msi" /> -->
       <PackageGroupRef Id="GtkSharp"/>
+		  <PackageGroupRef Id="MsBuild2013"/>
       <MsiPackage Id="Syntactik" SourceFile="$(var.SyntactikSetup.TargetPath)" DisplayInternalUI="yes" ForcePerMachine="yes" Compressed="yes"/>
 		</Chain>
 	</Bundle>
@@ -37,6 +38,23 @@
         DisplayInternalUI="no" 
         Vital="yes" InstallCondition="NOT(IsGtkInstalled OR IsGtkInstalled64)" 
          />
+    </PackageGroup>
+    <util:RegistrySearch Root="HKLM" Key="SOFTWARE\Microsoft\MSBuild\12.0" Result="exists" Variable="IsMSBInstalled" />
+    <util:RegistrySearch Root="HKLM" Key="SOFTWARE\Microsoft\MSBuild\12.0" Result="exists" Variable="IsMSBInstalled64" Win64="yes"/>
+    <PackageGroup Id="MsBuild2013">
+      <ExePackage
+        Id="MsBuild2013"
+        DisplayName ="Microsoft Build Tools 2013"
+        SourceFile="BuildTools_Full.exe"
+        Cache="yes"
+        InstallCommand="/S"
+        Compressed="yes"
+        Permanent="yes"
+        PerMachine="yes"
+        Vital="yes" 
+        DetectCondition="IsMSBInstalled OR IsMSBInstalled64"
+      />
+      <!--DownloadUrl="https://download.microsoft.com/download/9/B/B/9BB1309E-1A8F-4A47-A6C5-ECF76672A3B3/BuildTools_Full.exe"-->
     </PackageGroup>
   </Fragment>
 </Wix>

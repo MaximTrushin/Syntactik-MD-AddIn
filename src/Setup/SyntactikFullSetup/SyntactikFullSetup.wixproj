@@ -49,6 +49,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="BuildTools_Full.exe" />
     <Content Include="gtk-sharp-2.12.45.msi" />
     <Content Include="LicenseFile.rtf" />
     <Content Include="packages.config" />
