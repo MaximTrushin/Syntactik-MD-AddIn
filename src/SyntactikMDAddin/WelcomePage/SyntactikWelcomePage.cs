@@ -29,9 +29,9 @@ namespace Syntactik.MonoDevelop.WelcomePage
                 new WelcomePageColumn(
                 new WelcomePageRecentProjectsList(GettextCatalog.GetString("Solutions"))
                 ),
-                new WelcomePageColumn(
-                    new WelcomePageNewsFeed(GettextCatalog.GetString("News"), "http://software.xamarin.com/Service/News", "NewsLinks")
-                ),
+                //new WelcomePageColumn(
+                //    new WelcomePageNewsFeed(GettextCatalog.GetString("News"), "http://software.xamarin.com/Service/News", "NewsLinks")
+                //),
                 new WelcomePageColumn(
                     new WelcomePageTipOfTheDaySection()
                 )
