@@ -40,7 +40,7 @@ namespace Syntactik.MonoDevelop.Highlighting
 
         public override SpanParser CreateSpanParser(DocumentLine line, CloneableStack<Span> spanStack)
         {
-            return new SyntactikSpanParser(this, spanStack ?? line.StartSpan.Clone(), _targetFormat);
+            return new SyntactikSpanParser(this, spanStack ?? line.StartSpan.Clone(), _targetFormat, line);
         }
     }
 }
