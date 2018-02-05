@@ -68,7 +68,10 @@ namespace Syntactik.MonoDevelop.Formatting
                     indentString = textEditorData.GetIndentationString(oldLine.EndOffset);
                 }
                 var oldIndent = Editor.GetLineIndent(newLine);
-                Editor.ReplaceText(Editor.GetLine(newLine).Offset, oldIndent.Length, indentString);
+                using (Editor.OpenUndoGroup())
+                {
+                    Editor.ReplaceText(Editor.GetLine(newLine).Offset, oldIndent.Length, indentString);
+                }
             }
             return ret;
         }

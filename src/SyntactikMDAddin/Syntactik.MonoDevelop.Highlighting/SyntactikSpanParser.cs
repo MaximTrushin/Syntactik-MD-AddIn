@@ -36,12 +36,18 @@ namespace Syntactik.MonoDevelop.Highlighting
                 int indent;
                 if (_line != null)
                 {
-                    indent = (int) _line?.GetIndentation(mode.Document).Length;
+                    indent = _line.GetIndentation(mode.Document).Length;
                 }
                 else
                 {
                     var l = mode.Document.GetLineByOffset(i);
-                    indent = l.GetIndentation(mode.Document).Length;
+                    indent = (l?.GetIndentation(mode.Document).Length)??0;
+                    var indent2 = CurText.TakeWhile(c => c == ' ' || c == '\t').Count();
+
+                    if (indent2 > indent)
+                    {
+                        indent = indent2;
+                    }
                 }
                 
                 var textStyle = "Xml Text";
@@ -204,12 +210,17 @@ namespace Syntactik.MonoDevelop.Highlighting
                     int indent;
                     if (_line != null)
                     {
-                        indent = (int) _line?.GetIndentation(mode.Document).Length;
+                        indent = _line.GetIndentation(mode.Document).Length;
                     }
                     else
                     {
-                        var l = this.mode.Document.GetLineByOffset(i);
-                        indent = l.GetIndentation(mode.Document).Length;
+                        var l = mode.Document.GetLineByOffset(i);
+                        indent = l?.GetIndentation(mode.Document).Length??0;
+                        var indent2 = CurText.TakeWhile(c => c == ' ' || c == '\t').Count();
+                        if (indent2 > indent)
+                        {
+                            indent = indent2;
+                        }
                     }
 
                     if (CurText.Trim().Length > 0)
