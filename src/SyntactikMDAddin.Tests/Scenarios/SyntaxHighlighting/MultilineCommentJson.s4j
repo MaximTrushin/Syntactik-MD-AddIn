@@ -6,3 +6,7 @@ ML Comment
 """
 ML Comment
 """
+el2 == """ line1
+line2 """
+el3 = """ line1
+line2 """
