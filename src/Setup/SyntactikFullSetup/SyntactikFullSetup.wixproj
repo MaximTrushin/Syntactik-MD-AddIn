@@ -55,6 +55,7 @@
     <Content Include="packages.config" />
     <Content Include="Res\banner.png" />
     <Content Include="Res\RtfLargeTheme.xml" />
+    <Content Include="Res\SyntactikEditor.ico" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Res" />

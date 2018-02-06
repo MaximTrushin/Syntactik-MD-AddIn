@@ -3,7 +3,10 @@
 	<Product Id="*" Name="Syntactik Editor" Language="1033" Version="!(bind.FileVersion.SyntactikMDAddin.dll)" Manufacturer="Syntactik, LLC" UpgradeCode="CB50FDE4-7FA7-4A5A-93ED-73ECE9E6EC3D">
 		<Package Id="*" Keywords='Installer' Description="Syntactik Editor 0.1 Installer"
         Comments='Syntactik Editor.' Manufacturer='Syntactik Ltd.' InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
-
+	  
+    <Icon Id="icon.ico" SourceFile="$(var.FolderBranding)\SyntactikEditor.ico"/>
+	  <Property Id="ARPPRODUCTICON" Value="icon.ico" />
+    
 		<MajorUpgrade AllowDowngrades="no" AllowSameVersionUpgrades="no" DowngradeErrorMessage="A newer version of [ProductName] is already installed." Schedule="afterInstallInitialize" />
 		<MediaTemplate  EmbedCab="yes"/>
 
