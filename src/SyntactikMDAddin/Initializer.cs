@@ -13,9 +13,14 @@ namespace Syntactik.MonoDevelop
 {
     internal class Initializer : CommandHandler
     {
-
         protected override void Run()
         {
+            if (PropertyService.Get("MonoDevelop.Core.FirstRun", false))
+            {
+                PropertyService.Set("ShowFoldMargin", true);
+                PropertyService.SaveProperties();
+                LoggingService.LogInfo("Initial run properties updated.");
+            }
             IdeApp.CommandService.RegisterGlobalHandler(new GlobalCommandHandler());
         }
     }
