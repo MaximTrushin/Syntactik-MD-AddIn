@@ -12,7 +12,7 @@ namespace Syntactik.MonoDevelop.Parser
         public override async Task<ParsedDocument> Parse(ParseOptions options, CancellationToken cancellationToken = new CancellationToken())
         {
             var fileName = options.FileName;
-            var project = (SyntactikProject)options.Project;
+            var project = (SyntactikProject)options.Project??new SyntactikXmlProject();
             ParsedDocument result;
             var oldParsedDocument = options.OldParsedDocument as SyntactikParsedDocument;
             //Parse if document has newer version
