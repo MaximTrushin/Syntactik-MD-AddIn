@@ -56,7 +56,11 @@ namespace Syntactik.MonoDevelop
         public void HelpResolver()
         {
             var textEditor = IdeApp.Workbench.ActiveDocument?.Editor;
-            if (textEditor == null) return;
+            if (textEditor == null)
+            {
+                DesktopService.ShowUrl(@"https://www.syntactik.com/editorHelp.html");
+                return;
+            }
 
             var ext = textEditor.GetContent<SyntactikCompletionTextEditorExtension>();
             var task = ext.CompletionContextTask?.Task;
@@ -67,11 +71,19 @@ namespace Syntactik.MonoDevelop
 #else
                 task.Wait(2000, ext.CompletionContextTask.CancellationToken);
 #endif
-                if (task.Status != TaskStatus.RanToCompletion) return;
+                if (task.Status != TaskStatus.RanToCompletion)
+                {
+                    DesktopService.ShowUrl(@"https://www.syntactik.com/editorHelp.html");
+                    return;
+                }
                 CompletionContext context = task.Result;
                 
                 var lastPair = context.LastPair as DOM.Mapped.IMappedPair;
-                if (lastPair == null) return;
+                if (lastPair == null)
+                {
+                    DesktopService.ShowUrl(@"https://www.syntactik.com/editorHelp.html");
+                    return;
+                }
                 if (lastPair is Argument)
                 {
                     DesktopService.ShowUrl(@"https://github.com/syntactik/Syntactik/blob/master/README.md#argument");
