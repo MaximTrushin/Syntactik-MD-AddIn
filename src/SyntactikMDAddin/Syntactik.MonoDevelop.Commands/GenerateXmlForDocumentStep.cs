@@ -43,7 +43,7 @@ namespace Syntactik.MonoDevelop.Commands
                 var provider = PolicyService.GetUserDefaultPolicySet() as IPolicyProvider;
                 var policyContainr = provider.Policies;
                 var mimeTypeScopes = DesktopService.GetMimeTypeInheritanceChain("application/xml").ToList();
-                var policy = policyContainr.Get<XmlFormattingPolicy>(mimeTypeScopes);
+                var policy = policyContainr.Get<XmlFormattingPolicy>(mimeTypeScopes)??new XmlFormattingPolicy();
                 _context.InMemoryOutputObjects = new Dictionary<string, object>();
 
                 using (var visitor =

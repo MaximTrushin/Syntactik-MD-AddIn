@@ -43,7 +43,7 @@ namespace Syntactik.MonoDevelop.Commands
 
         public void Dispose()
         {
-            XmlTextWriter.Dispose();
+            XmlTextWriter?.Dispose();
         }
     }
 }
