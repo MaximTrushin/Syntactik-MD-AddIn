@@ -6,6 +6,7 @@
 	  
     <Icon Id="icon.ico" SourceFile="$(var.FolderBranding)\SyntactikEditor.ico"/>
 	  
+	  
 	  <Property Id="ARPPRODUCTICON" Value="icon.ico" />
     
 		<MajorUpgrade AllowDowngrades="no" AllowSameVersionUpgrades="no" DowngradeErrorMessage="A newer version of [ProductName] is already installed." Schedule="afterInstallInitialize" />
@@ -364,23 +365,37 @@
           <File Id="fil8FE9E0A17C07C11669A2C81782A5B31C" KeyPath="yes" Source="$(var.FolderBin)\MonoDevelop.exe" />
         </Component>
         <Component Id="cmp433FD1BAAEAB41CF87C2B9484C54BAA1" Guid="*">
+          <File Id="bike.ico"  Source="$(var.FolderBranding)\bike.ico"/>
           <ProgId Id='SyntactikEditor.s4xproj' Description='Syntactik for XML project'>
             <Extension Id='s4xproj' ContentType='application/x-syntactik4xmlproject'>
               <Verb Id='open' Command='Open' TargetFile='fil64082629ACBE455B8A25A40E8411E435' Argument='"%1"' />
             </Extension>
           </ProgId>
-          <!--
-          <ProgId Id='SyntactikEditor.s4x' Description='Syntactik for XML source code' Icon='SyntactikEditor16.png'>
+          
+          <ProgId Id='SyntactikEditor.s4x' Description='Syntactik for XML source code' Icon='bike.ico'>
             <Extension Id='s4x' ContentType='text/x-syntactik4xml'>
               <Verb Id='open' Command='Open' TargetFile='fil64082629ACBE455B8A25A40E8411E435' Argument='"%1"' />
             </Extension>
           </ProgId>
-          -->
+
+          <ProgId Id='SyntactikEditor.s4j' Description='Syntactik for JSON source code' Icon='bike.ico'>
+            <Extension Id='s4j' ContentType='text/x-syntactik4json'>
+              <Verb Id='open' Command='Open' TargetFile='fil64082629ACBE455B8A25A40E8411E435' Argument='"%1"' />
+            </Extension>
+          </ProgId>
+
           <ProgId Id='SyntactikEditor.s4jproj' Description='Syntactik for JSON project'>
             <Extension Id='s4jproj' ContentType='application/x-syntactik4jsonproject'>
               <Verb Id='open' Command='Open' TargetFile='fil64082629ACBE455B8A25A40E8411E435' Argument='"%1"' />
             </Extension>
           </ProgId>
+
+          <ProgId Id='SyntactikEditor.sln' Description='Solution file'>
+            <Extension Id='sln' ContentType='text/plain'>
+              <Verb Id='open' Command='Open' TargetFile='fil64082629ACBE455B8A25A40E8411E435' Argument='"%1"' />
+            </Extension>
+          </ProgId>
+          
           <File Id="fil64082629ACBE455B8A25A40E8411E435" KeyPath="yes" Source="$(var.FolderBin)\SyntactikEditor.exe" />
         </Component>
         <Component Id="cmp0EB4D533F8035CAD4366A38FB2BE057C" Guid="*">

@@ -47,6 +47,7 @@
     <Compile Include="Product.wxs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="bike.ico" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
