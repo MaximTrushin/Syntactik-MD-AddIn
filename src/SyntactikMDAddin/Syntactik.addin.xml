@@ -70,8 +70,10 @@
     </MimeType>
     <MimeType id="application/x-syntactik4jsonproject" _description="S4J-project file" baseType="application/x-msbuild">
       <File pattern="*.s4jproj" />
-    </MimeType>    
-    
+    </MimeType>
+    <MimeType id="application/xml" _description="XSD schema" icon="md-xml-file-icon" isText="true">
+      <File pattern="*.xsd" />
+    </MimeType>
   </Extension>
 
   <Extension path = "/MonoDevelop/SourceEditor2/SyntaxModes">
