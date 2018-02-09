@@ -1,0 +1,12 @@
+﻿!#ipo = http://www.example.com/myipo
+ipo.purchaseOrder:
+	@orderDate = 2017-01-01
+	shipTo: $Address.US.AK
+	billTo: $Address.US.AK
+	Items:
+		$Items.Jewelry.Necklaces.Lapis: %quantity = 2 
+		$Items.Jewelry.Diamonds.Heart
+		$Items.Jewelry.Diamonds.Uncut: %quantity = 7
+		$Items.Jewelry.Rings.Amber: %quantity = 3
+		$Items.Jewelry.Necklaces.Pearl
+		$Items.Jewelry.Earings.Jade: %quantity = 5

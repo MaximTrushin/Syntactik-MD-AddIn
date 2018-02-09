@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Default</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{552DAFA1-2F3B-48B9-A8F9-B321D272A793}</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Default|AnyCPU' ">
+    <OutputPath>Output\</OutputPath>
+    <XMLOutputFolder>C:\Users\mad\Documents\Projects\InternationalPurchaseOrder\InternationalPurchaseOrder\Output\</XMLOutputFolder>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="Schemas\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Schemas\address.xsd" />
+    <None Include="Schemas\ipo.xsd" />
+    <None Include="Items.s4x" />
+    <None Include="PurchaseOrder.s4x" />
+    <None Include="Templates.s4x" />
+    <None Include="Address.s4x" />
+    <None Include="PurchaseOrderWithAliases.s4x" />
+    <None Include="PurchaseOrdersFromTemplate.s4x" />
+  </ItemGroup>
+</Project>

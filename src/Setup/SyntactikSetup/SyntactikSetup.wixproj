@@ -38,6 +38,10 @@
     <MyFolderBranding Condition=" '$(MyFolderBranding)' == '' ">$(MSBuildProjectDirectory)\..\..\..\branding\branding</MyFolderBranding>
     <DefineConstants>$(DefineConstants);FolderBranding=$(MyFolderBranding)</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup>
+    <MyFolderExamples Condition=" '$(MyFolderExamples)' == '' ">$(MSBuildProjectDirectory)\Examples</MyFolderExamples>
+    <DefineConstants>$(DefineConstants);FolderExamples=$(MyFolderExamples)</DefineConstants>
+  </PropertyGroup>
   <!--
   <PropertyGroup>
     <MyFolderSyntactik Condition=" '$(MyFolderSyntactik)' == '' ">$(MSBuildProjectDirectory)\external\Syntactik</MyFolderSyntactik>
@@ -47,7 +51,6 @@
     <Compile Include="Product.wxs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="bike.ico" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -67,6 +70,12 @@
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLFOLDER</RefTargetDir>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WixExtension Include="WixUtilExtension">
+      <HintPath>c:\Program Files (x86)\WiX Toolset v3.11\bin\WixUtilExtension.dll</HintPath>
+      <Name>WixUtilExtension</Name>
+    </WixExtension>
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" Condition=" '$(WixTargetsPath)' != '' " />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets" Condition=" '$(WixTargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets') " />
@@ -126,6 +135,19 @@
         <PreprocessorVariable>var.FolderBranding</PreprocessorVariable>
       </HarvestDirectory>
     </ItemGroup>
+	<!--
+	<ItemGroup>
+      <HarvestDirectory Include="$(MyFolderExamples)">
+        <DirectoryRefId>ExamplesDirectory</DirectoryRefId>
+        <SuppressRootDirectory>true</SuppressRootDirectory>
+        <SuppressCom>true</SuppressCom>
+        <SuppressRegistry>true</SuppressRegistry>
+        <ComponentGroupName>SyntactikExamples</ComponentGroupName>
+        <PreprocessorVariable>var.FolderExamples</PreprocessorVariable>
+		<HarvestDirectoryAutogenerateGuids>true</HarvestDirectoryAutogenerateGuids>
+		<HarvestDirectoryGenerateGuidsNow>true</HarvestDirectoryGenerateGuidsNow>
+      </HarvestDirectory>
+    </ItemGroup>	-->
     <!--
     <ItemGroup>
       <HarvestDirectory Include="$(MyFolderSyntactik)">

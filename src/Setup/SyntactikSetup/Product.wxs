@@ -12,15 +12,22 @@
 		<MajorUpgrade AllowDowngrades="no" AllowSameVersionUpgrades="no" DowngradeErrorMessage="A newer version of [ProductName] is already installed." Schedule="afterInstallInitialize" />
 		<MediaTemplate  EmbedCab="yes"/>
 
+	  <PropertyRef Id="WIX_DIR_COMMON_DOCUMENTS"/>
+    
 		<Feature Id="ProductFeature" Title="SyntactikSetup" Level="1">
 			<ComponentGroupRef Id="SyntactikBranding" />
       <ComponentGroupRef Id="SyntactikMDBuildAddins"/>
       <ComponentGroupRef Id="SyntactikMDBuildBin"/>
       <ComponentGroupRef Id="SyntactikMDBuildData"/>
       <ComponentGroupRef Id="SyntactikMDAddin"/>
+		  <ComponentGroupRef Id="SyntactikExamples"/>
     </Feature>
 
     <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="WIX_DIR_COMMON_DOCUMENTS">
+        <Directory Id="ExamplesDirectory" Name="Syntactik">
+        </Directory>
+      </Directory>
       <Directory Id="ProgramFilesFolder">
         <Directory Id="INSTALLFOLDER" Name="Syntactik">
           <Directory Id="AddinsFolder" Name="Addins">
@@ -365,7 +372,7 @@
           <File Id="fil8FE9E0A17C07C11669A2C81782A5B31C" KeyPath="yes" Source="$(var.FolderBin)\MonoDevelop.exe" />
         </Component>
         <Component Id="cmp433FD1BAAEAB41CF87C2B9484C54BAA1" Guid="*">
-          <File Id="bike.ico"  Source="$(var.FolderBranding)\bike.ico"/>
+          <File Id="bike.ico"  Source="$(var.FolderBranding)\..\bike.ico"/>
           <ProgId Id='SyntactikEditor.s4xproj' Description='Syntactik for XML project'>
             <Extension Id='s4xproj' ContentType='application/x-syntactik4xmlproject'>
               <Verb Id='open' Command='Open' TargetFile='fil64082629ACBE455B8A25A40E8411E435' Argument='"%1"' />
@@ -1139,6 +1146,62 @@
           </Directory>
       </DirectoryRef>
   </Fragment>
+  <Fragment>
+    <DirectoryRef Id="ExamplesDirectory">
+      <Directory Id="dir25FBCC4E5938736ED57B3829E7F88D42" Name="InternationalPurchaseOrder">
+        <Component Id="cmp96F539F599E2A98D7DDFEAE518B8C3DD" Guid="96F539F599E2A98D7DDFEAE518B8C3DD">
+          <File Id="filC5F0D90D7CF8A67604558C84F4EFDDCA" KeyPath="yes" Source="$(var.FolderExamples)\InternationalPurchaseOrder\InternationalPurchaseOrder.sln" />
+        </Component>
+        <Directory Id="dir8F0D8642D4E0D5CE8FD8A70D6C98F4A2" Name="InternationalPurchaseOrder">
+          <Component Id="cmp4CF2B0E41D0231FA9E6CB87A07CC37BA" Guid="4CF2B0E41D0231FA9E6CB87A07CC37BA">
+            <File Id="filDFB996AC8D4D89B536354DCCDA611891" KeyPath="yes" Source="$(var.FolderExamples)\InternationalPurchaseOrder\InternationalPurchaseOrder\Address.s4x" />
+          </Component>
+          <Component Id="cmpF5594583E243F18E62C68AB0535D8E3D" Guid="F5594583E243F18E62C68AB0535D8E3D">
+            <File Id="fil648101E82F71FE76FEAEA7F96AD58D7C" KeyPath="yes" Source="$(var.FolderExamples)\InternationalPurchaseOrder\InternationalPurchaseOrder\InternationalPurchaseOrder.s4xproj" />
+          </Component>
+          <Component Id="cmp7C8369E02EA30D963A51D2BCC5167829" Guid="7C8369E02EA30D963A51D2BCC5167829">
+            <File Id="fil9B906F0FA6BC29CA59A4C48386601D65" KeyPath="yes" Source="$(var.FolderExamples)\InternationalPurchaseOrder\InternationalPurchaseOrder\Items.s4x" />
+          </Component>
+          <Component Id="cmpA0333447FFCAD84168908B9F88D1DCF6" Guid="A0333447FFCAD84168908B9F88D1DCF6">
+            <File Id="fil4DAE75C8BBEE0D89E10953F9618F233A" KeyPath="yes" Source="$(var.FolderExamples)\InternationalPurchaseOrder\InternationalPurchaseOrder\PurchaseOrder.s4x" />
+          </Component>
+          <Component Id="cmpB0654F72E124B4B27F454BB7875FB369" Guid="B0654F72E124B4B27F454BB7875FB369">
+            <File Id="fil2419C6C915292651957218CF75BF98DA" KeyPath="yes" Source="$(var.FolderExamples)\InternationalPurchaseOrder\InternationalPurchaseOrder\PurchaseOrdersFromTemplate.s4x" />
+          </Component>
+          <Component Id="cmp6B03CC2F05CB1CF89E5B6B3282F684D1" Guid="6B03CC2F05CB1CF89E5B6B3282F684D1">
+            <File Id="filBEF882C5BD4565721C300DB639160CB4" KeyPath="yes" Source="$(var.FolderExamples)\InternationalPurchaseOrder\InternationalPurchaseOrder\PurchaseOrderWithAliases.s4x" />
+          </Component>
+          <Component Id="cmpDF38CDE6CE1D86B703862D0B35243F42" Guid="DF38CDE6CE1D86B703862D0B35243F42">
+            <File Id="filCE136197AAA42F475CD34B6A97988081" KeyPath="yes" Source="$(var.FolderExamples)\InternationalPurchaseOrder\InternationalPurchaseOrder\Templates.s4x" />
+          </Component>
+          <Directory Id="dirA2661A18DB92E34FE384B10A7F2EFB7B" Name="Schemas">
+            <Component Id="cmp64BA86197E1380F8FAC7C882266162F6" Guid="64BA86197E1380F8FAC7C882266162F6">
+              <File Id="fil4C5BEE162C956BCDC6021C21ED87CE11" KeyPath="yes" Source="$(var.FolderExamples)\InternationalPurchaseOrder\InternationalPurchaseOrder\Schemas\address.xsd" />
+            </Component>
+            <Component Id="cmp5B668881BC5F2C309AFE5C7A335069BE" Guid="5B668881BC5F2C309AFE5C7A335069BE">
+              <File Id="filE38708FFE4708B27D78604183DF71443" KeyPath="yes" Source="$(var.FolderExamples)\InternationalPurchaseOrder\InternationalPurchaseOrder\Schemas\ipo.xsd" />
+            </Component>
+          </Directory>
+        </Directory>
+      </Directory>
+    </DirectoryRef>
+  </Fragment>
+  <Fragment>
+    <ComponentGroup Id="SyntactikExamples">
+      <ComponentRef Id="cmp96F539F599E2A98D7DDFEAE518B8C3DD" />
+      <ComponentRef Id="cmp4CF2B0E41D0231FA9E6CB87A07CC37BA" />
+      <ComponentRef Id="cmpF5594583E243F18E62C68AB0535D8E3D" />
+      <ComponentRef Id="cmp7C8369E02EA30D963A51D2BCC5167829" />
+      <ComponentRef Id="cmpA0333447FFCAD84168908B9F88D1DCF6" />
+      <ComponentRef Id="cmpB0654F72E124B4B27F454BB7875FB369" />
+      <ComponentRef Id="cmp6B03CC2F05CB1CF89E5B6B3282F684D1" />
+      <ComponentRef Id="cmpDF38CDE6CE1D86B703862D0B35243F42" />
+      <ComponentRef Id="cmp64BA86197E1380F8FAC7C882266162F6" />
+      <ComponentRef Id="cmp5B668881BC5F2C309AFE5C7A335069BE" />
+    </ComponentGroup>
+  </Fragment>
+  
+  
   <Fragment>
       <ComponentGroup Id="SyntactikMDAddin">
           <ComponentRef Id="cmp1A89EE684723ACA08CF031774D0904F7" />

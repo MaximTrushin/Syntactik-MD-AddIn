@@ -1,0 +1,18 @@
+﻿!purchaseOrder1:
+	$Templates.PurchaseOrder: %orderDate == 2017-01-14,
+		%shipTo: $Address.UK.Cambridge
+		%billTo: $Address.US.AK
+		%comment = Gift wrapping
+		%items: 
+			($Items.Jewelry.Necklaces.Lapis: %quantity = 2), $Items.Jewelry.Diamonds.Heart
+			$Items.Jewelry.Diamonds.Uncut: %quantity == 7,, $Items.Jewelry.Rings.Amber: %quantity = 3
+			$Items.Jewelry.Necklaces.Pearl
+			$Items.Jewelry.Earings.Jade: %quantity = 5	
+
+!purchaseOrder2:
+	$Templates.PurchaseOrder:
+		%orderDate = 2018-02-09
+		%shipTo: $Address.UK.Cambridge
+		%billTo: $Address.US.AK
+		%items: 
+			$Items.Jewelry.Necklaces.Lapis: %quantity = 2
