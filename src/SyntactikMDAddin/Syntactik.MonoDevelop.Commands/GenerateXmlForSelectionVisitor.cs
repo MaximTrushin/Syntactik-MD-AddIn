@@ -4,6 +4,7 @@ using System.Xml;
 using MonoDevelop.Core.Text;
 using Syntactik.Compiler;
 using Syntactik.Compiler.Generator;
+using Syntactik.DOM;
 using Syntactik.DOM.Mapped;
 using Alias = Syntactik.DOM.Alias;
 using Document = Syntactik.DOM.Mapped.Document;
@@ -31,32 +32,56 @@ namespace Syntactik.MonoDevelop.Commands
             CurrentDocument = null;
         }
 
-        public override void Visit(Element pair)
+        public override void Visit(Element element)
         {
-            var inSelection = IsInSelection(pair as IMappedPair, _selectionRange);
+            var inSelection = IsInSelection(element as IMappedPair, _selectionRange);
             if (inSelection)
             {
-                string prefix = null, ns;
+                string prefix = null, ns = null;
                 if (CurrentDocument != null) //User can copy from AliasDef
-                    NamespaceResolver.GetPrefixAndNs(pair, CurrentDocument,
+                    NamespaceResolver.GetPrefixAndNs(element, CurrentDocument,
                         ScopeContext.Peek(),
                         out prefix, out ns);
                 
                 //Starting Element
-                if (!string.IsNullOrEmpty(pair.Name)) //not text node
-                    XmlTextWriter.WriteStartElement(prefix == null ? pair.Name : $"{prefix}:{pair.Name}");
-                ResolveValue(pair);
+                if (!string.IsNullOrEmpty(element.Name)) //not text node
+                {
+                    if (element.Assignment != AssignmentEnum.CCC)
+                        XmlTextWriter.WriteStartElement(prefix == null ? element.Name : $"{prefix}:{element.Name}");
+                }
+                else
+                {
+                    if (element.Parent.Assignment == AssignmentEnum.CCC && (element.Assignment == AssignmentEnum.C || element.Assignment == AssignmentEnum.CC || element.Assignment == AssignmentEnum.E || element.Assignment == AssignmentEnum.EE))
+                    {
+                        // This is item of explicit array (:::)
+                        WriteExplicitArrayItem(element, prefix, ns);
+                    }
+                }
+                ResolveValue(element);
             }
 
-            ResolveAttributesInSelection(pair.Entities);
-            Visit(pair.Entities.Where(e => !(e is DOM.Attribute)));
-
+            ResolveAttributesInSelection(element.Entities);
+            Visit(element.Entities.Where(e => !(e is DOM.Attribute)));
             if (inSelection)
             {
                 //End Element
-                if (!string.IsNullOrEmpty(pair.Name)) //not text node
-                    XmlTextWriter.WriteEndElement();
+                if (!string.IsNullOrEmpty(element.Name))
+                {
+                    if (element.Assignment != AssignmentEnum.CCC) //not text node and not explicit array
+                        XmlTextWriter.WriteEndElement();
+                }
+                else
+                {
+                    if (element.Parent.Assignment == AssignmentEnum.CCC && (element.Assignment == AssignmentEnum.C || element.Assignment == AssignmentEnum.CC || element.Assignment == AssignmentEnum.E || element.Assignment == AssignmentEnum.EE))
+                        XmlTextWriter.WriteEndElement();
+                }
             }
+        }
+
+        private void WriteExplicitArrayItem(Element element, string prefix, string ns)
+        {
+            if (string.IsNullOrEmpty(element.NsPrefix)) prefix = null;
+            XmlTextWriter.WriteStartElement(prefix, element.Parent.Name, ns);
         }
 
         public override void Visit(DOM.AliasDefinition aliasDef)

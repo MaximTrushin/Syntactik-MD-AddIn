@@ -21,7 +21,6 @@
       <namespace name="IO.Swagger.Api" />
       <namespace name="IO.Swagger.Client" />
       <namespace name="IO.Swagger.Model" />
-      <namespace name="Rhino.Licensing" />
       <namespace name="Stetic" />
       <type name="Syntactik.MonoDevelop.Commands.CopyAsJsonHandler" />
       <type name="Syntactik.MonoDevelop.Commands.CopyAsXmlHandler" />
