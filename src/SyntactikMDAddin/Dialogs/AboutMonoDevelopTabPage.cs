@@ -73,7 +73,7 @@ namespace Syntactik.MonoDevelop.Dialogs
                 Spacing = 0,
                 MarginLeft = 12
             };
-            cbox.PackStart(new Xwt.Label("© 2011-" + DateTime.Now.Year + " "));
+            cbox.PackStart(new Xwt.Label("© 2017-" + DateTime.Now.Year + " "));
             cbox.PackStart(new Xwt.LinkLabel()
             {
                 Text = "Syntactik LLC.",

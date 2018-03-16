@@ -156,15 +156,15 @@
          macShortcut = "Shift|Meta|V"
          _label = "Paste Syntactik Fragment"
          icon = "gtk-paste"/>
-      <Command id = "Syntactik.MonoDevelop.Commands.SyntactikCommands.LicenseInfo"
+      <!--<Command id = "Syntactik.MonoDevelop.Commands.SyntactikCommands.LicenseInfo"
 						 defaultHandler = "Syntactik.MonoDevelop.Commands.LicenseInfoHandler"
 						 _label = "Syntactik License Info"
-						 icon = "gtk-dialog-info"/>
+						 icon = "gtk-dialog-info"/>-->
     </Category>
   </Extension>
 
   <Extension path="/MonoDevelop/Ide/MainMenu/Help">
-    <CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.LicenseInfo" insertbefore="MonoDevelop.Ide.Commands.HelpCommands.About" />
+    <!--<CommandItem id="Syntactik.MonoDevelop.Commands.SyntactikCommands.LicenseInfo" insertbefore="MonoDevelop.Ide.Commands.HelpCommands.About" />-->
     <LinkItem id = "ReportSyntactikBug" _label = "Report Syntactik Editor Problem..." link = "https://github.com/syntactik/syntactik/issues" />
     <LinkItem id = "SyntactikSupport" _label = "Syntactik Live Support" link = "https://gitter.im/syntactik/Syntactik" />
     <LinkItem id = "SyntactikEditorHelp" _label = "Syntactik Editor Help" icon = "gtk-help" link = "https://www.syntactik.com/editorHelp.html" />

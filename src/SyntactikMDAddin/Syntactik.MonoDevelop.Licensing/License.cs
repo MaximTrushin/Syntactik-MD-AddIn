@@ -31,7 +31,7 @@ namespace Syntactik.MonoDevelop.Licensing
         public void ValidateLicense()
         {
             RuntimeMode = Mode.Demo;
-            Validator.AssertValidLicense();
+            //Validator.AssertValidLicense();
             RuntimeMode = Mode.Full;
         }
     }

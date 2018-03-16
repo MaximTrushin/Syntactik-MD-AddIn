@@ -159,7 +159,7 @@ namespace Syntactik.MonoDevelop.Projects
             _license = null;
             try
             {
-                License.ValidateLicense();
+                //License.ValidateLicense();
             }
             catch
             {
